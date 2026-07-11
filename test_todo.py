@@ -65,12 +65,24 @@ class TestTaskManager(unittest.TestCase):
         self.assertEqual(mgr2.list()[0]["description"], "persist me")
 
     def test_format_task_undone(self):
-        task = {"id": 1, "description": "test", "done": False}
-        self.assertEqual(format_task(task), "  1 [ ] test")
+        task = {"id": 1, "description": "test", "done": False, "priority": "medium"}
+        self.assertEqual(format_task(task), "  1 [ ]  !  test")
 
     def test_format_task_done(self):
-        task = {"id": 42, "description": "done thing", "done": True}
-        self.assertEqual(format_task(task), " 42 [x] done thing")
+        task = {"id": 42, "description": "done thing", "done": True, "priority": "medium"}
+        self.assertEqual(format_task(task), " 42 [x]  !  done thing")
+
+    def test_add_default_priority(self):
+        task = self.mgr.add("default")
+        self.assertEqual(task["priority"], "medium")
+
+    def test_add_explicit_priority(self):
+        task = self.mgr.add("high prio", priority="high")
+        self.assertEqual(task["priority"], "high")
+
+    def test_format_task_shows_priority(self):
+        task = {"id": 1, "description": "urgent", "done": False, "priority": "high"}
+        self.assertEqual(format_task(task), "  1 [ ] !!! urgent")
 
     def test_clear_with_no_done_tasks(self):
         self.mgr.add("a")

@@ -31,11 +31,12 @@ class TaskManager:
             return 1
         return max(t["id"] for t in self.tasks) + 1
 
-    def add(self, description):
+    def add(self, description, priority="medium"):
         task = {
             "id": self._next_id(),
             "description": description,
             "done": False,
+            "priority": priority,
             "created_at": datetime.now().isoformat(),
         }
         self.tasks.append(task)
@@ -60,9 +61,13 @@ class TaskManager:
         self._save()
 
 
+PRIORITY_MARKS = {"high": "!!!", "medium": " ! ", "low": " .. "}
+
+
 def format_task(task):
     status = "[x]" if task["done"] else "[ ]"
-    return f"{task['id']:>3} {status} {task['description']}"
+    pmark = PRIORITY_MARKS.get(task.get("priority", "medium"), " ! ")
+    return f"{task['id']:>3} {status} {pmark} {task['description']}"
 
 
 def main():
@@ -71,6 +76,7 @@ def main():
 
     p_add = sub.add_parser("add", help="Add a new task")
     p_add.add_argument("description", nargs="+")
+    p_add.add_argument("--priority", "-p", choices=["low", "medium", "high"], default="medium")
 
     sub.add_parser("list", help="List all tasks")
 
@@ -84,8 +90,8 @@ def main():
 
     if args.command == "add":
         desc = " ".join(args.description)
-        task = mgr.add(desc)
-        print(f"Added task {task['id']}: {task['description']}")
+        task = mgr.add(desc, priority=args.priority)
+        print(f"Added task {task['id']}: {task['description']} ({task['priority']})")
 
     elif args.command == "list":
         tasks = mgr.list()
