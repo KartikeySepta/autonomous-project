@@ -1,5 +1,18 @@
 # Decisions
 
+## 2026-07-11 — Noun-Verb Agreement Fix in Middle Template 3
+
+### What
+Changed `{verb_conjugated}` → `{verb}` in `SENTENCE_TEMPLATES["middle"][2]`. The template was `"The {noun} {verb_conjugated} with {element}."` and is now `"The {noun} {verb} with {element}."`.
+
+### Why
+All nouns in the word banks are plural ("trees", "stones", "ruins", etc.), so using third-person singular verb conjugation ("whispers", "glows") produced a grammatical error: "The trees whispers with light." Using the bare verb form ("whisper") fixes the agreement: "The trees whisper with light." This was explicitly called out as a known tradeoff in the Session 8 decision entry.
+
+### Tradeoffs
+- Templates 1 and 2 use `{Element}`/`{element}` (singular concepts like "Mist", "Light") as the subject, so `{verb_conjugated}` is correct there — only template 3 was wrong
+- The bare verb is already passed to `str.format()` as the `verb` kwarg — no new data or parameters needed
+- 2 new tests, 144 total
+
 ## 2026-07-11 — Three New Biomes (Ruined City, Fungal Grove, Sky Islands)
 
 ### What

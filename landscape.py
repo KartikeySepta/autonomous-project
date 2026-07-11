@@ -193,7 +193,7 @@ SENTENCE_TEMPLATES = {
     "middle": [
         "{Element} {verb_conjugated} between the {noun}.",
         "Among the {noun}, {element} {verb_conjugated}.",
-        "The {noun} {verb_conjugated} with {element}.",
+        "The {noun} {verb} with {element}.",
     ],
     "weather": [
         "{Weather}.",

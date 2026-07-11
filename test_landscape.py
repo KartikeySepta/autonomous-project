@@ -498,6 +498,21 @@ class TestLandscape(unittest.TestCase):
             SENTENCE_TEMPLATES["opening"][2],
         )
 
+    def test_middle_third_template_uses_bare_verb(self):
+        middle_third = SENTENCE_TEMPLATES["middle"][2]
+        self.assertNotIn("{verb_conjugated}", middle_third,
+            "Third middle template should use bare {verb} not {verb_conjugated}")
+        self.assertIn("{verb}", middle_third)
+
+    def test_middle_third_end_to_end_bare_verb(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, biome="forest", template_set="third")
+            # Template 3 is "The {noun} {verb} with {element}."
+            self.assertIn(" with ", result,
+                f"template_set=third middle should use '... with ...' pattern at seed {s}")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
 
     def test_template_overrides_default_does_not_change_output(self):
         a = generate_landscape(seed=42, template_set="first")
