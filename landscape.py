@@ -141,7 +141,7 @@ MOOD_WORDS = {
 }
 
 
-def _word_weight(word, bias="normal", mood=None, category=None):
+def _word_weight(word, bias="normal", mood=None, category=None, mood_weight=MOOD_BOOST):
     weights = BIAS_MODES[bias]
     if word in RARE_WORDS:
         base = weights["rare"]
@@ -151,7 +151,7 @@ def _word_weight(word, bias="normal", mood=None, category=None):
         base = weights["normal"]
     if mood and category and mood in MOOD_WORDS:
         if word in MOOD_WORDS[mood].get(category, []):
-            base *= MOOD_BOOST
+            base *= mood_weight
     return base
 
 
@@ -353,7 +353,7 @@ BIOME_WORDS = {
 }
 
 
-def _pick(category, biomes, bias="normal", mood=None):
+def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST):
     """Pick a random word from the biome-specific pool(s) blended with the global pool.
     `biomes` is a list of biome names; words from all specified biomes are included.
     Words are weighted per the given bias mode and optionally boosted for mood."""
@@ -369,11 +369,11 @@ def _pick(category, biomes, bias="normal", mood=None):
         "anomalies": ANOMALIES,
     }[category]
     pool = specific + global_pool
-    weights = [_word_weight(w, bias, mood, category) for w in pool]
+    weights = [_word_weight(w, bias, mood, category, mood_weight) for w in pool]
     return random.choices(pool, weights=weights, k=1)[0]
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST):
     if seed is not None:
         random.seed(seed)
     elif show_seed:
@@ -393,21 +393,21 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         biomes = [chosen]
         display = chosen
 
-    adj = _pick("adjectives", biomes, bias=bias, mood=mood)
+    adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight)
     opening_tmpl = random.choice(SENTENCE_TEMPLATES["opening"])
     parts = [opening_tmpl.format(adj=adj, display=display)]
 
     for _ in range(max(detail, 0)):
-        element = _pick("elements", biomes, bias=bias, mood=mood)
-        noun = _pick("nouns", biomes, bias=bias, mood=mood)
-        verb = _pick("verbs", biomes, bias=bias, mood=mood)
+        element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight)
+        noun = _pick("nouns", biomes, bias=bias, mood=mood, mood_weight=mood_weight)
+        verb = _pick("verbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight)
         verb_conjugated = _conjugate(verb)
         middle_tmpl = random.choice(SENTENCE_TEMPLATES["middle"])
         parts.append(
             middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated)
         )
 
-        weather = _pick("weathers", biomes, bias=bias, mood=mood)
+        weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight)
         weather_tmpl = random.choice(SENTENCE_TEMPLATES["weather"])
         parts.append(
             weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display)
@@ -415,7 +415,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
 
     if detail >= 1 and random.random() < 0.3:
         anomaly_tmpl = random.choice(SENTENCE_TEMPLATES["anomaly"])
-        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood)))
+        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight)))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)
@@ -471,13 +471,17 @@ def main():
         help="Mood overlay that boosts tone-matched words (e.g. eerie, vibrant, desolate)",
     )
     parser.add_argument(
+        "--mood-weight", type=float, default=MOOD_BOOST,
+        help=f"Weight multiplier for mood-matched words (default: {MOOD_BOOST}, higher = stronger mood influence)",
+    )
+    parser.add_argument(
         "--show-seed", action="store_true",
         help="Display the random seed used for reproducibility",
     )
     args = parser.parse_args()
 
     for i in range(args.count):
-        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood))
+        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight))
         if args.count > 1 and i < args.count - 1:
             print()
 

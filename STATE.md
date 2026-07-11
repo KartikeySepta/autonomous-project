@@ -114,10 +114,19 @@
 - Added 5 tests: `test_mood_does_not_break_output`, `test_mood_word_weight_boosted_for_matched_words`, `test_mood_word_weight_not_boosted_for_unmatched_words`, `test_mood_category_specific_boost`, `test_mood_flag_exists_via_cli`
 - Tests increased from 75 to 80 total (18 todo + 62 landscape)
 
+### What was done (Session 14)
+- Added **`--mood-weight` CLI flag** and `mood_weight` parameter to `generate_landscape()` — a float multiplier (default: 5) that controls how strongly mood-matched words are boosted
+  - `--mood-weight 1` means no mood boost (equivalent to no mood)
+  - `--mood-weight 0` suppresses mood words entirely (weight = 0)
+  - Higher values (e.g. 10, 20) make mood words dominate the output
+  - `--mood-weight` replaces the hard-coded `MOOD_BOOST = 5` constant, threading through `_word_weight()` → `_pick()` → `generate_landscape()` → CLI
+- `MOOD_BOOST` kept as module-level constant (default value), so existing code that imports it still works
+- Added 6 tests: `test_mood_weight_one_equals_no_boost`, `test_mood_weight_zero_suppresses_mood_words`, `test_mood_weight_high_magnifies_boost`, `test_mood_weight_default_matches_mood_boost`, `test_mood_weight_produces_valid_output`, `test_mood_weight_flag_exists_via_cli`
+- Tests increased from 80 to 86 total (18 todo + 68 landscape)
+
 ### Current status
-Working. All 80 tests pass (18 todo + 62 landscape).
+Working. All 86 tests pass (18 todo + 68 landscape).
 
 ### Next likely steps
 - Expose template set choice via CLI flag (e.g. `--template-set`)
 - Add per-category bias control
-- Add a `--mood-weight` flag to let users control the boost strength

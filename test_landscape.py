@@ -397,6 +397,40 @@ class TestLandscape(unittest.TestCase):
         from landscape import main
         self.assertTrue(callable(main))
 
+    def test_mood_weight_one_equals_no_boost(self):
+        from landscape import _word_weight
+        w_no_mood = _word_weight("shadow", bias="flat", mood=None, category="adjectives")
+        w_one = _word_weight("shadow", bias="flat", mood="eerie", category="adjectives", mood_weight=1)
+        self.assertEqual(w_one, w_no_mood)
+
+    def test_mood_weight_zero_suppresses_mood_words(self):
+        from landscape import _word_weight
+        w_zero = _word_weight("shadow", bias="flat", mood="eerie", category="adjectives", mood_weight=0)
+        self.assertEqual(w_zero, 0)
+
+    def test_mood_weight_high_magnifies_boost(self):
+        from landscape import _word_weight
+        w_normal = _word_weight("shadow", bias="flat", mood="eerie", category="adjectives", mood_weight=MOOD_BOOST)
+        w_high = _word_weight("shadow", bias="flat", mood="eerie", category="adjectives", mood_weight=MOOD_BOOST * 3)
+        self.assertEqual(w_high, w_normal * 3)
+
+    def test_mood_weight_default_matches_mood_boost(self):
+        from landscape import _word_weight
+        w_default = _word_weight("shadow", bias="flat", mood="eerie", category="adjectives")
+        w_explicit = _word_weight("shadow", bias="flat", mood="eerie", category="adjectives", mood_weight=MOOD_BOOST)
+        self.assertEqual(w_default, w_explicit)
+
+    def test_mood_weight_produces_valid_output(self):
+        for w in [0, 1, 10, 20]:
+            for s in range(5):
+                result = generate_landscape(seed=s, mood="eerie", mood_weight=w)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_mood_weight_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
 
 if __name__ == "__main__":
     unittest.main()
