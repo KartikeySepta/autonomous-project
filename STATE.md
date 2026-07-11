@@ -162,14 +162,14 @@
 
 ## 2026-07-11
 
-### What was done (Session 18)
-- Added **per-slot template overrides** via 4 CLI flags (`--template-opening`, `--template-middle`, `--template-weather`, `--template-anomaly`) and `template_overrides` dict parameter to `generate_landscape()` — users can now control template selection independently per slot
-  - Each flag accepts the same choices as `--template-set`: `random`, `first`, `second`, `third`
-  - When set, overrides the global `--template-set` for that specific slot
-  - Example: `--template-set first --template-middle random` = first template for all slots except middle, which stays random
-- Added `template_overrides` dict parameter to `_pick_template()` — resolves `template_overrides.get(slot, template_set)` for each pick, same pattern as `bias_overrides` and `mood_weight_overrides`
-- Added 7 tests: `test_template_overrides_default_does_not_change_output`, `test_template_overrides_empty_dict_equals_no_override`, `test_template_overrides_produces_valid_output`, `test_template_override_opening_first_uses_first_opening`, `test_template_override_middle_second_uses_second_middle`, `test_template_overrides_multiple_slots`, `test_template_overrides_cli_flags_exist`
-- Tests increased from 109 to 116 total (18 todo + 98 landscape)
+### What was done (Session 19)
+- Added **cross-sentence word dedup**: `_pick()` now accepts an optional `used_words` set — when provided, already-used words are excluded from the selection pool and the newly chosen word is added to the set
+- In `generate_landscape()`, a single `used_words = set()` is threaded through all `_pick()` calls, so no word can be selected more than once per landscape (across all categories: adjectives, elements, nouns, verbs, weathers, anomalies)
+- If the filtered pool is empty (all words exhausted), falls back to the unfiltered pool — so edge cases with tiny biome word banks don't crash
+- Backward compatible: `used_words=None` (default) preserves the existing behavior for tests or direct `_pick()` calls that don't need dedup
+- Updated `test_detail_two_is_longer_than_one` to `test_detail_two_has_more_sentences_than_one` (counts periods instead of char length) to avoid a statistical edge case where anomaly text at detail=1 happens to equal the extra sentence pair at detail=2
+- Added 5 tests: `test_word_dedup_via_used_words_parameter`, `test_word_dedup_across_multiple_picks_same_category`, `test_word_dedup_across_categories`, `test_word_dedup_without_used_words_still_works`, `test_word_dedup_still_produces_valid_output`, `test_word_dedup_does_not_break_format_modes`
+- Tests increased from 116 to 122 total (18 todo + 104 landscape)
 
 ### Current status
-Working. All 116 tests pass (18 todo + 98 landscape).
+Working. All 122 tests pass (18 todo + 104 landscape).

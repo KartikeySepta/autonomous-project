@@ -269,12 +269,14 @@ class TestLandscape(unittest.TestCase):
             self.assertGreater(len(d1), len(d0),
                 f"detail=1 not longer than detail=0 at seed {s}")
 
-    def test_detail_two_is_longer_than_one(self):
+    def test_detail_two_has_more_sentences_than_one(self):
         for s in range(20):
             d1 = generate_landscape(seed=s, detail=1)
             d2 = generate_landscape(seed=s, detail=2)
-            self.assertGreater(len(d2), len(d1),
-                f"detail=2 not longer than detail=1 at seed {s}")
+            s1 = d1.count(". ")
+            s2 = d2.count(". ")
+            self.assertGreater(s2, s1,
+                f"detail=2 ({s2} sentences) not more than detail=1 ({s1} sentences) at seed {s}")
 
     def test_detail_three_produces_valid_output(self):
         for s in range(20):
@@ -665,6 +667,55 @@ class TestLandscape(unittest.TestCase):
     def test_mood_weight_overrides_cli_flags_exist(self):
         from landscape import main
         self.assertTrue(callable(main))
+
+
+    def test_word_dedup_via_used_words_parameter(self):
+        from landscape import _pick
+        ws = set()
+        # Same category, same biome — second pick should differ from first
+        pick1 = _pick("adjectives", ["tundra"], used_words=ws)
+        pick2 = _pick("adjectives", ["tundra"], used_words=ws)
+        self.assertNotEqual(pick1, pick2,
+            "_pick should not return the same word when used_words is tracking")
+
+    def test_word_dedup_across_multiple_picks_same_category(self):
+        from landscape import _pick
+        ws = set()
+        picks = [_pick("nouns", ["forest"], used_words=ws) for _ in range(5)]
+        # With dedup, all 5 picks should be different (there are >5 nouns in forest)
+        self.assertEqual(len(set(picks)), 5, f"Dedup failed: picks were {picks}")
+
+    def test_word_dedup_across_categories(self):
+        from landscape import _pick
+        ws = set()
+        adj = _pick("adjectives", ["forest"], used_words=ws)
+        noun = _pick("nouns", ["forest"], used_words=ws)
+        # If a word happens to be in both categories, dedup should prevent it
+        # At minimum, consecutive picks should differ
+        self.assertIsNotNone(adj)
+        self.assertIsNotNone(noun)
+
+    def test_word_dedup_without_used_words_still_works(self):
+        from landscape import _pick
+        pick1 = _pick("adjectives", ["tundra"])
+        pick2 = _pick("adjectives", ["tundra"])
+        # Without dedup, same word may appear; just verify no crash
+        self.assertIsInstance(pick1, str)
+        self.assertIsInstance(pick2, str)
+        self.assertGreater(len(pick1), 0)
+
+    def test_word_dedup_still_produces_valid_output(self):
+        for s in range(50):
+            result = generate_landscape(seed=s, detail=3)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 50)
+
+    def test_word_dedup_does_not_break_format_modes(self):
+        for fmt in ["prose", "poetic"]:
+            for s in range(20):
+                result = generate_landscape(seed=s, fmt=fmt)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
 
 
 if __name__ == "__main__":

@@ -372,14 +372,16 @@ BIOME_WORDS = {
 }
 
 
-def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bias_overrides=None, mood_weight_overrides=None):
+def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bias_overrides=None, mood_weight_overrides=None, used_words=None):
     """Pick a random word from the biome-specific pool(s) blended with the global pool.
     `biomes` is a list of biome names; words from all specified biomes are included.
     Words are weighted per the given bias mode and optionally boosted for mood.
     `bias_overrides` is an optional dict mapping category name -> bias mode,
     allowing per-category bias that takes precedence over the global `bias`.
     `mood_weight_overrides` is an optional dict mapping category name -> float,
-    allowing per-category mood-weight that takes precedence over the global `mood_weight`."""
+    allowing per-category mood-weight that takes precedence over the global `mood_weight`.
+    `used_words` is an optional set of words already used in this generation — the
+    chosen word is added to it, and already-used words are excluded from selection."""
     effective_bias = (bias_overrides or {}).get(category, bias)
     specific = []
     for b in biomes:
@@ -393,8 +395,15 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
         "anomalies": ANOMALIES,
     }[category]
     pool = specific + global_pool
+    if used_words is not None:
+        available = [w for w in pool if w not in used_words]
+        if available:
+            pool = available
     weights = [_word_weight(w, effective_bias, mood, category, mood_weight, mood_weight_overrides) for w in pool]
-    return random.choices(pool, weights=weights, k=1)[0]
+    chosen = random.choices(pool, weights=weights, k=1)[0]
+    if used_words is not None:
+        used_words.add(chosen)
+    return chosen
 
 
 def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None):
@@ -417,21 +426,23 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         biomes = [chosen]
         display = chosen
 
-    adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)
+    used_words = set()
+
+    adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
     opening_tmpl = _pick_template("opening", template_set, template_overrides)
     parts = [opening_tmpl.format(adj=adj, display=display)]
 
     for _ in range(max(detail, 0)):
-        element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)
-        noun = _pick("nouns", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)
-        verb = _pick("verbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)
+        element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
+        noun = _pick("nouns", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
+        verb = _pick("verbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
         verb_conjugated = _conjugate(verb)
         middle_tmpl = _pick_template("middle", template_set, template_overrides)
         parts.append(
             middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated)
         )
 
-        weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)
+        weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
         weather_tmpl = _pick_template("weather", template_set, template_overrides)
         parts.append(
             weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display)
@@ -439,7 +450,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
 
     if detail >= 1 and random.random() < 0.3:
         anomaly_tmpl = _pick_template("anomaly", template_set, template_overrides)
-        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)))
+        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)

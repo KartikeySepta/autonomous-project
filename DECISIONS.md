@@ -15,20 +15,22 @@ The global `--mood-weight` flag (Session 14) applies the same multiplier to all 
 - This was the first suggested "next likely step" from Session 16's STATE.md — natural follow-up
 - Per-category mood-weight overrides make `mood_weight_overrides` the fourth dict parameter alongside `bias_overrides`, keeping the pattern consistent
 
-## 2026-07-11 — Per-Slot Template Override (`--template-opening`, `--template-middle`, etc.)
+## 2026-07-11 — Cross-Sentence Word Dedup
 
 ### What
-Added 4 CLI flags (`--template-opening`, `--template-middle`, `--template-weather`, `--template-anomaly`) and a `template_overrides` dict parameter to `_pick_template()` and `generate_landscape()`. Each flag accepts the same choices as `--template-set` (`random`, `first`, `second`, `third`) and overrides the global `--template-set` for that specific template slot.
+Added an optional `used_words` set parameter to `_pick()`. When provided, already-used words are excluded from the selection pool, and the newly chosen word is added to the set. `generate_landscape()` creates a single `used_words` set and threads it through all `_pick()` calls, so no word can be selected more than once per landscape.
 
 ### Why
-The global `--template-set` flag (Session 15) applies the same template selection mode to all 4 slots (opening, middle, weather, anomaly). A user who wants a fixed "first" opening for consistency but randomized middle/weather sentences for variety had no way to express that. Per-slot template overrides unlock fine-grained structural control: "keep the opening consistent but let the rest vary."
+After 18 sessions of adding parameters, knobs, and overrides, the project needed a core output-quality improvement. The most obvious quality gap was that the same word could appear twice in one landscape — "crystal" as both adjective and element, or "shimmer" as verb appearing in both the middle sentence and weather phrase. This made the output feel repetitive and less polished. Dedup is invisible to the user (no CLI flag needed) but meaningfully improves every generated landscape.
 
 ### Tradeoffs
-- Dict parameter rather than 4 individual kwargs — same pattern as `bias_overrides` and `mood_weight_overrides`, keeps the signature clean
-- Resolution happens in `_pick_template()` (one line: `effective = (template_overrides or {}).get(slot, template_set)`) — consistent with the existing override pattern
-- Backward compatible: `template_overrides=None` or `{}` produces identical output to the existing behavior for the same seed
-- This was the third suggested "next likely step" from Session 17's STATE.md — completes the per-slot template control feature
-- Per-slot template overrides make `template_overrides` the fifth dict parameter, continuing the established pattern for fine-grained override control
+- `used_words=None` by default preserves backward compatibility for direct `_pick()` callers (not used in production, but keeps tests clean)
+- Global cross-category dedup (not per-category) — a single set shared across adjectives, elements, nouns, verbs, weathers, and anomalies. This is intentional: the goal is to prevent any word from appearing twice in a single description, regardless of grammatical role. A word like "echo" appearing in both elements and verbs would feel repetitive even though it's grammatically valid in both slots.
+- When the filtered pool is empty (all words for a category have been used), falls back to the unfiltered pool. This is a safety net for edge cases with tiny biome word banks at high detail levels — the description might repeat a word rather than crash.
+- Morphological variants (e.g. "crystal" vs "crystals", "shimmer" vs "shimmers") are NOT deduped — they're different strings. Full lemmatization would add complexity and a dependency; in practice, these variants read as natural repetition rather than a bug.
+- This is the first feature in the project that doesn't add a CLI flag — it's an automatic quality improvement, not a user-facing control. This sets a precedent: not every change needs a knob.
+- The `test_detail_two_is_longer_than_one` test was changed to count sentences instead of character length, because anomaly text at detail=1 may be as long as an extra sentence pair at detail=2. Counting periods is more robust.
+- 6 new tests added (122 total, 18 todo + 104 landscape).
 
 ## 2026-07-11 — Per-Category Bias Override (`--bias-adjective`, etc.)
 
