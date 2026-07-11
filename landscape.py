@@ -51,6 +51,32 @@ ANOMALIES = [
     "Everything is slightly out of focus.",
 ]
 
+# Weight tiers for word selection — common words appear more often, rare words less so
+COMMON_WORDS = {
+    "crystal", "shadow", "ancient", "forgotten", "silent",
+    "mist", "light", "silence", "darkness",
+    "trees", "stones", "ruins", "crystals",
+    "whisper", "glow", "shimmer", "drift",
+    "a gentle rain falls", "a still calm lingers", "mist curls along the ground",
+}
+
+RARE_WORDS = {
+    "brass", "ivory", "glass",
+    "fragrance", "radiance",
+    "geodes", "fungi", "archways",
+    "resonate", "vibrate",
+    "ash drifts slowly downward",
+}
+
+
+def _word_weight(word):
+    if word in RARE_WORDS:
+        return 1
+    if word in COMMON_WORDS:
+        return 10
+    return 5
+
+
 # Biome-specific word enrichments — blended with global pools for more evocative output
 BIOME_WORDS = {
     "forest": {
@@ -217,7 +243,8 @@ BIOME_WORDS = {
 
 
 def _pick(category, biome):
-    """Pick a random word from the biome-specific pool blended with the global pool."""
+    """Pick a random word from the biome-specific pool blended with the global pool.
+    Words are weighted: common (10), normal (5), rare (1)."""
     specific = BIOME_WORDS.get(biome, {}).get(category, [])
     global_pool = {
         "adjectives": ADJECTIVES,
@@ -227,7 +254,9 @@ def _pick(category, biome):
         "weathers": WEATHERS,
         "anomalies": ANOMALIES,
     }[category]
-    return random.choice(specific + global_pool)
+    pool = specific + global_pool
+    weights = [_word_weight(w) for w in pool]
+    return random.choices(pool, weights=weights, k=1)[0]
 
 
 def generate_landscape(seed=None, biome=None):

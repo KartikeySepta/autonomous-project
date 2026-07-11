@@ -1,5 +1,19 @@
 # Decisions
 
+## 2026-07-11 — Weighted Word Selection
+
+### What
+Replaced uniform `random.choice()` in `_pick()` with weighted `random.choices()`. Three weight tiers: common (weight 10), normal (5), rare (1). Marked ~30 global words as common and ~10 as rare via `COMMON_WORDS` and `RARE_WORDS` sets.
+
+### Why
+With uniform selection, every word was equally likely — a vivid word like "resonate" appeared as often as a bland one like "glow". Weighting makes common atmospheric words appear more often (reinforcing the scene's mood) while keeping rarer words as occasional surprises.
+
+### Tradeoffs
+- Flat sets rather than per-category weights — simpler but means a common adjective and a common element share the same bias; fine for a word bank this size
+- Biome-specific words are unweighted (default normal tier) — biome words are already distinctive enough that weighting isn't needed
+- Weights are hard-coded rather than configurable — keeps the implementation simple at 10 lines; extensible via CLI later if needed
+- `random.choices()` slightly slower than `random.choice()` on tiny pools — negligible at this scale (<1µs per pick)
+
 ## 2026-07-11 — Biome-Specific Word Banks
 
 ### What

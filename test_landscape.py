@@ -1,8 +1,11 @@
 import unittest
 
+import random
+
 from landscape import (
     generate_landscape,
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, BIOME_WORDS,
+    COMMON_WORDS, RARE_WORDS,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -85,6 +88,36 @@ class TestLandscape(unittest.TestCase):
     def test_count_flag_argument_exists(self):
         from landscape import main
         self.assertTrue(callable(main))
+
+    def test_common_words_appear_often_across_categories(self):
+        results = [generate_landscape(seed=s) for s in range(500)]
+        common_hits = sum(
+            1 for r in results if any(c in r for c in COMMON_WORDS)
+        )
+        self.assertGreater(common_hits, 100)
+
+    def test_rare_words_appear_sometimes(self):
+        results = [generate_landscape(seed=s) for s in range(500)]
+        rare_hits = sum(
+            1 for r in results if any(c in r for c in RARE_WORDS)
+        )
+        self.assertLess(rare_hits, 400)
+        self.assertGreater(rare_hits, 0)
+
+    def test_common_outnumbers_rare_in_output(self):
+        common_count = 0
+        rare_count = 0
+        for s in range(500):
+            r = generate_landscape(seed=s)
+            common_count += sum(1 for c in COMMON_WORDS if c in r)
+            rare_count += sum(1 for c in RARE_WORDS if c in r)
+        self.assertGreater(common_count, rare_count * 2)
+
+    def test_word_weight_function_exists(self):
+        from landscape import _word_weight
+        self.assertGreater(_word_weight("crystal"), _word_weight("brass"))
+        self.assertEqual(_word_weight("crystal"), _word_weight("shadow"))
+        self.assertEqual(_word_weight("brass"), _word_weight("ivory"))
 
 
 if __name__ == "__main__":
