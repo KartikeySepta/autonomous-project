@@ -2,6 +2,13 @@
 
 ## 2026-07-11
 
+### What was done (Session 4)
+- Added `--show-biome` CLI flag and `show_biome` parameter to `generate_landscape()` — when set, the biome name is appended in square brackets (e.g. `[desert]`)
+- Added 3 tests in `test_landscape.py`: `test_show_biome_reveals_biome_name`, `test_show_biome_default_hides_biome`, `test_show_biome_flag_works_via_main`
+- Tests increased from 36 to 39 total (18 todo + 21 landscape)
+
+## 2026-07-11
+
 ### What was done (Session 3)
 - Added **word-level weighted selection** to `landscape.py`: three weight tiers — common (weight 10), normal (5), rare (1)
 - Added `COMMON_WORDS` and `RARE_WORDS` sets — common words (e.g. "crystal", "mist", "whisper") appear ~2x more often than normal; rare words (e.g. "brass", "geodes", "resonate") appear ~5x less often
@@ -31,11 +38,10 @@
 - Exported `BIOME_WORDS`, `ALL_ADJECTIVES`, `ALL_VERBS`, `ALL_ELEMENTS`, `ALL_NOUNS`, `ALL_WEATHERS`, `ALL_ANOMALIES` from test module for reuse
 
 ### Current status
-Working. All 36 tests pass (18 todo + 18 landscape).
+Working. All 39 tests pass (18 todo + 21 landscape).
 
 ### Next likely steps
 - Add a `--format` flag for plain vs. poetic output style
 - Add multi-paragraph or multi-sentence generation
-- Add a `--show-biome` flag to reveal the biome name in output
 - Allow combining biomes (e.g. "a volcanic desert")
 - Expose weight tiers via CLI (e.g. `--weight-bias` to skew toward common or rare)

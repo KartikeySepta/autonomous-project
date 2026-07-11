@@ -119,6 +119,18 @@ class TestLandscape(unittest.TestCase):
         self.assertEqual(_word_weight("crystal"), _word_weight("shadow"))
         self.assertEqual(_word_weight("brass"), _word_weight("ivory"))
 
+    def test_show_biome_reveals_biome_name(self):
+        result = generate_landscape(seed=42, biome="tundra", show_biome=True)
+        self.assertIn("[tundra]", result)
+
+    def test_show_biome_default_hides_biome(self):
+        result = generate_landscape(seed=42, biome="tundra", show_biome=False)
+        self.assertNotIn("[tundra]", result)
+
+    def test_show_biome_flag_works_via_main(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,17 @@
 # Decisions
 
+## 2026-07-11 — Show Biome Flag
+
+### What
+Added `--show-biome` CLI flag and `show_biome` parameter to `generate_landscape()`. When set, the biome name is appended in square brackets (e.g. `A vast frozen tundra stretches before you. [tundra]`).
+
+### Why
+Without this flag, the chosen biome is invisible in the output — the user sees descriptive text but has no way to know which biome was selected. This is especially important when using random biome selection (the default), since the biome shapes the vocabulary but is never named. The bracket notation keeps it unobtrusive and easy to strip programmatically.
+
+### Tradeoffs
+- Bracketed suffix rather than inline text (e.g. "In the tundra,...") — minimal disruption to the generated prose, machine-parseable, and trivially removable with `sed` or regex
+- No `--show-biome` implies no biome tag — preserves backward compatibility for anyone piping output
+
 ## 2026-07-11 — Weighted Word Selection
 
 ### What

@@ -259,7 +259,7 @@ def _pick(category, biome):
     return random.choices(pool, weights=weights, k=1)[0]
 
 
-def generate_landscape(seed=None, biome=None):
+def generate_landscape(seed=None, biome=None, show_biome=False):
     if seed is not None:
         random.seed(seed)
 
@@ -283,7 +283,10 @@ def generate_landscape(seed=None, biome=None):
     if random.random() < 0.3:
         parts.append(_pick("anomalies", biome))
 
-    return " ".join(parts)
+    output = " ".join(parts)
+    if show_biome:
+        output += f" [{biome}]"
+    return output
 
 
 def main():
@@ -303,10 +306,14 @@ def main():
         "--biome", type=str, default=None,
         help="Force a specific biome (overrides random selection)",
     )
+    parser.add_argument(
+        "--show-biome", action="store_true",
+        help="Reveal the biome name in the output",
+    )
     args = parser.parse_args()
 
     for i in range(args.count):
-        print(generate_landscape(seed=args.seed, biome=args.biome))
+        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome))
         if args.count > 1 and i < args.count - 1:
             print()
 
