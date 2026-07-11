@@ -266,5 +266,14 @@
 - Added 6 tests: `test_anomaly_count_default_is_one`, `test_anomaly_count_zero_no_anomalies`, `test_anomaly_count_two_sometimes_has_multiple`, `test_anomaly_count_produces_valid_output`, `test_anomaly_count_flag_exists_via_cli`, `test_anomaly_count_json_includes_field`
 - Tests increased from 167 to 173 total (18 todo + 155 landscape)
 
+### What was done (Session 30)
+- **Added `{adverb}` to opening templates 0 and 1, and weather template 1** — the adverb is now used in all 3 opening templates (was only in template 2/third) and in the first weather template (was not used by any weather template)
+  - Opening 0: `"A vast {adj} {display} stretches {adverb} before you."` (previously no adverb)
+  - Opening 1: `"Before you, a {adj} {display} comes into view {adverb}."` (previously no adverb)
+  - Weather 1: `"{Weather} {adverb}."` (previously `"{Weather}."`)
+  - No code changes needed — `adverb` was already threaded through all format calls
+  - No new tests — existing adverb and template tests cover the change
+- Tests: still 173 total (18 todo + 155 landscape)
+
 ### Current status
 Working. All 173 tests pass (18 todo + 155 landscape).

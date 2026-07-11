@@ -201,8 +201,8 @@ def _pick_template(slot, template_set, template_overrides=None):
 # Sentence templates for landscape generation — randomly selected each time for variety
 SENTENCE_TEMPLATES = {
     "opening": [
-        "A vast {adj} {display} stretches before you.",
-        "Before you, a {adj} {display} comes into view.",
+        "A vast {adj} {display} stretches {adverb} before you.",
+        "Before you, a {adj} {display} comes into view {adverb}.",
         "The {adj} {display} lies {adverb} ahead.",
     ],
     "middle": [
@@ -213,7 +213,7 @@ SENTENCE_TEMPLATES = {
         "Beneath the {noun}, {element} {verb_conjugated} {adverb}.",
     ],
     "weather": [
-        "{Weather}.",
+        "{Weather} {adverb}.",
         "The air tells its own story: {weather}.",
         "{Weather}, as if the {display} itself breathes.",
     ],

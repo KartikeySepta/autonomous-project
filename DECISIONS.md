@@ -1,5 +1,21 @@
 # Decisions
 
+## 2026-07-11 — `{adverb}` in More Templates (Openings 0/1, Weather 1)
+
+### What
+Added `{adverb}` to two opening templates (0 and 1) and weather template 1 in `SENTENCE_TEMPLATES`. The adverb is now used in all 3 opening templates (was only in template 2) and for the first time in a weather template. No code changes — the `adverb` kwarg was already passed to all format calls.
+
+### Why
+The adverb system (Session 24) picked a single adverb per landscape and threaded it through all template format calls, but only 1 of 3 opening templates and 2 of 5 middle templates actually used it. Weather and anomaly templates didn't use it at all. This meant the adverb was invisible in most outputs — the word was picked, consumed a dedup slot, but never appeared. Adding `{adverb}` to the remaining opening templates and the simplest weather template makes the adverb useful in nearly every output regardless of which templates are randomly selected.
+
+### Tradeoffs
+- Opening template 0 now reads `"... stretches softly before you."` — the adverb sits before "before you" which reads naturally; "stretches silently before you" is more evocative than "stretches before you".
+- Opening template 1 reads `"... comes into view silently."` — end-of-sentence adverb placement is slightly formal but grammatically natural.
+- Weather template 1 reads `"A gentle rain falls silently."` — some weather strings already imply a manner ("ash drifts slowly downward" + "gently" = "ash drifts slowly downward gently"), but the dedup prevents exact word repetition and the combination reads as atmospheric layering rather than a bug.
+- The adverb is now used in 6 of 12 templates (opening: 3/3, middle: 2/5, weather: 1/3, anomaly: 0/4) — up from 3 of 12. Anomaly templates remain adverb-free because `{anomaly}` includes a complete sentence with a period, making adverb attachment grammatically awkward.
+- No new tests — existing tests (`test_output_contains_known_adverb`, `test_adverb_appears_in_middle_templates`, template set tests) already cover adverb appearance in output.
+- 173 tests total (unchanged).
+
 ## 2026-07-11 — Multiple Anomalies (`--anomaly-count`)
 
 ### What
