@@ -88,10 +88,18 @@
 - Added 5 tests: `test_detail_default_is_one`, `test_detail_zero_is_shorter_than_one`, `test_detail_two_is_longer_than_one`, `test_detail_three_produces_valid_output`, `test_detail_flag_exists_via_cli`
 - Tests increased from 59 to 64 total (18 todo + 46 landscape)
 
+### What was done (Session 11)
+- Added **`--bias` CLI flag** and `bias` parameter to `generate_landscape()` exposing the word-weight system for user control
+  - Four modes: `normal` (default, common=10 / normal=5 / rare=1), `common` (common=20, further skews toward frequent words), `rare` (rare=3, makes uncommon words appear more often), `flat` (all=1, uniform selection)
+  - `BIAS_MODES` dict maps mode names to weight triples
+  - `_word_weight()` now accepts a `bias` parameter; `_pick()` threads it through
+- Added 6 tests: `test_bias_default_is_normal`, `test_bias_modes_affect_word_weights`, `test_bias_flat_produces_valid_output`, `test_bias_common_increases_common_word_frequency`, `test_bias_rare_increases_rare_word_frequency`, `test_bias_flag_exists_via_cli`
+- Tests increased from 64 to 70 total (18 todo + 52 landscape)
+
 ### Current status
-Working. All 64 tests pass (18 todo + 46 landscape).
+Working. All 70 tests pass (18 todo + 52 landscape).
 
 ### Next likely steps
-- Expose weight tiers via CLI (e.g. `--weight-bias` to skew toward common or rare)
 - Expose template set choice via CLI flag (e.g. `--template-set`)
 - Add a mood/emotion overlay that biases word selection toward a specific tone
+- Add seed output / reproducibility enhancement (e.g. print the seed used)

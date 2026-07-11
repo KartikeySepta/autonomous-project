@@ -69,12 +69,20 @@ RARE_WORDS = {
 }
 
 
-def _word_weight(word):
+BIAS_MODES = {
+    "normal":  {"common": 10, "normal": 5, "rare": 1},
+    "common":  {"common": 20, "normal": 5, "rare": 1},
+    "rare":    {"common": 5,  "normal": 5, "rare": 3},
+    "flat":    {"common": 1,  "normal": 1, "rare": 1},
+}
+
+def _word_weight(word, bias="normal"):
+    weights = BIAS_MODES[bias]
     if word in RARE_WORDS:
-        return 1
+        return weights["rare"]
     if word in COMMON_WORDS:
-        return 10
-    return 5
+        return weights["common"]
+    return weights["normal"]
 
 
 def _conjugate(verb):
@@ -275,10 +283,10 @@ BIOME_WORDS = {
 }
 
 
-def _pick(category, biomes):
+def _pick(category, biomes, bias="normal"):
     """Pick a random word from the biome-specific pool(s) blended with the global pool.
     `biomes` is a list of biome names; words from all specified biomes are included.
-    Words are weighted: common (10), normal (5), rare (1)."""
+    Words are weighted per the given bias mode."""
     specific = []
     for b in biomes:
         specific.extend(BIOME_WORDS.get(b, {}).get(category, []))
@@ -291,11 +299,11 @@ def _pick(category, biomes):
         "anomalies": ANOMALIES,
     }[category]
     pool = specific + global_pool
-    weights = [_word_weight(w) for w in pool]
+    weights = [_word_weight(w, bias) for w in pool]
     return random.choices(pool, weights=weights, k=1)[0]
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal"):
     if seed is not None:
         random.seed(seed)
 
@@ -312,21 +320,21 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         biomes = [chosen]
         display = chosen
 
-    adj = _pick("adjectives", biomes)
+    adj = _pick("adjectives", biomes, bias=bias)
     opening_tmpl = random.choice(SENTENCE_TEMPLATES["opening"])
     parts = [opening_tmpl.format(adj=adj, display=display)]
 
     for _ in range(max(detail, 0)):
-        element = _pick("elements", biomes)
-        noun = _pick("nouns", biomes)
-        verb = _pick("verbs", biomes)
+        element = _pick("elements", biomes, bias=bias)
+        noun = _pick("nouns", biomes, bias=bias)
+        verb = _pick("verbs", biomes, bias=bias)
         verb_conjugated = _conjugate(verb)
         middle_tmpl = random.choice(SENTENCE_TEMPLATES["middle"])
         parts.append(
             middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated)
         )
 
-        weather = _pick("weathers", biomes)
+        weather = _pick("weathers", biomes, bias=bias)
         weather_tmpl = random.choice(SENTENCE_TEMPLATES["weather"])
         parts.append(
             weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display)
@@ -334,7 +342,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
 
     if detail >= 1 and random.random() < 0.3:
         anomaly_tmpl = random.choice(SENTENCE_TEMPLATES["anomaly"])
-        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes)))
+        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias)))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)
@@ -379,10 +387,14 @@ def main():
         "--detail", "-d", type=int, default=1, choices=[0, 1, 2, 3],
         help="Number of middle/weather sentence pairs (0-3, default: 1)",
     )
+    parser.add_argument(
+        "--bias", type=str, default="normal", choices=["normal", "common", "rare", "flat"],
+        help="Word selection bias: normal (default), common (favors common words), rare (favors rare words), flat (uniform, no weighting)",
+    )
     args = parser.parse_args()
 
     for i in range(args.count):
-        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail))
+        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias))
         if args.count > 1 and i < args.count - 1:
             print()
 

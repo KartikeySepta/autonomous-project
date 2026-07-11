@@ -5,7 +5,7 @@ import random
 from landscape import (
     generate_landscape,
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, BIOME_WORDS,
-    COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, _conjugate,
+    COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -282,6 +282,52 @@ class TestLandscape(unittest.TestCase):
             self.assertGreater(len(result), 50)
 
     def test_detail_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+    def test_bias_default_is_normal(self):
+        from landscape import _word_weight
+        self.assertEqual(_word_weight("crystal"), 10)
+        self.assertEqual(_word_weight("brass"), 1)
+        self.assertEqual(_word_weight("pillars"), 5)
+
+    def test_bias_modes_affect_word_weights(self):
+        from landscape import _word_weight
+        self.assertEqual(_word_weight("crystal", bias="common"), 20)
+        self.assertEqual(_word_weight("crystal", bias="flat"), 1)
+        self.assertEqual(_word_weight("brass", bias="rare"), 3)
+        self.assertEqual(_word_weight("brass", bias="flat"), 1)
+
+    def test_bias_flat_produces_valid_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, bias="flat")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_bias_common_increases_common_word_frequency(self):
+        common_hits_normal = 0
+        common_hits_common = 0
+        for s in range(300):
+            if any(c in generate_landscape(seed=s, bias="normal") for c in COMMON_WORDS):
+                common_hits_normal += 1
+            if any(c in generate_landscape(seed=s, bias="common") for c in COMMON_WORDS):
+                common_hits_common += 1
+        self.assertGreater(common_hits_common, common_hits_normal,
+            "bias=common should produce more outputs with common words than bias=normal")
+
+    def test_bias_rare_increases_rare_word_frequency(self):
+        rare_hits_normal = 0
+        rare_hits_rare = 0
+        for s in range(300):
+            if any(r in generate_landscape(seed=s, bias="normal") for r in RARE_WORDS):
+                rare_hits_normal += 1
+            if any(r in generate_landscape(seed=s, bias="rare") for r in RARE_WORDS):
+                rare_hits_rare += 1
+        self.assertGreater(rare_hits_rare, rare_hits_normal,
+            "bias=rare should produce more outputs with rare words than bias=normal")
+
+    def test_bias_flag_exists_via_cli(self):
         from landscape import main
         self.assertTrue(callable(main))
 
