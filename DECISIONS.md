@@ -30,3 +30,16 @@ Priorities are a natural next step for task management — they let users triage
 - Using string markers (`!!!`, ` ! `, ` .. `) instead of colors — keeps output simple, works in any terminal, no dependency on colorama
 - Priority is stored as a string rather than an int — more readable in JSON, easier to extend with new levels
 - No ordering by priority in `list` yet — a natural follow-up once the data is in place
+
+## 2026-07-11 — Due Date Support
+
+### What
+Added `--due` / `-d` flag to the `add` command accepting a free-form string (e.g. `YYYY-MM-DD`). Due date is displayed in `format_task` as `(due YYYY-MM-DD)` when present. No validation is performed on the date string.
+
+### Why
+Due dates are the next natural extension after priorities — they let users track deadlines. The display-only approach (no date parsing/sorting) keeps the change minimal and testable.
+
+### Tradeoffs
+- No date validation — accepts any string, keeps it simple and flexible; validation can be added later
+- Due date stored only when provided (`"due"` key is absent for tasks without one), keeping JSON clean
+- No sorting by due date yet — follows the same deferred approach as priority ordering

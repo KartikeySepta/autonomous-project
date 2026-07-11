@@ -1,4 +1,5 @@
 #!/bin/bash
+export PATH="/home/kart2000/.opencode/bin:/home/kart2000/.nvm/versions/node/v22.23.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
 cd /home/kart2000/project/autonomous-project
 
 opencode run "Read GOAL.md, STATE.md (if it exists), and DECISIONS.md (if it exists) 

@@ -90,6 +90,22 @@ class TestTaskManager(unittest.TestCase):
         self.mgr.clear()
         self.assertEqual(len(self.mgr.list()), 2)
 
+    def test_add_with_due_date(self):
+        task = self.mgr.add("deadline task", due="2026-08-01")
+        self.assertEqual(task["due"], "2026-08-01")
+
+    def test_add_without_due_date_has_no_due_key(self):
+        task = self.mgr.add("no deadline")
+        self.assertNotIn("due", task)
+
+    def test_format_task_shows_due_date(self):
+        task = {"id": 1, "description": "homework", "done": False, "priority": "medium", "due": "2026-08-15"}
+        self.assertEqual(format_task(task), "  1 [ ]  !  homework (due 2026-08-15)")
+
+    def test_format_task_no_due_date(self):
+        task = {"id": 1, "description": "chores", "done": False, "priority": "medium"}
+        self.assertEqual(format_task(task), "  1 [ ]  !  chores")
+
 
 if __name__ == "__main__":
     unittest.main()

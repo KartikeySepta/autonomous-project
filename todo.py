@@ -31,7 +31,7 @@ class TaskManager:
             return 1
         return max(t["id"] for t in self.tasks) + 1
 
-    def add(self, description, priority="medium"):
+    def add(self, description, priority="medium", due=None):
         task = {
             "id": self._next_id(),
             "description": description,
@@ -39,6 +39,8 @@ class TaskManager:
             "priority": priority,
             "created_at": datetime.now().isoformat(),
         }
+        if due:
+            task["due"] = due
         self.tasks.append(task)
         self._save()
         return task
@@ -67,7 +69,8 @@ PRIORITY_MARKS = {"high": "!!!", "medium": " ! ", "low": " .. "}
 def format_task(task):
     status = "[x]" if task["done"] else "[ ]"
     pmark = PRIORITY_MARKS.get(task.get("priority", "medium"), " ! ")
-    return f"{task['id']:>3} {status} {pmark} {task['description']}"
+    due = f" (due {task['due']})" if "due" in task else ""
+    return f"{task['id']:>3} {status} {pmark} {task['description']}{due}"
 
 
 def main():
@@ -77,6 +80,7 @@ def main():
     p_add = sub.add_parser("add", help="Add a new task")
     p_add.add_argument("description", nargs="+")
     p_add.add_argument("--priority", "-p", choices=["low", "medium", "high"], default="medium")
+    p_add.add_argument("--due", "-d", help="Due date (e.g. YYYY-MM-DD)")
 
     sub.add_parser("list", help="List all tasks")
 
@@ -90,8 +94,9 @@ def main():
 
     if args.command == "add":
         desc = " ".join(args.description)
-        task = mgr.add(desc, priority=args.priority)
-        print(f"Added task {task['id']}: {task['description']} ({task['priority']})")
+        task = mgr.add(desc, priority=args.priority, due=args.due)
+        due_str = f" due {task['due']}" if "due" in task else ""
+        print(f"Added task {task['id']}: {task['description']} ({task['priority']}{due_str})")
 
     elif args.command == "list":
         tasks = mgr.list()
