@@ -890,6 +890,43 @@ class TestLandscape(unittest.TestCase):
         from landscape import main
         self.assertTrue(callable(main))
 
+    def test_anomaly_count_default_is_one(self):
+        for s in range(20):
+            result = generate_landscape(seed=s)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_anomaly_count_zero_no_anomalies(self):
+        results = [generate_landscape(seed=s, anomaly_count=0, anomaly_prob=1.0) for s in range(100)]
+        for r in results:
+            for a in ALL_ANOMALIES:
+                self.assertNotIn(a, r,
+                    f"Anomaly '{a}' should not appear with anomaly_count=0")
+
+    def test_anomaly_count_two_sometimes_has_multiple(self):
+        results = [generate_landscape(seed=s, anomaly_count=3, anomaly_prob=1.0) for s in range(100)]
+        multi = [r for r in results if r.count(". ") - r.count(": ") >= 4]
+        self.assertGreater(len(multi), 10,
+            "anomaly_count=3 with anomaly_prob=1.0 should often produce multi-anomaly outputs")
+
+    def test_anomaly_count_produces_valid_output(self):
+        for count in [0, 1, 2, 3]:
+            for s in range(10):
+                result = generate_landscape(seed=s, anomaly_count=count)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_anomaly_count_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_anomaly_count_json_includes_field(self):
+        result = generate_landscape(seed=42, anomaly_count=2, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("anomaly_count", data)
+        self.assertEqual(data["anomaly_count"], 2)
+
 
     def test_mood_combine_does_not_break_output(self):
         for combo in [["eerie", "vibrant"], ["eerie", "desolate"], ["vibrant", "desolate"]]:

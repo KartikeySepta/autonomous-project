@@ -473,7 +473,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
     return chosen
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1):
     if seed is not None:
         random.seed(seed)
     elif show_seed:
@@ -516,9 +516,11 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
             weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display, adverb=adverb)
         )
 
-    if detail >= 1 and random.random() < anomaly_prob:
-        anomaly_tmpl = _pick_template("anomaly", template_set, template_overrides)
-        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words), adverb=adverb))
+    if detail >= 1 and anomaly_count > 0:
+        for _ in range(anomaly_count):
+            if random.random() < anomaly_prob:
+                anomaly_tmpl = _pick_template("anomaly", template_set, template_overrides)
+                parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words), adverb=adverb))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)
@@ -537,6 +539,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         data["bias"] = bias
         data["template_set"] = template_set
         data["anomaly_prob"] = anomaly_prob
+        data["anomaly_count"] = anomaly_count
         if bias_overrides:
             data["bias_overrides"] = bias_overrides
         if mood_weight_overrides:
@@ -591,6 +594,10 @@ def main():
     parser.add_argument(
         "--anomaly-prob", type=float, default=0.3,
         help="Probability of an anomaly appearing (0.0 to 1.0, default: 0.3)",
+    )
+    parser.add_argument(
+        "--anomaly-count", type=int, default=1, choices=[0, 1, 2, 3],
+        help="Number of anomaly chances per landscape (default: 1)",
     )
     parser.add_argument(
         "--bias", type=str, default="normal", choices=["normal", "common", "rare", "flat"],
@@ -689,7 +696,7 @@ def main():
 
     for i in range(args.count):
         effective_seed = args.seed + i if args.seed is not None else None
-        print(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides))
+        print(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides))
         if args.count > 1 and i < args.count - 1:
             print()
 

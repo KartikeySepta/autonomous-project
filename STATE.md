@@ -257,5 +257,14 @@
 - No new tests needed — existing template tests (`test_output_starts_with_valid_opening`, `test_template_set_third_uses_third_opening`, `test_template_set_third_weather_has_expected_pattern`) all still pass because the opening start ("The ") and index 2 are unchanged.
 - Tests: still 167 (18 todo + 149 landscape)
 
+### What was done (Session 29)
+- Added **`--anomaly-count` CLI flag** and `anomaly_count` parameter to `generate_landscape()` — users can now control how many anomaly rolls happen per landscape (default: 1, range 0–3)
+  - Each anomaly independently rolls against `anomaly_prob`, so `--anomaly-count 3 --anomaly-prob 0.5` yields ~1–2 anomalies on average
+  - `--anomaly-count 0` suppresses anomalies regardless of `anomaly_prob` (alternative to `--anomaly-prob 0`)
+  - Replaced the single `if` block with a `for _ in range(anomaly_count)` loop
+  - Added `anomaly_count` to JSON metadata output
+- Added 6 tests: `test_anomaly_count_default_is_one`, `test_anomaly_count_zero_no_anomalies`, `test_anomaly_count_two_sometimes_has_multiple`, `test_anomaly_count_produces_valid_output`, `test_anomaly_count_flag_exists_via_cli`, `test_anomaly_count_json_includes_field`
+- Tests increased from 167 to 173 total (18 todo + 155 landscape)
+
 ### Current status
-Working. All 167 tests pass (18 todo + 149 landscape).
+Working. All 173 tests pass (18 todo + 155 landscape).

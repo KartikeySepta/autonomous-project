@@ -1,5 +1,19 @@
 # Decisions
 
+## 2026-07-11 — Multiple Anomalies (`--anomaly-count`)
+
+### What
+Added `--anomaly-count` CLI flag and `anomaly_count` parameter to `generate_landscape()` (default: 1, range 0–3). Instead of a single anomaly probability check per landscape, the generator now loops over `anomaly_count` iterations, each independently rolling against `anomaly_prob`. Each anomaly gets its own word pick (subject to cross-sentence dedup) and its own template selection.
+
+### Why
+At high detail levels (`--detail 3`), a rich landscape paragraph with only one potential anomaly felt under-explored — the most surreal element of the description was limited to a single appearance. Allowing multiple anomaly rolls lets users create landscapes with layered strangeness: multiple anomalies building on each other, especially useful for scenario generation or writing prompts where the uncanny accumulates.
+
+### Tradeoffs
+- `--anomaly-count 0` is an alternative suppression mechanism to `--anomaly-prob 0.0`: the former skips the loop entirely, the latter keeps the loop but never triggers. Both are valid; `anomaly_count=0` is slightly more explicit about intent.
+- Each anomaly independently rolls probability and picks its own word/template, meaning a user could get 0, 1, 2, or 3 anomalies even at `--anomaly-count 3 --anomaly-prob 0.5`. This is intentional — the randomness of which anomalies appear is part of the generative appeal.
+- Cross-sentence word dedup applies across all anomaly picks, so the same anomaly text won't appear twice in one landscape.
+- 6 new tests, 173 total.
+
 ## 2026-07-11 — `mood_weight` in JSON Output
 
 ### What
