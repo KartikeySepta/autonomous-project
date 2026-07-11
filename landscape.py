@@ -654,6 +654,10 @@ def main():
         help="Per-slot override: template for weather sentences")
     parser.add_argument("--template-anomaly", type=str, default=None, choices=list(TEMPLATE_SETS.keys()),
         help="Per-slot override: template for anomaly sentences")
+    parser.add_argument(
+        "--output", "-o", type=str, default=None,
+        help="Write output to a file instead of stdout",
+    )
     args = parser.parse_args()
 
     bias_overrides = {}
@@ -696,11 +700,16 @@ def main():
         if val is not None:
             template_overrides[slot] = val
 
+    lines = []
     for i in range(args.count):
         effective_seed = args.seed + i if args.seed is not None else None
-        print(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides))
-        if args.count > 1 and i < args.count - 1:
-            print()
+        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides))
+    output = "\n\n".join(lines) + ("\n" if lines else "")
+    if args.output:
+        with open(args.output, "w") as f:
+            f.write(output)
+    else:
+        print(output, end="")
 
 
 if __name__ == "__main__":

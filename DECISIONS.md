@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-11 — File Output Flag (`--output` / `-o`)
+
+### What
+Added `--output` / `-o` CLI flag to `landscape.py` that writes generated output to a file instead of printing to stdout. Refactored `main()` to collect all generated landscape strings (including multi-landscape `--count` output) into a list, then either writes them to the specified file or prints to stdout.
+
+### Why
+The landscape generator is useful for creative writing prompts, worldbuilding, and procedural content generation — all use cases where saving output to a file is more practical than piping from stdout. A user generating 10 landscapes with `--count 10 --seed 42` wants to keep those as a file for later review or editing, not just see them flash by in the terminal. This is the most basic quality-of-life feature that was missing: the ability to capture output persistently.
+
+### Tradeoffs
+- Output file is overwritten (`"w"` mode) rather than appended — avoids surprise accumulation and matches the standard CLI tool convention (`grep -o outfile`, `curl -o outfile`). Append mode could be added later with a `--append` flag if users need it.
+- The refactoring from per-iteration `print()` to collecting a `lines` list + single output write is a minor internal change but zero behavioral change for the default stdout path.
+- `--count` output is separated by `\n\n` (blank line) matching the previous stdout behavior exactly — files look the same as what was printed.
+- No `--quiet` flag needed: when `--output` is set, nothing is printed to stdout. This is the expected convention — output goes exclusively to the file.
+- 5 new tests, 182 total.
+
 ## 2026-07-11 — Anomaly Lowercase in Colon Templates; Plain Biome Verb Fix
 
 ### What

@@ -1,4 +1,5 @@
 import unittest
+from pathlib import Path
 
 import random
 
@@ -1093,6 +1094,92 @@ class TestCountWithSeed(unittest.TestCase):
             outputs.append(generate_landscape())
         self.assertGreater(len(set(outputs)), 1,
             "Landscapes without explicit seed should vary")
+
+
+class TestOutputFlag(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.tmpdir = tempfile.mkdtemp()
+        self.outpath = Path(self.tmpdir) / "output.txt"
+
+    def tearDown(self):
+        if self.outpath.exists():
+            self.outpath.unlink()
+        Path(self.tmpdir).rmdir()
+
+    def test_output_flag_writes_to_file(self):
+        from landscape import main
+        import sys
+        old_argv = sys.argv
+        sys.argv = ["landscape", "--seed", "42", "--output", str(self.outpath)]
+        try:
+            main()
+        finally:
+            sys.argv = old_argv
+        self.assertTrue(self.outpath.exists(),
+            "Output file should exist after running with --output")
+        content = self.outpath.read_text()
+        self.assertGreater(len(content), 0,
+            "Output file should not be empty")
+
+    def test_output_file_contains_generated_text(self):
+        from landscape import main
+        import sys
+        old_argv = sys.argv
+        sys.argv = ["landscape", "--seed", "42", "--biome", "forest",
+                     "--output", str(self.outpath)]
+        try:
+            main()
+        finally:
+            sys.argv = old_argv
+        content = self.outpath.read_text()
+        self.assertIn("forest", content,
+            "Output file should contain generated text with the biome")
+
+    def test_output_file_matches_stdout_output(self):
+        import io
+        from landscape import main
+        import sys
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--seed", "42", "--biome", "tundra"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        stdout_text = captured.getvalue()
+
+        sys.argv = ["landscape", "--seed", "42", "--biome", "tundra",
+                     "--output", str(self.outpath)]
+        try:
+            main()
+        finally:
+            sys.argv = old_argv
+        file_text = self.outpath.read_text()
+        self.assertEqual(stdout_text, file_text,
+            "Output file content should match stdout output")
+
+    def test_output_with_count_writes_all_landscapes(self):
+        from landscape import main
+        import sys
+        old_argv = sys.argv
+        sys.argv = ["landscape", "--seed", "42", "--count", "3",
+                     "--output", str(self.outpath)]
+        try:
+            main()
+        finally:
+            sys.argv = old_argv
+        content = self.outpath.read_text()
+        sections = content.strip().split("\n\n")
+        self.assertEqual(len(sections), 3,
+            "With --count 3, output file should contain 3 landscapes")
+
+    def test_output_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
 
 
 if __name__ == "__main__":

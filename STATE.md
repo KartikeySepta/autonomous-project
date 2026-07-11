@@ -275,19 +275,16 @@
   - No new tests — existing adverb and template tests cover the change
 - Tests: still 173 total (18 todo + 155 landscape)
 
-### Current status
-Working. All 173 tests pass (18 todo + 155 landscape).
-
 ## 2026-07-11
 
-### What was done (Session 31)
-- **Fixed anomaly capitalization in colon-style templates**: `SENTENCE_TEMPLATES["anomaly"][2]` and `[3]` now use `{anomaly_lower}` instead of `{anomaly}`, so anomaly text starts lowercase after a colon — producing `"A strange detail catches your eye: the gravity here feels wrong."` instead of `"...: The gravity here feels wrong."` Templates 0 (standalone) and 1 (after em-dash) continue to use capitalized `{anomaly}`, which is grammatically correct there.
-  - In `generate_landscape()`, the anomaly word is picked and stored in a variable, then `anomaly_lower` is computed and passed to the format call.
-  - No new parameters or API changes — backward compatible.
-- **Fixed duplicate `"stretch"` verb in `plain` biome**: The second occurrence of `"stretch"` was replaced with `"bend"`. The duplicate had created an unintentional 2x weight bias for `"stretch"` in plain biome word selection.
-- Updated `test_anomaly_prob_one_always_has_anomaly` to check both capitalized and lowercase anomaly forms.
-- Added 4 tests: `test_anomaly_standalone_template_keeps_capital`, `test_anomaly_colon_template_lowercases`, `test_anomaly_lower_does_not_break_output`, `test_anomaly_lower_with_detail_three`.
-- Tests: 159 total (18 todo + 141 landscape).
+### What was done (Session 32)
+- Added **`--output` / `-o` CLI flag** — writes generated landscapes to a file instead of stdout
+  - Refactored `main()` to collect all output into a list, then either write to file or print to stdout
+  - When `--output` is used, output goes only to the file (nothing printed to terminal)
+  - Works with `--count`: all landscapes are written to the file, separated by blank lines
+  - Backward compatible: without `--output`, behavior is identical to before
+- Added 5 tests in `TestOutputFlag` class: `test_output_flag_writes_to_file`, `test_output_file_contains_generated_text`, `test_output_file_matches_stdout_output`, `test_output_with_count_writes_all_landscapes`, `test_output_flag_exists_via_cli`
+- Tests increased from 177 to 182 total (18 todo + 164 landscape)
 
 ### Current status
-Working. All 159 tests pass (18 todo + 141 landscape).
+Working. All 182 tests pass (18 todo + 164 landscape).
