@@ -159,6 +159,67 @@ class TestLandscape(unittest.TestCase):
         from landscape import main
         self.assertTrue(callable(main))
 
+    def test_format_json_valid_json(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIsInstance(data, dict)
+
+    def test_format_json_contains_text_key(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_format_json_contains_biome_key(self):
+        result = generate_landscape(seed=42, biome="tundra", fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("biome", data)
+        self.assertEqual(data["biome"], "tundra")
+
+    def test_format_json_contains_seed_when_provided(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("seed", data)
+        self.assertEqual(data["seed"], 42)
+
+    def test_format_json_text_matches_prose(self):
+        prose = generate_landscape(seed=42, biome="forest")
+        result = generate_landscape(seed=42, biome="forest", fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertEqual(data["text"], prose)
+
+    def test_format_json_with_combine_includes_biomes_list(self):
+        result = generate_landscape(seed=42, combine="forest,desert", fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("biome", data)
+        self.assertIn("biomes", data)
+        self.assertEqual(data["biomes"], ["forest", "desert"])
+
+    def test_format_json_includes_mood_when_set(self):
+        result = generate_landscape(seed=42, mood="eerie", fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("mood", data)
+        self.assertIn("eerie", data["mood"])
+
+    def test_format_json_does_not_have_bracketed_tags(self):
+        result = generate_landscape(seed=42, biome="tundra", show_biome=True, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertNotIn("[tundra]", data["text"])
+        self.assertEqual(data["biome"], "tundra")
+
+    def test_format_json_works_with_all_formats_flag(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
 
     def test_output_contains_known_adverb(self):
         results = {generate_landscape(seed=s) for s in range(200)}

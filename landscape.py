@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import json
 import random
 
 BIOMES = [
@@ -521,6 +522,28 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)
+
+    if fmt == "json":
+        data = {"text": output}
+        data["biome"] = biomes if combine else display
+        if combine:
+            data["biomes"] = biomes
+        if seed is not None:
+            data["seed"] = seed
+        if mood:
+            data["mood"] = mood if isinstance(mood, (list, tuple)) else [mood]
+        data["detail"] = detail
+        data["bias"] = bias
+        data["template_set"] = template_set
+        data["anomaly_prob"] = anomaly_prob
+        if bias_overrides:
+            data["bias_overrides"] = bias_overrides
+        if mood_weight_overrides:
+            data["mood_weight_overrides"] = mood_weight_overrides
+        if template_overrides:
+            data["template_overrides"] = template_overrides
+        return json.dumps(data)
+
     if show_biome:
         if combine:
             output += f" [{', '.join(biomes)}]"
@@ -553,8 +576,8 @@ def main():
         help="Reveal the biome name in the output",
     )
     parser.add_argument(
-        "--format", type=str, default="prose", choices=["prose", "poetic"],
-        help="Output format: prose (single line) or poetic (line breaks)",
+        "--format", type=str, default="prose", choices=["prose", "poetic", "json"],
+        help="Output format: prose (single line), poetic (line breaks), or json (structured metadata)",
     )
     parser.add_argument(
         "--combine", "-c", type=str, default=None,

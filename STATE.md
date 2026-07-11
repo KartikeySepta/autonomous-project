@@ -227,6 +227,16 @@
 
 ## 2026-07-11
 
+### What was done (Session 26)
+- Added **JSON output format** via `--format json` CLI flag — outputs a structured JSON object with the landscape `text` plus metadata fields (`biome`, `seed`, `mood`, `bias`, `detail`, `template_set`, `anomaly_prob`, and any overrides)
+  - When `--combine` is used, includes both `biome` (display string) and `biomes` (list of all combined biomes)
+  - When `--mood` is set, includes `mood` as a list (even for a single mood, for consistency)
+  - The `text` field contains the clean prose without bracketed biome/seed tags — metadata goes in JSON fields instead
+  - All existing `--format` modes (`prose`, `poetic`) are unchanged
+- Added `import json` to `landscape.py`
+- Added 9 tests: `test_format_json_valid_json`, `test_format_json_contains_text_key`, `test_format_json_contains_biome_key`, `test_format_json_contains_seed_when_provided`, `test_format_json_text_matches_prose`, `test_format_json_with_combine_includes_biomes_list`, `test_format_json_includes_mood_when_set`, `test_format_json_does_not_have_bracketed_tags`, `test_format_json_works_with_all_formats_flag`
+- Tests increased from 155 to 164 total (18 todo + 146 landscape)
+
 ### What was done (Session 25)
 - Added **mood blending**: `--mood` CLI flag now uses `action="append"` and accepts multiple values — users can blend moods by repeating the flag (e.g. `--mood eerie --mood vibrant`) to create hybrid tonal palettes
   - `--mood eerie --mood vibrant` = haunting beauty (eerie's silence + vibrant's light)
@@ -241,4 +251,4 @@
 - Tests increased from 150 to 155 total (18 todo + 137 landscape)
 
 ### Current status
-Working. All 155 tests pass (18 todo + 137 landscape).
+Working. All 164 tests pass (18 todo + 146 landscape).

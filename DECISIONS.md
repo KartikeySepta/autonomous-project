@@ -1,5 +1,19 @@
 # Decisions
 
+## 2026-07-11 — JSON Output Format
+
+### What
+Added `"json"` as a third option for `--format` (alongside `prose` and `poetic`). When `fmt="json"`, `generate_landscape()` returns a JSON string with a `text` field (the clean prose output) and metadata fields: `biome`, `seed` (if known), `mood` (if set), `bias`, `detail`, `template_set`, `anomaly_prob`, and any overrides (`bias_overrides`, `mood_weight_overrides`, `template_overrides`). When `--combine` is used, the JSON also includes a `biomes` list.
+
+### Why
+After 25 sessions of adding creative controls (biomes, moods, biases, template-sets, overrides, etc.), the tool could generate rich landscapes but only output text. A machine-readable JSON format unlocks programmatic consumption: piping into other tools, embedding in web apps, saving structured generation data for analysis, or using as training data. The format is backward compatible — `prose` and `poetic` are unchanged.
+
+### Tradeoffs
+- JSON mode sets `show_biome` and `show_seed` semantics differently: bracketed suffixes are never appended to `text` — biome and seed data goes into JSON fields instead. This is cleaner for consumers who would otherwise have to parse brackets out of the text.
+- All generation parameters that the user might want to reference later are included in the JSON output (seed for reproducibility, bias/mood/overrides for understanding what produced the text). This is comprehensive but adds some redundancy — a consumer could reconstruct some of these from the `text` alone.
+- The `text` field in JSON always uses prose-style space-joined formatting (not poetic line breaks) — JSON is primarily for machine consumption, and a single text string is easier to work with than multiline content.
+- 9 new tests (164 total, 18 todo + 146 landscape).
+
 ## 2026-07-11 — Mood Blending
 
 ### What
