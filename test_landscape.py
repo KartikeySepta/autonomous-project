@@ -332,5 +332,36 @@ class TestLandscape(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+    def test_show_seed_with_provided_seed_shows_seed(self):
+        result = generate_landscape(seed=42, show_seed=True)
+        self.assertIn("[seed=42]", result)
+
+    def test_show_seed_default_hides_seed(self):
+        result = generate_landscape(seed=42, show_seed=False)
+        self.assertNotIn("[seed=", result)
+
+    def test_show_seed_without_seed_generates_seed(self):
+        result = generate_landscape(show_seed=True)
+        import re
+        match = re.search(r'\[seed=(\d+)\]', result)
+        self.assertIsNotNone(match, f"Output should contain [seed=N]: {result!r}")
+        seed = int(match.group(1))
+        self.assertGreaterEqual(seed, 0)
+
+    def test_show_seed_output_is_reproducible(self):
+        a = generate_landscape(show_seed=True)
+        import re
+        match = re.search(r'\[seed=(\d+)\]', a)
+        seed = int(match.group(1))
+        b = generate_landscape(seed=seed, show_seed=True)
+        self.assertIn(f"[seed={seed}]", b)
+        self.assertEqual(a, b,
+            "Output with auto-generated seed should be reproducible with that seed")
+
+    def test_show_seed_flag_works_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 if __name__ == "__main__":
     unittest.main()

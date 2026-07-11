@@ -303,8 +303,11 @@ def _pick(category, biomes, bias="normal"):
     return random.choices(pool, weights=weights, k=1)[0]
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal"):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False):
     if seed is not None:
+        random.seed(seed)
+    elif show_seed:
+        seed = random.randint(0, 2**31 - 1)
         random.seed(seed)
 
     if biome is not None:
@@ -351,6 +354,8 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
             output += f" [{', '.join(biomes)}]"
         else:
             output += f" [{display}]"
+    if show_seed:
+        output += f" [seed={seed}]"
     return output
 
 
@@ -391,10 +396,14 @@ def main():
         "--bias", type=str, default="normal", choices=["normal", "common", "rare", "flat"],
         help="Word selection bias: normal (default), common (favors common words), rare (favors rare words), flat (uniform, no weighting)",
     )
+    parser.add_argument(
+        "--show-seed", action="store_true",
+        help="Display the random seed used for reproducibility",
+    )
     args = parser.parse_args()
 
     for i in range(args.count):
-        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias))
+        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed))
         if args.count > 1 and i < args.count - 1:
             print()
 

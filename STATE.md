@@ -96,10 +96,17 @@
 - Added 6 tests: `test_bias_default_is_normal`, `test_bias_modes_affect_word_weights`, `test_bias_flat_produces_valid_output`, `test_bias_common_increases_common_word_frequency`, `test_bias_rare_increases_rare_word_frequency`, `test_bias_flag_exists_via_cli`
 - Tests increased from 64 to 70 total (18 todo + 52 landscape)
 
+### What was done (Session 12)
+- Added **`--show-seed` CLI flag** and `show_seed` parameter to `generate_landscape()` — when set, the seed used is appended in square brackets (e.g. `[seed=42]`)
+  - If a seed is provided via `--seed`, that seed is shown
+  - If no seed is provided, a random seed is auto-generated, the RNG is seeded with it, and that seed is shown — making every output reproducible
+- Added 5 tests: `test_show_seed_with_provided_seed_shows_seed`, `test_show_seed_default_hides_seed`, `test_show_seed_without_seed_generates_seed`, `test_show_seed_output_is_reproducible`, `test_show_seed_flag_works_via_cli`
+- Tests increased from 70 to 75 total (18 todo + 57 landscape)
+
 ### Current status
-Working. All 70 tests pass (18 todo + 52 landscape).
+Working. All 75 tests pass (18 todo + 57 landscape).
 
 ### Next likely steps
 - Expose template set choice via CLI flag (e.g. `--template-set`)
 - Add a mood/emotion overlay that biases word selection toward a specific tone
-- Add seed output / reproducibility enhancement (e.g. print the seed used)
+- Add per-category bias control
