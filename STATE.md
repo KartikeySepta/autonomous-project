@@ -2,6 +2,15 @@
 
 ## 2026-07-11
 
+### What was done (Session 7)
+- Added **template variety** to `landscape.py`: a `SENTENCE_TEMPLATES` dict with 3 alternative opening templates, 3 middle-sentence templates, and 2 anomaly-introduction templates
+- `generate_landscape()` now picks a random template from each slot using `random.choice()`, so outputs vary in sentence structure (not just vocabulary)
+- Updated `test_output_starts_with_a_vast` → `test_output_starts_with_valid_opening` to accept any of the 3 opening patterns
+- Added 3 tests: `test_template_variety_opening_patterns_differ_across_seeds`, `test_template_variety_middle_has_varied_structure`, `test_template_variety_does_not_break_output`
+- Tests increased from 50 to 53 total (18 todo + 35 landscape)
+
+## 2026-07-11
+
 ### What was done (Session 4)
 - Added `--show-biome` CLI flag and `show_biome` parameter to `generate_landscape()` — when set, the biome name is appended in square brackets (e.g. `[desert]`)
 - Added 3 tests in `test_landscape.py`: `test_show_biome_reveals_biome_name`, `test_show_biome_default_hides_biome`, `test_show_biome_flag_works_via_main`
@@ -52,8 +61,9 @@
 - Tests increased from 44 to 50 total (18 todo + 32 landscape)
 
 ### Current status
-Working. All 50 tests pass (18 todo + 32 landscape).
+Working. All 53 tests pass (18 todo + 35 landscape).
 
 ### Next likely steps
 - Add multi-paragraph or multi-sentence generation
 - Expose weight tiers via CLI (e.g. `--weight-bias` to skew toward common or rare)
+- Add more template variety for weather and anomaly slots

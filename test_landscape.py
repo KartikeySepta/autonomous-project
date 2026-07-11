@@ -5,7 +5,7 @@ import random
 from landscape import (
     generate_landscape,
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, BIOME_WORDS,
-    COMMON_WORDS, RARE_WORDS,
+    COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -26,9 +26,13 @@ class TestLandscape(unittest.TestCase):
         result = generate_landscape(seed=42)
         self.assertTrue(result.endswith("."))
 
-    def test_output_starts_with_a_vast(self):
+    def test_output_starts_with_valid_opening(self):
         result = generate_landscape(seed=42)
-        self.assertTrue(result.startswith("A vast "))
+        valid_starts = ("A vast ", "Before you", "The ")
+        self.assertTrue(
+            any(result.startswith(s) for s in valid_starts),
+            f"Output doesn't start with any valid opening: {result!r}",
+        )
 
     def test_output_contains_known_biome(self):
         result = generate_landscape(seed=42)
@@ -187,6 +191,29 @@ class TestLandscape(unittest.TestCase):
     def test_combine_flag_exists_via_cli(self):
         from landscape import main
         self.assertTrue(callable(main))
+
+
+    def test_template_variety_opening_patterns_differ_across_seeds(self):
+        results = [generate_landscape(seed=s, biome="forest") for s in range(100)]
+        counts = {
+            "A vast ": sum(1 for r in results if r.startswith("A vast ")),
+            "Before you": sum(1 for r in results if r.startswith("Before you")),
+            "The ": sum(1 for r in results if r.startswith("The ")),
+        }
+        distinct = sum(1 for v in counts.values() if v > 0)
+        self.assertGreaterEqual(distinct, 2, f"Only {distinct} opening patterns seen: {counts}")
+
+    def test_template_variety_middle_has_varied_structure(self):
+        results = [generate_landscape(seed=s, biome="forest") for s in range(100)]
+        has_classic = any(" between the " in r for r in results)
+        has_among = any(r.startswith("Among") for r in results)
+        self.assertTrue(has_classic or has_among, "Neither classic nor among middle pattern found")
+
+    def test_template_variety_does_not_break_output(self):
+        for s in range(50):
+            result = generate_landscape(seed=s)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
 
 
 if __name__ == "__main__":

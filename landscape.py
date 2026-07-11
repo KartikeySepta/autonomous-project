@@ -77,6 +77,27 @@ def _word_weight(word):
     return 5
 
 
+# Sentence templates for landscape generation — randomly selected each time for variety
+SENTENCE_TEMPLATES = {
+    "opening": [
+        "A vast {adj} {display} stretches before you.",
+        "Before you, a {adj} {display} comes into view.",
+        "The {adj} {display} lies ahead.",
+    ],
+    "middle": [
+        "{Element} {verb}s between the {noun}.",
+        "Among the {noun}, {element} {verb}s.",
+        "The {noun} {verb} with {element}.",
+    ],
+    "weather": [
+        "{Weather}.",
+    ],
+    "anomaly": [
+        "{anomaly}",
+        "Something is not right — {anomaly}",
+    ],
+}
+
 # Biome-specific word enrichments — blended with global pools for more evocative output
 BIOME_WORDS = {
     "forest": {
@@ -285,14 +306,19 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
     verb = _pick("verbs", biomes)
     weather = _pick("weathers", biomes)
 
+    opening_tmpl = random.choice(SENTENCE_TEMPLATES["opening"])
+    middle_tmpl = random.choice(SENTENCE_TEMPLATES["middle"])
+    weather_tmpl = random.choice(SENTENCE_TEMPLATES["weather"])
+
     parts = [
-        f"A vast {adj} {display} stretches before you.",
-        f"{element.capitalize()} {verb}s between the {noun}.",
-        f"{weather.capitalize()}.",
+        opening_tmpl.format(adj=adj, display=display),
+        middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb),
+        weather_tmpl.format(Weather=weather.capitalize(), weather=weather),
     ]
 
     if random.random() < 0.3:
-        parts.append(_pick("anomalies", biomes))
+        anomaly_tmpl = random.choice(SENTENCE_TEMPLATES["anomaly"])
+        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes)))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)
