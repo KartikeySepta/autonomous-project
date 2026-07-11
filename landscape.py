@@ -532,6 +532,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
             data["seed"] = seed
         if mood:
             data["mood"] = mood if isinstance(mood, (list, tuple)) else [mood]
+        data["mood_weight"] = mood_weight
         data["detail"] = detail
         data["bias"] = bias
         data["template_set"] = template_set

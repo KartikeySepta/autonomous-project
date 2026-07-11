@@ -220,6 +220,26 @@ class TestLandscape(unittest.TestCase):
         from landscape import main
         self.assertTrue(callable(main))
 
+    def test_format_json_includes_mood_weight(self):
+        result = generate_landscape(seed=42, mood="eerie", fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("mood_weight", data)
+        self.assertEqual(data["mood_weight"], 5)
+
+    def test_format_json_includes_mood_weight_without_mood(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("mood_weight", data)
+        self.assertEqual(data["mood_weight"], 5)
+
+    def test_format_json_mood_weight_reflects_custom_value(self):
+        result = generate_landscape(seed=42, mood="eerie", mood_weight=20, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertEqual(data["mood_weight"], 20)
+
 
     def test_output_contains_known_adverb(self):
         results = {generate_landscape(seed=s) for s in range(200)}

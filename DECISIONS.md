@@ -1,5 +1,15 @@
 # Decisions
 
+## 2026-07-11 — `mood_weight` in JSON Output
+
+### What
+Added `mood_weight` to the JSON output data. Previously, the `--mood-weight` parameter was silently omitted from JSON output even though every other major generation parameter (`bias`, `detail`, `template_set`, `anomaly_prob`) was included. Now `mood_weight` is always present in JSON output at its current value.
+
+### Why
+Omission from Session 26 (JSON format). The `mood_weight` parameter affects the generated text when mood is active, so consumers need it to understand how the output was produced. Without it, JSON consumers would see `mood` in the metadata but have no way to know how strongly it influenced word selection.
+
+3 new tests, 167 total.
+
 ## 2026-07-11 — JSON Output Format
 
 ### What

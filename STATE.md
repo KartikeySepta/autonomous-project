@@ -250,5 +250,13 @@
 - Added 5 tests: `test_mood_combine_does_not_break_output`, `test_mood_combine_uses_words_from_both`, `test_mood_combine_different_from_single_mood`, `test_mood_combine_all_three_still_valid`, `test_mood_combine_cli_flag_accepts_multiple`
 - Tests increased from 150 to 155 total (18 todo + 137 landscape)
 
+## 2026-07-11
+
+### What was done (Session 27)
+- Added **`mood_weight` to JSON output** — the `--mood-weight` parameter was missing from the JSON format even though every other major parameter (`bias`, `detail`, `template_set`, `anomaly_prob`) was included. Now `mood_weight` appears in JSON output at its current value (default 5 or any custom setting).
+- One-line change in `landscape.py`: added `data["mood_weight"] = mood_weight` to the JSON block.
+- Added 3 tests: `test_format_json_includes_mood_weight`, `test_format_json_includes_mood_weight_without_mood`, `test_format_json_mood_weight_reflects_custom_value`
+- Tests increased from 164 to 167 total (18 todo + 149 landscape)
+
 ### Current status
-Working. All 164 tests pass (18 todo + 146 landscape).
+Working. All 167 tests pass (18 todo + 149 landscape).
