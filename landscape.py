@@ -5,6 +5,7 @@ import random
 BIOMES = [
     "forest", "desert", "tundra", "ocean", "mountain range",
     "swamp", "cave system", "plain", "volcanic field", "coral reef",
+    "ruined city", "fungal grove", "sky islands",
 ]
 
 # Global fallback word pools
@@ -367,6 +368,54 @@ BIOME_WORDS = {
             "The coral pulses in unison like a single heart.",
             "Fish leave trails of light as they swim.",
             "Every shell contains a tiny, perfect melody.",
+        ],
+    },
+    "ruined city": {
+        "adjectives": ["crumbling", "hollow", "rusted", "fallen", "skeletal", "gutted", "fractured", "ashen"],
+        "elements": ["distant hum", "dust", "rust scent", "broken light", "stifled echo"],
+        "nouns": ["facades", "girders", "husks", "plazas", "overpasses", "broken windows"],
+        "verbs": ["creak", "settle", "sway", "crumble", "groan"],
+        "weathers": [
+            "ash drifts through broken windows like snow",
+            "a pale sun filters through smog",
+            "the wind moans through empty streets",
+        ],
+        "anomalies": [
+            "The street signs point in directions that don't exist.",
+            "Every clock reads the same time.",
+            "Shadows of people who aren't there move along the walls.",
+        ],
+    },
+    "fungal grove": {
+        "adjectives": ["bioluminescent", "spongy", "spore-filled", "mycelial", "phosphorescent", "thriving", "veined", "delicate"],
+        "elements": ["spore glow", "fungal scent", "mycelium hum", "rot warmth"],
+        "nouns": ["caps", "gills", "stalks", "hyphae", "puffballs", "tendrils"],
+        "verbs": ["pulse", "glow", "release", "expand", "spore"],
+        "weathers": [
+            "spores drift through the air like slow-motion snow",
+            "the ground pulses with faint blue light",
+            "a warm dampness carries the scent of growth",
+        ],
+        "anomalies": [
+            "The mushrooms sing at frequencies only bones can feel.",
+            "Spores form faces when they settle.",
+            "The entire grove shares one consciousness.",
+        ],
+    },
+    "sky islands": {
+        "adjectives": ["floating", "cloud-wreathed", "sun-bleached", "sky-born", "ethereal", "exposed", "high", "wind-bitten"],
+        "elements": ["cloud vapor", "wind shear", "sky-blue light", "thin air"],
+        "nouns": ["archipelagos", "peaks", "bridges", "precipices", "cloud banks", "updrafts"],
+        "verbs": ["float", "drift", "soar", "hover", "ride"],
+        "weathers": [
+            "clouds churn far below like a white sea",
+            "lightning arcs silently between nearby islands",
+            "the wind is constant and unforgiving",
+        ],
+        "anomalies": [
+            "The islands orbit each other in a slow dance.",
+            "Waterfalls flow upward into the clouds.",
+            "A bell tolls from an island that no one has ever reached.",
         ],
     },
 }

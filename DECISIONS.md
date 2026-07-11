@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-11 — Three New Biomes (Ruined City, Fungal Grove, Sky Islands)
+
+### What
+Added 3 new biomes to `BIOMES` and `BIOME_WORDS`: `ruined city`, `fungal grove`, and `sky islands`. Each has 8 adjectives, 4-5 elements, 6 nouns, 5 verbs, 3 weathers, and 3 anomalies — expanding the total biome count from 10 to 13.
+
+### Why
+The existing 10 biomes are all natural environments (forest, desert, ocean, etc.). Adding weird, non-natural biomes directly serves the project's creative goal: "originality matters more than 'usefulness'." A ruined city evokes post-apocalyptic wonder, a fungal grove is surreal and alien, and sky islands are dreamlike. These biomes add genuinely new flavor to the output — a landscape can now describe an urban ruin or a floating archipelago, not just another forest or desert.
+
+### Tradeoffs
+- 3 biomes rather than 1 — the data is compact (~60 lines total) and the impact per line is high; adding them all at once avoids 3 separate sessions of the same mechanical change
+- Some biome words overlap with mood words (e.g. fungal grove's "bioluminescent" overlaps with vibrant mood's "bioluminescent") — this is fine because the mood boost is orthogonal to biome; the word appears in both pools independently
+- "ruined city" and "fungal grove" share some desolate/eerie vocabulary with existing mood words — cross-pollination between biomes and moods is a feature, not a bug; a ruined city with eerie mood will feel doubly eerie
+- New biomes are not added to `COMMON_WORDS` or `RARE_WORDS` — their words default to normal weight (weight 5), which is appropriate since they're already distinctive
+- 11 new tests (142 total, 18 todo + 124 landscape)
+
 ## 2026-07-11 — Per-Category Mood-Weight Override (`--mood-weight-adjective`, etc.)
 
 ### What

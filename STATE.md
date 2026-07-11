@@ -190,5 +190,15 @@
 - Added 4 tests in `TestCountWithSeed` class: `test_count_seed_sequence_produces_unique_outputs`, `test_count_seed_sequence_is_reproducible`, `test_count_seed_sequence_different_from_single_seed`, `test_count_without_seed_produces_varied_outputs`
 - Tests increased from 127 to 131 total (18 todo + 113 landscape)
 
+## 2026-07-11
+
+### What was done (Session 22)
+- Added **3 new biomes**: `ruined city`, `fungal grove`, and `sky islands` — expanding the landscape generator beyond purely natural environments into weird, unusual settings
+  - **ruined city**: post-urban decay vocabulary (crumbling, rusted, skeletal facades and girders)
+  - **fungal grove**: bioluminescent mushroom forest (spore glow, mycelial, caps and hyphae)
+  - **sky islands**: floating archipelago above the clouds (cloud-wreathed, ethereal, archipelagos and updrafts)
+- Added 11 tests in `TestNewBiomes` class: `test_ruined_city_in_biomes_list`, `test_fungal_grove_in_biomes_list`, `test_sky_islands_in_biomes_list`, `test_ruined_city_produces_valid_output`, `test_fungal_grove_produces_valid_output`, `test_sky_islands_produces_valid_output`, `test_ruined_city_uses_specific_vocabulary`, `test_fungal_grove_uses_specific_vocabulary`, `test_sky_islands_uses_specific_vocabulary`, `test_new_biomes_appear_in_random_selection`, `test_combine_with_new_biome_uses_vocabulary`
+- Tests increased from 131 to 142 total (18 todo + 124 landscape)
+
 ### Current status
-Working. All 131 tests pass (18 todo + 113 landscape).
+Working. All 142 tests pass (18 todo + 124 landscape).

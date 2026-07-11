@@ -751,6 +751,69 @@ class TestLandscape(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+class TestNewBiomes(unittest.TestCase):
+    def test_ruined_city_in_biomes_list(self):
+        self.assertIn("ruined city", BIOMES)
+
+    def test_fungal_grove_in_biomes_list(self):
+        self.assertIn("fungal grove", BIOMES)
+
+    def test_sky_islands_in_biomes_list(self):
+        self.assertIn("sky islands", BIOMES)
+
+    def test_ruined_city_produces_valid_output(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, biome="ruined city")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_fungal_grove_produces_valid_output(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, biome="fungal grove")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_sky_islands_produces_valid_output(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, biome="sky islands")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_ruined_city_uses_specific_vocabulary(self):
+        ruined_adj = set(BIOME_WORDS["ruined city"].get("adjectives", []))
+        results = [generate_landscape(seed=s, biome="ruined city") for s in range(200)]
+        found = any(any(w in r for w in ruined_adj) for r in results)
+        self.assertTrue(found, "ruined city-specific adjectives never appeared")
+
+    def test_fungal_grove_uses_specific_vocabulary(self):
+        fungal_adj = set(BIOME_WORDS["fungal grove"].get("adjectives", []))
+        results = [generate_landscape(seed=s, biome="fungal grove") for s in range(200)]
+        found = any(any(w in r for w in fungal_adj) for r in results)
+        self.assertTrue(found, "fungal grove-specific adjectives never appeared")
+
+    def test_sky_islands_uses_specific_vocabulary(self):
+        sky_adj = set(BIOME_WORDS["sky islands"].get("adjectives", []))
+        results = [generate_landscape(seed=s, biome="sky islands") for s in range(200)]
+        found = any(any(w in r for w in sky_adj) for r in results)
+        self.assertTrue(found, "sky islands-specific adjectives never appeared")
+
+    def test_new_biomes_appear_in_random_selection(self):
+        biomes_seen = set()
+        for s in range(200):
+            r = generate_landscape(seed=s)
+            for b in ["ruined city", "fungal grove", "sky islands"]:
+                if b in r:
+                    biomes_seen.add(b)
+        self.assertGreaterEqual(len(biomes_seen), 1,
+            f"At least one new biome should appear in 200 random seeds, got {biomes_seen}")
+
+    def test_combine_with_new_biome_uses_vocabulary(self):
+        result = generate_landscape(seed=42, combine="ruined city,fungal grove")
+        self.assertIn("ruined city", result)
+        self.assertIn("fungal grove", result)
+        self.assertIn(" and ", result)
+
+
 class TestCountWithSeed(unittest.TestCase):
     def test_count_seed_sequence_produces_unique_outputs(self):
         outputs = [generate_landscape(seed=42 + i) for i in range(5)]
