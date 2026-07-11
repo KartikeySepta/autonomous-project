@@ -39,6 +39,19 @@ With uniform selection, every word was equally likely — a vivid word like "res
 - Weights are hard-coded rather than configurable — keeps the implementation simple at 10 lines; extensible via CLI later if needed
 - `random.choices()` slightly slower than `random.choice()` on tiny pools — negligible at this scale (<1µs per pick)
 
+## 2026-07-11 — Biome Combination
+
+### What
+Added `--combine`/`-c` CLI flag and `combine` parameter to `generate_landscape()`. Accepts comma-separated biome names (e.g. `--combine forest,desert`) and blends vocabulary from all specified biomes. The biome name in the output becomes "forest and desert", and `--show-biome` shows all biomes as `[forest, desert]`.
+
+### Why
+This is the most natural extension after biome-specific word banks. Single-biome descriptions are already evocative, but combining two (or more) biomes creates genuinely novel landscape hybrids — a "volcanic desert" or "frozen swamp" — that feel fresh and unexpected, directly serving the project's goal of generating unusual, creative output.
+
+### Tradeoffs
+- Comma-separated string in CLI rather than repeated `--combine` flags — simpler typing and parsing, though slightly less discoverable than `action="append"`
+- Union of word banks (concat all biome words) rather than per-word random biome selection — richer vocabulary blending at the cost of occasionally mixing incongruous words (e.g. "dappled volcanic field"), which is arguably poetic rather than wrong
+- `--combine` and `--biome` are mutually exclusive in effect (`--biome` takes priority if both are given) — keeps the logic simple and avoids ambiguous state
+
 ## 2026-07-11 — Biome-Specific Word Banks
 
 ### What

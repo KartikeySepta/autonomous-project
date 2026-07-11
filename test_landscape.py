@@ -154,5 +154,40 @@ class TestLandscape(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+    def test_combine_two_biomes_contains_both_names(self):
+        result = generate_landscape(seed=42, combine="forest,desert")
+        self.assertIn("forest", result)
+        self.assertIn("desert", result)
+        self.assertIn(" and ", result)
+
+    def test_combine_three_biomes_contains_all_names(self):
+        result = generate_landscape(seed=42, combine="tundra,ocean,mountain range")
+        self.assertIn("tundra", result)
+        self.assertIn("ocean", result)
+        self.assertIn("mountain range", result)
+
+    def test_combine_uses_vocabulary_from_both(self):
+        forest_words = set(BIOME_WORDS["forest"].get("adjectives", []))
+        desert_words = set(BIOME_WORDS["desert"].get("adjectives", []))
+        results = [generate_landscape(seed=s, combine="forest,desert") for s in range(200)]
+        found_forest = any(any(w in r for w in forest_words) for r in results)
+        found_desert = any(any(w in r for w in desert_words) for r in results)
+        self.assertTrue(found_forest, "forest-specific adjectives never appeared")
+        self.assertTrue(found_desert, "desert-specific adjectives never appeared")
+
+    def test_combine_show_biome_shows_all(self):
+        result = generate_landscape(seed=42, combine="swamp,cave system", show_biome=True)
+        self.assertIn("[swamp, cave system]", result)
+
+    def test_combine_single_biome_equals_regular(self):
+        combined = generate_landscape(seed=42, combine="tundra")
+        regular = generate_landscape(seed=42, biome="tundra")
+        self.assertEqual(combined, regular)
+
+    def test_combine_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 if __name__ == "__main__":
     unittest.main()

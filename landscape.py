@@ -242,10 +242,13 @@ BIOME_WORDS = {
 }
 
 
-def _pick(category, biome):
-    """Pick a random word from the biome-specific pool blended with the global pool.
+def _pick(category, biomes):
+    """Pick a random word from the biome-specific pool(s) blended with the global pool.
+    `biomes` is a list of biome names; words from all specified biomes are included.
     Words are weighted: common (10), normal (5), rare (1)."""
-    specific = BIOME_WORDS.get(biome, {}).get(category, [])
+    specific = []
+    for b in biomes:
+        specific.extend(BIOME_WORDS.get(b, {}).get(category, []))
     global_pool = {
         "adjectives": ADJECTIVES,
         "elements": ELEMENTS,
@@ -259,34 +262,45 @@ def _pick(category, biome):
     return random.choices(pool, weights=weights, k=1)[0]
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose"):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None):
     if seed is not None:
         random.seed(seed)
 
-    if biome is None:
-        biome = random.choice(BIOMES)
+    if biome is not None:
+        biomes = [biome.lower()]
+        display = biome.lower()
+    elif combine is not None:
+        biomes = [b.strip().lower() for b in combine.split(",")]
+        if len(biomes) == 0:
+            biomes = [random.choice(BIOMES)]
+        display = " and ".join(biomes)
     else:
-        biome = biome.lower()
+        chosen = random.choice(BIOMES)
+        biomes = [chosen]
+        display = chosen
 
-    adj = _pick("adjectives", biome)
-    element = _pick("elements", biome)
-    noun = _pick("nouns", biome)
-    verb = _pick("verbs", biome)
-    weather = _pick("weathers", biome)
+    adj = _pick("adjectives", biomes)
+    element = _pick("elements", biomes)
+    noun = _pick("nouns", biomes)
+    verb = _pick("verbs", biomes)
+    weather = _pick("weathers", biomes)
 
     parts = [
-        f"A vast {adj} {biome} stretches before you.",
+        f"A vast {adj} {display} stretches before you.",
         f"{element.capitalize()} {verb}s between the {noun}.",
         f"{weather.capitalize()}.",
     ]
 
     if random.random() < 0.3:
-        parts.append(_pick("anomalies", biome))
+        parts.append(_pick("anomalies", biomes))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)
     if show_biome:
-        output += f" [{biome}]"
+        if combine:
+            output += f" [{', '.join(biomes)}]"
+        else:
+            output += f" [{display}]"
     return output
 
 
@@ -315,10 +329,14 @@ def main():
         "--format", type=str, default="prose", choices=["prose", "poetic"],
         help="Output format: prose (single line) or poetic (line breaks)",
     )
+    parser.add_argument(
+        "--combine", "-c", type=str, default=None,
+        help="Combine multiple biomes (comma-separated, e.g. 'forest,desert')",
+    )
     args = parser.parse_args()
 
     for i in range(args.count):
-        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format))
+        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine))
         if args.count > 1 and i < args.count - 1:
             print()
 

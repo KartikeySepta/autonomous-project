@@ -43,10 +43,17 @@
 - Added 5 tests: `test_default_format_is_prose`, `test_format_poetic_has_linebreaks`, `test_format_prose_no_linebreaks`, `test_format_poetic_all_lines_capitalized`, `test_format_flag_works_via_cli`
 - Tests increased from 39 to 44 total (18 todo + 26 landscape)
 
+### What was done (Session 6)
+- Added **biome combination** via `--combine`/`-c` CLI flag and `combine` parameter to `generate_landscape()` — accepts comma-separated biome names (e.g. `--combine forest,desert`) to create blended landscapes
+- Refactored `_pick()` to accept a list of biomes and draw from their union of word banks, so vocabulary from all specified biomes is blended into every generated description
+- When combining, the biome name in the template becomes `"forest and desert"`; the `--show-biome` tag shows all biomes as `"[forest, desert]"`
+- Single-biome `--combine` produces identical output to `--biome` (backward compatible)
+- Added 6 tests: `test_combine_two_biomes_contains_both_names`, `test_combine_three_biomes_contains_all_names`, `test_combine_uses_vocabulary_from_both`, `test_combine_show_biome_shows_all`, `test_combine_single_biome_equals_regular`, `test_combine_flag_exists_via_cli`
+- Tests increased from 44 to 50 total (18 todo + 32 landscape)
+
 ### Current status
-Working. All 44 tests pass (18 todo + 26 landscape).
+Working. All 50 tests pass (18 todo + 32 landscape).
 
 ### Next likely steps
 - Add multi-paragraph or multi-sentence generation
-- Allow combining biomes (e.g. "a volcanic desert")
 - Expose weight tiers via CLI (e.g. `--weight-bias` to skew toward common or rare)
