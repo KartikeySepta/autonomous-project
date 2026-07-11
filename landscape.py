@@ -161,10 +161,13 @@ def _word_weight(word, bias="normal", mood=None, category=None, mood_weight=MOOD
         base = weights["common"]
     else:
         base = weights["normal"]
-    if mood and category and mood in MOOD_WORDS:
-        if word in MOOD_WORDS[mood].get(category, []):
-            effective_mw = (mood_weight_overrides or {}).get(category, mood_weight)
-            base *= effective_mw
+    if mood and category:
+        moods = mood if isinstance(mood, (list, tuple)) else [mood]
+        for m in moods:
+            if m in MOOD_WORDS and word in MOOD_WORDS[m].get(category, []):
+                effective_mw = (mood_weight_overrides or {}).get(category, mood_weight)
+                base *= effective_mw
+                break
     return base
 
 
@@ -582,8 +585,9 @@ def main():
     parser.add_argument("--bias-anomaly", type=str, default=None, choices=["normal", "common", "rare", "flat"],
         help="Per-category override: bias for anomalies")
     parser.add_argument(
-        "--mood", type=str, default=None, choices=list(MOOD_WORDS.keys()),
-        help="Mood overlay that boosts tone-matched words (e.g. eerie, vibrant, desolate)",
+        "--mood", action="append", type=str, default=None,
+        choices=list(MOOD_WORDS.keys()),
+        help="Mood overlay(s) that boost tone-matched words. Use multiple times to blend moods (e.g. --mood eerie --mood vibrant)",
     )
     parser.add_argument(
         "--mood-weight", type=float, default=MOOD_BOOST,

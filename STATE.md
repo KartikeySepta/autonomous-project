@@ -225,5 +225,20 @@
 - Added 6 tests: `test_output_contains_known_adverb`, `test_adverb_appears_in_middle_templates`, `test_adverb_with_mood_does_not_break_output`, `test_adverb_is_deterministic_with_seed`, `test_adverb_with_detail_three_produces_valid_output`, `test_adverb_word_weight_function_works`
 - Tests increased from 144 to 150 total (18 todo + 132 landscape)
 
+## 2026-07-11
+
+### What was done (Session 25)
+- Added **mood blending**: `--mood` CLI flag now uses `action="append"` and accepts multiple values — users can blend moods by repeating the flag (e.g. `--mood eerie --mood vibrant`) to create hybrid tonal palettes
+  - `--mood eerie --mood vibrant` = haunting beauty (eerie's silence + vibrant's light)
+  - `--mood eerie --mood desolate` = bleak and unsettling (both lean into darkness/stillness)
+  - `--mood vibrant --mood desolate` = beauty amidst decay (vibrant's glow + desolate's barren)
+  - `--mood eerie --mood vibrant --mood desolate` = all three (most words from any mood list get boosted)
+- Modified `_word_weight()` to accept `mood` as a string (single mood, backward compatible), list, or tuple — when a word matches **any** active mood's category list, the mood-weight boost applies
+  - The `break` on first match ensures the boost is applied once (not compounded) even if a word appears in multiple moods' lists
+- No changes to `_pick()` or `generate_landscape()` signatures — `mood` threaded through as before, both string and list callers work
+- `--mood` CLI changed from `type=str, choices=...` to `action="append", type=str, choices=...` — single usage (`--mood eerie`) produces a 1-element list internally, which `_word_weight()` normalizes the same way as a bare string
+- Added 5 tests: `test_mood_combine_does_not_break_output`, `test_mood_combine_uses_words_from_both`, `test_mood_combine_different_from_single_mood`, `test_mood_combine_all_three_still_valid`, `test_mood_combine_cli_flag_accepts_multiple`
+- Tests increased from 150 to 155 total (18 todo + 137 landscape)
+
 ### Current status
-Working. All 150 tests pass (18 todo + 132 landscape).
+Working. All 155 tests pass (18 todo + 137 landscape).

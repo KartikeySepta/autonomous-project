@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-11 — Mood Blending
+
+### What
+Changed `--mood` from a single-choice flag to an `action="append"` flag that accepts multiple moods (e.g. `--mood eerie --mood vibrant`). In `_word_weight()`, the `mood` parameter now accepts a string (single mood, backward compatible) or list/tuple of strings — a word gets the mood-weight boost if it matches **any** active mood's category list.
+
+### Why
+After adding mood weight and per-category mood-weight overrides (Sessions 13–17), the mood system was flexible but users were locked into exactly one emotional palette per landscape. A forest with eerie mood always felt silent and shadowed; a vibrant mood always felt bright and luminous. Mood blending unlocks genuinely new tones that don't exist as single presets: "eerie + vibrant" creates a haunted-but-beautiful atmosphere (bioluminescent shadows, silent radiance), while "eerie + desolate" doubles down on bleak wrongness. This is the mood equivalent of `--combine` for biomes (Session 6) — combining existing data to create something new.
+
+### Tradeoffs
+- `action="append"` internally produces a list even for a single `--mood eerie` (becomes `["eerie"]`), but `_word_weight()` handles both strings and lists transparently via `isinstance` normalization. All existing callers that pass a bare string still work.
+- The mood-weight boost applies only once per word, even if it appears in multiple moods' lists — `break` on first match prevents compounding. This keeps the boost binary (on/off) rather than additive, which is simpler and avoids needing to think about "how many moods does this word match."
+- The `choices` constraint is preserved, so argparse still validates each mood value independently — `--mood eerie --mood nonexistent` is rejected.
+- No change to mood weight or mood-weight overrides — blending composes with all existing mood controls. `--mood eerie --mood vibrant --mood-weight 10` boosts words in either mood by 10x.
+- 5 new tests (155 total, 18 todo + 137 landscape).
+
 ## 2026-07-11 — Adverb Word Category
 
 ### What

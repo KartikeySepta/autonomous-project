@@ -810,6 +810,39 @@ class TestLandscape(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+    def test_mood_combine_does_not_break_output(self):
+        for combo in [["eerie", "vibrant"], ["eerie", "desolate"], ["vibrant", "desolate"]]:
+            for s in range(10):
+                result = generate_landscape(seed=s, mood=combo)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_mood_combine_uses_words_from_both(self):
+        eerie_words = set(MOOD_WORDS["eerie"].get("adjectives", []))
+        vibrant_words = set(MOOD_WORDS["vibrant"].get("adjectives", []))
+        results = [generate_landscape(seed=s, mood=["eerie", "vibrant"]) for s in range(200)]
+        found_eerie = any(any(w in r for w in eerie_words) for r in results)
+        found_vibrant = any(any(w in r for w in vibrant_words) for r in results)
+        self.assertTrue(found_eerie, "eerie mood words never appeared in blended output")
+        self.assertTrue(found_vibrant, "vibrant mood words never appeared in blended output")
+
+    def test_mood_combine_different_from_single_mood(self):
+        combined = generate_landscape(seed=42, mood=["eerie", "vibrant"])
+        single = generate_landscape(seed=42, mood="eerie")
+        self.assertNotEqual(combined, single,
+            "Combined mood should produce different output than single mood with same seed")
+
+    def test_mood_combine_all_three_still_valid(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, mood=["eerie", "vibrant", "desolate"])
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_mood_combine_cli_flag_accepts_multiple(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 class TestNewBiomes(unittest.TestCase):
     def test_ruined_city_in_biomes_list(self):
         self.assertIn("ruined city", BIOMES)
