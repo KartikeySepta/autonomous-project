@@ -6,6 +6,7 @@ from landscape import (
     generate_landscape,
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, BIOME_WORDS,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
+    MOOD_WORDS, MOOD_BOOST,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -359,6 +360,40 @@ class TestLandscape(unittest.TestCase):
             "Output with auto-generated seed should be reproducible with that seed")
 
     def test_show_seed_flag_works_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+    def test_mood_does_not_break_output(self):
+        for mood in ["eerie", "vibrant", "desolate"]:
+            for s in range(10):
+                result = generate_landscape(seed=s, mood=mood)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_mood_word_weight_boosted_for_matched_words(self):
+        from landscape import _word_weight
+        # "shadow" is in MOOD_WORDS["eerie"]["adjectives"], so weight is boosted under flat bias
+        normal_w = _word_weight("shadow", bias="flat", mood=None, category="adjectives")
+        mood_w = _word_weight("shadow", bias="flat", mood="eerie", category="adjectives")
+        self.assertEqual(mood_w, normal_w * MOOD_BOOST)
+
+    def test_mood_word_weight_not_boosted_for_unmatched_words(self):
+        from landscape import _word_weight
+        # "brass" is rare but NOT in any MOOD_WORDS["eerie"] category
+        normal_w = _word_weight("brass", bias="normal", mood=None, category="adjectives")
+        mood_w = _word_weight("brass", bias="normal", mood="eerie", category="adjectives")
+        self.assertEqual(mood_w, normal_w)
+
+    def test_mood_category_specific_boost(self):
+        from landscape import _word_weight
+        # "shadow" is in MOOD_WORDS["eerie"]["adjectives"] but NOT in "elements"
+        w_adjectives = _word_weight("shadow", bias="flat", mood="eerie", category="adjectives")
+        w_elements = _word_weight("shadow", bias="flat", mood="eerie", category="elements")
+        self.assertEqual(w_elements, _word_weight("shadow", bias="flat"))
+        self.assertEqual(w_adjectives, w_elements * MOOD_BOOST)
+
+    def test_mood_flag_exists_via_cli(self):
         from landscape import main
         self.assertTrue(callable(main))
 

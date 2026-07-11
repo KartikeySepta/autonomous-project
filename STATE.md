@@ -103,10 +103,21 @@
 - Added 5 tests: `test_show_seed_with_provided_seed_shows_seed`, `test_show_seed_default_hides_seed`, `test_show_seed_without_seed_generates_seed`, `test_show_seed_output_is_reproducible`, `test_show_seed_flag_works_via_cli`
 - Tests increased from 70 to 75 total (18 todo + 57 landscape)
 
+### What was done (Session 13)
+- Added **mood/emotion overlay** via `--mood` CLI flag and `mood` parameter to `generate_landscape()`
+  - Three moods: `eerie`, `vibrant`, `desolate`
+  - Each mood defines a curated set of tone-matched words per category (adjectives, elements, nouns, verbs, weathers, anomalies)
+- Added `MOOD_WORDS` dict and `MOOD_BOOST = 5` constant
+- Updated `_word_weight()` to accept `mood` and `category` params — when a word matches the active mood's category list, its weight is multiplied by `MOOD_BOOST` (5x), making mood-themed words much more likely without excluding other vocabulary
+- `mood` parameter threads through `_pick()` → `_word_weight()` for all word selections
+- Mood works orthogonally to `--bias`: bias sets the base weight distribution, mood multiplies on top; they compose naturally
+- Added 5 tests: `test_mood_does_not_break_output`, `test_mood_word_weight_boosted_for_matched_words`, `test_mood_word_weight_not_boosted_for_unmatched_words`, `test_mood_category_specific_boost`, `test_mood_flag_exists_via_cli`
+- Tests increased from 75 to 80 total (18 todo + 62 landscape)
+
 ### Current status
-Working. All 75 tests pass (18 todo + 57 landscape).
+Working. All 80 tests pass (18 todo + 62 landscape).
 
 ### Next likely steps
 - Expose template set choice via CLI flag (e.g. `--template-set`)
-- Add a mood/emotion overlay that biases word selection toward a specific tone
 - Add per-category bias control
+- Add a `--mood-weight` flag to let users control the boost strength

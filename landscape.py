@@ -76,13 +76,83 @@ BIAS_MODES = {
     "flat":    {"common": 1,  "normal": 1, "rare": 1},
 }
 
-def _word_weight(word, bias="normal"):
+MOOD_BOOST = 5
+
+MOOD_WORDS = {
+    "eerie": {
+        "adjectives": ["shadow", "silent", "forgotten", "bone", "obsidian", "pale", "deep"],
+        "elements": ["echo", "silence", "darkness", "stillness", "cave wind"],
+        "nouns": ["ruins", "stones", "crystals", "archways", "spires", "fissures"],
+        "verbs": ["whisper", "hum", "vibrate", "resonate", "creak", "echo"],
+        "weathers": [
+            "a still calm lingers",
+            "an unnatural silence hangs",
+            "mist curls along the ground",
+            "the darkness presses in from all sides",
+        ],
+        "anomalies": [
+            "Time seems to flow backward.",
+            "Colors shift as you watch.",
+            "The horizon curves upward.",
+            "Your footsteps make no sound.",
+            "The shadows move against the wind.",
+            "Passages rearrange when you blink.",
+            "The ice sings when the wind blows across it.",
+        ],
+    },
+    "vibrant": {
+        "adjectives": ["crystal", "crimson", "amethyst", "golden", "luminous", "vibrant", "bioluminescent", "reef-born"],
+        "elements": ["light", "radiance", "warmth", "fragrance", "birdsong", "leaf rustle"],
+        "nouns": ["crystals", "geodes", "glades", "canopies", "polyps", "groves"],
+        "verbs": ["glow", "shimmer", "pulse", "glimmer", "resonate", "wave"],
+        "weathers": [
+            "a warm breeze drifts through",
+            "sunlight filters through the canopy in golden beams",
+            "the water is clear and impossibly blue",
+            "sunlight dances on the water in shifting patterns",
+        ],
+        "anomalies": [
+            "The water glows with an inner light.",
+            "The coral pulses in unison like a single heart.",
+            "Fish leave trails of light as they swim.",
+            "Every shell contains a tiny, perfect melody.",
+            "Fungal spores hang in the air like tiny lanterns.",
+        ],
+    },
+    "desolate": {
+        "adjectives": ["forgotten", "bone", "scorched", "barren", "frozen", "rotting", "windswept", "cracked"],
+        "elements": ["stillness", "silence", "darkness", "dry air", "ash fall"],
+        "nouns": ["ruins", "dunes", "ice fields", "crevasses", "slag heaps", "permafrost"],
+        "verbs": ["crack", "freeze", "drift", "scour", "bake", "stagnate"],
+        "weathers": [
+            "ash drifts slowly downward",
+            "a biting wind carries ice crystals",
+            "the sun beats down without mercy",
+            "a hot wind scours the dunes",
+        ],
+        "anomalies": [
+            "The sand falls upward here.",
+            "There is no sky — only stone above.",
+            "Shapes move beneath the frozen surface.",
+            "The heat does not burn — it freezes.",
+            "Distant figures never get closer no matter how far you walk.",
+        ],
+    },
+}
+
+
+def _word_weight(word, bias="normal", mood=None, category=None):
     weights = BIAS_MODES[bias]
     if word in RARE_WORDS:
-        return weights["rare"]
-    if word in COMMON_WORDS:
-        return weights["common"]
-    return weights["normal"]
+        base = weights["rare"]
+    elif word in COMMON_WORDS:
+        base = weights["common"]
+    else:
+        base = weights["normal"]
+    if mood and category and mood in MOOD_WORDS:
+        if word in MOOD_WORDS[mood].get(category, []):
+            base *= MOOD_BOOST
+    return base
 
 
 def _conjugate(verb):
@@ -283,10 +353,10 @@ BIOME_WORDS = {
 }
 
 
-def _pick(category, biomes, bias="normal"):
+def _pick(category, biomes, bias="normal", mood=None):
     """Pick a random word from the biome-specific pool(s) blended with the global pool.
     `biomes` is a list of biome names; words from all specified biomes are included.
-    Words are weighted per the given bias mode."""
+    Words are weighted per the given bias mode and optionally boosted for mood."""
     specific = []
     for b in biomes:
         specific.extend(BIOME_WORDS.get(b, {}).get(category, []))
@@ -299,11 +369,11 @@ def _pick(category, biomes, bias="normal"):
         "anomalies": ANOMALIES,
     }[category]
     pool = specific + global_pool
-    weights = [_word_weight(w, bias) for w in pool]
+    weights = [_word_weight(w, bias, mood, category) for w in pool]
     return random.choices(pool, weights=weights, k=1)[0]
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None):
     if seed is not None:
         random.seed(seed)
     elif show_seed:
@@ -323,21 +393,21 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         biomes = [chosen]
         display = chosen
 
-    adj = _pick("adjectives", biomes, bias=bias)
+    adj = _pick("adjectives", biomes, bias=bias, mood=mood)
     opening_tmpl = random.choice(SENTENCE_TEMPLATES["opening"])
     parts = [opening_tmpl.format(adj=adj, display=display)]
 
     for _ in range(max(detail, 0)):
-        element = _pick("elements", biomes, bias=bias)
-        noun = _pick("nouns", biomes, bias=bias)
-        verb = _pick("verbs", biomes, bias=bias)
+        element = _pick("elements", biomes, bias=bias, mood=mood)
+        noun = _pick("nouns", biomes, bias=bias, mood=mood)
+        verb = _pick("verbs", biomes, bias=bias, mood=mood)
         verb_conjugated = _conjugate(verb)
         middle_tmpl = random.choice(SENTENCE_TEMPLATES["middle"])
         parts.append(
             middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated)
         )
 
-        weather = _pick("weathers", biomes, bias=bias)
+        weather = _pick("weathers", biomes, bias=bias, mood=mood)
         weather_tmpl = random.choice(SENTENCE_TEMPLATES["weather"])
         parts.append(
             weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display)
@@ -345,7 +415,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
 
     if detail >= 1 and random.random() < 0.3:
         anomaly_tmpl = random.choice(SENTENCE_TEMPLATES["anomaly"])
-        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias)))
+        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood)))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)
@@ -397,13 +467,17 @@ def main():
         help="Word selection bias: normal (default), common (favors common words), rare (favors rare words), flat (uniform, no weighting)",
     )
     parser.add_argument(
+        "--mood", type=str, default=None, choices=list(MOOD_WORDS.keys()),
+        help="Mood overlay that boosts tone-matched words (e.g. eerie, vibrant, desolate)",
+    )
+    parser.add_argument(
         "--show-seed", action="store_true",
         help="Display the random seed used for reproducibility",
     )
     args = parser.parse_args()
 
     for i in range(args.count):
-        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed))
+        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood))
         if args.count > 1 and i < args.count - 1:
             print()
 
