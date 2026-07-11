@@ -15,6 +15,20 @@ The global `--mood-weight` flag (Session 14) applies the same multiplier to all 
 - This was the first suggested "next likely step" from Session 16's STATE.md — natural follow-up
 - Per-category mood-weight overrides make `mood_weight_overrides` the fourth dict parameter alongside `bias_overrides`, keeping the pattern consistent
 
+## 2026-07-11 — Auto-Increment Seed for `--count` with `--seed`
+
+### What
+Fixed `main()` so that when `--count > 1` and `--seed` is given, each iteration uses `seed + i` instead of the same seed. `--seed 42 --count 3` now produces 3 different outputs, equivalent to running `--seed 42`, `--seed 43`, `--seed 44` separately.
+
+### Why
+`--seed 42 --count 3` previously printed the same landscape 3 times — a usability bug that made `--count` pointless when combined with `--seed`. The fix makes `--count` genuinely useful for batch-producing N different reproducible landscapes.
+
+### Tradeoffs
+- Simple additive offset (`seed + i`) rather than any fancy hashing — preserves determinism and makes it obvious which seed produced which output
+- The change is in `main()` only; `generate_landscape()` is untouched
+- A caller who somehow wants N copies of the same output can still call `generate_landscape()` directly; the CLI no longer supports that degenerate case
+- 4 new tests, 131 total
+
 ## 2026-07-11 — Configurable Anomaly Probability (`--anomaly-prob`)
 
 ### What

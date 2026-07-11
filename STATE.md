@@ -180,5 +180,15 @@
 - Added 5 tests: `test_anomaly_prob_default_works`, `test_anomaly_prob_zero_suppresses_anomalies`, `test_anomaly_prob_one_always_has_anomaly`, `test_anomaly_prob_produces_valid_output`, `test_anomaly_prob_flag_exists_via_cli`
 - Tests increased from 122 to 127 total (18 todo + 109 landscape)
 
+## 2026-07-11
+
+### What was done (Session 21)
+- Fixed **`--count` + `--seed` interaction**: previously, `--seed 42 --count 3` produced the same output 3 times because every loop iteration passed the same seed. Now the seed auto-increments per iteration (`seed + i`), so each output is unique and individually reproducible
+  - `--seed 42 --count 3` is equivalent to running `--seed 42`, `--seed 43`, `--seed 44` separately
+  - `--count` without `--seed` (fully random) is unaffected
+- One-line change in `main()`: `effective_seed = args.seed + i if args.seed is not None else None`
+- Added 4 tests in `TestCountWithSeed` class: `test_count_seed_sequence_produces_unique_outputs`, `test_count_seed_sequence_is_reproducible`, `test_count_seed_sequence_different_from_single_seed`, `test_count_without_seed_produces_varied_outputs`
+- Tests increased from 127 to 131 total (18 todo + 113 landscape)
+
 ### Current status
-Working. All 127 tests pass (18 todo + 109 landscape).
+Working. All 131 tests pass (18 todo + 113 landscape).

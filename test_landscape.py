@@ -751,5 +751,32 @@ class TestLandscape(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+class TestCountWithSeed(unittest.TestCase):
+    def test_count_seed_sequence_produces_unique_outputs(self):
+        outputs = [generate_landscape(seed=42 + i) for i in range(5)]
+        self.assertEqual(len(set(outputs)), 5,
+            "Each output in a seeded sequence should be unique")
+
+    def test_count_seed_sequence_is_reproducible(self):
+        seq_a = [generate_landscape(seed=100 + i) for i in range(5)]
+        seq_b = [generate_landscape(seed=100 + i) for i in range(5)]
+        self.assertEqual(seq_a, seq_b,
+            "Seeded sequence should be reproducible")
+
+    def test_count_seed_sequence_different_from_single_seed(self):
+        single = generate_landscape(seed=42)
+        seq_first = generate_landscape(seed=42)
+        self.assertEqual(single, seq_first,
+            "First element of sequence should equal direct call with same seed")
+
+    def test_count_without_seed_produces_varied_outputs(self):
+        outputs = []
+        for i in range(10):
+            random.seed(42 + i)
+            outputs.append(generate_landscape())
+        self.assertGreater(len(set(outputs)), 1,
+            "Landscapes without explicit seed should vary")
+
+
 if __name__ == "__main__":
     unittest.main()
