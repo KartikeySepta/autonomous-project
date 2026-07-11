@@ -1,5 +1,22 @@
 # Decisions
 
+## 2026-07-11 — Pivot from Todo App to Procedural Landscape Generator
+
+### What
+Replaced the todo-app trajectory with a **procedural landscape description generator** (`landscape.py`). It generates short, evocative descriptions of imaginary landscapes by combining biomes, adjectives, elements, and atmospheric details.
+
+### Why
+The GOAL.md explicitly says to stop building a todo app and build something genuinely novel or creative instead. A landscape generator is:
+- **Generative & creative** — produces varied, evocative text from simple rules
+- **Testable** — deterministic with a seed; output shape and word inclusion are verifiable
+- **No external deps** — uses only `random`, `argparse`, and `unittest` (all stdlib)
+- **Small scope** — one focused change, easy to extend later (biome-specific word banks, weighted selections, temperature/sentiment, etc.)
+
+### Tradeoffs
+- Simple random selection (uniform) rather than weighted or Markov-chain generation — keeps the code short and understandable
+- No grammar-aware sentence generation — templates are fixed shapes, which can feel repetitive; fine for v1
+- Uses `random.seed()` for reproducibility rather than a dedicated RNG instance — simpler, works for single-use generation
+
 ## 2026-07-11 — CLI Todo Manager
 
 ### What
