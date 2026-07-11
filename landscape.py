@@ -77,6 +77,14 @@ def _word_weight(word):
     return 5
 
 
+def _conjugate(verb):
+    if verb.endswith(("s", "sh", "ch", "x", "z", "o")):
+        return verb + "es"
+    if verb.endswith("y") and len(verb) > 1 and verb[-2] not in "aeiou":
+        return verb[:-1] + "ies"
+    return verb + "s"
+
+
 # Sentence templates for landscape generation — randomly selected each time for variety
 SENTENCE_TEMPLATES = {
     "opening": [
@@ -85,9 +93,9 @@ SENTENCE_TEMPLATES = {
         "The {adj} {display} lies ahead.",
     ],
     "middle": [
-        "{Element} {verb}s between the {noun}.",
-        "Among the {noun}, {element} {verb}s.",
-        "The {noun} {verb} with {element}.",
+        "{Element} {verb_conjugated} between the {noun}.",
+        "Among the {noun}, {element} {verb_conjugated}.",
+        "The {noun} {verb_conjugated} with {element}.",
     ],
     "weather": [
         "{Weather}.",
@@ -310,9 +318,10 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
     middle_tmpl = random.choice(SENTENCE_TEMPLATES["middle"])
     weather_tmpl = random.choice(SENTENCE_TEMPLATES["weather"])
 
+    verb_conjugated = _conjugate(verb)
     parts = [
         opening_tmpl.format(adj=adj, display=display),
-        middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb),
+        middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated),
         weather_tmpl.format(Weather=weather.capitalize(), weather=weather),
     ]
 

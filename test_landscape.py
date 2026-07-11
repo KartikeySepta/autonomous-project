@@ -5,7 +5,7 @@ import random
 from landscape import (
     generate_landscape,
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, BIOME_WORDS,
-    COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES,
+    COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, _conjugate,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -214,6 +214,29 @@ class TestLandscape(unittest.TestCase):
             result = generate_landscape(seed=s)
             self.assertIsInstance(result, str)
             self.assertGreater(len(result), 10)
+
+
+    def test_conjugate_adds_s_for_regular_verbs(self):
+        self.assertEqual(_conjugate("whisper"), "whispers")
+        self.assertEqual(_conjugate("glow"), "glows")
+        self.assertEqual(_conjugate("drift"), "drifts")
+
+    def test_conjugate_adds_es_for_sibilant_endings(self):
+        self.assertEqual(_conjugate("crash"), "crashes")
+        self.assertEqual(_conjugate("hiss"), "hisses")
+        self.assertEqual(_conjugate("stretch"), "stretches")
+        self.assertEqual(_conjugate("echo"), "echoes")
+
+    def test_conjugate_handles_y_endings(self):
+        self.assertEqual(_conjugate("fly"), "flies")
+        self.assertEqual(_conjugate("carry"), "carries")
+
+    def test_conjugate_output_no_bare_s_append_for_es_verbs(self):
+        wrong_forms = ["crashs", "stretchs", "echos"]
+        results = [generate_landscape(seed=s, combine="ocean,plain,mountain range,cave system,volcanic field") for s in range(500)]
+        for r in results:
+            for bad in wrong_forms:
+                self.assertNotIn(bad, r)
 
 
 if __name__ == "__main__":

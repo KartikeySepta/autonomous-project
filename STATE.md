@@ -60,8 +60,17 @@
 - Added 6 tests: `test_combine_two_biomes_contains_both_names`, `test_combine_three_biomes_contains_all_names`, `test_combine_uses_vocabulary_from_both`, `test_combine_show_biome_shows_all`, `test_combine_single_biome_equals_regular`, `test_combine_flag_exists_via_cli`
 - Tests increased from 44 to 50 total (18 todo + 32 landscape)
 
+### What was done (Session 8)
+- Fixed **verb conjugation** bug: `_conjugate(verb)` function added to `landscape.py` that correctly handles third-person singular verb forms
+  - Regular verbs get `+s` (whisper → whispers, glow → glows)
+  - Verbs ending in `s`, `sh`, `ch`, `x`, `z`, `o` get `+es` (crash → crashes, hiss → hisses, stretch → stretches, echo → echoes)
+  - Verbs ending in consonant + `y` get `y→ies` (fly → flies)
+- Updated `SENTENCE_TEMPLATES` to use `{verb_conjugated}` instead of bare `{verb}s` in all three middle templates
+- Added 4 new tests: `test_conjugate_adds_s_for_regular_verbs`, `test_conjugate_adds_es_for_sibilant_endings`, `test_conjugate_handles_y_endings`, `test_conjugate_output_no_bare_s_append_for_es_verbs`
+- Tests increased from 53 to 57 total (18 todo + 39 landscape)
+
 ### Current status
-Working. All 53 tests pass (18 todo + 35 landscape).
+Working. All 57 tests pass (18 todo + 39 landscape).
 
 ### Next likely steps
 - Add multi-paragraph or multi-sentence generation
