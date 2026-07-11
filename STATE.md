@@ -149,10 +149,21 @@
 - Added 6 tests: `test_mood_weight_one_equals_no_boost`, `test_mood_weight_zero_suppresses_mood_words`, `test_mood_weight_high_magnifies_boost`, `test_mood_weight_default_matches_mood_boost`, `test_mood_weight_produces_valid_output`, `test_mood_weight_flag_exists_via_cli`
 - Tests increased from 80 to 86 total (18 todo + 68 landscape)
 
+## 2026-07-11
+
+### What was done (Session 17)
+- Added **per-category mood-weight overrides** via 6 CLI flags (`--mood-weight-adjective`, `--mood-weight-element`, `--mood-weight-noun`, `--mood-weight-verb`, `--mood-weight-weather`, `--mood-weight-anomaly`) and `mood_weight_overrides` dict parameter to `generate_landscape()` — users can now control mood weight independently per category
+  - Each flag accepts a float (same as `--mood-weight`), overriding the global mood weight for that specific category
+  - Example: `--mood eerie --mood-weight 5 --mood-weight-adjective 20` = eerie mood with heavy adjective skew but normal boost for everything else
+- Added `mood_weight_overrides` dict parameter to `_word_weight()` — resolves `mood_weight_overrides.get(category, mood_weight)` for each mood-boost computation
+- Added `mood_weight_overrides` parameter to `_pick()` and `generate_landscape()` — threads through to `_word_weight()` the same way `bias_overrides` threads through to `_pick()`
+- Added 7 tests: `test_mood_weight_overrides_default_does_not_change_output`, `test_mood_weight_overrides_empty_dict_equals_no_override`, `test_mood_weight_overrides_produces_valid_output`, `test_mood_weight_adjective_override_high_boosts_mood_adjectives`, `test_mood_weight_element_override_zero_suppresses_mood_elements`, `test_mood_weight_overrides_multiple_categories`, `test_mood_weight_overrides_cli_flags_exist`
+- Tests increased from 102 to 109 total (18 todo + 91 landscape)
+
 ### Current status
-Working. All 102 tests pass (18 todo + 84 landscape).
+Working. All 109 tests pass (18 todo + 91 landscape).
 
 ### Next likely steps
-- Add per-category mood-weight control (e.g. `--mood-weight-adjective 10`)
 - Add new word categories (e.g. sounds, scents, textures)
 - Add an interactive/exploration mode
+- Add per-template-set control for individual slots

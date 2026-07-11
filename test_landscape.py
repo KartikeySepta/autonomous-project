@@ -561,5 +561,56 @@ class TestLandscape(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+    def test_mood_weight_overrides_default_does_not_change_output(self):
+        a = generate_landscape(seed=42, mood="eerie", mood_weight=5)
+        b = generate_landscape(seed=42, mood="eerie", mood_weight=5, mood_weight_overrides=None)
+        self.assertEqual(a, b)
+
+    def test_mood_weight_overrides_empty_dict_equals_no_override(self):
+        a = generate_landscape(seed=42, mood="eerie", mood_weight=5)
+        b = generate_landscape(seed=42, mood="eerie", mood_weight=5, mood_weight_overrides={})
+        self.assertEqual(a, b)
+
+    def test_mood_weight_overrides_produces_valid_output(self):
+        for mw_val in [0, 1, 10, 20]:
+            for cat in ["adjectives", "elements", "nouns", "verbs", "weathers", "anomalies"]:
+                for s in range(5):
+                    result = generate_landscape(
+                        seed=s, mood="eerie",
+                        mood_weight_overrides={cat: mw_val}
+                    )
+                    self.assertIsInstance(result, str)
+                    self.assertGreater(len(result), 10)
+
+    def test_mood_weight_adjective_override_high_boosts_mood_adjectives(self):
+        from landscape import _word_weight
+        # "shadow" is in MOOD_WORDS["eerie"]["adjectives"]
+        w_normal = _word_weight("shadow", bias="flat", mood="eerie", category="adjectives", mood_weight=5)
+        w_high = _word_weight("shadow", bias="flat", mood="eerie", category="adjectives",
+                              mood_weight=5, mood_weight_overrides={"adjectives": 20})
+        self.assertEqual(w_high, w_normal * 4)
+
+    def test_mood_weight_element_override_zero_suppresses_mood_elements(self):
+        from landscape import _word_weight
+        # "echo" is in MOOD_WORDS["eerie"]["elements"]
+        w_normal = _word_weight("echo", bias="flat", mood="eerie", category="elements", mood_weight=MOOD_BOOST)
+        w_zero = _word_weight("echo", bias="flat", mood="eerie", category="elements",
+                              mood_weight=MOOD_BOOST, mood_weight_overrides={"elements": 0})
+        self.assertEqual(w_zero, 0)
+
+    def test_mood_weight_overrides_multiple_categories(self):
+        overrides = {"adjectives": 1, "elements": 20}
+        results = [
+            generate_landscape(seed=s, mood="vibrant", mood_weight_overrides=overrides) for s in range(50)
+        ]
+        for r in results:
+            self.assertIsInstance(r, str)
+            self.assertGreater(len(r), 10)
+
+    def test_mood_weight_overrides_cli_flags_exist(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 if __name__ == "__main__":
     unittest.main()

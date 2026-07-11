@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-11 — Per-Category Mood-Weight Override (`--mood-weight-adjective`, etc.)
+
+### What
+Added 6 CLI flags (`--mood-weight-adjective`, `--mood-weight-element`, `--mood-weight-noun`, `--mood-weight-verb`, `--mood-weight-weather`, `--mood-weight-anomaly`) and a `mood_weight_overrides` dict parameter to `_word_weight()`, `_pick()`, and `generate_landscape()`. Each flag accepts a float and overrides the global `--mood-weight` for that word category.
+
+### Why
+The global `--mood-weight` flag (Session 14) applies the same multiplier to all 6 word categories. A user who wants strongly mood-biased adjectives (every adjective should feel eerie) but neutral weather (weather shouldn't be pushed toward any mood) had no way to express that. Per-category mood-weight overrides unlock fine-grained emotional control: "make adjectives heavily eerie but keep weather neutral and elements only slightly eerie."
+
+### Tradeoffs
+- Dict parameter rather than 6 individual kwargs — same pattern as `bias_overrides`, keeps the `generate_landscape()` signature from growing, easy to extend with new categories
+- Resolution happens in `_word_weight()` (one line: `effective_mw = (mood_weight_overrides or {}).get(category, mood_weight)`) — clean separation, same pattern as `bias_overrides`
+- Overrides compose with bias the same way global mood weight does: bias sets base weight, (possibly overridden) mood weight multiplies on top
+- This was the first suggested "next likely step" from Session 16's STATE.md — natural follow-up
+- Per-category mood-weight overrides make `mood_weight_overrides` the fourth dict parameter alongside `bias_overrides`, keeping the pattern consistent
+
 ## 2026-07-11 — Per-Category Bias Override (`--bias-adjective`, etc.)
 
 ### What

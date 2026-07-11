@@ -141,7 +141,7 @@ MOOD_WORDS = {
 }
 
 
-def _word_weight(word, bias="normal", mood=None, category=None, mood_weight=MOOD_BOOST):
+def _word_weight(word, bias="normal", mood=None, category=None, mood_weight=MOOD_BOOST, mood_weight_overrides=None):
     weights = BIAS_MODES[bias]
     if word in RARE_WORDS:
         base = weights["rare"]
@@ -151,7 +151,8 @@ def _word_weight(word, bias="normal", mood=None, category=None, mood_weight=MOOD
         base = weights["normal"]
     if mood and category and mood in MOOD_WORDS:
         if word in MOOD_WORDS[mood].get(category, []):
-            base *= mood_weight
+            effective_mw = (mood_weight_overrides or {}).get(category, mood_weight)
+            base *= effective_mw
     return base
 
 
@@ -370,12 +371,14 @@ BIOME_WORDS = {
 }
 
 
-def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bias_overrides=None):
+def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bias_overrides=None, mood_weight_overrides=None):
     """Pick a random word from the biome-specific pool(s) blended with the global pool.
     `biomes` is a list of biome names; words from all specified biomes are included.
     Words are weighted per the given bias mode and optionally boosted for mood.
     `bias_overrides` is an optional dict mapping category name -> bias mode,
-    allowing per-category bias that takes precedence over the global `bias`."""
+    allowing per-category bias that takes precedence over the global `bias`.
+    `mood_weight_overrides` is an optional dict mapping category name -> float,
+    allowing per-category mood-weight that takes precedence over the global `mood_weight`."""
     effective_bias = (bias_overrides or {}).get(category, bias)
     specific = []
     for b in biomes:
@@ -389,11 +392,11 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
         "anomalies": ANOMALIES,
     }[category]
     pool = specific + global_pool
-    weights = [_word_weight(w, effective_bias, mood, category, mood_weight) for w in pool]
+    weights = [_word_weight(w, effective_bias, mood, category, mood_weight, mood_weight_overrides) for w in pool]
     return random.choices(pool, weights=weights, k=1)[0]
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None):
     if seed is not None:
         random.seed(seed)
     elif show_seed:
@@ -413,21 +416,21 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         biomes = [chosen]
         display = chosen
 
-    adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides)
+    adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)
     opening_tmpl = _pick_template("opening", template_set)
     parts = [opening_tmpl.format(adj=adj, display=display)]
 
     for _ in range(max(detail, 0)):
-        element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides)
-        noun = _pick("nouns", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides)
-        verb = _pick("verbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides)
+        element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)
+        noun = _pick("nouns", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)
+        verb = _pick("verbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)
         verb_conjugated = _conjugate(verb)
         middle_tmpl = _pick_template("middle", template_set)
         parts.append(
             middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated)
         )
 
-        weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides)
+        weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)
         weather_tmpl = _pick_template("weather", template_set)
         parts.append(
             weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display)
@@ -435,7 +438,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
 
     if detail >= 1 and random.random() < 0.3:
         anomaly_tmpl = _pick_template("anomaly", template_set)
-        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides)))
+        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)
@@ -506,6 +509,18 @@ def main():
         "--mood-weight", type=float, default=MOOD_BOOST,
         help=f"Weight multiplier for mood-matched words (default: {MOOD_BOOST}, higher = stronger mood influence)",
     )
+    parser.add_argument("--mood-weight-adjective", type=float, default=None,
+        help="Per-category override: mood weight for adjectives (overrides --mood-weight)")
+    parser.add_argument("--mood-weight-element", type=float, default=None,
+        help="Per-category override: mood weight for elements")
+    parser.add_argument("--mood-weight-noun", type=float, default=None,
+        help="Per-category override: mood weight for nouns")
+    parser.add_argument("--mood-weight-verb", type=float, default=None,
+        help="Per-category override: mood weight for verbs")
+    parser.add_argument("--mood-weight-weather", type=float, default=None,
+        help="Per-category override: mood weight for weathers")
+    parser.add_argument("--mood-weight-anomaly", type=float, default=None,
+        help="Per-category override: mood weight for anomalies")
     parser.add_argument(
         "--show-seed", action="store_true",
         help="Display the random seed used for reproducibility",
@@ -530,8 +545,22 @@ def main():
         if val is not None:
             bias_overrides[internal_cat] = val
 
+    mood_weight_overrides = {}
+    mw_cat_map = {
+        "mood_weight_adjective": "adjectives",
+        "mood_weight_element": "elements",
+        "mood_weight_noun": "nouns",
+        "mood_weight_verb": "verbs",
+        "mood_weight_weather": "weathers",
+        "mood_weight_anomaly": "anomalies",
+    }
+    for flag_cat, internal_cat in mw_cat_map.items():
+        val = getattr(args, flag_cat)
+        if val is not None:
+            mood_weight_overrides[internal_cat] = val
+
     for i in range(args.count):
-        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, bias_overrides=bias_overrides))
+        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides))
         if args.count > 1 and i < args.count - 1:
             print()
 
