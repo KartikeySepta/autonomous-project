@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-11 — Per-Category Bias Override (`--bias-adjective`, etc.)
+
+### What
+Added 6 CLI flags (`--bias-adjective`, `--bias-element`, `--bias-noun`, `--bias-verb`, `--bias-weather`, `--bias-anomaly`) and a `bias_overrides` dict parameter to `generate_landscape()` and `_pick()`. Each flag accepts the same choices as `--bias` and overrides the global bias for that word category. The dict is built in `main()` from whichever flags the user set.
+
+### Why
+The global `--bias` flag (Session 11) applies the same weight distribution to all 6 word categories — adjectives, elements, nouns, verbs, weathers, anomalies. A user who wants rare, unusual adjectives but common, familiar nouns had no way to express that. Per-category overrides unlock fine-grained creative control: "use rare adjectives so descriptions feel surprising, but keep common weather patterns so the atmosphere stays recognizable."
+
+### Tradeoffs
+- Dict parameter rather than individual kwargs — keeps the `generate_landscape()` signature from growing by 6 more arguments and is easy to extend with new categories
+- CLI flag names use singular form (`--bias-adjective` not `--bias-adjectives`) — reads more naturally and the mapping to plural internal names is handled in `main()` via a small lookup dict
+- Resolution happens in `_pick()` (one line: `effective_bias = (bias_overrides or {}).get(category, bias)`) — clean separation: `_word_weight()` doesn't need to know about overrides at all
+- No per-category bias for mood weight yet — that would be a natural follow-up (`--mood-weight-adjective`, etc.)
+- Overrides compose with mood the same way global bias does: mood weight is a multiplier on top of the (potentially overridden) base weight
+
 ## 2026-07-11 — Template Set Selection (`--template-set`)
 
 ### What

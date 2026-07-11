@@ -2,6 +2,18 @@
 
 ## 2026-07-11
 
+### What was done (Session 16)
+- Added **per-category bias overrides** via 6 CLI flags (`--bias-adjective`, `--bias-element`, `--bias-noun`, `--bias-verb`, `--bias-weather`, `--bias-anomaly`) and `bias_overrides` parameter to `generate_landscape()` — users can now control word selection bias independently per category
+  - Each flag accepts the same choices as `--bias`: `normal`, `common`, `rare`, `flat`
+  - When set, overrides the global `--bias` for that specific category
+  - Example: `--bias common --bias-adjective rare` = common words everywhere except rare adjectives
+- Added `bias_overrides` dict parameter to `_pick()` — resolves `bias_overrides.get(category, global_bias)` for each pick
+- No changes to `_word_weight()` (it already accepts a bias string — the override is resolved before calling it)
+- Added 7 tests: `test_bias_overrides_default_does_not_change_output`, `test_bias_overrides_empty_dict_equals_no_override`, `test_bias_overrides_produces_valid_output`, `test_bias_adjective_override_rare_reduces_common_adjectives`, `test_bias_element_override_common_increases_common_elements`, `test_bias_overrides_multiple_categories`, `test_bias_overrides_flag_exists_via_cli`
+- Tests increased from 95 to 102 total (18 todo + 84 landscape)
+
+## 2026-07-11
+
 ### What was done (Session 15)
 - Added **`--template-set` CLI flag** and `template_set` parameter to `generate_landscape()` — exposes template selection control to users
   - `"random"` (default): random choice per slot (existing behavior, backward compatible)
@@ -138,7 +150,9 @@
 - Tests increased from 80 to 86 total (18 todo + 68 landscape)
 
 ### Current status
-Working. All 95 tests pass (18 todo + 77 landscape).
+Working. All 102 tests pass (18 todo + 84 landscape).
 
 ### Next likely steps
-- Add per-category bias control
+- Add per-category mood-weight control (e.g. `--mood-weight-adjective 10`)
+- Add new word categories (e.g. sounds, scents, textures)
+- Add an interactive/exploration mode

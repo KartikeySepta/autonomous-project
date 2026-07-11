@@ -370,10 +370,13 @@ BIOME_WORDS = {
 }
 
 
-def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST):
+def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bias_overrides=None):
     """Pick a random word from the biome-specific pool(s) blended with the global pool.
     `biomes` is a list of biome names; words from all specified biomes are included.
-    Words are weighted per the given bias mode and optionally boosted for mood."""
+    Words are weighted per the given bias mode and optionally boosted for mood.
+    `bias_overrides` is an optional dict mapping category name -> bias mode,
+    allowing per-category bias that takes precedence over the global `bias`."""
+    effective_bias = (bias_overrides or {}).get(category, bias)
     specific = []
     for b in biomes:
         specific.extend(BIOME_WORDS.get(b, {}).get(category, []))
@@ -386,11 +389,11 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST):
         "anomalies": ANOMALIES,
     }[category]
     pool = specific + global_pool
-    weights = [_word_weight(w, bias, mood, category, mood_weight) for w in pool]
+    weights = [_word_weight(w, effective_bias, mood, category, mood_weight) for w in pool]
     return random.choices(pool, weights=weights, k=1)[0]
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random"):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None):
     if seed is not None:
         random.seed(seed)
     elif show_seed:
@@ -410,21 +413,21 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         biomes = [chosen]
         display = chosen
 
-    adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight)
+    adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides)
     opening_tmpl = _pick_template("opening", template_set)
     parts = [opening_tmpl.format(adj=adj, display=display)]
 
     for _ in range(max(detail, 0)):
-        element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight)
-        noun = _pick("nouns", biomes, bias=bias, mood=mood, mood_weight=mood_weight)
-        verb = _pick("verbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight)
+        element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides)
+        noun = _pick("nouns", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides)
+        verb = _pick("verbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides)
         verb_conjugated = _conjugate(verb)
         middle_tmpl = _pick_template("middle", template_set)
         parts.append(
             middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated)
         )
 
-        weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight)
+        weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides)
         weather_tmpl = _pick_template("weather", template_set)
         parts.append(
             weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display)
@@ -432,7 +435,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
 
     if detail >= 1 and random.random() < 0.3:
         anomaly_tmpl = _pick_template("anomaly", template_set)
-        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight)))
+        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides)))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)
@@ -483,6 +486,18 @@ def main():
         "--bias", type=str, default="normal", choices=["normal", "common", "rare", "flat"],
         help="Word selection bias: normal (default), common (favors common words), rare (favors rare words), flat (uniform, no weighting)",
     )
+    parser.add_argument("--bias-adjective", type=str, default=None, choices=["normal", "common", "rare", "flat"],
+        help="Per-category override: bias for adjectives (overrides --bias)")
+    parser.add_argument("--bias-element", type=str, default=None, choices=["normal", "common", "rare", "flat"],
+        help="Per-category override: bias for elements")
+    parser.add_argument("--bias-noun", type=str, default=None, choices=["normal", "common", "rare", "flat"],
+        help="Per-category override: bias for nouns")
+    parser.add_argument("--bias-verb", type=str, default=None, choices=["normal", "common", "rare", "flat"],
+        help="Per-category override: bias for verbs")
+    parser.add_argument("--bias-weather", type=str, default=None, choices=["normal", "common", "rare", "flat"],
+        help="Per-category override: bias for weathers")
+    parser.add_argument("--bias-anomaly", type=str, default=None, choices=["normal", "common", "rare", "flat"],
+        help="Per-category override: bias for anomalies")
     parser.add_argument(
         "--mood", type=str, default=None, choices=list(MOOD_WORDS.keys()),
         help="Mood overlay that boosts tone-matched words (e.g. eerie, vibrant, desolate)",
@@ -501,8 +516,22 @@ def main():
     )
     args = parser.parse_args()
 
+    bias_overrides = {}
+    cat_map = {
+        "bias_adjective": "adjectives",
+        "bias_element": "elements",
+        "bias_noun": "nouns",
+        "bias_verb": "verbs",
+        "bias_weather": "weathers",
+        "bias_anomaly": "anomalies",
+    }
+    for flag_cat, internal_cat in cat_map.items():
+        val = getattr(args, flag_cat)
+        if val is not None:
+            bias_overrides[internal_cat] = val
+
     for i in range(args.count):
-        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set))
+        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, bias_overrides=bias_overrides))
         if args.count > 1 and i < args.count - 1:
             print()
 

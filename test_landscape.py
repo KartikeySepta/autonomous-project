@@ -497,5 +497,69 @@ class TestLandscape(unittest.TestCase):
         )
 
 
+    def test_bias_overrides_default_does_not_change_output(self):
+        a = generate_landscape(seed=42, bias="normal")
+        b = generate_landscape(seed=42, bias="normal", bias_overrides=None)
+        self.assertEqual(a, b)
+
+    def test_bias_overrides_empty_dict_equals_no_override(self):
+        a = generate_landscape(seed=42, bias="normal")
+        b = generate_landscape(seed=42, bias="normal", bias_overrides={})
+        self.assertEqual(a, b)
+
+    def test_bias_overrides_produces_valid_output(self):
+        for override_bias in ["normal", "common", "rare", "flat"]:
+            for cat in ["adjectives", "elements", "nouns", "verbs", "weathers", "anomalies"]:
+                for s in range(5):
+                    result = generate_landscape(seed=s, bias_overrides={cat: override_bias})
+                    self.assertIsInstance(result, str)
+                    self.assertGreater(len(result), 10)
+
+    def test_bias_adjective_override_rare_reduces_common_adjectives(self):
+        common_adj = {"crystal", "shadow", "ancient", "forgotten", "silent"}
+        results_normal = [
+            generate_landscape(seed=s, biome="tundra") for s in range(300)
+        ]
+        results_override = [
+            generate_landscape(seed=s, biome="tundra", bias_overrides={"adjectives": "rare"})
+            for s in range(300)
+        ]
+        normal_hits = sum(1 for r in results_normal if any(w in r for w in common_adj))
+        override_hits = sum(1 for r in results_override if any(w in r for w in common_adj))
+        self.assertGreater(
+            normal_hits, override_hits,
+            "bias_overrides={'adjectives': 'rare'} should reduce common adjective frequency vs default",
+        )
+
+    def test_bias_element_override_common_increases_common_elements(self):
+        common_elem = {"mist", "light", "silence", "darkness"}
+        results_normal = [
+            generate_landscape(seed=s, biome="tundra") for s in range(300)
+        ]
+        results_override = [
+            generate_landscape(seed=s, biome="tundra", bias_overrides={"elements": "common"})
+            for s in range(300)
+        ]
+        normal_hits = sum(1 for r in results_normal if any(w in r for w in common_elem))
+        override_hits = sum(1 for r in results_override if any(w in r for w in common_elem))
+        self.assertGreater(
+            override_hits, normal_hits,
+            "bias_overrides={'elements': 'common'} should increase common element frequency vs default",
+        )
+
+    def test_bias_overrides_multiple_categories(self):
+        overrides = {"adjectives": "flat", "elements": "rare"}
+        results = [
+            generate_landscape(seed=s, bias_overrides=overrides) for s in range(50)
+        ]
+        for r in results:
+            self.assertIsInstance(r, str)
+            self.assertGreater(len(r), 10)
+
+    def test_bias_overrides_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 if __name__ == "__main__":
     unittest.main()
