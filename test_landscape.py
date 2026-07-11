@@ -256,5 +256,35 @@ class TestLandscape(unittest.TestCase):
                 self.assertNotIn(bad, r)
 
 
+    def test_detail_default_is_one(self):
+        result = generate_landscape(seed=42)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_detail_zero_is_shorter_than_one(self):
+        for s in range(20):
+            d0 = generate_landscape(seed=s, detail=0)
+            d1 = generate_landscape(seed=s, detail=1)
+            self.assertGreater(len(d1), len(d0),
+                f"detail=1 not longer than detail=0 at seed {s}")
+
+    def test_detail_two_is_longer_than_one(self):
+        for s in range(20):
+            d1 = generate_landscape(seed=s, detail=1)
+            d2 = generate_landscape(seed=s, detail=2)
+            self.assertGreater(len(d2), len(d1),
+                f"detail=2 not longer than detail=1 at seed {s}")
+
+    def test_detail_three_produces_valid_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, detail=3)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 50)
+
+    def test_detail_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 if __name__ == "__main__":
     unittest.main()

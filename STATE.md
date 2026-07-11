@@ -77,10 +77,21 @@
 - Added 2 tests: `test_template_variety_weather_has_varied_structure`, `test_template_variety_anomaly_has_varied_structure`
 - Tests increased from 57 to 59 total (18 todo + 41 landscape)
 
+### What was done (Session 10)
+- Added **multi-sentence generation** via `--detail`/`-d` CLI flag and `detail` parameter to `generate_landscape()`
+  - `detail=1` (default): opening + 1 middle + 1 weather + optional anomaly (backward compatible)
+  - `detail=0`: opening sentence only (minimal mode)
+  - `detail=2`: opening + 2 middle + 2 weather + optional anomaly
+  - `detail=3`: opening + 3 middle + 3 weather + optional anomaly
+- Refactored `generate_landscape()` to loop over middle+weather pairs, picking fresh words and templates for each pair
+  - Each additional sentence gets its own random word pick and template choice, so sentences within the same landscape vary in vocabulary and structure
+- Added 5 tests: `test_detail_default_is_one`, `test_detail_zero_is_shorter_than_one`, `test_detail_two_is_longer_than_one`, `test_detail_three_produces_valid_output`, `test_detail_flag_exists_via_cli`
+- Tests increased from 59 to 64 total (18 todo + 46 landscape)
+
 ### Current status
-Working. All 59 tests pass (18 todo + 41 landscape).
+Working. All 64 tests pass (18 todo + 46 landscape).
 
 ### Next likely steps
-- Add multi-paragraph or multi-sentence generation
 - Expose weight tiers via CLI (e.g. `--weight-bias` to skew toward common or rare)
 - Expose template set choice via CLI flag (e.g. `--template-set`)
+- Add a mood/emotion overlay that biases word selection toward a specific tone

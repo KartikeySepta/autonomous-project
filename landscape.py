@@ -295,7 +295,7 @@ def _pick(category, biomes):
     return random.choices(pool, weights=weights, k=1)[0]
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1):
     if seed is not None:
         random.seed(seed)
 
@@ -313,23 +313,26 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         display = chosen
 
     adj = _pick("adjectives", biomes)
-    element = _pick("elements", biomes)
-    noun = _pick("nouns", biomes)
-    verb = _pick("verbs", biomes)
-    weather = _pick("weathers", biomes)
-
     opening_tmpl = random.choice(SENTENCE_TEMPLATES["opening"])
-    middle_tmpl = random.choice(SENTENCE_TEMPLATES["middle"])
-    weather_tmpl = random.choice(SENTENCE_TEMPLATES["weather"])
+    parts = [opening_tmpl.format(adj=adj, display=display)]
 
-    verb_conjugated = _conjugate(verb)
-    parts = [
-        opening_tmpl.format(adj=adj, display=display),
-        middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated),
-        weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display),
-    ]
+    for _ in range(max(detail, 0)):
+        element = _pick("elements", biomes)
+        noun = _pick("nouns", biomes)
+        verb = _pick("verbs", biomes)
+        verb_conjugated = _conjugate(verb)
+        middle_tmpl = random.choice(SENTENCE_TEMPLATES["middle"])
+        parts.append(
+            middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated)
+        )
 
-    if random.random() < 0.3:
+        weather = _pick("weathers", biomes)
+        weather_tmpl = random.choice(SENTENCE_TEMPLATES["weather"])
+        parts.append(
+            weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display)
+        )
+
+    if detail >= 1 and random.random() < 0.3:
         anomaly_tmpl = random.choice(SENTENCE_TEMPLATES["anomaly"])
         parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes)))
 
@@ -372,10 +375,14 @@ def main():
         "--combine", "-c", type=str, default=None,
         help="Combine multiple biomes (comma-separated, e.g. 'forest,desert')",
     )
+    parser.add_argument(
+        "--detail", "-d", type=int, default=1, choices=[0, 1, 2, 3],
+        help="Number of middle/weather sentence pairs (0-3, default: 1)",
+    )
     args = parser.parse_args()
 
     for i in range(args.count):
-        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine))
+        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail))
         if args.count > 1 and i < args.count - 1:
             print()
 
