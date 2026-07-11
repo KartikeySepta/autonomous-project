@@ -203,7 +203,7 @@ SENTENCE_TEMPLATES = {
     "opening": [
         "A vast {adj} {display} stretches before you.",
         "Before you, a {adj} {display} comes into view.",
-        "The {adj} {display} lies ahead.",
+        "The {adj} {display} lies {adverb} ahead.",
     ],
     "middle": [
         "{Element} {verb_conjugated} between the {noun}.",

@@ -252,11 +252,10 @@
 
 ## 2026-07-11
 
-### What was done (Session 27)
-- Added **`mood_weight` to JSON output** — the `--mood-weight` parameter was missing from the JSON format even though every other major parameter (`bias`, `detail`, `template_set`, `anomaly_prob`) was included. Now `mood_weight` appears in JSON output at its current value (default 5 or any custom setting).
-- One-line change in `landscape.py`: added `data["mood_weight"] = mood_weight` to the JSON block.
-- Added 3 tests: `test_format_json_includes_mood_weight`, `test_format_json_includes_mood_weight_without_mood`, `test_format_json_mood_weight_reflects_custom_value`
-- Tests increased from 164 to 167 total (18 todo + 149 landscape)
+### What was done (Session 28)
+- Added **`{adverb}` to the third opening template** — changed `"The {adj} {display} lies ahead."` to `"The {adj} {display} lies {adverb} ahead."` in `SENTENCE_TEMPLATES["opening"]`. The adverb is already picked per-landscape and passed to all template format calls, but only middle templates used it. Now the opening template can produce lines like "The crystal forest lies silently ahead.", making the opener more expressive.
+- No new tests needed — existing template tests (`test_output_starts_with_valid_opening`, `test_template_set_third_uses_third_opening`, `test_template_set_third_weather_has_expected_pattern`) all still pass because the opening start ("The ") and index 2 are unchanged.
+- Tests: still 167 (18 todo + 149 landscape)
 
 ### Current status
 Working. All 167 tests pass (18 todo + 149 landscape).
