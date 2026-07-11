@@ -7,6 +7,7 @@ BIOMES = [
     "swamp", "cave system", "plain", "volcanic field", "coral reef",
 ]
 
+# Global fallback word pools
 ADJECTIVES = [
     "crystal", "shadow", "ember", "frost", "silent", "ancient",
     "forgotten", "bone", "iron", "glass", "crimson", "amethyst",
@@ -50,17 +51,199 @@ ANOMALIES = [
     "Everything is slightly out of focus.",
 ]
 
+# Biome-specific word enrichments — blended with global pools for more evocative output
+BIOME_WORDS = {
+    "forest": {
+        "adjectives": ["dappled", "verdant", "whispering", "mossy", "deep"],
+        "elements": ["birdsong", "leaf rustle", "sap scent", "shade"],
+        "nouns": ["canopies", "trunks", "glades", "ferns", "branches"],
+        "verbs": ["rustle", "whisper", "breathe", "creak", "shade"],
+        "weathers": [
+            "sunlight filters through the canopy in golden beams",
+            "a soft wind stirs the leaves overhead",
+            "the undergrowth glistens with morning dew",
+        ],
+        "anomalies": [
+            "Every leaf faces the same direction.",
+            "The rings on every stump glow faintly.",
+            "Fungal spores hang in the air like tiny lanterns.",
+        ],
+    },
+    "desert": {
+        "adjectives": ["scorched", "barren", "windswept", "blazing", "golden"],
+        "elements": ["heat shimmer", "sand grain", "dry air", "sun flare"],
+        "nouns": ["dunes", "mesas", "canyons", "plateaus", "oases"],
+        "verbs": ["bake", "crack", "drift", "shimmer", "scour"],
+        "weathers": [
+            "heat ripples rise from the sand in waves",
+            "a hot wind scours the dunes",
+            "the sun beats down without mercy",
+        ],
+        "anomalies": [
+            "The sand falls upward here.",
+            "A second sun hangs low on the horizon.",
+            "The dunes form perfect geometric spirals.",
+        ],
+    },
+    "ocean": {
+        "adjectives": ["deep", "abyssal", "endless", "bioluminescent", "saline"],
+        "elements": ["salt spray", "current pull", "ocean scent", "pressure"],
+        "nouns": ["trenches", "currents", "reefs", "abysses", "swells"],
+        "verbs": ["crash", "surge", "drift", "plunge", "churn"],
+        "weathers": [
+            "waves roll in from an unseen horizon",
+            "a fine salt mist hangs in the air",
+            "the water is eerily still and black",
+        ],
+        "anomalies": [
+            "The water glows with an inner light.",
+            "Fish swim in geometric formation overhead.",
+            "The surface is a mirror to a different sky.",
+        ],
+    },
+    "tundra": {
+        "adjectives": ["frozen", "barren", "windswept", "auroral", "pale"],
+        "elements": ["frost", "aurora light", "wind howl", "hoar"],
+        "nouns": ["ice fields", "glaciers", "crevasses", "permafrost", "snowdrifts"],
+        "verbs": ["freeze", "howl", "crack", "gleam", "drift"],
+        "weathers": [
+            "the aurora pulses in silent sheets of green",
+            "a biting wind carries ice crystals",
+            "snow falls in a world of white and silence",
+        ],
+        "anomalies": [
+            "The ice sings when the wind blows across it.",
+            "Shapes move beneath the frozen surface.",
+            "The aurora casts shadows that move on their own.",
+        ],
+    },
+    "mountain range": {
+        "adjectives": ["jagged", "towering", "snow-capped", "ancient", "granite"],
+        "elements": ["stone echo", "thin air", "alpine scent", "cold light"],
+        "nouns": ["peaks", "ridges", "cliffs", "valleys", "crags"],
+        "verbs": ["tower", "loom", "echo", "rise", "cut"],
+        "weathers": [
+            "wind howls through the narrow passes",
+            "clouds cling to the peaks like shawls",
+            "thin air carries every sound for miles",
+        ],
+        "anomalies": [
+            "The peaks rearrange themselves at night.",
+            "Echoes return minutes after you speak.",
+            "A stone bridge arcs between clouds.",
+        ],
+    },
+    "swamp": {
+        "adjectives": ["fetid", "murky", "choked", "rotting", "drowned"],
+        "elements": ["marsh gas", "decay scent", "still water", "humidity"],
+        "nouns": ["bayous", "mangroves", "bogs", "quicksand", "thickets"],
+        "verbs": ["bubble", "fester", "seep", "creep", "stagnate"],
+        "weathers": [
+            "fog rolls low over the black water",
+            "the air is thick and heavy with moisture",
+            "gnats swarm in the stagnant heat",
+        ],
+        "anomalies": [
+            "Will-o'-wisps flicker in perfect constellations.",
+            "The water reflects a world that no longer exists.",
+            "Bubbles rise spelling out words in an old language.",
+        ],
+    },
+    "cave system": {
+        "adjectives": ["subterranean", "echoing", "pitch-dark", "limestone", "dripping"],
+        "elements": ["drip sound", "stone scent", "darkness", "cave wind"],
+        "nouns": ["stalactites", "caverns", "tunnels", "chambers", "fissures"],
+        "verbs": ["drip", "echo", "glimmer", "resonate", "collapse"],
+        "weathers": [
+            "water drips in a slow, endless rhythm",
+            "a draft carries the scent of deep earth",
+            "the darkness presses in from all sides",
+        ],
+        "anomalies": [
+            "The crystals here glow without a light source.",
+            "Passages rearrange when you blink.",
+            "The cave breathes — a slow, deep rhythm.",
+        ],
+    },
+    "plain": {
+        "adjectives": ["endless", "golden", "wide", "wind-scoured", "open"],
+        "elements": ["grass rustle", "open sky", "distant haze", "earth scent"],
+        "nouns": ["grasses", "horizons", "fields", "bluffs", "meadows"],
+        "verbs": ["wave", "stretch", "roll", "sway", "stretch"],
+        "weathers": [
+            "a warm wind sends ripples across the grass",
+            "clouds cast slow-moving shadows on the land",
+            "the sky stretches forever, blue and empty",
+        ],
+        "anomalies": [
+            "The grass bends in patterns that spell something.",
+            "There is no horizon — land and sky merge as one.",
+            "Distant figures never get closer no matter how far you walk.",
+        ],
+    },
+    "volcanic field": {
+        "adjectives": ["scorched", "smoldering", "obsidian", "sulfurous", "cracked"],
+        "elements": ["sulfur scent", "heat haze", "lava glow", "ash fall"],
+        "nouns": ["vents", "fissures", "calderas", "magma chambers", "slag heaps"],
+        "verbs": ["smolder", "hiss", "crack", "erupt", "seethe"],
+        "weathers": [
+            "ash falls like gray snow from a black sky",
+            "steam vents hiss in ragged chorus",
+            "lava illuminates the smoke from below",
+        ],
+        "anomalies": [
+            "Lava flows uphill without reason.",
+            "Obsidian shards show visions of the past.",
+            "The heat does not burn — it freezes.",
+        ],
+    },
+    "coral reef": {
+        "adjectives": ["luminous", "vibrant", "underwater", "reef-born", "crystalline"],
+        "elements": ["coral scent", "underwater light", "current hum", "salt"],
+        "nouns": ["polyps", "anemones", "lagoon beds", "drop-offs", "groves"],
+        "verbs": ["pulse", "drift", "glow", "wave", "filter"],
+        "weathers": [
+            "sunlight dances on the water in shifting patterns",
+            "warm currents drift through the coral canyons",
+            "the water is clear and impossibly blue",
+        ],
+        "anomalies": [
+            "The coral pulses in unison like a single heart.",
+            "Fish leave trails of light as they swim.",
+            "Every shell contains a tiny, perfect melody.",
+        ],
+    },
+}
 
-def generate_landscape(seed=None):
+
+def _pick(category, biome):
+    """Pick a random word from the biome-specific pool blended with the global pool."""
+    specific = BIOME_WORDS.get(biome, {}).get(category, [])
+    global_pool = {
+        "adjectives": ADJECTIVES,
+        "elements": ELEMENTS,
+        "nouns": NOUNS,
+        "verbs": VERBS,
+        "weathers": WEATHERS,
+        "anomalies": ANOMALIES,
+    }[category]
+    return random.choice(specific + global_pool)
+
+
+def generate_landscape(seed=None, biome=None):
     if seed is not None:
         random.seed(seed)
 
-    biome = random.choice(BIOMES)
-    adj = random.choice(ADJECTIVES)
-    element = random.choice(ELEMENTS)
-    noun = random.choice(NOUNS)
-    verb = random.choice(VERBS)
-    weather = random.choice(WEATHERS)
+    if biome is None:
+        biome = random.choice(BIOMES)
+    else:
+        biome = biome.lower()
+
+    adj = _pick("adjectives", biome)
+    element = _pick("elements", biome)
+    noun = _pick("nouns", biome)
+    verb = _pick("verbs", biome)
+    weather = _pick("weathers", biome)
 
     parts = [
         f"A vast {adj} {biome} stretches before you.",
@@ -69,7 +252,7 @@ def generate_landscape(seed=None):
     ]
 
     if random.random() < 0.3:
-        parts.append(random.choice(ANOMALIES))
+        parts.append(_pick("anomalies", biome))
 
     return " ".join(parts)
 
@@ -87,10 +270,14 @@ def main():
         "--seed", type=int, default=None,
         help="Random seed for reproducible output",
     )
+    parser.add_argument(
+        "--biome", type=str, default=None,
+        help="Force a specific biome (overrides random selection)",
+    )
     args = parser.parse_args()
 
     for i in range(args.count):
-        print(generate_landscape(seed=args.seed))
+        print(generate_landscape(seed=args.seed, biome=args.biome))
         if args.count > 1 and i < args.count - 1:
             print()
 
