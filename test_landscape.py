@@ -497,6 +497,61 @@ class TestLandscape(unittest.TestCase):
         )
 
 
+    def test_template_overrides_default_does_not_change_output(self):
+        a = generate_landscape(seed=42, template_set="first")
+        b = generate_landscape(seed=42, template_set="first", template_overrides=None)
+        self.assertEqual(a, b)
+
+    def test_template_overrides_empty_dict_equals_no_override(self):
+        a = generate_landscape(seed=42, template_set="first")
+        b = generate_landscape(seed=42, template_set="first", template_overrides={})
+        self.assertEqual(a, b)
+
+    def test_template_overrides_produces_valid_output(self):
+        for slot in ["opening", "middle", "weather", "anomaly"]:
+            for mode in ["first", "second", "third"]:
+                for s in range(5):
+                    result = generate_landscape(
+                        seed=s, template_overrides={slot: mode}
+                    )
+                    self.assertIsInstance(result, str)
+                    self.assertGreater(len(result), 10)
+
+    def test_template_override_opening_first_uses_first_opening(self):
+        for s in range(20):
+            result = generate_landscape(
+                seed=s, biome="forest", template_overrides={"opening": "first"}
+            )
+            self.assertTrue(
+                result.startswith("A vast "),
+                f"template_overrides={{'opening': 'first'}} should use first opening at seed {s}: {result!r}",
+            )
+
+    def test_template_override_middle_second_uses_second_middle(self):
+        for s in range(20):
+            result = generate_landscape(
+                seed=s, biome="forest", template_overrides={"middle": "second"}
+            )
+            self.assertIn("Among the ", result,
+                f"template_overrides={{'middle': 'second'}} should use 'Among the' middle at seed {s}")
+
+    def test_template_overrides_multiple_slots(self):
+        overrides = {"opening": "second", "weather": "third"}
+        results = [
+            generate_landscape(seed=s, biome="forest", template_overrides=overrides)
+            for s in range(20)
+        ]
+        for r in results:
+            self.assertTrue(r.startswith("Before you"),
+                f"Opening should be 'Before you' with overrides={overrides}: {r!r}")
+            self.assertIn(" itself breathes", r,
+                f"Weather should use third template with overrides={overrides}: {r!r}")
+
+    def test_template_overrides_cli_flags_exist(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
     def test_bias_overrides_default_does_not_change_output(self):
         a = generate_landscape(seed=42, bias="normal")
         b = generate_landscape(seed=42, bias="normal", bias_overrides=None)

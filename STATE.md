@@ -160,10 +160,16 @@
 - Added 7 tests: `test_mood_weight_overrides_default_does_not_change_output`, `test_mood_weight_overrides_empty_dict_equals_no_override`, `test_mood_weight_overrides_produces_valid_output`, `test_mood_weight_adjective_override_high_boosts_mood_adjectives`, `test_mood_weight_element_override_zero_suppresses_mood_elements`, `test_mood_weight_overrides_multiple_categories`, `test_mood_weight_overrides_cli_flags_exist`
 - Tests increased from 102 to 109 total (18 todo + 91 landscape)
 
-### Current status
-Working. All 109 tests pass (18 todo + 91 landscape).
+## 2026-07-11
 
-### Next likely steps
-- Add new word categories (e.g. sounds, scents, textures)
-- Add an interactive/exploration mode
-- Add per-template-set control for individual slots
+### What was done (Session 18)
+- Added **per-slot template overrides** via 4 CLI flags (`--template-opening`, `--template-middle`, `--template-weather`, `--template-anomaly`) and `template_overrides` dict parameter to `generate_landscape()` — users can now control template selection independently per slot
+  - Each flag accepts the same choices as `--template-set`: `random`, `first`, `second`, `third`
+  - When set, overrides the global `--template-set` for that specific slot
+  - Example: `--template-set first --template-middle random` = first template for all slots except middle, which stays random
+- Added `template_overrides` dict parameter to `_pick_template()` — resolves `template_overrides.get(slot, template_set)` for each pick, same pattern as `bias_overrides` and `mood_weight_overrides`
+- Added 7 tests: `test_template_overrides_default_does_not_change_output`, `test_template_overrides_empty_dict_equals_no_override`, `test_template_overrides_produces_valid_output`, `test_template_override_opening_first_uses_first_opening`, `test_template_override_middle_second_uses_second_middle`, `test_template_overrides_multiple_slots`, `test_template_overrides_cli_flags_exist`
+- Tests increased from 109 to 116 total (18 todo + 98 landscape)
+
+### Current status
+Working. All 116 tests pass (18 todo + 98 landscape).

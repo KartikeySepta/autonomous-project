@@ -173,11 +173,12 @@ TEMPLATE_SETS = {
 }
 
 
-def _pick_template(slot, template_set):
+def _pick_template(slot, template_set, template_overrides=None):
+    effective = (template_overrides or {}).get(slot, template_set)
     templates = SENTENCE_TEMPLATES[slot]
-    if template_set == "random":
+    if effective == "random":
         return random.choice(templates)
-    idx = min(TEMPLATE_SETS[template_set], len(templates) - 1)
+    idx = min(TEMPLATE_SETS[effective], len(templates) - 1)
     return templates[idx]
 
 
@@ -396,7 +397,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
     return random.choices(pool, weights=weights, k=1)[0]
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None):
     if seed is not None:
         random.seed(seed)
     elif show_seed:
@@ -417,7 +418,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         display = chosen
 
     adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)
-    opening_tmpl = _pick_template("opening", template_set)
+    opening_tmpl = _pick_template("opening", template_set, template_overrides)
     parts = [opening_tmpl.format(adj=adj, display=display)]
 
     for _ in range(max(detail, 0)):
@@ -425,19 +426,19 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         noun = _pick("nouns", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)
         verb = _pick("verbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)
         verb_conjugated = _conjugate(verb)
-        middle_tmpl = _pick_template("middle", template_set)
+        middle_tmpl = _pick_template("middle", template_set, template_overrides)
         parts.append(
             middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated)
         )
 
         weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)
-        weather_tmpl = _pick_template("weather", template_set)
+        weather_tmpl = _pick_template("weather", template_set, template_overrides)
         parts.append(
             weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display)
         )
 
     if detail >= 1 and random.random() < 0.3:
-        anomaly_tmpl = _pick_template("anomaly", template_set)
+        anomaly_tmpl = _pick_template("anomaly", template_set, template_overrides)
         parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides)))
 
     joiner = "\n" if fmt == "poetic" else " "
@@ -529,6 +530,14 @@ def main():
         "--template-set", type=str, default="random", choices=list(TEMPLATE_SETS.keys()),
         help="Template selection mode: random (default), first, second, or third",
     )
+    parser.add_argument("--template-opening", type=str, default=None, choices=list(TEMPLATE_SETS.keys()),
+        help="Per-slot override: template for opening (overrides --template-set)")
+    parser.add_argument("--template-middle", type=str, default=None, choices=list(TEMPLATE_SETS.keys()),
+        help="Per-slot override: template for middle sentences")
+    parser.add_argument("--template-weather", type=str, default=None, choices=list(TEMPLATE_SETS.keys()),
+        help="Per-slot override: template for weather sentences")
+    parser.add_argument("--template-anomaly", type=str, default=None, choices=list(TEMPLATE_SETS.keys()),
+        help="Per-slot override: template for anomaly sentences")
     args = parser.parse_args()
 
     bias_overrides = {}
@@ -559,8 +568,20 @@ def main():
         if val is not None:
             mood_weight_overrides[internal_cat] = val
 
+    template_overrides = {}
+    tmpl_slot_map = {
+        "template_opening": "opening",
+        "template_middle": "middle",
+        "template_weather": "weather",
+        "template_anomaly": "anomaly",
+    }
+    for flag_cat, slot in tmpl_slot_map.items():
+        val = getattr(args, flag_cat)
+        if val is not None:
+            template_overrides[slot] = val
+
     for i in range(args.count):
-        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides))
+        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides))
         if args.count > 1 and i < args.count - 1:
             print()
 

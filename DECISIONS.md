@@ -15,6 +15,21 @@ The global `--mood-weight` flag (Session 14) applies the same multiplier to all 
 - This was the first suggested "next likely step" from Session 16's STATE.md — natural follow-up
 - Per-category mood-weight overrides make `mood_weight_overrides` the fourth dict parameter alongside `bias_overrides`, keeping the pattern consistent
 
+## 2026-07-11 — Per-Slot Template Override (`--template-opening`, `--template-middle`, etc.)
+
+### What
+Added 4 CLI flags (`--template-opening`, `--template-middle`, `--template-weather`, `--template-anomaly`) and a `template_overrides` dict parameter to `_pick_template()` and `generate_landscape()`. Each flag accepts the same choices as `--template-set` (`random`, `first`, `second`, `third`) and overrides the global `--template-set` for that specific template slot.
+
+### Why
+The global `--template-set` flag (Session 15) applies the same template selection mode to all 4 slots (opening, middle, weather, anomaly). A user who wants a fixed "first" opening for consistency but randomized middle/weather sentences for variety had no way to express that. Per-slot template overrides unlock fine-grained structural control: "keep the opening consistent but let the rest vary."
+
+### Tradeoffs
+- Dict parameter rather than 4 individual kwargs — same pattern as `bias_overrides` and `mood_weight_overrides`, keeps the signature clean
+- Resolution happens in `_pick_template()` (one line: `effective = (template_overrides or {}).get(slot, template_set)`) — consistent with the existing override pattern
+- Backward compatible: `template_overrides=None` or `{}` produces identical output to the existing behavior for the same seed
+- This was the third suggested "next likely step" from Session 17's STATE.md — completes the per-slot template control feature
+- Per-slot template overrides make `template_overrides` the fifth dict parameter, continuing the established pattern for fine-grained override control
+
 ## 2026-07-11 — Per-Category Bias Override (`--bias-adjective`, etc.)
 
 ### What
