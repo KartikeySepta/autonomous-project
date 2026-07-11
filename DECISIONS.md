@@ -15,6 +15,19 @@ The global `--mood-weight` flag (Session 14) applies the same multiplier to all 
 - This was the first suggested "next likely step" from Session 16's STATE.md — natural follow-up
 - Per-category mood-weight overrides make `mood_weight_overrides` the fourth dict parameter alongside `bias_overrides`, keeping the pattern consistent
 
+## 2026-07-11 — Configurable Anomaly Probability (`--anomaly-prob`)
+
+### What
+Added `--anomaly-prob` CLI flag and `anomaly_prob` parameter to `generate_landscape()` — a float from 0.0 to 1.0 that controls the probability of an anomaly appearing in the output (default: 0.3, preserving existing behavior).
+
+### Why
+The anomaly chance was the last hardcoded magic number in the generation logic. Unlike every other creative control (bias, mood, mood-weight, template-set, detail), there was no way to control whether anomalies appeared frequently, rarely, or never. This gap was especially noticeable when using `--detail 3` for rich vignettes — anomalies felt too rare or too frequent depending on the use case. Making it configurable follows the project's established pattern of turning constants into user-facing parameters.
+
+### Tradeoffs
+- Single global probability rather than per-detail-level probabilities — keeps the API simple; a user who wants anomalies only at high detail levels can compose with `--detail` themselves
+- No per-category override for anomaly probability (unlike bias/mood-weight overrides) — anomaly is a single binary event per landscape, not a per-category concept, so overrides don't apply
+- The default 0.3 matches the previous hardcoded value exactly, so all existing seed-based output is preserved
+
 ## 2026-07-11 — Cross-Sentence Word Dedup
 
 ### What

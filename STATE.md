@@ -171,5 +171,14 @@
 - Added 5 tests: `test_word_dedup_via_used_words_parameter`, `test_word_dedup_across_multiple_picks_same_category`, `test_word_dedup_across_categories`, `test_word_dedup_without_used_words_still_works`, `test_word_dedup_still_produces_valid_output`, `test_word_dedup_does_not_break_format_modes`
 - Tests increased from 116 to 122 total (18 todo + 104 landscape)
 
+## 2026-07-11
+
+### What was done (Session 20)
+- Added **configurable anomaly probability** via `--anomaly-prob` CLI flag and `anomaly_prob` parameter to `generate_landscape()` — users can now control how often anomalies appear (0.0 = never, 1.0 = always, default 0.3 preserves existing behavior)
+  - Replaced the hardcoded `random.random() < 0.3` with `random.random() < anomaly_prob`
+  - This was the last remaining magic number in the generation logic
+- Added 5 tests: `test_anomaly_prob_default_works`, `test_anomaly_prob_zero_suppresses_anomalies`, `test_anomaly_prob_one_always_has_anomaly`, `test_anomaly_prob_produces_valid_output`, `test_anomaly_prob_flag_exists_via_cli`
+- Tests increased from 122 to 127 total (18 todo + 109 landscape)
+
 ### Current status
-Working. All 122 tests pass (18 todo + 104 landscape).
+Working. All 127 tests pass (18 todo + 109 landscape).

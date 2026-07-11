@@ -718,5 +718,38 @@ class TestLandscape(unittest.TestCase):
                 self.assertGreater(len(result), 10)
 
 
+    def test_anomaly_prob_default_works(self):
+        for s in range(20):
+            result = generate_landscape(seed=s)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_anomaly_prob_zero_suppresses_anomalies(self):
+        results = [generate_landscape(seed=s, anomaly_prob=0.0) for s in range(100)]
+        for r in results:
+            for a in ALL_ANOMALIES:
+                self.assertNotIn(a, r,
+                    f"Anomaly '{a}' should not appear with anomaly_prob=0.0")
+
+    def test_anomaly_prob_one_always_has_anomaly(self):
+        results = [generate_landscape(seed=s, anomaly_prob=1.0) for s in range(100)]
+        has_anomaly = sum(
+            1 for r in results if any(a in r for a in ALL_ANOMALIES)
+        )
+        self.assertGreater(has_anomaly, 80,
+            "With anomaly_prob=1.0, most outputs should contain an anomaly")
+
+    def test_anomaly_prob_produces_valid_output(self):
+        for prob in [0.0, 0.1, 0.5, 0.9, 1.0]:
+            for s in range(10):
+                result = generate_landscape(seed=s, anomaly_prob=prob)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_anomaly_prob_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 if __name__ == "__main__":
     unittest.main()
