@@ -1,5 +1,21 @@
 # Decisions
 
+## 2026-07-11 — Adverb Word Category
+
+### What
+Added a new `ADVERBS` word category to the landscape generator: 12 global adverbs with weighted tiers (4 common, 4 rare, 4 normal), mood-specific adverb lists, and 2 new middle templates that use `{adverb}`. The adverb is picked once per landscape and threaded through all format calls as an ignored-optional kwarg.
+
+### Why
+After 23 sessions of adding biomes, moods, biases, templates, and overrides, the generated descriptions still lacked one key dimension of descriptive language: *how* things happen. "Mist drifts between the trees" is descriptive; "Mist drifts slowly between the trees" is evocative. Adverbs add texture to existing sentences with minimal data — 12 words and 2 templates — while fitting naturally into the existing weighted-selection, mood-boost, and dedup systems.
+
+### Tradeoffs
+- Single adverb per landscape (not per sentence) — avoids overusing adverbs while ensuring every sentence can potentially use it. A per-sentence adverb would add more variety but could make the output feel cluttered ("softly... gently... quietly...") across detail=3 outputs.
+- Only middle templates use `{adverb}` — opening and anomaly templates don't get adverb variants. Mid-sentence adverbs feel most natural in descriptive action ("shimmers softly through", "whispers gently beneath"), while opening templates are more static ("stretches before you") and anomalies are about surreal wrongness ("Time seems to flow backward").
+- `{adverb}` is passed to all format calls as an extra kwarg that is silently ignored by templates that don't use it. This is identical to how `display` is already passed to templates that may or may not use it — no new plumbing needed.
+- No biome-specific adverbs — the global pool is generic enough that biome-specific adverbs would add little value. But mood-specific adverbs were worth adding (3 lists of 4-5 words each) since mood already controls tonal palette and adverbs like "relentlessly" vs "gently" carry strong mood signals.
+- No CLI flag to control adverb selection — like word dedup, this is an automatic quality improvement, not a user-facing control. Adverbs are always active; users who want to suppress them can't, but the impact is mild (one extra word in ~50-80% of middle sentences depending on which template is selected).
+- 6 new tests (150 total, 18 todo + 132 landscape).
+
 ## 2026-07-11 — Noun-Verb Agreement Fix in Middle Template 3
 
 ### What

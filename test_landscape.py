@@ -4,7 +4,7 @@ import random
 
 from landscape import (
     generate_landscape,
-    BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, BIOME_WORDS,
+    BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, BIOME_WORDS,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
 )
@@ -15,6 +15,7 @@ ALL_ELEMENTS = set(ELEMENTS) | {w for bw in BIOME_WORDS.values() for w in bw.get
 ALL_NOUNS = set(NOUNS) | {w for bw in BIOME_WORDS.values() for w in bw.get("nouns", [])}
 ALL_WEATHERS = set(WEATHERS) | {w for bw in BIOME_WORDS.values() for w in bw.get("weathers", [])}
 ALL_ANOMALIES = set(ANOMALIES) | {w for bw in BIOME_WORDS.values() for w in bw.get("anomalies", [])}
+ALL_ADVERBS = set(ADVERBS)
 
 
 class TestLandscape(unittest.TestCase):
@@ -159,6 +160,46 @@ class TestLandscape(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+    def test_output_contains_known_adverb(self):
+        results = {generate_landscape(seed=s) for s in range(200)}
+        self.assertTrue(
+            any(a in r for r in results for a in ALL_ADVERBS),
+            "No known adverb appeared across 200 seeds",
+        )
+
+    def test_adverb_appears_in_middle_templates(self):
+        results = [generate_landscape(seed=s, biome="forest", template_set="first") for s in range(200)]
+        self.assertTrue(
+            any(a in r for r in results for a in ALL_ADVERBS),
+            "No adverb appeared in middle sentences across 200 seeds",
+        )
+
+    def test_adverb_with_mood_does_not_break_output(self):
+        for mood in ["eerie", "vibrant", "desolate"]:
+            for s in range(10):
+                result = generate_landscape(seed=s, mood=mood)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_adverb_is_deterministic_with_seed(self):
+        a = generate_landscape(seed=42)
+        b = generate_landscape(seed=42)
+        self.assertEqual(a, b)
+
+    def test_adverb_with_detail_three_produces_valid_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, detail=3)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 50)
+
+    def test_adverb_word_weight_function_works(self):
+        from landscape import _word_weight
+        w_common = _word_weight("softly", bias="normal")
+        w_rare = _word_weight("relentlessly", bias="normal")
+        self.assertGreater(w_common, w_rare,
+            "Common adverb should have higher weight than rare adverb")
+
+
     def test_combine_two_biomes_contains_both_names(self):
         result = generate_landscape(seed=42, combine="forest,desert")
         self.assertIn("forest", result)
@@ -208,7 +249,10 @@ class TestLandscape(unittest.TestCase):
         results = [generate_landscape(seed=s, biome="forest") for s in range(100)]
         has_classic = any(" between the " in r for r in results)
         has_among = any(r.startswith("Among") for r in results)
-        self.assertTrue(has_classic or has_among, "Neither classic nor among middle pattern found")
+        has_through = any(" through the " in r for r in results)
+        has_beneath = any("Beneath the " in r for r in results)
+        self.assertTrue(has_classic or has_among or has_through or has_beneath,
+            "No known middle pattern found")
 
     def test_template_variety_does_not_break_output(self):
         for s in range(50):

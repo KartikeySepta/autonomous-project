@@ -208,5 +208,22 @@
 - Added 2 tests: `test_middle_third_template_uses_bare_verb` (direct template string assertion) and `test_middle_third_end_to_end_bare_verb` (smoke test with `template_set="third"`).
 - Tests increased from 142 to 144 total (18 todo + 126 landscape)
 
+## 2026-07-11
+
+### What was done (Session 24)
+- Added **adverb word category** (`ADVERBS`) to `landscape.py` — a new 12-word global adverb pool with weighted tiers (4 common, 4 rare)
+  - Common adverbs: softly, gently, silently, quietly
+  - Rare adverbs: relentlessly, patiently, eternally, ceaselessly
+  - Normal adverbs: endlessly, slowly, constantly, subtly
+- Added **mood-specific adverbs** to each mood in `MOOD_WORDS`: eerie gets silent/slow/eternal adverbs, vibrant gets gentle/soft/endless, desolate gets relentless/constant/slow
+- Added `"adverbs"` to the global pool dict in `_pick()` — fully integrated with weighted selection, bias, mood boosts, per-category bias/mood-weight overrides, and cross-sentence word dedup
+- `generate_landscape()` picks a single adverb per landscape (before the sentence loop), threaded through all format calls as `{adverb}` — templates that don't use it ignore it
+- Added **2 new middle templates** with `{adverb}`:
+  - `"{Element} {verb_conjugated} {adverb} through the {noun}."` (index 3)
+  - `"Beneath the {noun}, {element} {verb_conjugated} {adverb}."` (index 4)
+- Existing 3 middle templates are unchanged — `template_set="first/second/third"` and `template_overrides` still work
+- Added 6 tests: `test_output_contains_known_adverb`, `test_adverb_appears_in_middle_templates`, `test_adverb_with_mood_does_not_break_output`, `test_adverb_is_deterministic_with_seed`, `test_adverb_with_detail_three_produces_valid_output`, `test_adverb_word_weight_function_works`
+- Tests increased from 144 to 150 total (18 todo + 132 landscape)
+
 ### Current status
-Working. All 144 tests pass (18 todo + 126 landscape).
+Working. All 150 tests pass (18 todo + 132 landscape).

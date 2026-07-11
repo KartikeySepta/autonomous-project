@@ -52,6 +52,12 @@ ANOMALIES = [
     "Everything is slightly out of focus.",
 ]
 
+ADVERBS = [
+    "softly", "endlessly", "gently", "relentlessly",
+    "patiently", "eternally", "silently", "slowly",
+    "constantly", "subtly", "quietly", "ceaselessly",
+]
+
 # Weight tiers for word selection — common words appear more often, rare words less so
 COMMON_WORDS = {
     "crystal", "shadow", "ancient", "forgotten", "silent",
@@ -59,6 +65,7 @@ COMMON_WORDS = {
     "trees", "stones", "ruins", "crystals",
     "whisper", "glow", "shimmer", "drift",
     "a gentle rain falls", "a still calm lingers", "mist curls along the ground",
+    "softly", "gently", "silently", "quietly",
 }
 
 RARE_WORDS = {
@@ -67,6 +74,7 @@ RARE_WORDS = {
     "geodes", "fungi", "archways",
     "resonate", "vibrate",
     "ash drifts slowly downward",
+    "relentlessly", "patiently", "eternally", "ceaselessly",
 }
 
 
@@ -85,6 +93,7 @@ MOOD_WORDS = {
         "elements": ["echo", "silence", "darkness", "stillness", "cave wind"],
         "nouns": ["ruins", "stones", "crystals", "archways", "spires", "fissures"],
         "verbs": ["whisper", "hum", "vibrate", "resonate", "creak", "echo"],
+        "adverbs": ["silently", "slowly", "eternally", "patiently", "ceaselessly"],
         "weathers": [
             "a still calm lingers",
             "an unnatural silence hangs",
@@ -106,6 +115,7 @@ MOOD_WORDS = {
         "elements": ["light", "radiance", "warmth", "fragrance", "birdsong", "leaf rustle"],
         "nouns": ["crystals", "geodes", "glades", "canopies", "polyps", "groves"],
         "verbs": ["glow", "shimmer", "pulse", "glimmer", "resonate", "wave"],
+        "adverbs": ["gently", "softly", "endlessly", "quietly"],
         "weathers": [
             "a warm breeze drifts through",
             "sunlight filters through the canopy in golden beams",
@@ -125,6 +135,7 @@ MOOD_WORDS = {
         "elements": ["stillness", "silence", "darkness", "dry air", "ash fall"],
         "nouns": ["ruins", "dunes", "ice fields", "crevasses", "slag heaps", "permafrost"],
         "verbs": ["crack", "freeze", "drift", "scour", "bake", "stagnate"],
+        "adverbs": ["relentlessly", "constantly", "slowly", "eternally"],
         "weathers": [
             "ash drifts slowly downward",
             "a biting wind carries ice crystals",
@@ -194,6 +205,8 @@ SENTENCE_TEMPLATES = {
         "{Element} {verb_conjugated} between the {noun}.",
         "Among the {noun}, {element} {verb_conjugated}.",
         "The {noun} {verb} with {element}.",
+        "{Element} {verb_conjugated} {adverb} through the {noun}.",
+        "Beneath the {noun}, {element} {verb_conjugated} {adverb}.",
     ],
     "weather": [
         "{Weather}.",
@@ -442,6 +455,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
         "verbs": VERBS,
         "weathers": WEATHERS,
         "anomalies": ANOMALIES,
+        "adverbs": ADVERBS,
     }[category]
     pool = specific + global_pool
     if used_words is not None:
@@ -478,8 +492,9 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
     used_words = set()
 
     adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
+    adverb = _pick("adverbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
     opening_tmpl = _pick_template("opening", template_set, template_overrides)
-    parts = [opening_tmpl.format(adj=adj, display=display)]
+    parts = [opening_tmpl.format(adj=adj, display=display, adverb=adverb)]
 
     for _ in range(max(detail, 0)):
         element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
@@ -488,18 +503,18 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         verb_conjugated = _conjugate(verb)
         middle_tmpl = _pick_template("middle", template_set, template_overrides)
         parts.append(
-            middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated)
+            middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated, adverb=adverb)
         )
 
         weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
         weather_tmpl = _pick_template("weather", template_set, template_overrides)
         parts.append(
-            weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display)
+            weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display, adverb=adverb)
         )
 
     if detail >= 1 and random.random() < anomaly_prob:
         anomaly_tmpl = _pick_template("anomaly", template_set, template_overrides)
-        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)))
+        parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words), adverb=adverb))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)
