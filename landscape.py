@@ -99,10 +99,14 @@ SENTENCE_TEMPLATES = {
     ],
     "weather": [
         "{Weather}.",
+        "The air tells its own story: {weather}.",
+        "{Weather}, as if the {display} itself breathes.",
     ],
     "anomaly": [
         "{anomaly}",
         "Something is not right — {anomaly}",
+        "A strange detail catches your eye: {anomaly}",
+        "There is a quiet wrongness here: {anomaly}",
     ],
 }
 
@@ -322,7 +326,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
     parts = [
         opening_tmpl.format(adj=adj, display=display),
         middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated),
-        weather_tmpl.format(Weather=weather.capitalize(), weather=weather),
+        weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display),
     ]
 
     if random.random() < 0.3:

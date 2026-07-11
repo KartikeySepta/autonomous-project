@@ -69,10 +69,18 @@
 - Added 4 new tests: `test_conjugate_adds_s_for_regular_verbs`, `test_conjugate_adds_es_for_sibilant_endings`, `test_conjugate_handles_y_endings`, `test_conjugate_output_no_bare_s_append_for_es_verbs`
 - Tests increased from 53 to 57 total (18 todo + 39 landscape)
 
+### What was done (Session 9)
+- Added **template variety for weather and anomaly slots**: weather went from 1 template to 3, anomaly from 2 to 4
+  - Weather templates: `"{Weather}."`, `"The air tells its own story: {weather}."`, `"{Weather}, as if the {display} itself breathes."` (the last two tie weather to the biome/noun context)
+  - Anomaly templates: `"{anomaly}"`, `"Something is not right — {anomaly}"`, `"A strange detail catches your eye: {anomaly}"`, `"There is a quiet wrongness here: {anomaly}"`
+- Updated weather format call to pass `display` parameter (needed by the new `as if the {display}` template)
+- Added 2 tests: `test_template_variety_weather_has_varied_structure`, `test_template_variety_anomaly_has_varied_structure`
+- Tests increased from 57 to 59 total (18 todo + 41 landscape)
+
 ### Current status
-Working. All 57 tests pass (18 todo + 39 landscape).
+Working. All 59 tests pass (18 todo + 41 landscape).
 
 ### Next likely steps
 - Add multi-paragraph or multi-sentence generation
 - Expose weight tiers via CLI (e.g. `--weight-bias` to skew toward common or rare)
-- Add more template variety for weather and anomaly slots
+- Expose template set choice via CLI flag (e.g. `--template-set`)

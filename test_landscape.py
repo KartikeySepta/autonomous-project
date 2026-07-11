@@ -215,6 +215,23 @@ class TestLandscape(unittest.TestCase):
             self.assertIsInstance(result, str)
             self.assertGreater(len(result), 10)
 
+    def test_template_variety_weather_has_varied_structure(self):
+        results = [generate_landscape(seed=s, biome="forest") for s in range(200)]
+        has_air_tells = any("The air tells its own story: " in r for r in results)
+        has_as_if = any(" itself breathes." in r for r in results)
+        self.assertTrue(
+            has_air_tells or has_as_if,
+            "Neither alternative weather template appeared across 200 seeds",
+        )
+
+    def test_template_variety_anomaly_has_varied_structure(self):
+        results = [generate_landscape(seed=s, biome="forest") for s in range(200)]
+        has_strange = any("A strange detail catches your eye: " in r for r in results)
+        has_wrongness = any("There is a quiet wrongness here: " in r for r in results)
+        self.assertTrue(
+            has_strange or has_wrongness,
+            "Neither alternative anomaly template appeared across 200 seeds",
+        )
 
     def test_conjugate_adds_s_for_regular_verbs(self):
         self.assertEqual(_conjugate("whisper"), "whispers")
