@@ -259,7 +259,7 @@ def _pick(category, biome):
     return random.choices(pool, weights=weights, k=1)[0]
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose"):
     if seed is not None:
         random.seed(seed)
 
@@ -277,13 +277,14 @@ def generate_landscape(seed=None, biome=None, show_biome=False):
     parts = [
         f"A vast {adj} {biome} stretches before you.",
         f"{element.capitalize()} {verb}s between the {noun}.",
-        f"{weather}.",
+        f"{weather.capitalize()}.",
     ]
 
     if random.random() < 0.3:
         parts.append(_pick("anomalies", biome))
 
-    output = " ".join(parts)
+    joiner = "\n" if fmt == "poetic" else " "
+    output = joiner.join(parts)
     if show_biome:
         output += f" [{biome}]"
     return output
@@ -310,10 +311,14 @@ def main():
         "--show-biome", action="store_true",
         help="Reveal the biome name in the output",
     )
+    parser.add_argument(
+        "--format", type=str, default="prose", choices=["prose", "poetic"],
+        help="Output format: prose (single line) or poetic (line breaks)",
+    )
     args = parser.parse_args()
 
     for i in range(args.count):
-        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome))
+        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format))
         if args.count > 1 and i < args.count - 1:
             print()
 

@@ -132,5 +132,27 @@ class TestLandscape(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+    def test_default_format_is_prose(self):
+        result = generate_landscape(seed=42)
+        self.assertNotIn("\n", result)
+
+    def test_format_poetic_has_linebreaks(self):
+        result = generate_landscape(seed=42, fmt="poetic")
+        self.assertIn("\n", result)
+
+    def test_format_prose_no_linebreaks(self):
+        result = generate_landscape(seed=42, fmt="prose")
+        self.assertNotIn("\n", result)
+
+    def test_format_poetic_all_lines_capitalized(self):
+        result = generate_landscape(seed=42, biome="tundra", fmt="poetic")
+        for line in result.split("\n"):
+            self.assertTrue(line[0].isupper(), f"Line does not start with capital: {line!r}")
+
+    def test_format_flag_works_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,18 @@
 # Decisions
 
+## 2026-07-11 — Output Format (Prose / Poetic)
+
+### What
+Added `--format` CLI flag and `fmt` parameter to `generate_landscape()` supporting two modes: `"prose"` (default, existing behavior — sentences joined by spaces) and `"poetic"` (sentences joined by newlines, weather string capitalized).
+
+### Why
+The single-line prose format works well for embedding in other tools or piping, but a poetic line-broken format better suits the generative/creative intent of the project. The weather capitalization fix (`weather.capitalize()` instead of raw `weather`) addresses a long-standing cosmetic issue where the third sentence began lowercase despite being a new sentence.
+
+### Tradeoffs
+- `fmt` parameter name avoids shadowing Python's `format` builtin while keeping the CLI flag `--format` natural
+- Weather capitalization is applied unconditionally in both modes (not just poetic) — this changes existing seed-based output slightly (third sentence now capitalized), but is strictly a correctness improvement
+- No additional template structure for poetic mode (same sentences, just line-broken) — keeps the change minimal; richer poetic templates can be added later
+
 ## 2026-07-11 — Show Biome Flag
 
 ### What

@@ -37,11 +37,16 @@
 - Fixed existing adjective/verb/anomaly tests to check against combined (global + biome-specific) word pools
 - Exported `BIOME_WORDS`, `ALL_ADJECTIVES`, `ALL_VERBS`, `ALL_ELEMENTS`, `ALL_NOUNS`, `ALL_WEATHERS`, `ALL_ANOMALIES` from test module for reuse
 
+### What was done (Session 5)
+- Added `--format` CLI flag and `fmt` parameter to `generate_landscape()` — accepts `"prose"` (default, existing behavior joined by spaces) or `"poetic"` (lines joined by `\n`, weather string capitalized)
+- Weather string is now capitalized in both modes (`weather.capitalize()` instead of raw `weather`) — fixes a long-standing cosmetic issue where the third sentence started lowercase
+- Added 5 tests: `test_default_format_is_prose`, `test_format_poetic_has_linebreaks`, `test_format_prose_no_linebreaks`, `test_format_poetic_all_lines_capitalized`, `test_format_flag_works_via_cli`
+- Tests increased from 39 to 44 total (18 todo + 26 landscape)
+
 ### Current status
-Working. All 39 tests pass (18 todo + 21 landscape).
+Working. All 44 tests pass (18 todo + 26 landscape).
 
 ### Next likely steps
-- Add a `--format` flag for plain vs. poetic output style
 - Add multi-paragraph or multi-sentence generation
 - Allow combining biomes (e.g. "a volcanic desert")
 - Expose weight tiers via CLI (e.g. `--weight-bias` to skew toward common or rare)
