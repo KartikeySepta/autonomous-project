@@ -220,8 +220,8 @@ SENTENCE_TEMPLATES = {
     "anomaly": [
         "{anomaly}",
         "Something is not right — {anomaly}",
-        "A strange detail catches your eye: {anomaly}",
-        "There is a quiet wrongness here: {anomaly}",
+        "A strange detail catches your eye: {anomaly_lower}",
+        "There is a quiet wrongness here: {anomaly_lower}",
     ],
 }
 
@@ -343,7 +343,7 @@ BIOME_WORDS = {
         "adjectives": ["endless", "golden", "wide", "wind-scoured", "open"],
         "elements": ["grass rustle", "open sky", "distant haze", "earth scent"],
         "nouns": ["grasses", "horizons", "fields", "bluffs", "meadows"],
-        "verbs": ["wave", "stretch", "roll", "sway", "stretch"],
+        "verbs": ["wave", "stretch", "roll", "sway", "bend"],
         "weathers": [
             "a warm wind sends ripples across the grass",
             "clouds cast slow-moving shadows on the land",
@@ -520,7 +520,9 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         for _ in range(anomaly_count):
             if random.random() < anomaly_prob:
                 anomaly_tmpl = _pick_template("anomaly", template_set, template_overrides)
-                parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words), adverb=adverb))
+                anomaly_word = _pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
+                anomaly_lower = anomaly_word[0].lower() + anomaly_word[1:]
+                parts.append(anomaly_tmpl.format(anomaly=anomaly_word, anomaly_lower=anomaly_lower, adverb=adverb))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)

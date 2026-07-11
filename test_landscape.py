@@ -359,6 +359,46 @@ class TestLandscape(unittest.TestCase):
             "Neither alternative anomaly template appeared across 200 seeds",
         )
 
+    def test_anomaly_standalone_template_keeps_capital(self):
+        for s in range(100):
+            result = generate_landscape(seed=s, biome="forest", template_overrides={"anomaly": "first"}, anomaly_prob=1.0)
+            if "Something is not right" in result or "A strange detail" in result or "quiet wrongness" in result:
+                continue
+            for a in ALL_ANOMALIES:
+                if a in result:
+                    self.assertTrue(a[0].isupper(),
+                        f"Standalone anomaly should start capitalized: {result!r}")
+                    break
+
+    def test_anomaly_colon_template_lowercases(self):
+        results = [
+            generate_landscape(seed=s, biome="forest",
+                               template_overrides={"anomaly": "third"}, anomaly_prob=1.0)
+            for s in range(200)
+        ]
+        colon_lines = [r for r in results if "A strange detail catches your eye: " in r or "There is a quiet wrongness here: " in r]
+        lowercases = sum(
+            1 for r in colon_lines
+            for a in ALL_ANOMALIES
+            if a[0].lower() + a[1:] in r
+        )
+        self.assertGreater(
+            lowercases, 0,
+            "Colon-style anomaly templates should produce lowercase continuation",
+        )
+
+    def test_anomaly_lower_does_not_break_output(self):
+        for s in range(50):
+            result = generate_landscape(seed=s, anomaly_prob=1.0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_anomaly_lower_with_detail_three(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, detail=3, anomaly_prob=1.0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 50)
+
     def test_conjugate_adds_s_for_regular_verbs(self):
         self.assertEqual(_conjugate("whisper"), "whispers")
         self.assertEqual(_conjugate("glow"), "glows")
@@ -874,7 +914,11 @@ class TestLandscape(unittest.TestCase):
     def test_anomaly_prob_one_always_has_anomaly(self):
         results = [generate_landscape(seed=s, anomaly_prob=1.0) for s in range(100)]
         has_anomaly = sum(
-            1 for r in results if any(a in r for a in ALL_ANOMALIES)
+            1 for r in results
+            if any(
+                a in r or a[0].lower() + a[1:] in r
+                for a in ALL_ANOMALIES
+            )
         )
         self.assertGreater(has_anomaly, 80,
             "With anomaly_prob=1.0, most outputs should contain an anomaly")

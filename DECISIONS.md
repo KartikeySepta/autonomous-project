@@ -1,5 +1,23 @@
 # Decisions
 
+## 2026-07-11 — Anomaly Lowercase in Colon Templates; Plain Biome Verb Fix
+
+### What
+Changed `SENTENCE_TEMPLATES["anomaly"][2]` and `[3]` from `{anomaly}` to `{anomaly_lower}`, so anomaly text starts with a lowercase letter when introduced by a colon (templates: "A strange detail catches your eye:" and "There is a quiet wrongness here:"). In `generate_landscape()`, the anomaly word is now stored in a variable so both `{anomaly}` (capitalized) and `{anomaly_lower}` (lowercased first letter) can be passed to the format call.
+
+Also fixed a duplicate `"stretch"` verb in the `plain` biome word bank — the list contained `"stretch"` twice, giving it an unintentional 2x selection weight vs other plain verbs.
+
+### Why
+The colon-style anomaly templates have been producing grammatically non-standard output since Session 9 — `"A strange detail catches your eye: The gravity here feels wrong."` reads as awkward because the colon introduces what looks like a new sentence rather than a continuation. Lowercasing the first letter of the anomaly after a colon makes the sentence read naturally as a continuation. The em-dash template ("Something is not right — The gravity...") is fine with a capital because an em-dash separates independent clauses.
+
+The duplicate `"stretch"` was a data bug that went unnoticed since Session 2 (when the plain biome was created). It only affected the plain biome and only at the verb-selection level, making `"stretch"` twice as likely as the other 4 plain verbs.
+
+### Tradeoffs
+- `{anomaly_lower}` is computed inline rather than stored in the word bank — keeps anomaly data pristine (full sentences with capitals) and avoids needing a separate lowercase word list.
+- The standalone template 0 and em-dash template 1 keep `{anomaly}` (capitalized) because in those positions a capital letter is grammatically correct. The choice of which template uses which form is per-slot in `SENTENCE_TEMPLATES`, not an automatic rule — a future template that also embeds the anomaly mid-sentence would need to use `{anomaly_lower}` explicitly.
+- No new tests added beyond the 4 anomaly-lowercase tests and one test fix — the template string assertions and output-matching tests provide adequate coverage.
+- 159 tests total (18 todo + 141 landscape).
+
 ## 2026-07-11 — `{adverb}` in More Templates (Openings 0/1, Weather 1)
 
 ### What
