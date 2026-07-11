@@ -6,7 +6,7 @@ from landscape import (
     generate_landscape,
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, BIOME_WORDS,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
-    MOOD_WORDS, MOOD_BOOST,
+    MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -430,6 +430,71 @@ class TestLandscape(unittest.TestCase):
     def test_mood_weight_flag_exists_via_cli(self):
         from landscape import main
         self.assertTrue(callable(main))
+
+
+    def test_template_set_default_is_random(self):
+        result = generate_landscape(seed=42, template_set="random")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 10)
+
+    def test_template_set_first_uses_first_opening(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, biome="forest", template_set="first")
+            self.assertTrue(
+                result.startswith("A vast "),
+                f"template_set=first should use first opening template at seed {s}: {result!r}",
+            )
+
+    def test_template_set_second_uses_second_opening(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, biome="forest", template_set="second")
+            self.assertTrue(
+                result.startswith("Before you"),
+                f"template_set=second should use second opening template at seed {s}: {result!r}",
+            )
+
+    def test_template_set_third_uses_third_opening(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, biome="forest", template_set="third")
+            self.assertTrue(
+                result.startswith("The "),
+                f"template_set=third should use third opening template at seed {s}: {result!r}",
+            )
+
+    def test_template_set_first_is_deterministic(self):
+        a = generate_landscape(seed=42, template_set="first")
+        b = generate_landscape(seed=42, template_set="first")
+        self.assertEqual(a, b)
+
+    def test_template_set_second_middle_has_expected_pattern(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, biome="forest", template_set="second")
+            self.assertIn("Among the ", result,
+                f"template_set=second middle should use 'Among the' pattern at seed {s}")
+
+    def test_template_set_third_weather_has_expected_pattern(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, biome="forest", template_set="third")
+            self.assertIn(" itself breathes", result,
+                f"template_set=third weather should use the 'as if the' pattern at seed {s}")
+
+    def test_template_set_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_pick_template_selects_correct_index(self):
+        self.assertEqual(
+            _pick_template("opening", "first"),
+            SENTENCE_TEMPLATES["opening"][0],
+        )
+        self.assertEqual(
+            _pick_template("opening", "second"),
+            SENTENCE_TEMPLATES["opening"][1],
+        )
+        self.assertEqual(
+            _pick_template("opening", "third"),
+            SENTENCE_TEMPLATES["opening"][2],
+        )
 
 
 if __name__ == "__main__":

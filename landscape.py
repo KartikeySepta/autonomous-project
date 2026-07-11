@@ -163,6 +163,23 @@ def _conjugate(verb):
     return verb + "s"
 
 
+# Named template sets — "random" uses random.choice per slot; others force a fixed index
+TEMPLATE_SETS = {
+    "random": None,
+    "first": 0,
+    "second": 1,
+    "third": 2,
+}
+
+
+def _pick_template(slot, template_set):
+    templates = SENTENCE_TEMPLATES[slot]
+    if template_set == "random":
+        return random.choice(templates)
+    idx = min(TEMPLATE_SETS[template_set], len(templates) - 1)
+    return templates[idx]
+
+
 # Sentence templates for landscape generation — randomly selected each time for variety
 SENTENCE_TEMPLATES = {
     "opening": [
@@ -373,7 +390,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST):
     return random.choices(pool, weights=weights, k=1)[0]
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random"):
     if seed is not None:
         random.seed(seed)
     elif show_seed:
@@ -394,7 +411,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         display = chosen
 
     adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight)
-    opening_tmpl = random.choice(SENTENCE_TEMPLATES["opening"])
+    opening_tmpl = _pick_template("opening", template_set)
     parts = [opening_tmpl.format(adj=adj, display=display)]
 
     for _ in range(max(detail, 0)):
@@ -402,19 +419,19 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         noun = _pick("nouns", biomes, bias=bias, mood=mood, mood_weight=mood_weight)
         verb = _pick("verbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight)
         verb_conjugated = _conjugate(verb)
-        middle_tmpl = random.choice(SENTENCE_TEMPLATES["middle"])
+        middle_tmpl = _pick_template("middle", template_set)
         parts.append(
             middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated)
         )
 
         weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight)
-        weather_tmpl = random.choice(SENTENCE_TEMPLATES["weather"])
+        weather_tmpl = _pick_template("weather", template_set)
         parts.append(
             weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display)
         )
 
     if detail >= 1 and random.random() < 0.3:
-        anomaly_tmpl = random.choice(SENTENCE_TEMPLATES["anomaly"])
+        anomaly_tmpl = _pick_template("anomaly", template_set)
         parts.append(anomaly_tmpl.format(anomaly=_pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight)))
 
     joiner = "\n" if fmt == "poetic" else " "
@@ -478,10 +495,14 @@ def main():
         "--show-seed", action="store_true",
         help="Display the random seed used for reproducibility",
     )
+    parser.add_argument(
+        "--template-set", type=str, default="random", choices=list(TEMPLATE_SETS.keys()),
+        help="Template selection mode: random (default), first, second, or third",
+    )
     args = parser.parse_args()
 
     for i in range(args.count):
-        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight))
+        print(generate_landscape(seed=args.seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set))
         if args.count > 1 and i < args.count - 1:
             print()
 

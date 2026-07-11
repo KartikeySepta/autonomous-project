@@ -2,6 +2,19 @@
 
 ## 2026-07-11
 
+### What was done (Session 15)
+- Added **`--template-set` CLI flag** and `template_set` parameter to `generate_landscape()` — exposes template selection control to users
+  - `"random"` (default): random choice per slot (existing behavior, backward compatible)
+  - `"first"`: always uses index 0 for every slot (opening="A vast...", middle="{Element}...", weather="{Weather}.", anomaly="{anomaly}")
+  - `"second"`: always uses index 1 for every slot (opening="Before you...", middle="Among the...", weather="The air tells...", anomaly="Something is not right...")
+  - `"third"`: always uses index 2 for every slot (opening="The...", middle="The {noun}...", weather="...as if the...", anomaly="A strange detail...")
+- Added `TEMPLATE_SETS` dict mapping mode names to `None` (random) or an int index
+- Added `_pick_template(slot, template_set)` helper used by all 4 template slots (opening, middle, weather, anomaly)
+- Added 9 tests: `test_template_set_default_is_random`, `test_template_set_first_uses_first_opening`, `test_template_set_second_uses_second_opening`, `test_template_set_third_uses_third_opening`, `test_template_set_first_is_deterministic`, `test_template_set_second_middle_has_expected_pattern`, `test_template_set_third_weather_has_expected_pattern`, `test_template_set_flag_exists_via_cli`, `test_pick_template_selects_correct_index`
+- Tests increased from 86 to 95 total (18 todo + 77 landscape)
+
+## 2026-07-11
+
 ### What was done (Session 7)
 - Added **template variety** to `landscape.py`: a `SENTENCE_TEMPLATES` dict with 3 alternative opening templates, 3 middle-sentence templates, and 2 anomaly-introduction templates
 - `generate_landscape()` now picks a random template from each slot using `random.choice()`, so outputs vary in sentence structure (not just vocabulary)
@@ -125,8 +138,7 @@
 - Tests increased from 80 to 86 total (18 todo + 68 landscape)
 
 ### Current status
-Working. All 86 tests pass (18 todo + 68 landscape).
+Working. All 95 tests pass (18 todo + 77 landscape).
 
 ### Next likely steps
-- Expose template set choice via CLI flag (e.g. `--template-set`)
 - Add per-category bias control
