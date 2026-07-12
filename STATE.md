@@ -297,5 +297,17 @@
 - Added 6 tests in `TestDedupFlag` class: `test_dedup_default_is_true`, `test_dedup_disabled_still_produces_valid_output`, `test_dedup_flag_exists_via_cli`, `test_dedup_disabled_produces_deterministic_output`, `test_dedup_disabled_works_with_detail_three`, `test_dedup_disabled_works_with_mood_and_bias`
 - Tests increased from 182 to 188 total (18 todo + 170 landscape)
 
+## 2026-07-12
+
+### What was done (Session 34)
+- Added **`--no-adverb` CLI flag** and `adverb_enabled` parameter to `generate_landscape()` — users can now disable adverb insertion in generated descriptions
+  - `adverb_enabled=True` (default) preserves existing behavior — an adverb is picked per-landscape and threaded through templates
+  - `adverb_enabled=False` skips the adverb pick entirely and passes an empty string to all template format calls
+  - Follows the same pattern as `--no-dedup` (Session 33): automatic quality improvement made configurable
+- Added **`_format_tmpl(template, **kwargs)` helper** — wraps `str.format()` with post-processing that collapses double spaces and removes space-before-period artifacts that occur when `{adverb}` is empty
+  - Used for all 4 template format calls (opening, middle, weather, anomaly) — the helper is a no-op when `{adverb}` has a real value
+- Added 8 tests in `TestAdverbFlag` class: `test_adverb_enabled_default_same_as_before`, `test_adverb_disabled_still_produces_valid_output`, `test_adverb_disabled_differs_from_enabled`, `test_adverb_disabled_deterministic`, `test_adverb_disabled_no_formatting_artifacts`, `test_adverb_disabled_flag_exists_via_cli`, `test_adverb_disabled_works_with_detail_three`, `test_adverb_disabled_works_with_mood_and_bias`
+- Tests increased from 188 to 196 total (18 todo + 178 landscape)
+
 ### Current status
-Working. All 188 tests pass (18 todo + 170 landscape).
+Working. All 196 tests pass (18 todo + 178 landscape).

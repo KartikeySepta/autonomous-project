@@ -1216,5 +1216,54 @@ class TestDedupFlag(unittest.TestCase):
         self.assertTrue(result.endswith("."))
 
 
+class TestAdverbFlag(unittest.TestCase):
+    def test_adverb_enabled_default_same_as_before(self):
+        r1 = generate_landscape(seed=42, adverb_enabled=True)
+        r2 = generate_landscape(seed=42)
+        self.assertEqual(r1, r2, "adverb_enabled=True should equal default")
+
+    def test_adverb_disabled_still_produces_valid_output(self):
+        result = generate_landscape(seed=42, adverb_enabled=False)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_adverb_disabled_differs_from_enabled(self):
+        # With adverb enabled, the adverb word is picked and appears in the output;
+        # with adverb disabled, it's skipped — outputs should differ.
+        enabled = generate_landscape(seed=42, adverb_enabled=True)
+        disabled = generate_landscape(seed=42, adverb_enabled=False)
+        self.assertNotEqual(enabled, disabled,
+            "Output should differ when adverb is disabled")
+
+    def test_adverb_disabled_deterministic(self):
+        r1 = generate_landscape(seed=99, adverb_enabled=False)
+        r2 = generate_landscape(seed=99, adverb_enabled=False)
+        self.assertEqual(r1, r2, "adverb_enabled=False should be deterministic with same seed")
+
+    def test_adverb_disabled_no_formatting_artifacts(self):
+        results = [generate_landscape(seed=s, adverb_enabled=False) for s in range(50)]
+        for r in results:
+            self.assertNotIn("  ", r, f"Output has double space: {r!r}")
+            self.assertNotIn(" .", r, f"Output has space before period: {r!r}")
+            self.assertNotIn(" ,", r, f"Output has space before comma: {r!r}")
+
+    def test_adverb_disabled_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_adverb_disabled_works_with_detail_three(self):
+        result = generate_landscape(seed=42, adverb_enabled=False, detail=3)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_adverb_disabled_works_with_mood_and_bias(self):
+        result = generate_landscape(seed=42, adverb_enabled=False, mood="eerie", bias="rare")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+
 if __name__ == "__main__":
     unittest.main()

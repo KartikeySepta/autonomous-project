@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-12 — Configurable Adverb Suppression (`--no-adverb`)
+
+### What
+Added `--no-adverb` CLI flag and `adverb_enabled` parameter to `generate_landscape()` (default: `True`). When `adverb_enabled=False`, the adverb pick is skipped entirely and an empty string is passed to all template format calls. A `_format_tmpl()` helper post-processes formatted text to collapse double spaces and remove space-before-period artifacts.
+
+### Why
+The adverb system (Session 24) was an automatic quality improvement with no off switch. Adverbs generally improve output, but some users may want to suppress them — for shorter/more direct descriptions, to avoid a formal tone, or to match a specific style where adverbs feel intrusive. Making it configurable follows the established pattern (same as `--no-dedup`, `--anomaly-prob`).
+
+### Tradeoffs
+- `adverb_enabled=True` is the default, preserving backward compatibility and existing seed-based output
+- When disabled, the adverb variable is `""` rather than skipping the template placeholder — all templates continue to receive the kwarg but render it as empty
+- The `_format_tmpl` helper is a general-purpose spacing cleanup that applies to all format calls regardless of adverb state — it's a no-op when adverb has a real value
+- Flag name `--no-adverb` (negation) follows the same convention as `--no-dedup`
+- 8 new tests, 196 total.
+
 ## 2026-07-12 — Configurable Word Dedup (`--no-dedup`)
 
 ### What

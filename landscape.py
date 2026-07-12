@@ -199,6 +199,11 @@ def _pick_template(slot, template_set, template_overrides=None):
 
 
 # Sentence templates for landscape generation — randomly selected each time for variety
+def _format_tmpl(template, **kwargs):
+    result = template.format(**kwargs)
+    return result.replace("  ", " ").replace(" .", ".")
+
+
 SENTENCE_TEMPLATES = {
     "opening": [
         "A vast {adj} {display} stretches {adverb} before you.",
@@ -473,7 +478,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
     return chosen
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True):
     if seed is not None:
         random.seed(seed)
     elif show_seed:
@@ -496,9 +501,12 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
     used_words = set() if dedup else None
 
     adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
-    adverb = _pick("adverbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
+    if adverb_enabled:
+        adverb = _pick("adverbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
+    else:
+        adverb = ""
     opening_tmpl = _pick_template("opening", template_set, template_overrides)
-    parts = [opening_tmpl.format(adj=adj, display=display, adverb=adverb)]
+    parts = [_format_tmpl(opening_tmpl, adj=adj, display=display, adverb=adverb)]
 
     for _ in range(max(detail, 0)):
         element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
@@ -507,13 +515,13 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         verb_conjugated = _conjugate(verb)
         middle_tmpl = _pick_template("middle", template_set, template_overrides)
         parts.append(
-            middle_tmpl.format(Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated, adverb=adverb)
+            _format_tmpl(middle_tmpl, Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated, adverb=adverb)
         )
 
         weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
         weather_tmpl = _pick_template("weather", template_set, template_overrides)
         parts.append(
-            weather_tmpl.format(Weather=weather.capitalize(), weather=weather, display=display, adverb=adverb)
+            _format_tmpl(weather_tmpl, Weather=weather.capitalize(), weather=weather, display=display, adverb=adverb)
         )
 
     if detail >= 1 and anomaly_count > 0:
@@ -522,7 +530,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
                 anomaly_tmpl = _pick_template("anomaly", template_set, template_overrides)
                 anomaly_word = _pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
                 anomaly_lower = anomaly_word[0].lower() + anomaly_word[1:]
-                parts.append(anomaly_tmpl.format(anomaly=anomaly_word, anomaly_lower=anomaly_lower, adverb=adverb))
+                parts.append(_format_tmpl(anomaly_tmpl, anomaly=anomaly_word, anomaly_lower=anomaly_lower, adverb=adverb))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)
@@ -662,6 +670,10 @@ def main():
         "--no-dedup", action="store_true",
         help="Disable cross-sentence word deduplication (allow repeated words)",
     )
+    parser.add_argument(
+        "--no-adverb", action="store_true",
+        help="Disable adverb insertion in landscape descriptions",
+    )
     args = parser.parse_args()
 
     bias_overrides = {}
@@ -707,7 +719,7 @@ def main():
     lines = []
     for i in range(args.count):
         effective_seed = args.seed + i if args.seed is not None else None
-        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup))
+        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb))
     output = "\n\n".join(lines) + ("\n" if lines else "")
     if args.output:
         with open(args.output, "w") as f:
