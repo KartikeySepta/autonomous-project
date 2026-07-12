@@ -592,3 +592,18 @@ Working. All 311 tests pass (18 todo + 293 landscape).
 - Updated `test_template_variety_weather_has_varied_structure` to check for new "Through the " pattern and fixed the `has_as_if` check (now matches on " itself breathes " instead of " itself breathes.")
 - Added 9 tests: element appearance in weather, "Through the" template statistical appearance, works with middle-disabled, determinism, detail=3, JSON format, template count, element placeholder assertion, works with no-adverb
 - Tests increased from 311 to 320 total (18 todo + 302 landscape)
+
+## 2026-07-12
+
+### What was done (Session 58)
+- Added **`{color}` to weather templates** — the weather slot now references the per-sentence-pair color word, making weather descriptions richer and more cohesive with the landscape's color palette
+  - Template 4 (new): `"{Weather} {adverb} in {color} light."` — "A gentle rain falls softly in vivid light."
+  - Existing `Weather=weather.capitalize()`, `weather=weather`, `display=display`, `adverb=adverb`, `element=element` kwargs are unchanged
+  - `color=color` kwarg passed to weather `_format_tmpl()` call — unmodified templates silently ignore the extra kwarg
+- **`color` variable initialized to `""` before the `if middle_enabled:` block** in the detail loop — ensures color is always defined for weather templates even when middle sentences are suppressed. When `middle_enabled=True` and `color_enabled=True`, the picked color word is used; otherwise color stays `""` and `_format_tmpl` cleans up the resulting `" in  light."` → `" in light."` (reads naturally without the color).
+- No seed-breaking change: the random sequence is unchanged when `middle_enabled=True` (color is picked at the same position). When `middle_enabled=False`, `color=""` adds no random calls.
+- Added 9 tests: color appearance in weather, "in {color} light" template statistical appearance, works with middle-disabled, determinism, detail=3, JSON format, template count, color placeholder assertion, works with no-adverb
+- Tests increased from 320 to 329 total (18 todo + 311 landscape)
+
+### Current status
+Working. All 329 tests pass (18 todo + 311 landscape).

@@ -866,3 +866,18 @@ Session 56 added element to the opening templates, making openings consistently 
 - **Seed-breaking change**: existing seed-based output differs because the element pick now happens for every weather iteration regardless of middle state, and the new weather templates change the output. Since no seed-based output has been published, this is acceptable.
 - **4 weather templates now**: weather goes from 3 to 4 templates. Template_set "third" still maps to index 2 (unchanged); the new template at index 3 is only accessible via random selection, matching the same pattern as the opening's em-dash template (Session 56).
 - **9 new tests**, 320 total (18 todo + 302 landscape).
+
+## 2026-07-12 — `{color}` in Weather Templates
+
+### What
+Added `{color}` to weather descriptions: a 5th weather template `"{Weather} {adverb} in {color} light."` that references the per-sentence-pair color word. The `color` variable is initialized to `""` before the `if middle_enabled:` block in the detail loop, so it's always available for weather templates regardless of middle state. The `color=color` kwarg is passed to all weather `_format_tmpl()` calls; unmodified templates silently ignore it.
+
+### Why
+The color word bank (Session 51) was previously only used in one middle template (index 6: `"The {color} light of {element} {verb_conjugated} {adverb}."`), making it invisible in most outputs — the word was picked but only appeared in ~14% of middle sentences (1 of 7 templates) and never in weather, openings, or anomalies. Adding `{color}` to weather gives the color category more visibility and makes weather descriptions richer, following the same pattern as Session 57 (`{element}` in weather) and Session 56 (`{element}` in openings). This is a natural progression: colors were added as a quality improvement, and now they get broader template coverage for greater impact.
+
+### Tradeoffs
+- **`color = ""` initialization before the middle block** — when middle is disabled, no color word is picked (saves a `_pick()` call and dedup slot). The weather template renders as `"in  light."` and `_format_tmpl` collapses the double space to `"in light."`, which reads naturally. When middle is enabled and color_enabled=True, the picked color word is used.
+- **No seed-breaking change** — unlike Sessions 56–57 which moved element picks (changing the random call order), this change only adds a `color = ""` initialization (no random call) and passes an existing variable to a format call it was previously missing from. The only output change is when weather template 4 is randomly selected, which is a new template added to the pool — the same seed may now select this template instead of one of the previous 4.
+- **Only 1 new template** (rather than modifying existing ones) — keeps the change minimal. Color in weather could be extended to more templates in the future.
+- **Works with `color_enabled=False`** — the empty-string pattern handles suppression identically to `adverb_enabled=False`: the template renders without the color word and spacing is cleaned up by `_format_tmpl`.
+- **9 new tests**, 329 total (18 todo + 311 landscape).

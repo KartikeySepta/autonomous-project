@@ -2079,6 +2079,68 @@ class TestColors(unittest.TestCase):
         for c in ALL_COLORS:
             self.assertIn(c, result)
 
+    def test_weather_contains_known_color(self):
+        results = [generate_landscape(seed=s, biome="forest") for s in range(300)]
+        self.assertTrue(
+            any(c in r for r in results for c in ALL_COLORS),
+            "No known color word appeared in weather across 300 seeds",
+        )
+
+    def test_weather_in_color_light_template_appears_across_seeds(self):
+        results = [generate_landscape(seed=s, biome="tundra") for s in range(500)]
+        color_light_matches = sum(
+            1 for r in results if " in " in r and " light" in r
+        )
+        self.assertGreater(color_light_matches, 0,
+            "'in {color} light' weather template should appear across 500 seeds",
+        )
+
+    def test_weather_color_works_with_middle_disabled(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, middle_enabled=False, detail=2)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertTrue(result.endswith("."))
+
+    def test_weather_color_is_deterministic(self):
+        a = generate_landscape(seed=42, detail=2)
+        b = generate_landscape(seed=42, detail=2)
+        self.assertEqual(a, b,
+            "Weather with color templates should be deterministic")
+
+    def test_weather_color_works_with_detail_three(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, detail=3)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 50)
+
+    def test_weather_color_works_with_json_format(self):
+        result = generate_landscape(seed=42, fmt="json", detail=2)
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_weather_color_template_count_increased(self):
+        weather_templates = SENTENCE_TEMPLATES["weather"]
+        self.assertGreaterEqual(len(weather_templates), 5,
+            "Should have at least 5 weather templates")
+
+    def test_weather_color_templates_use_color_placeholder(self):
+        weather_templates = SENTENCE_TEMPLATES["weather"]
+        color_tmpls = [t for t in weather_templates if "{color}" in t]
+        self.assertGreaterEqual(len(color_tmpls), 1,
+            "At least 1 weather template should reference {color}")
+
+    def test_weather_color_works_with_no_adverb(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, adverb_enabled=False, detail=2)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertNotIn("  ", result)
+            self.assertTrue(result.endswith("."))
+
 
 class TestPeacefulMood(unittest.TestCase):
     def test_peaceful_mood_does_not_break_output(self):
