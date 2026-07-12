@@ -1,5 +1,16 @@
 # State
 
+## 2026-07-12
+
+### What was done (Session 51)
+- Added **color word bank** (`COLORS`) to `landscape.py` — a new word category with 12 words across 3 weight tiers (4 common: vivid, burnished, stark, murky; 4 normal: lurid, mottled, bleached, veined; 4 rare: iridescent, fluorescent, scintillating, coruscating)
+- Added mood-specific color lists to each mood in `MOOD_WORDS`: eerie gets dark/desaturated colors, vibrant gets bright/luminous colors, desolate gets muted/bleached colors
+- Integrated colors into the full pipeline: global pool in `_pick()`, per-sentence-pair selection in `generate_landscape()`, mood-boost in `_word_weight()`, cross-sentence dedup, and weight tiers (common/rare)
+- Added new 7th middle template: `"The {color} light of {element} {verb_conjugated} {adverb}."` — produces lines like "The vivid light of mist shimmers gently."
+- Updated `describe_global()` to include the colors category
+- Added 12 tests in `TestColors` class: output presence, middle-template appearance, determinism, mood boost (matched and unmatched), weight tiers, template structure, detail=3 compatibility, middle-disabled compatibility, JSON output, and `describe_global` inclusion
+- Tests increased from 256 to 268 total (18 todo + 250 landscape)
+
 ## 2026-07-11
 
 ### What was done (Session 16)

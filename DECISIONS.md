@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-12 — Color Word Bank (`COLORS`)
+
+### What
+Added a new `COLORS` word category to the landscape generator: 12 global color words with weighted tiers (4 common, 4 rare), mood-specific color lists in each of the 3 moods, and a new 7th middle template `"The {color} light of {element} {verb_conjugated} {adverb}."`. The color word is picked per-sentence-pair (alongside the adjective) inside the middle-enabled block, fully integrated with weighted selection, mood boosts, bias/mood-weight overrides, cross-sentence dedup, and `describe_global()`.
+
+### Why
+After 50 sessions, the landscape generator had 6 word categories (adjectives, elements, nouns, verbs, weathers, anomalies, plus adverbs from Session 24) but no dedicated color vocabulary. Color is one of the most evocative dimensions of descriptive language — a "vivid light of mist" or "murky light of darkness" paints a much richer picture than "the light of mist." Adding colors as a separate category (rather than more adjectives) was deliberate: colors compete in their own dedup pool, so they don't crowd out other adjectives, and the mood system gets another lever for tonal expression (eerie gets "murky"/"bleached", vibrant gets "vivid"/"iridescent", desolate gets "murky"/"lurid").
+
+### Tradeoffs
+- Colors are a separate category from adjectives — this means a landscape can have both "crystal trees" (adjective) and "vivid light of mist" (color) without dedup blocking either. The cost is an extra word pick per sentence pair.
+- The color is picked per-sentence-pair (like adj), not once per landscape — allows different sentence pairs to reference different colors (e.g., "vivid" in first pair, "iridescent" in second). Follows the same pattern as per-sentence-pair adjectives (Session 49) and adverbs (Session 37).
+- Only the middle template uses `{color}` — opening, weather, and anomaly templates don't get color references. This keeps scope small and avoids cluttering weather descriptions (which are already the most verbose slot).
+- No CLI flags for color suppression or color-specific overrides — follows the same convention as adverbs (Session 24): an automatic quality improvement. A `--no-color` flag could be added later if needed (parallel to `--no-adverb`).
+- 12 new tests, 268 total (18 todo + 250 landscape).
+
 ## 2026-07-12 — Local Random State (`random.Random()`)
 
 ### What

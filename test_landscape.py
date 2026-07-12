@@ -5,7 +5,7 @@ import random
 
 from landscape import (
     generate_landscape,
-    BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, BIOME_WORDS,
+    BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
 )
@@ -17,6 +17,7 @@ ALL_NOUNS = set(NOUNS) | {w for bw in BIOME_WORDS.values() for w in bw.get("noun
 ALL_WEATHERS = set(WEATHERS) | {w for bw in BIOME_WORDS.values() for w in bw.get("weathers", [])}
 ALL_ANOMALIES = set(ANOMALIES) | {w for bw in BIOME_WORDS.values() for w in bw.get("anomalies", [])}
 ALL_ADVERBS = set(ADVERBS)
+ALL_COLORS = set(COLORS)
 
 
 class TestLandscape(unittest.TestCase):
@@ -1807,6 +1808,97 @@ class TestMiddleFlag(unittest.TestCase):
     def test_middle_disabled_flag_exists_via_cli(self):
         from landscape import main
         self.assertTrue(callable(main))
+
+
+class TestColors(unittest.TestCase):
+    def test_output_contains_known_color(self):
+        results = {generate_landscape(seed=s) for s in range(200)}
+        self.assertTrue(
+            any(c in r for r in results for c in ALL_COLORS),
+            "No known color word appeared across 200 seeds",
+        )
+
+    def test_color_appears_in_middle_templates(self):
+        results = [generate_landscape(seed=s, biome="tundra", detail=2) for s in range(300)]
+        self.assertTrue(
+            any(c in r for r in results for c in ALL_COLORS),
+            "No color word appeared in middle sentences across 300 seeds",
+        )
+
+    def test_color_is_deterministic_with_seed(self):
+        a = generate_landscape(seed=42)
+        b = generate_landscape(seed=42)
+        self.assertEqual(a, b)
+
+    def test_color_with_mood_does_not_break_output(self):
+        for mood in ["eerie", "vibrant", "desolate"]:
+            for s in range(10):
+                result = generate_landscape(seed=s, mood=mood)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_color_with_detail_three_produces_valid_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, detail=3)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 50)
+
+    def test_color_word_weight_function_works(self):
+        from landscape import _word_weight
+        w_common = _word_weight("vivid", bias="normal")
+        w_rare = _word_weight("iridescent", bias="normal")
+        self.assertGreater(w_common, w_rare,
+            "Common color word should have higher weight than rare color word")
+
+    def test_color_mood_boost_applies(self):
+        from landscape import _word_weight
+        w_no_mood = _word_weight("vivid", bias="flat", mood=None, category="colors")
+        w_mood = _word_weight("vivid", bias="flat", mood="vibrant", category="colors")
+        self.assertEqual(w_mood, w_no_mood * MOOD_BOOST,
+            "vivid should be boosted in vibrant mood")
+
+    def test_color_mood_boost_not_applied_for_unmatched(self):
+        from landscape import _word_weight
+        w_no_mood = _word_weight("fluorescent", bias="flat", mood=None, category="colors")
+        w_mood = _word_weight("fluorescent", bias="flat", mood="desolate", category="colors")
+        self.assertEqual(w_mood, w_no_mood,
+            "fluorescent should not be boosted in desolate mood")
+
+    def test_color_light_template_exists_in_pool(self):
+        middle_templates = SENTENCE_TEMPLATES["middle"]
+        color_tmpl = [t for t in middle_templates if "{color}" in t]
+        self.assertEqual(len(color_tmpl), 1,
+            "Exactly one middle template should reference {color}")
+        self.assertIn("The {color} light of {element}", color_tmpl[0])
+
+    def test_color_light_template_appears_in_output(self):
+        results = [generate_landscape(seed=s, biome="tundra") for s in range(500)]
+        color_matches = sum(
+            1 for r in results if " light of " in r
+        )
+        self.assertGreater(color_matches, 0,
+            "Color light template should appear across 500 random seeds")
+
+    def test_color_works_with_deactivated_middle(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, middle_enabled=False, detail=2)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_color_works_with_json_output(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_describe_global_includes_colors(self):
+        from landscape import describe_global
+        result = describe_global()
+        self.assertIn("colors", result)
+        for c in ALL_COLORS:
+            self.assertIn(c, result)
 
 
 if __name__ == "__main__":

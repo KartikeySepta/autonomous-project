@@ -59,6 +59,12 @@ ADVERBS = [
     "constantly", "subtly", "quietly", "ceaselessly",
 ]
 
+COLORS = [
+    "vivid", "murky", "burnished", "stark",
+    "lurid", "mottled", "bleached", "veined",
+    "iridescent", "fluorescent", "scintillating", "coruscating",
+]
+
 # Weight tiers for word selection — common words appear more often, rare words less so
 COMMON_WORDS = {
     "crystal", "shadow", "ancient", "forgotten", "silent",
@@ -67,6 +73,7 @@ COMMON_WORDS = {
     "whisper", "glow", "shimmer", "drift",
     "a gentle rain falls", "a still calm lingers", "mist curls along the ground",
     "softly", "gently", "silently", "quietly",
+    "vivid", "burnished", "stark", "murky",
 }
 
 RARE_WORDS = {
@@ -76,6 +83,7 @@ RARE_WORDS = {
     "resonate", "vibrate",
     "ash drifts slowly downward",
     "relentlessly", "patiently", "eternally", "ceaselessly",
+    "iridescent", "fluorescent", "scintillating", "coruscating",
 }
 
 
@@ -94,6 +102,7 @@ MOOD_WORDS = {
         "elements": ["echo", "silence", "darkness", "stillness", "cave wind"],
         "nouns": ["ruins", "stones", "crystals", "archways", "spires", "fissures"],
         "verbs": ["whisper", "hum", "vibrate", "resonate", "creak", "echo"],
+        "colors": ["murky", "bleached", "stark", "veined", "lurid"],
         "adverbs": ["silently", "slowly", "eternally", "patiently", "ceaselessly"],
         "weathers": [
             "a still calm lingers",
@@ -116,6 +125,7 @@ MOOD_WORDS = {
         "elements": ["light", "radiance", "warmth", "fragrance", "birdsong", "leaf rustle"],
         "nouns": ["crystals", "geodes", "glades", "canopies", "polyps", "groves"],
         "verbs": ["glow", "shimmer", "pulse", "glimmer", "resonate", "wave"],
+        "colors": ["vivid", "burnished", "iridescent", "fluorescent", "scintillating"],
         "adverbs": ["gently", "softly", "endlessly", "quietly"],
         "weathers": [
             "a warm breeze drifts through",
@@ -136,6 +146,7 @@ MOOD_WORDS = {
         "elements": ["stillness", "silence", "darkness", "dry air", "ash fall"],
         "nouns": ["ruins", "dunes", "ice fields", "crevasses", "slag heaps", "permafrost"],
         "verbs": ["crack", "freeze", "drift", "scour", "bake", "stagnate"],
+        "colors": ["murky", "bleached", "stark", "lurid", "mottled"],
         "adverbs": ["relentlessly", "constantly", "slowly", "eternally"],
         "weathers": [
             "ash drifts slowly downward",
@@ -250,6 +261,7 @@ def describe_global():
         "weathers": WEATHERS,
         "anomalies": ANOMALIES,
         "adverbs": ADVERBS,
+        "colors": COLORS,
     }
     lines = ["=== global word pools ==="]
     for cat_name, pool in categories.items():
@@ -280,6 +292,7 @@ SENTENCE_TEMPLATES = {
         "{Element} {verb_conjugated} {adverb} through the {adj} {noun}.",
         "Beneath the {adj} {noun}, {element} {verb_conjugated} {adverb}.",
         "Across the {display}, {element} {verb_conjugated} {adverb}.",
+        "The {color} light of {element} {verb_conjugated} {adverb}.",
     ],
     "weather": [
         "{Weather} {adverb}.",
@@ -530,6 +543,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
         "weathers": WEATHERS,
         "anomalies": ANOMALIES,
         "adverbs": ADVERBS,
+        "colors": COLORS,
     }[category]
     pool = specific + global_pool
     if used_words is not None:
@@ -590,6 +604,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
             noun = _pick("nouns", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
             verb = _pick("verbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
             verb_conjugated = _conjugate(verb)
+            color = _pick("colors", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
         if adverb_enabled:
             adverb = _pick("adverbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
         else:
@@ -597,7 +612,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         if middle_enabled:
             middle_tmpl = _pick_template("middle", template_set, template_overrides, rng=rng)
             parts.append(
-                _format_tmpl(middle_tmpl, Element=element.capitalize(), element=element, adj=adj, noun=noun, verb=verb, verb_conjugated=verb_conjugated, adverb=adverb, display=display)
+                _format_tmpl(middle_tmpl, Element=element.capitalize(), element=element, adj=adj, noun=noun, verb=verb, verb_conjugated=verb_conjugated, adverb=adverb, display=display, color=color)
             )
 
         if weather_enabled:
