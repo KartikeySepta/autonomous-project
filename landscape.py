@@ -301,9 +301,10 @@ def describe_global():
 
 SENTENCE_TEMPLATES = {
     "opening": [
-        "A vast {adj} {display} stretches {adverb} before you.",
-        "Before you, a {adj} {display} comes into view {adverb}.",
-        "The {adj} {display} lies {adverb} ahead.",
+        "A vast {adj} {display} of {element} stretches {adverb} before you.",
+        "Before you, a {adj} {display} of {element} comes into view {adverb}.",
+        "The {adj} {display} of {element} lies {adverb} ahead.",
+        "{Element} — the {adj} {display} stretches {adverb} before you.",
     ],
     "middle": [
         "{Element} {verb_conjugated} {adverb} between the {adj} {noun}.",
@@ -610,12 +611,13 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
     used_words = set() if dedup else None
 
     adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
+    element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
     if adverb_enabled:
         adverb = _pick("adverbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
     else:
         adverb = ""
     opening_tmpl = _pick_template("opening", template_set, template_overrides, rng=rng)
-    parts = [_format_tmpl(opening_tmpl, adj=adj, display=display, adverb=adverb)]
+    parts = [_format_tmpl(opening_tmpl, adj=adj, display=display, adverb=adverb, element=element, Element=element.capitalize())]
 
     for _ in range(max(detail, 0)):
         if middle_enabled:

@@ -33,10 +33,43 @@ class TestLandscape(unittest.TestCase):
     def test_output_starts_with_valid_opening(self):
         result = generate_landscape(seed=42)
         valid_starts = ("A vast ", "Before you", "The ")
+        has_em_dash = " — " in result[:60] and result[0].isupper()
         self.assertTrue(
-            any(result.startswith(s) for s in valid_starts),
+            any(result.startswith(s) for s in valid_starts) or has_em_dash,
             f"Output doesn't start with any valid opening: {result!r}",
         )
+
+    def test_opening_contains_known_element(self):
+        result = generate_landscape(seed=42)
+        self.assertTrue(
+            any(e in result for e in ALL_ELEMENTS),
+            f"Opening should contain a known element word: {result!r}",
+        )
+
+    def test_opening_em_dash_template_appears_across_seeds(self):
+        results = [generate_landscape(seed=s, biome="forest") for s in range(200)]
+        em_dash_count = sum(1 for r in results if " — " in r[:60])
+        self.assertGreater(em_dash_count, 0,
+            "Em-dash opening template should appear across 200 seeds")
+
+    def test_opening_element_is_deterministic(self):
+        a = generate_landscape(seed=42)
+        b = generate_landscape(seed=42)
+        self.assertEqual(a, b)
+
+    def test_opening_element_works_with_detail_zero(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, detail=0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_opening_element_works_with_json_format(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
 
     def test_output_contains_known_biome(self):
         result = generate_landscape(seed=42)
@@ -393,6 +426,7 @@ class TestLandscape(unittest.TestCase):
             "A vast ": sum(1 for r in results if r.startswith("A vast ")),
             "Before you": sum(1 for r in results if r.startswith("Before you")),
             "The ": sum(1 for r in results if r.startswith("The ")),
+            "em-dash": sum(1 for r in results if " — " in r[:60]),
         }
         distinct = sum(1 for v in counts.values() if v > 0)
         self.assertGreaterEqual(distinct, 2, f"Only {distinct} opening patterns seen: {counts}")

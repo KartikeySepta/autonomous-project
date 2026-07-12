@@ -829,3 +829,20 @@ Anomalies were the last major output component without a dedicated `--no-*` supp
 - The parameter name `anomaly_enabled` follows the same convention as `weather_enabled`, `middle_enabled`, `color_enabled`, and `adverb_enabled` — a simple boolean that gates a component
 - `--no-anomaly` is orthogonal to `--anomaly-prob` and `--anomaly-count`: if all three are specified, `anomaly_enabled=False` takes precedence and suppresses anomalies entirely
 - 8 new tests, 298 total.
+
+## 2026-07-12 — `{element}` in Opening Templates + New Em-Dash Template
+
+### What
+Added `{element}` to all 3 existing opening templates (now `"... of {element} ..."`) and added a 4th opening template `"{Element} — the {adj} {display} stretches {adverb} before you."` that uses an em-dash construction. The element is picked once before the opening (like `adj` and `adverb`) via a new `_pick("elements", ...)` call. Both `element=element` (lowercase, for mid-sentence) and `Element=element.capitalize()` (for sentence-initial) kwargs are passed to the opening format call; templates silently ignore unused kwargs.
+
+### Why
+The opening templates have always only used `{adj}`, `{display}`, and `{adverb}` — they described where the landscape is and what it looks like, but not what sensory qualities (element) define it. Adding `{element}` makes openings richer: "A vast crystal forest of mist stretches silently before you" is more evocative than "A vast crystal forest stretches silently before you." The new em-dash template is structurally different from the other three ("Mist — the crystal forest stretches silently before you") and creates a more poetic, invocation-like opening that sets the atmospheric tone before revealing the landscape.
+
+### Tradeoffs
+- **Seed-breaking change**: existing seed-based output differs because the random call order changes (one extra `_pick()` before the opening template). Since no seed-based output has been published, this is acceptable.
+- **One extra dedup slot consumed**: the opening's element is added to `used_words`, so it won't appear in middle sentences. This is consistent with how the opening's `adj` works (also deduped separately from the loop's `adj`).
+- **4 opening templates now**: opening variety goes from 3 to 4 templates, making the em-dash template appear in ~25% of outputs rather than ~33% for each of the old templates. This is a welcome increase in structural variety.
+- **Multi-word elements work correctly**: biome-specific elements like "leaf rustle" or "heat shimmer" are capitalized via `str.capitalize()` (e.g. "Leaf rustle — the forest..."), which is grammatically correct.
+- Template_set "third" still maps to index 2 (the `"The {adj}..."` template), unchanged. The new template at index 3 is only accessible via random selection.
+- `test_pick_template_selects_correct_index` and `test_template_set_third_uses_third_opening` are unaffected.
+- 5 new tests, 311 total.

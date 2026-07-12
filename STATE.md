@@ -559,3 +559,22 @@ Working. All 306 tests pass (18 todo + 288 landscape).
   - Anomalies were the last major output component without a dedicated suppression flag; `--anomaly-prob 0` worked but was less discoverable
 - Added 8 tests in `TestAnomalyFlag` class: `test_anomaly_enabled_default_same_as_before`, `test_anomaly_disabled_still_produces_valid_output`, `test_anomaly_disabled_differs_from_enabled`, `test_anomaly_disabled_deterministic`, `test_anomaly_disabled_suppresses_all_anomalies`, `test_anomaly_disabled_flag_exists_via_cli`, `test_anomaly_disabled_works_with_detail_three`, `test_anomaly_disabled_works_with_mood_and_bias`
 - Tests increased from 290 to 298 total (18 todo + 280 landscape)
+
+### Current status
+Working. All 306 tests pass (18 todo + 288 landscape).
+
+## 2026-07-12
+
+### What was done (Session 56)
+- Added **`{element}` to all 3 opening templates** and added a **4th poetic em-dash opening template** — the opening now references an element word (mist, light, echo, etc.) for richer, more vivid opening descriptions
+  - Templates 0–2: `"... of {element} ..."` — "A vast crystal forest of mist stretches silently before you."
+  - Template 3 (new): `"{Element} — the {adj} {display} stretches {adverb} before you."` — "Mist — the crystal forest stretches silently before you."
+  - The element is picked once before the opening (like `adj` and `adverb`), consuming a dedup slot
+  - `element` and `Element` kwargs are passed to the opening format call; templates that don't use one or the other silently ignore the extra kwarg
+- Seed-breaking change: existing seed-based output differs because the random call order changes (one extra `_pick()` before the opening template)
+- Added 5 tests: `test_opening_contains_known_element`, `test_opening_em_dash_template_appears_across_seeds`, `test_opening_element_is_deterministic`, `test_opening_element_works_with_detail_zero`, `test_opening_element_works_with_json_format`
+- Updated `test_output_starts_with_valid_opening` and `test_template_variety_opening_patterns_differ_across_seeds` to accept em-dash openings
+- Tests increased from 306 to 311 total (18 todo + 293 landscape)
+
+### Current status
+Working. All 311 tests pass (18 todo + 293 landscape).
