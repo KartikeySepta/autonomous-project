@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-12 — Biome Introspection (`--describe-biome`)
+
+### What
+Added `--describe-biome` CLI flag and `describe_biome()` function. When invoked with a biome name (e.g. `--describe-biome forest`), it prints that biome's word bank — all words in all 6 categories — and exits without generating a landscape. When invoked without an argument (`--describe-biome` alone) or with `all`, it prints all 13 biomes' word banks.
+
+### Why
+After 42 sessions of adding creative controls (13 biomes, 3 moods, bias/mood-weight systems, template sets, formatting options), the tool had no way for a user to discover what biomes exist or what vocabulary they use. The only way to inspect a biome's words was to read `landscape.py` directly. The `--describe-biome` flag fills this gap: it's an introspection/learning tool that helps users understand what the generator can do before they decide which biome to use. This is especially useful now that the project has grown beyond a simple generator into a system with significant depth.
+
+### Tradeoffs
+- `describe_biome()` is a pure function that returns a string — the CLI just prints it. This means callers can reuse it programmatically, and tests can assert on the returned string without capturing stdout.
+- `--describe-biome` without an argument defaults to `all` — uses argparse `nargs="?"` with `const="all"`, so `--describe-biome` and `--describe-biome all` are equivalent. This matches the UX pattern of `--help` showing everything when no specific topic is given.
+- The function lists biome-specific words only (not the blended global pool). This is intentional: the global pool is shared across all biomes, so listing it would be redundant. Users who want to see global words can look at the source or a future `--describe-global` flag.
+- No `--describe-mood` flag (yet) — moods follow the same pattern but are simpler (3 moods with ~5-7 words per category). Could be added later if users need it.
+- 7 new tests, 221 total.
+
 ## 2026-07-12 — `{adverb}` in Weather Templates 1 and 2
 
 ### What

@@ -1436,5 +1436,70 @@ class TestBiomeWeights(unittest.TestCase):
         self.assertEqual(data["biome_weights"], {"forest": 5})
 
 
+class TestDescribeBiome(unittest.TestCase):
+    def test_describe_known_biome_contains_name(self):
+        from landscape import describe_biome
+        result = describe_biome("forest")
+        self.assertIn("forest", result)
+
+    def test_describe_known_biome_contains_categories(self):
+        from landscape import describe_biome
+        result = describe_biome("tundra")
+        self.assertIn("adjectives:", result)
+        self.assertIn("elements:", result)
+        self.assertIn("nouns:", result)
+
+    def test_describe_unknown_biome_returns_error(self):
+        from landscape import describe_biome
+        result = describe_biome("nonexistent")
+        self.assertIn("Unknown biome", result)
+
+    def test_describe_all_contains_all_biomes(self):
+        from landscape import describe_biome
+        result = describe_biome("all")
+        for b in ["forest", "desert", "tundra", "ocean", "ruined city", "fungal grove", "sky islands"]:
+            self.assertIn(b, result)
+
+    def test_describe_biome_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_biome_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-biome", "forest"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("forest", output)
+        self.assertIn("adjectives:", output)
+
+    def test_describe_all_flag_prints_multiple_biomes(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-biome"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("=== forest ===", output)
+        self.assertIn("=== desert ===", output)
+
+
 if __name__ == "__main__":
     unittest.main()

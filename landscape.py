@@ -204,6 +204,24 @@ def _format_tmpl(template, **kwargs):
     return result.replace("  ", " ").replace(" .", ".")
 
 
+def describe_biome(biome):
+    """Return a string describing the given biome's word bank.
+    If biome is 'all', describe all biomes."""
+    if biome == "all":
+        lines = []
+        for b in BIOMES:
+            lines.append(describe_biome(b))
+        return "\n\n".join(lines)
+    words = BIOME_WORDS.get(biome)
+    if words is None:
+        return f"Unknown biome: {biome!r}"
+    lines = [f"=== {biome} ==="]
+    for cat in ["adjectives", "elements", "nouns", "verbs", "weathers", "anomalies"]:
+        pool = words.get(cat, [])
+        lines.append(f"  {cat}: {', '.join(pool)}")
+    return "\n".join(lines)
+
+
 SENTENCE_TEMPLATES = {
     "opening": [
         "A vast {adj} {display} stretches {adverb} before you.",
@@ -600,6 +618,11 @@ def main():
         help="Force a specific biome (overrides random selection)",
     )
     parser.add_argument(
+        "--describe-biome", type=str, default=None, nargs="?",
+        const="all",
+        help="Show word bank for a biome (or 'all' for all biomes, default: all)",
+    )
+    parser.add_argument(
         "--show-biome", action="store_true",
         help="Reveal the biome name in the output",
     )
@@ -740,6 +763,10 @@ def main():
         for pair in args.biome_weight.split(","):
             b, w = pair.split("=")
             biome_weights[b.strip().lower()] = float(w)
+
+    if args.describe_biome is not None:
+        print(describe_biome(args.describe_biome))
+        return
 
     lines = []
     for i in range(args.count):

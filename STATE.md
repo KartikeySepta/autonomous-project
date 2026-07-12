@@ -397,5 +397,17 @@
 - No new tests — existing adverb and template tests cover the change
 - Tests: still 214 total (18 todo + 196 landscape)
 
+## 2026-07-12
+
+### What was done (Session 43)
+- Added **`--describe-biome` CLI flag** and `describe_biome()` function — users can now inspect the word bank for any biome without reading the source code
+  - `--describe-biome forest` prints all word categories (adjectives, elements, nouns, verbs, weathers, anomalies) for the forest biome
+  - `--describe-biome` (no argument) or `--describe-biome all` lists all 13 biomes with their word banks
+  - Unknown biome names produce a clear error message
+  - The function returns a string (no side effects) so it can be tested and reused programmatically
+  - CLI exits immediately after printing — no landscape generation occurs when `--describe-biome` is used
+- Added 7 tests in `TestDescribeBiome` class: `test_describe_known_biome_contains_name`, `test_describe_known_biome_contains_categories`, `test_describe_unknown_biome_returns_error`, `test_describe_all_contains_all_biomes`, `test_describe_biome_flag_exists_via_cli`, `test_describe_biome_flag_prints_to_stdout`, `test_describe_all_flag_prints_multiple_biomes`
+- Tests increased from 214 to 221 total (18 todo + 203 landscape)
+
 ### Current status
-Working. All 214 tests pass (18 todo + 196 landscape).
+Working. All 221 tests pass (18 todo + 203 landscape).
