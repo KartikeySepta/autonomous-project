@@ -1810,6 +1810,7 @@ class TestDescribeMood(unittest.TestCase):
         self.assertIn("elements:", result)
         self.assertIn("nouns:", result)
         self.assertIn("verbs:", result)
+        self.assertIn("colors:", result)
         self.assertIn("adverbs:", result)
 
     def test_describe_unknown_mood_returns_error(self):

@@ -269,7 +269,7 @@ def describe_mood(mood):
     if words is None:
         return f"Unknown mood: {mood!r}"
     lines = [f"=== {mood} ==="]
-    for cat in ["adjectives", "elements", "nouns", "verbs", "adverbs", "weathers", "anomalies"]:
+    for cat in ["adjectives", "elements", "nouns", "verbs", "colors", "adverbs", "weathers", "anomalies"]:
         pool = words.get(cat, [])
         lines.append(f"  {cat}: {', '.join(pool)}")
     return "\n".join(lines)

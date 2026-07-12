@@ -699,5 +699,11 @@ Working. All 367 tests pass (18 todo + 349 landscape).
 - Added 7 template set tests and 10 describe_templates tests
 - Tests increased from 367 to 384 total (18 todo + 366 landscape)
 
+### What was done (Session 65)
+- Fixed `describe_mood()` to include `"colors"` in its category listing — when Session 62 added colors and adverbs to biome word banks, `describe_biome()` was updated to list both new categories, but `describe_mood()` was not similarly updated, so mood introspection silently omitted color words
+- Updated `test_describe_known_mood_contains_categories` to assert on `"colors:"` presence (was missing from the test assertion list)
+- One-line fix in `describe_mood()`: added `"colors"` to the category iteration list
+- Tests: still 384 total (18 todo + 366 landscape) — assertion updated in existing test
+
 ### Current status
-Working. All 384 tests pass (18 todo + 366 landscape).
+Working. All 366 tests pass (18 todo + 366 landscape).
