@@ -366,5 +366,14 @@
 - Added 3 tests: `test_middle_template_display_exists_in_pool` (direct string assertion), `test_middle_template_with_display_appears_in_output` (statistical — appears across 300 seeds), `test_middle_template_display_composable_with_combine` (works with `--combine`)
 - Tests increased from 193 to 196 total (18 todo + 178 landscape)
 
+## 2026-07-12
+
+### What was done (Session 40)
+- Added `{adj}` to the classic middle template (index 0): `"{Element} {verb_conjugated} between the {adj} {noun}."` — previously `"{Element} {verb_conjugated} between the {noun}."` without an adjective, making it the only middle template that didn't use the already-picked landscape adjective
+  - Example output: "Mist whispers between the crystal trees." instead of "Mist whispers between the trees."
+  - The `adj` kwarg was already passed to the middle template format call (from Session 38), so this is a one-line template string change with no code changes
+- No new tests — existing template and output tests cover the change
+- Tests: still 196 total (18 todo + 178 landscape)
+
 ### Current status
 Working. All 196 tests pass (18 todo + 178 landscape).

@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-12 — `{adj}` in Middle Template 0 (Classic Template)
+
+### What
+Added `{adj}` to `SENTENCE_TEMPLATES["middle"][0]`: changed `"{Element} {verb_conjugated} between the {noun}."` to `"{Element} {verb_conjugated} between the {adj} {noun}."`. The `adj` kwarg was already passed to the format call (Session 38) and was simply unused by this template.
+
+### Why
+Template 0 was the only middle template without `{adj}` — templates 1 and 2 received it in Session 38. This made template 0 produce flatter output ("Mist whispers between the trees.") compared to other templates ("Among the crystal trees, mist whispers."). Adding `{adj}` brings it in line with the rest of the template pool, making the classic template equally descriptive.
+
+### Tradeoffs
+- One-line template change, no code changes — `adj` was already in scope and threaded through `_format_tmpl`
+- No seed-breaking change: no new `_pick()` calls
+- Template 0 now reads as `"Mist whispers between the crystal trees."` — the adjective sits naturally before the noun
+- No new tests — existing coverage (template variety, output validity, deterministic seed) covers the change
+- 196 tests total (unchanged).
+
 ## 2026-07-12 — Biome Name in Middle Sentences (`{display}` Template)
 
 ### What
