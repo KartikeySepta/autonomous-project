@@ -433,5 +433,16 @@
 - Added 9 tests in `TestDescribeGlobal` class: `test_describe_global_returns_string`, `test_describe_global_contains_header`, `test_describe_global_contains_all_categories`, `test_describe_global_contains_weight_tiers`, `test_describe_global_contains_known_common_words`, `test_describe_global_contains_known_rare_words`, `test_describe_global_flag_exists_via_cli`, `test_describe_global_flag_prints_to_stdout`, `test_describe_global_no_landscape_generated`
 - Tests increased from 228 to 237 total (18 todo + 219 landscape)
 
+## 2026-07-12
+
+### What was done (Session 46)
+- Added **`--no-weather` CLI flag** and `weather_enabled` parameter to `generate_landscape()` — users can now suppress weather descriptions while keeping opening, middle, and anomaly sentences
+  - `weather_enabled=True` (default) preserves existing behavior
+  - `weather_enabled=False` skips the weather pick and template in the detail loop — only middle sentences are generated for each detail iteration
+  - Follows the same pattern as `--no-dedup` (Session 33) and `--no-adverb` (Session 34): automatic quality improvement made configurable
+  - Works with `detail=0` (opening only, no-op) and `--format json`
+- Added 9 tests in `TestWeatherFlag` class: `test_weather_enabled_default_same_as_before`, `test_weather_disabled_still_produces_valid_output`, `test_weather_disabled_differs_from_enabled`, `test_weather_disabled_has_fewer_sentences`, `test_weather_disabled_deterministic`, `test_weather_disabled_works_with_detail_three`, `test_weather_disabled_works_with_mood_and_bias`, `test_weather_disabled_works_with_json_format`, `test_weather_disabled_flag_exists_via_cli`
+- Tests increased from 237 to 246 total (18 todo + 228 landscape)
+
 ### Current status
-Working. All 237 tests pass (18 todo + 219 landscape).
+Working. All 246 tests pass (18 todo + 228 landscape).

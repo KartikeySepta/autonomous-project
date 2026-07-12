@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-12 — Configurable Weather Suppression (`--no-weather`)
+
+### What
+Added `--no-weather` CLI flag and `weather_enabled` parameter to `generate_landscape()` (default: `True`). When `weather_enabled=False`, the weather word pick and template rendering are skipped in the detail loop — only the middle sentence is generated for each detail iteration.
+
+### Why
+Weather has been an always-on component since Session 1 (the original landscape generator always had an opening, a middle sentence, and weather). While `--detail 0` suppresses everything except the opening, and `--anomaly-prob 0` / `--anomaly-count 0` suppress anomalies, there was no way to suppress *weather* while keeping middle sentences. A user who wants atmospheric descriptions without explicit weather (e.g., a static scene, an interior space, or a purely visual vignette) had no option. Making it configurable follows the established pattern (`--no-dedup`, `--no-adverb`) of exposing automatic features as user-facing controls.
+
+### Tradeoffs
+- `weather_enabled=True` is the default, preserving backward compatibility and all existing seed-based output
+- When disabled, weather words are not picked at all (saves a `_pick()` call and a dedup slot), making the output slightly more efficient
+- Works orthogonally with all other controls: mood, bias, detail, anomaly settings, template sets, etc.
+- JSON output does not include `weather_enabled` — follows the same convention as `dedup` and `adverb_enabled`, which are also omitted from JSON metadata
+- 9 new tests, 246 total.
+
 ## 2026-07-12 — Global Word Pool Introspection (`--describe-global`)
 
 ### What
