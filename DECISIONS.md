@@ -529,3 +529,18 @@ Due dates are the next natural extension after priorities — they let users tra
 - No date validation — accepts any string, keeps it simple and flexible; validation can be added later
 - Due date stored only when provided (`"due"` key is absent for tasks without one), keeping JSON clean
 - No sorting by due date yet — follows the same deferred approach as priority ordering
+
+## 2026-07-12 — Per-Sentence Adverbs
+
+### What
+Changed adverb selection from single-per-landscape to per-sentence-pair. Previously, one adverb was picked per landscape and reused in every template that included `{adverb}`. Now, the opening gets its own adverb pick (before the opening template), and each middle+weather sentence pair inside the `detail` loop gets its own adverb pick. Anomaly templates (which don't use `{adverb}`) receive the last-picked adverb as a no-op kwarg.
+
+### Why
+With a single adverb per landscape, detail=2 and detail=3 outputs used the same adverb (e.g., "softly") in every sentence pair that included it — which could feel repetitive in a long description. Per-sentence adverbs allow different adverbial flavors across sentence pairs: the first pair might describe silent movement ("silently"), while the second pair evokes slow decay ("slowly"). This makes richer outputs genuinely richer, not just longer. The change is analogous to how elements, nouns, and verbs were already per-sentence (picked fresh inside the loop) — the adverb was the only word category that was locked to a single landscape-wide pick.
+
+### Tradeoffs
+- **Seed-breaking change**: Existing seed-based output differs because the random call order changes (one `_pick("adverbs", ...)` call per detail level). Determinism is preserved — the same seed still produces the same output.
+- **More dedup slots consumed**: Each adverb pick consumes a dedup slot (if `dedup=True`), so a detail=3 output consumes 4 adverb picks (1 opening + 3 pairs) instead of 1. With only 12 adverbs in the global pool, a very high detail level could theoretically exhaust the adverb pool and trigger the fallback (unfiltered pool), though in practice this is unlikely since only 5 of 11 templates use `{adverb}`.
+- **Clutter risk**: Multiple adverbs could make output feel busy ("softly... gently... quietly..."). Mitigated by: (1) only 5 of 11 templates actually use `{adverb}`, (2) dedup prevents the same adverb from appearing twice, (3) `--no-adverb` is always available to disable adverbs entirely.
+- **Per-sentence, not per-template**: Each middle+weather pair shares one adverb, which avoids the "every sentence a different adverb" excess that the original Session 24 decision warned about. The pair shares a common adverbial flavor, which reads naturally as part of the same descriptive moment.
+- 5 new tests, 211 total.

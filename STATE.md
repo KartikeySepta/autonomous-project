@@ -333,5 +333,18 @@
 - Added 6 tests in `TestBiomeWeights` class: `test_biome_weights_default_does_not_change_output`, `test_biome_weights_produces_valid_output`, `test_biome_weights_zero_suppresses_biome`, `test_biome_weights_all_zero_falls_back`, `test_biome_weights_flag_exists_via_cli`, `test_biome_weights_json_includes_field`
 - Tests increased from 200 to 206 total (18 todo + 188 landscape)
 
+## 2026-07-12
+
+### What was done (Session 37)
+- Changed adverb from single-per-landscape to **per-sentence-pair**: previously the same adverb was used for the opening and every middle+weather sentence pair; now each sentence pair (and the opening) gets its own adverb pick
+  - Opening still picks its own adverb once before the template
+  - Inside the `detail` loop, a fresh adverb is picked for each middle+weather pair
+  - Anomaly templates (which don't use `{adverb}`) still receive the last-picked adverb as a kwarg (no-op)
+- `adverb_enabled` behavior is unchanged: when `False`, all adverb slots are empty strings
+- This is a **seed-breaking change**: existing seed-based output differs because the random call order changes (one extra `_pick` call per detail level). Determinism is preserved: the same seed still produces the same output.
+- Per-sentence adverbs make detail=2 and detail=3 outputs richer by allowing different adverbial flavors across sentence pairs (e.g., "silently" in the first pair, "gently" in the second)
+- Added 5 tests: `test_per_sentence_adverb_uses_multiple_adverbs`, `test_per_sentence_adverb_deterministic`, `test_per_sentence_adverb_detail_three_has_more_adverb_variety`, `test_per_sentence_adverb_respects_adverb_disabled`, `test_per_sentence_adverb_with_adverb_enabled_default`
+- Tests increased from 206 to 211 total (18 todo + 193 landscape)
+
 ### Current status
-Working. All 206 tests pass (18 todo + 188 landscape).
+Working. All 211 tests pass (18 todo + 193 landscape).

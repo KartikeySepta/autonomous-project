@@ -281,6 +281,38 @@ class TestLandscape(unittest.TestCase):
         self.assertGreater(w_common, w_rare,
             "Common adverb should have higher weight than rare adverb")
 
+    def test_per_sentence_adverb_uses_multiple_adverbs(self):
+        result = generate_landscape(seed=42, template_set="first", detail=2, dedup=True)
+        found = [a for a in ALL_ADVERBS if a in result]
+        self.assertGreaterEqual(len(found), 2,
+            "Per-sentence adverb should use different adverbs across sentences")
+
+    def test_per_sentence_adverb_deterministic(self):
+        a = generate_landscape(seed=42, detail=2)
+        b = generate_landscape(seed=42, detail=2)
+        self.assertEqual(a, b,
+            "Per-sentence adverb should be deterministic with same seed")
+
+    def test_per_sentence_adverb_detail_three_has_more_adverb_variety(self):
+        adverbs_found = set()
+        for s in range(50):
+            result = generate_landscape(seed=s, template_set="first", detail=3, dedup=True)
+            adverbs_found.update(a for a in ALL_ADVERBS if a in result)
+        self.assertGreaterEqual(len(adverbs_found), 3,
+            "With detail=3 and per-sentence adverb, should see varied adverbs across many outputs")
+
+    def test_per_sentence_adverb_respects_adverb_disabled(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, adverb_enabled=False, detail=2)
+            self.assertNotIn("  ", result)
+            self.assertNotIn(" .", result)
+            self.assertTrue(result.endswith("."))
+
+    def test_per_sentence_adverb_with_adverb_enabled_default(self):
+        a = generate_landscape(seed=42, adverb_enabled=True, detail=2)
+        b = generate_landscape(seed=42, detail=2)
+        self.assertEqual(a, b,
+            "adverb_enabled=True should match default with per-sentence adverb")
 
     def test_combine_two_biomes_contains_both_names(self):
         result = generate_landscape(seed=42, combine="forest,desert")
