@@ -240,6 +240,33 @@ def describe_mood(mood):
     return "\n".join(lines)
 
 
+def describe_global():
+    """Return a string describing all global word pools with weight tiers."""
+    categories = {
+        "adjectives": ADJECTIVES,
+        "elements": ELEMENTS,
+        "nouns": NOUNS,
+        "verbs": VERBS,
+        "weathers": WEATHERS,
+        "anomalies": ANOMALIES,
+        "adverbs": ADVERBS,
+    }
+    lines = ["=== global word pools ==="]
+    for cat_name, pool in categories.items():
+        common = [w for w in pool if w in COMMON_WORDS]
+        rare = [w for w in pool if w in RARE_WORDS]
+        normal = [w for w in pool if w not in COMMON_WORDS and w not in RARE_WORDS]
+        parts = []
+        if common:
+            parts.append(f"common: {', '.join(common)}")
+        if normal:
+            parts.append(f"normal: {', '.join(normal)}")
+        if rare:
+            parts.append(f"rare: {', '.join(rare)}")
+        lines.append(f"  {cat_name} ({', '.join(parts)})")
+    return "\n".join(lines)
+
+
 SENTENCE_TEMPLATES = {
     "opening": [
         "A vast {adj} {display} stretches {adverb} before you.",
@@ -646,6 +673,10 @@ def main():
         help="Show word bank for a mood (or 'all' for all moods, default: all)",
     )
     parser.add_argument(
+        "--describe-global", action="store_true",
+        help="Show all global word pools with weight tiers",
+    )
+    parser.add_argument(
         "--show-biome", action="store_true",
         help="Reveal the biome name in the output",
     )
@@ -792,6 +823,9 @@ def main():
         return
     if args.describe_mood is not None:
         print(describe_mood(args.describe_mood))
+        return
+    if args.describe_global:
+        print(describe_global())
         return
 
     lines = []

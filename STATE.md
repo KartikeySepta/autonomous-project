@@ -421,5 +421,17 @@
 - Added 7 tests in `TestDescribeMood` class: `test_describe_known_mood_contains_name`, `test_describe_known_mood_contains_categories`, `test_describe_unknown_mood_returns_error`, `test_describe_all_contains_all_moods`, `test_describe_mood_flag_exists_via_cli`, `test_describe_mood_flag_prints_to_stdout`, `test_describe_all_moods_flag_prints_multiple`
 - Tests increased from 221 to 228 total (18 todo + 210 landscape)
 
+## 2026-07-12
+
+### What was done (Session 45)
+- Added **`--describe-global` CLI flag** and `describe_global()` function — users can now inspect all global word pools (adjectives, elements, nouns, verbs, weathers, anomalies, adverbs) with per-word weight tier annotations (common/normal/rare) without reading the source code
+  - Lists every global word in each category, grouped by weight tier (common: crystal, shadow, ...; normal: ember, frost, ...; rare: glass, brass, ...)
+  - Pure function returns a string (no side effects) — same pattern as `describe_biome()` and `describe_mood()`, callers can reuse it programmatically, tests assert on the returned string
+  - CLI exits immediately after printing — no landscape generation occurs when `--describe-global` is used
+- Follows the same pattern as `--describe-biome` (Session 43) and `--describe-mood` (Session 44), completing the introspection triad: biome, mood, and global word pools are now all discoverable from the CLI
+- This was explicitly anticipated as a future gap in DECISIONS.md (Session 43): "Users who want to see global words can look at the source or a future `--describe-global` flag."
+- Added 9 tests in `TestDescribeGlobal` class: `test_describe_global_returns_string`, `test_describe_global_contains_header`, `test_describe_global_contains_all_categories`, `test_describe_global_contains_weight_tiers`, `test_describe_global_contains_known_common_words`, `test_describe_global_contains_known_rare_words`, `test_describe_global_flag_exists_via_cli`, `test_describe_global_flag_prints_to_stdout`, `test_describe_global_no_landscape_generated`
+- Tests increased from 228 to 237 total (18 todo + 219 landscape)
+
 ### Current status
-Working. All 228 tests pass (18 todo + 210 landscape).
+Working. All 237 tests pass (18 todo + 219 landscape).

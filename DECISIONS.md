@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-12 — Global Word Pool Introspection (`--describe-global`)
+
+### What
+Added `--describe-global` CLI flag and `describe_global()` function. Prints all global word pools (adjectives, elements, nouns, verbs, weathers, anomalies, adverbs) with each word annotated by its weight tier (common/normal/rare). Exits immediately without generating a landscape.
+
+### Why
+Sessions 43–44 added `--describe-biome` and `--describe-mood` for biome and mood introspection. The DECISIONS.md entry for Session 43 explicitly noted: "Users who want to see global words can look at the source or a future `--describe-global` flag." This session fills that gap. With the global word pools being the base vocabulary that all biomes draw from (alongside biome-specific words), users have no way to discover what words are available globally or what weight tier they belong to without reading `landscape.py` directly. The `--describe-global` flag completes the introspection triad: biome, mood, and global word pools are now all discoverable from the CLI.
+
+### Tradeoffs
+- `describe_global()` is a pure function that returns a string — same pattern as `describe_biome()` and `describe_mood()`. Callers can reuse it programmatically, and tests assert on the returned string without capturing stdout.
+- No `nargs` or `const` argument needed — `--describe-global` is a boolean flag with no argument, unlike `--describe-biome` and `--describe-mood` which accept an optional biome/mood name. Global pools are always the same set, so no sub-selection is meaningful.
+- The function annotates each word with its weight tier (common/normal/rare) by checking membership in `COMMON_WORDS` and `RARE_WORDS`. This gives users insight into why certain words appear more often than others — the same tier annotations that `_word_weight()` uses internally.
+- Words that appear in no tier special list (neither common nor rare) are labeled `normal` with base weight 5. This mirrors the logic in `_word_weight()`.
+- 9 new tests, 237 total.
+
 ## 2026-07-12 — Mood Introspection (`--describe-mood`)
 
 ### What

@@ -1569,5 +1569,91 @@ class TestDescribeMood(unittest.TestCase):
         self.assertIn("=== desolate ===", output)
 
 
+class TestDescribeGlobal(unittest.TestCase):
+    def test_describe_global_returns_string(self):
+        from landscape import describe_global
+        result = describe_global()
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_describe_global_contains_header(self):
+        from landscape import describe_global
+        result = describe_global()
+        self.assertIn("global word pools", result)
+
+    def test_describe_global_contains_all_categories(self):
+        from landscape import describe_global
+        result = describe_global()
+        for cat in ["adjectives", "elements", "nouns", "verbs", "weathers", "anomalies", "adverbs"]:
+            self.assertIn(f"{cat} (", result,
+                f"Global description should contain category '{cat}'")
+
+    def test_describe_global_contains_weight_tiers(self):
+        from landscape import describe_global
+        result = describe_global()
+        self.assertIn("common:", result,
+            "Global description should annotate common words")
+        self.assertIn("rare:", result,
+            "Global description should annotate rare words")
+        self.assertIn("normal:", result,
+            "Global description should annotate normal words")
+
+    def test_describe_global_contains_known_common_words(self):
+        from landscape import describe_global, COMMON_WORDS
+        result = describe_global()
+        for w in list(COMMON_WORDS)[:3]:
+            self.assertIn(w, result)
+
+    def test_describe_global_contains_known_rare_words(self):
+        from landscape import describe_global, RARE_WORDS
+        result = describe_global()
+        for w in list(RARE_WORDS)[:3]:
+            self.assertIn(w, result)
+
+    def test_describe_global_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_global_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-global"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("global word pools", output)
+        self.assertIn("adjectives", output)
+        self.assertIn("common:", output)
+        self.assertIn("rare:", output)
+
+    def test_describe_global_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-global", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-global is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-global is used")
+
+
 if __name__ == "__main__":
     unittest.main()
