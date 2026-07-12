@@ -932,3 +932,22 @@ Two template enrichments in one session:
 - **No seed-breaking change from new `_pick()` calls**: Template string changes only, no new random calls. Seed-based output differs only for landscapes that happen to select affected templates — and the content is strictly richer.
 - **All 7 middle templates now use `{color}`**: Complete coverage across the middle slot, joining `{adj}` (6/6), `{adverb}` (6/6), and `{element}` (in all templates that have element kwarg support).
 - **11 new tests**, 348 total (18 todo + 330 landscape).
+
+## 2026-07-12 — Biome-Specific Color and Adverb Word Pools
+
+### What
+Added `"colors"` and `"adverbs"` entries to each of the 13 biomes in `BIOME_WORDS` — each biome now has 3-4 curated color words and 3-4 curated adverbs that are blended with the global pools during word selection. Updated `describe_biome()` to include these two new categories in its output.
+
+### Why
+When colors (Session 51) and adverbs (Session 24) were added as word categories, they were only populated in global pools and `MOOD_WORDS` — `BIOME_WORDS` never got corresponding entries. This meant `_pick("colors", biomes)` and `_pick("adverbs", biomes)` always fell back entirely to the global pool, making every biome share the same colors and adverbial flavors. A forest, desert, and ocean all used the same "vivid"/"murky"/"burnished" colors and "softly"/"silently"/"gently" adverbs.
+
+Adding biome-specific colors and adverbs closes this gap: the same biome system that makes a forest feel like a forest (through distinctive adjectives, elements, nouns, verbs, weathers, and anomalies) now also makes it feel distinctive in color and adverb choices. A desert's "crimson" and "relentlessly" feel different from a forest's "emerald" and "peacefully" or a tundra's "frost-white" and "coldly." This is the natural completion of the biome word bank system — all 8 word categories now have biome-specific pools.
+
+### Tradeoffs
+- **Zero code changes to `_pick()`**: The function already used `BIOME_WORDS.get(b, {}).get(category, [])` for all categories. Colors and adverbs were simply missing from `BIOME_WORDS`, so they returned empty lists. Adding the data entries is purely additive — no pipeline logic changes.
+- **3-4 words per biome per category** — smaller than the global pools (12 each) so the global flavor still dominates when no biome is set or when combining biomes. This keeps the system balanced: biome-specific words add thematic seasoning without overwhelming the global vocabulary.
+- **Word overlap with global pools is acceptable**: Some biome colors (e.g., "golden" in forest/desert/plain/sky islands) also appear in the global pool. This is fine — the biome word is added to the pool alongside the global word, so selection probability increases for that word when the biome is active. This follows the same pattern as biome adjectives/elements/nouns/verbs overlapping with global pools (e.g., "golden" is both a desert adjective and a global color).
+- **Not all multi-word colors will appear in all templates**: Multi-word colors like "deep green" and "obsidian black" could be split across template placeholders (e.g., `"emerald"` fits anywhere, but `"deep green"` before `{element}` produces `"deep green birdsong"`). This is acceptable — multi-word elements like "heat shimmer" and "leaf rustle" already work the same way, and the results read as natural adjective phrases.
+- **No seed-breaking change**: Adding data to `BIOME_WORDS` doesn't change the random call order — only the pool of available words changes. Seed-based output is preserved for biomes whose random selections don't draw from the new pools (though in practice most will, since colors and adverbs are picked per-sentence-pair).
+- **`describe_biome()` now includes 8 categories** (was 6). The `test_describe_known_biome_contains_categories` test checked for "adjectives:", "elements:", "nouns:" but didn't assert "only these categories" — so no update was needed. A new test verifies the new categories appear.
+- **12 new tests**, 360 total (18 todo + 342 landscape).

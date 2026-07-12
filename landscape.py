@@ -247,7 +247,7 @@ def describe_biome(biome):
     if words is None:
         return f"Unknown biome: {biome!r}"
     lines = [f"=== {biome} ==="]
-    for cat in ["adjectives", "elements", "nouns", "verbs", "weathers", "anomalies"]:
+    for cat in ["adjectives", "elements", "nouns", "verbs", "colors", "adverbs", "weathers", "anomalies"]:
         pool = words.get(cat, [])
         lines.append(f"  {cat}: {', '.join(pool)}")
     return "\n".join(lines)
@@ -337,6 +337,8 @@ BIOME_WORDS = {
         "elements": ["birdsong", "leaf rustle", "sap scent", "shade"],
         "nouns": ["canopies", "trunks", "glades", "ferns", "branches"],
         "verbs": ["rustle", "whisper", "breathe", "creak", "shade"],
+        "colors": ["emerald", "deep green", "golden", "dappled"],
+        "adverbs": ["softly", "gently", "peacefully"],
         "weathers": [
             "sunlight filters through the canopy in golden beams",
             "a soft wind stirs the leaves overhead",
@@ -353,6 +355,8 @@ BIOME_WORDS = {
         "elements": ["heat shimmer", "sand grain", "dry air", "sun flare"],
         "nouns": ["dunes", "mesas", "canyons", "plateaus", "oases"],
         "verbs": ["bake", "crack", "drift", "shimmer", "scour"],
+        "colors": ["amber", "golden", "pale", "crimson"],
+        "adverbs": ["relentlessly", "harshly", "patiently"],
         "weathers": [
             "heat ripples rise from the sand in waves",
             "a hot wind scours the dunes",
@@ -369,6 +373,8 @@ BIOME_WORDS = {
         "elements": ["salt spray", "current pull", "ocean scent", "pressure"],
         "nouns": ["trenches", "currents", "reefs", "abysses", "swells"],
         "verbs": ["crash", "surge", "drift", "plunge", "churn"],
+        "colors": ["sapphire", "deep blue", "teal", "silver"],
+        "adverbs": ["endlessly", "powerfully", "deeply"],
         "weathers": [
             "waves roll in from an unseen horizon",
             "a fine salt mist hangs in the air",
@@ -385,6 +391,8 @@ BIOME_WORDS = {
         "elements": ["frost", "aurora light", "wind howl", "hoar"],
         "nouns": ["ice fields", "glaciers", "crevasses", "permafrost", "snowdrifts"],
         "verbs": ["freeze", "howl", "crack", "gleam", "drift"],
+        "colors": ["pale blue", "silver", "frost-white", "auroral"],
+        "adverbs": ["silently", "eternally", "coldly"],
         "weathers": [
             "the aurora pulses in silent sheets of green",
             "a biting wind carries ice crystals",
@@ -401,6 +409,8 @@ BIOME_WORDS = {
         "elements": ["stone echo", "thin air", "alpine scent", "cold light"],
         "nouns": ["peaks", "ridges", "cliffs", "valleys", "crags"],
         "verbs": ["tower", "loom", "echo", "rise", "cut"],
+        "colors": ["granite grey", "snow-white", "purple", "slate"],
+        "adverbs": ["majestically", "patiently", "tirelessly"],
         "weathers": [
             "wind howls through the narrow passes",
             "clouds cling to the peaks like shawls",
@@ -417,6 +427,8 @@ BIOME_WORDS = {
         "elements": ["marsh gas", "decay scent", "still water", "humidity"],
         "nouns": ["bayous", "mangroves", "bogs", "quicksand", "thickets"],
         "verbs": ["bubble", "fester", "seep", "creep", "stagnate"],
+        "colors": ["murky", "green-brown", "dark", "rotting"],
+        "adverbs": ["thickly", "heavily", "sluggishly"],
         "weathers": [
             "fog rolls low over the black water",
             "the air is thick and heavy with moisture",
@@ -433,6 +445,8 @@ BIOME_WORDS = {
         "elements": ["drip sound", "stone scent", "darkness", "cave wind"],
         "nouns": ["stalactites", "caverns", "tunnels", "chambers", "fissures"],
         "verbs": ["drip", "echo", "glimmer", "resonate", "collapse"],
+        "colors": ["pitch-black", "phosphorescent", "glimmering", "deep violet"],
+        "adverbs": ["patiently", "ceaselessly", "endlessly"],
         "weathers": [
             "water drips in a slow, endless rhythm",
             "a draft carries the scent of deep earth",
@@ -449,6 +463,8 @@ BIOME_WORDS = {
         "elements": ["grass rustle", "open sky", "distant haze", "earth scent"],
         "nouns": ["grasses", "horizons", "fields", "bluffs", "meadows"],
         "verbs": ["wave", "stretch", "roll", "sway", "bend"],
+        "colors": ["golden", "pale", "amber", "wide"],
+        "adverbs": ["endlessly", "freely", "peacefully"],
         "weathers": [
             "a warm wind sends ripples across the grass",
             "clouds cast slow-moving shadows on the land",
@@ -465,6 +481,8 @@ BIOME_WORDS = {
         "elements": ["sulfur scent", "heat haze", "lava glow", "ash fall"],
         "nouns": ["vents", "fissures", "calderas", "magma chambers", "slag heaps"],
         "verbs": ["smolder", "hiss", "crack", "erupt", "seethe"],
+        "colors": ["obsidian black", "crimson", "molten orange", "ash-grey"],
+        "adverbs": ["violently", "harshly", "relentlessly"],
         "weathers": [
             "ash falls like gray snow from a black sky",
             "steam vents hiss in ragged chorus",
@@ -481,6 +499,8 @@ BIOME_WORDS = {
         "elements": ["coral scent", "underwater light", "current hum", "salt"],
         "nouns": ["polyps", "anemones", "lagoon beds", "drop-offs", "groves"],
         "verbs": ["pulse", "drift", "glow", "wave", "filter"],
+        "colors": ["coral", "turquoise", "bioluminescent", "vibrant pink"],
+        "adverbs": ["gently", "softly", "brilliantly"],
         "weathers": [
             "sunlight dances on the water in shifting patterns",
             "warm currents drift through the coral canyons",
@@ -497,6 +517,8 @@ BIOME_WORDS = {
         "elements": ["distant hum", "dust", "rust scent", "broken light", "stifled echo"],
         "nouns": ["facades", "girders", "husks", "plazas", "overpasses", "broken windows"],
         "verbs": ["creak", "settle", "sway", "crumble", "groan"],
+        "colors": ["grey", "rusted", "ashen", "faded"],
+        "adverbs": ["silently", "slowly", "patiently"],
         "weathers": [
             "ash drifts through broken windows like snow",
             "a pale sun filters through smog",
@@ -513,6 +535,8 @@ BIOME_WORDS = {
         "elements": ["spore glow", "fungal scent", "mycelium hum", "rot warmth"],
         "nouns": ["caps", "gills", "stalks", "hyphae", "puffballs", "tendrils"],
         "verbs": ["pulse", "glow", "release", "expand", "spore"],
+        "colors": ["phosphorescent", "neon green", "luminous", "deep purple"],
+        "adverbs": ["gently", "silently", "unceasingly"],
         "weathers": [
             "spores drift through the air like slow-motion snow",
             "the ground pulses with faint blue light",
@@ -529,6 +553,8 @@ BIOME_WORDS = {
         "elements": ["cloud vapor", "wind shear", "sky-blue light", "thin air"],
         "nouns": ["archipelagos", "peaks", "bridges", "precipices", "cloud banks", "updrafts"],
         "verbs": ["float", "drift", "soar", "hover", "ride"],
+        "colors": ["sky-blue", "cloud-white", "golden", "sunset-tinged"],
+        "adverbs": ["gracefully", "silently", "peacefully"],
         "weathers": [
             "clouds churn far below like a white sea",
             "lightning arcs silently between nearby islands",

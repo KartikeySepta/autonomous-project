@@ -655,3 +655,18 @@ Working. All 333 tests pass (18 todo + 315 landscape).
 - Updated 2 existing tests: `test_template_variety_anomaly_has_varied_structure` and `test_anomaly_colon_template_lowercases` — the detection strings no longer assume a colon immediately follows "your eye"/"here" since the adverb now sits between them
 - Added 11 tests: `TestAnomalyAdverb` class (8 tests: placeholder presence, output validity, adverb appearance, determinism, no-adverb composition, mood+bias composition, detail=3, JSON format) + `test_color_in_all_middle_templates`, `test_color_middle_template_zero_and_three_have_color`, `test_color_middle_zero_and_three_produce_valid_output`
 - Tests increased from 337 to 348 total (18 todo + 330 landscape)
+
+## 2026-07-12
+
+### What was done (Session 62)
+- Added **biome-specific color and adverb word pools** to `BIOME_WORDS` — each of the 13 biomes now has its own curated list of 3-4 colors and 3-4 adverbs, making each biome feel more distinctive in its color palette and adverbial flavor
+  - Previously, `_pick("colors", ...)` and `_pick("adverbs", ...)` fell back entirely to global pools — every biome shared the same colors and adverbs
+  - Now, colors and adverbs are blended the same way as other categories: biome-specific words are concatenated with the global pool, so biomes get thematic flavor without losing global variety
+  - Example: forest gets "emerald"/"deep green"/"golden"/"dappled" colors and "softly"/"gently"/"peacefully" adverbs; desert gets "amber"/"golden"/"pale"/"crimson" and "relentlessly"/"harshly"/"patiently"; volcanic field gets "obsidian black"/"crimson"/"molten orange"/"ash-grey" and "violently"/"harshly"/"relentlessly"
+- Updated `describe_biome()` to include `"colors"` and `"adverbs"` in its category listing — users inspecting biome word banks via `--describe-biome` now see the new categories
+- No code changes to `_pick()` — it already looked up `BIOME_WORDS[biome]["colors"]` and `BIOME_WORDS[biome]["adverbs"]` via the generic `BIOME_WORDS.get(b, {}).get(category, [])` pattern, it just returned empty lists before because the entries didn't exist
+- Added 12 tests in `TestBiomeColorsAndAdverbs` class: structural tests (all biomes have non-empty colors/adverbs), statistical tests (biome-specific colors/adverbs appear in output), validity tests (works with combine, color_disabled, determinism, mood+bias, detail levels), and describe_biome inclusion
+- Tests increased from 348 to 360 total (18 todo + 342 landscape)
+
+### Current status
+Working. All 360 tests pass (18 todo + 342 landscape).

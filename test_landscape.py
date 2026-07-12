@@ -2421,5 +2421,99 @@ class TestAnomalyAdverb(unittest.TestCase):
         self.assertGreater(len(data["text"]), 0)
 
 
+class TestBiomeColorsAndAdverbs(unittest.TestCase):
+    def test_biome_forest_has_colors_in_biome_words(self):
+        self.assertIn("colors", BIOME_WORDS["forest"])
+        self.assertGreater(len(BIOME_WORDS["forest"]["colors"]), 0)
+
+    def test_biome_desert_has_adverbs_in_biome_words(self):
+        self.assertIn("adverbs", BIOME_WORDS["desert"])
+        self.assertGreater(len(BIOME_WORDS["desert"]["adverbs"]), 0)
+
+    def test_each_biome_has_colors_and_adverbs(self):
+        for b in BIOMES:
+            with self.subTest(biome=b):
+                self.assertIn("colors", BIOME_WORDS[b],
+                    f"Biome {b!r} missing 'colors'")
+                self.assertIn("adverbs", BIOME_WORDS[b],
+                    f"Biome {b!r} missing 'adverbs'")
+                self.assertGreater(len(BIOME_WORDS[b]["colors"]), 0,
+                    f"Biome {b!r} has empty colors")
+                self.assertGreater(len(BIOME_WORDS[b]["adverbs"]), 0,
+                    f"Biome {b!r} has empty adverbs")
+
+    def test_biome_specific_colors_appear_in_output(self):
+        for biome in ["forest", "desert", "ocean"]:
+            with self.subTest(biome=biome):
+                colors = set(BIOME_WORDS[biome].get("colors", []))
+                results = [generate_landscape(seed=s, biome=biome) for s in range(300)]
+                found = any(any(c in r for c in colors) for r in results)
+                self.assertTrue(found,
+                    f"No {biome}-specific colors appeared across 300 seeds")
+
+    def test_biome_specific_adverbs_appear_in_output(self):
+        for biome in ["tundra", "swamp", "cave system"]:
+            with self.subTest(biome=biome):
+                adverbs = set(BIOME_WORDS[biome].get("adverbs", []))
+                results = [generate_landscape(seed=s, biome=biome) for s in range(300)]
+                found = any(any(a in r for a in adverbs) for r in results)
+                self.assertTrue(found,
+                    f"No {biome}-specific adverbs appeared across 300 seeds")
+
+    def test_biome_colors_produce_valid_output(self):
+        for b in BIOMES:
+            with self.subTest(biome=b):
+                for s in range(5):
+                    result = generate_landscape(seed=s, biome=b)
+                    self.assertIsInstance(result, str)
+                    self.assertGreater(len(result), 10)
+
+    def test_biome_colors_work_with_combine(self):
+        colors_desert = set(BIOME_WORDS["desert"].get("colors", []))
+        colors_ocean = set(BIOME_WORDS["ocean"].get("colors", []))
+        combined = colors_desert | colors_ocean
+        results = [generate_landscape(seed=s, combine="desert,ocean") for s in range(300)]
+        found = any(any(c in r for c in combined) for r in results)
+        self.assertTrue(found,
+            "No desert or ocean colors appeared in combined output across 300 seeds")
+
+    def test_biome_colors_work_with_color_disabled(self):
+        for b in ["forest", "volcanic field", "sky islands"]:
+            with self.subTest(biome=b):
+                result = generate_landscape(seed=42, biome=b, color_enabled=False)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_biome_colors_are_deterministic(self):
+        for b in ["forest", "coral reef", "ruined city"]:
+            with self.subTest(biome=b):
+                a = generate_landscape(seed=42, biome=b)
+                b_result = generate_landscape(seed=42, biome=b)
+                self.assertEqual(a, b_result,
+                    f"Output for {b} should be deterministic")
+
+    def test_biome_colors_work_with_mood_and_bias(self):
+        for b in ["fungal grove", "plain", "mountain range"]:
+            with self.subTest(biome=b):
+                result = generate_landscape(seed=42, biome=b, mood="vibrant", bias="common")
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_biome_colors_appear_across_detail_levels(self):
+        for detail in [0, 1, 2, 3]:
+            with self.subTest(detail=detail):
+                result = generate_landscape(seed=42, biome="forest", detail=detail)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_describe_biome_includes_colors_and_adverbs(self):
+        from landscape import describe_biome
+        result = describe_biome("forest")
+        self.assertIn("colors:", result,
+            "describe_biome should include color category")
+        self.assertIn("adverbs:", result,
+            "describe_biome should include adverb category")
+
+
 if __name__ == "__main__":
     unittest.main()
