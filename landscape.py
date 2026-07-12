@@ -558,7 +558,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
     return chosen
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, middle_enabled=True, color_enabled=True):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, middle_enabled=True, color_enabled=True, anomaly_enabled=True):
     if seed is not None:
         rng = random.Random(seed)
     elif show_seed:
@@ -625,7 +625,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
                 _format_tmpl(weather_tmpl, Weather=weather.capitalize(), weather=weather, display=display, adverb=adverb)
             )
 
-    if detail >= 1 and anomaly_count > 0:
+    if anomaly_enabled and detail >= 1 and anomaly_count > 0:
         for _ in range(anomaly_count):
             if rng.random() < anomaly_prob:
                 anomaly_tmpl = _pick_template("anomaly", template_set, template_overrides, rng=rng)
@@ -812,6 +812,10 @@ def main():
         help="Disable color words in landscape descriptions",
     )
     parser.add_argument(
+        "--no-anomaly", action="store_true",
+        help="Disable anomaly descriptions in landscape output",
+    )
+    parser.add_argument(
         "--biome-weight", type=str, default=None,
         help="Weight biomes for random selection (comma-separated biome=weight pairs, e.g. forest=5,desert=1)",
     )
@@ -881,7 +885,7 @@ def main():
     lines = []
     for i in range(args.count):
         effective_seed = args.seed + i if args.seed is not None else None
-        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, middle_enabled=not args.no_middle, color_enabled=not args.no_color))
+        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, middle_enabled=not args.no_middle, color_enabled=not args.no_color, anomaly_enabled=not args.no_anomaly))
     if args.format == "json" and len(lines) > 1:
         output = "[" + ",\n".join(lines) + "]\n"
     else:

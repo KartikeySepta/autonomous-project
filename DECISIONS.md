@@ -797,3 +797,18 @@ When per-category bias overrides were added (Session 16) and per-category mood-w
 - `--bias-color` affects color word selection probability; `--bias-adverb` affects adverb word selection probability — exactly the same behavior as the existing 6 override flags for their respective categories.
 - `--mood-weight-color` controls how strongly mood-matched colors are boosted (e.g., "murky" for eerie mood); `--mood-weight-adverb` does the same for mood-matched adverbs (e.g., "silently" for eerie). Both accept any float, including 0 (suppress) and 1 (no boost).
 - 8 new tests, 282 total (18 todo + 264 landscape).
+
+## 2026-07-12 — Configurable Anomaly Suppression (`--no-anomaly`)
+
+### What
+Added `--no-anomaly` CLI flag and `anomaly_enabled` parameter to `generate_landscape()` (default: `True`). When `anomaly_enabled=False`, the entire anomaly generation block is skipped — no anomaly word picks, no template rendering, regardless of `anomaly_prob` or `anomaly_count` settings.
+
+### Why
+Anomalies were the last major output component without a dedicated `--no-*` suppression flag. Users could suppress anomalies via `--anomaly-prob 0` or `--anomaly-count 0`, but these are less discoverable and more verbose than a dedicated flag. Every other component (dedup, adverb, weather, middle, color) already had a suppression flag. This flag completes the suppression family, making the CLI more consistent and easier to discover.
+
+### Tradeoffs
+- `anomaly_enabled=True` is the default, preserving backward compatibility and all existing seed-based output
+- When `anomaly_enabled=False`, anomalies are entirely suppressed—no anomaly picks consume dedup slots, no anomaly templates are rendered. This is more efficient than `anomaly_prob=0` (which still runs the loop and checks probability) or `anomaly_count=0` (which skips the loop but leaves the semantic intent less clear)
+- The parameter name `anomaly_enabled` follows the same convention as `weather_enabled`, `middle_enabled`, `color_enabled`, and `adverb_enabled` — a simple boolean that gates a component
+- `--no-anomaly` is orthogonal to `--anomaly-prob` and `--anomaly-count`: if all three are specified, `anomaly_enabled=False` takes precedence and suppresses anomalies entirely
+- 8 new tests, 298 total.

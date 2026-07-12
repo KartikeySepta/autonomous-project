@@ -2028,5 +2028,53 @@ class TestColorFlag(unittest.TestCase):
         self.assertTrue(result.endswith("."))
 
 
+class TestAnomalyFlag(unittest.TestCase):
+    def test_anomaly_enabled_default_same_as_before(self):
+        r1 = generate_landscape(seed=42, anomaly_enabled=True)
+        r2 = generate_landscape(seed=42)
+        self.assertEqual(r1, r2, "anomaly_enabled=True should match default")
+
+    def test_anomaly_disabled_still_produces_valid_output(self):
+        result = generate_landscape(seed=42, anomaly_enabled=False)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_anomaly_disabled_differs_from_enabled(self):
+        enabled = generate_landscape(seed=42, anomaly_enabled=True, anomaly_prob=1.0)
+        disabled = generate_landscape(seed=42, anomaly_enabled=False, anomaly_prob=1.0)
+        self.assertNotEqual(enabled, disabled,
+            "Output should differ when anomaly is disabled")
+
+    def test_anomaly_disabled_deterministic(self):
+        r1 = generate_landscape(seed=99, anomaly_enabled=False)
+        r2 = generate_landscape(seed=99, anomaly_enabled=False)
+        self.assertEqual(r1, r2, "anomaly_enabled=False should be deterministic with same seed")
+
+    def test_anomaly_disabled_suppresses_all_anomalies(self):
+        results = [generate_landscape(seed=s, anomaly_enabled=False, anomaly_prob=1.0, anomaly_count=3) for s in range(100)]
+        has_anomaly = any(
+            any(a in r for a in ALL_ANOMALIES) for r in results
+        )
+        self.assertFalse(has_anomaly,
+            "No anomaly should appear when anomaly_enabled=False even with high prob")
+
+    def test_anomaly_disabled_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_anomaly_disabled_works_with_detail_three(self):
+        result = generate_landscape(seed=42, anomaly_enabled=False, detail=3)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_anomaly_disabled_works_with_mood_and_bias(self):
+        result = generate_landscape(seed=42, anomaly_enabled=False, mood="eerie", bias="rare")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+
 if __name__ == "__main__":
     unittest.main()

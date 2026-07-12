@@ -527,3 +527,14 @@ Working. All 261 tests pass (18 todo + 243 landscape).
 
 ### Current status
 Working. All 290 tests pass (18 todo + 272 landscape).
+
+## 2026-07-12
+
+### What was done (Session 54)
+- Added **`--no-anomaly` CLI flag** and `anomaly_enabled` parameter to `generate_landscape()` — users can now conveniently suppress anomaly descriptions alongside the existing `--no-weather`, `--no-middle`, `--no-color`, and `--no-adverb` flags
+  - `anomaly_enabled=True` (default) preserves existing behavior
+  - `anomaly_enabled=False` skips the entire anomaly generation block regardless of `anomaly_prob` and `anomaly_count` settings
+  - Follows the same pattern as the other `--no-*` suppression flags: `--no-dedup` (Session 33), `--no-adverb` (Session 34), `--no-weather` (Session 46), `--no-middle` (Session 48), `--no-color` (Session 53)
+  - Anomalies were the last major output component without a dedicated suppression flag; `--anomaly-prob 0` worked but was less discoverable
+- Added 8 tests in `TestAnomalyFlag` class: `test_anomaly_enabled_default_same_as_before`, `test_anomaly_disabled_still_produces_valid_output`, `test_anomaly_disabled_differs_from_enabled`, `test_anomaly_disabled_deterministic`, `test_anomaly_disabled_suppresses_all_anomalies`, `test_anomaly_disabled_flag_exists_via_cli`, `test_anomaly_disabled_works_with_detail_three`, `test_anomaly_disabled_works_with_mood_and_bias`
+- Tests increased from 290 to 298 total (18 todo + 280 landscape)
