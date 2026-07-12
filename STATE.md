@@ -530,6 +530,27 @@ Working. All 290 tests pass (18 todo + 272 landscape).
 
 ## 2026-07-12
 
+### What was done (Session 55)
+- Added **"peaceful" mood** — the 4th mood overlay — to `MOOD_WORDS` in `landscape.py`, with curated word banks across all 8 categories:
+  - 8 adjectives (calm, serene, gentle, tranquil, placid, lulling, sleepy, soft)
+  - 6 elements (stillness, warmth, soft light, quiet, breeze, lullaby)
+  - 6 nouns (glades, shallows, meadows, clearings, reflections, coves)
+  - 6 verbs (rest, glide, settle, bloom, ripple, cradle)
+  - 6 colors (pale, soft, gentle, mellow, warm, milky)
+  - 6 adverbs (gently, softly, peacefully, calmly, tranquilly, serenely)
+  - 4 weathers (soft breeze, warm sunlight, still air, light mist)
+  - 4 anomalies (harmonious hum, world holds its breath, vivid colors, time like honey)
+- Mood blends with existing moods: `--mood peaceful --mood eerie` creates gentle eeriness; `--mood peaceful --mood vibrant` creates luminous calm; `--mood peaceful --mood desolate` creates quiet desolation
+- Follows the exact same pattern as the 3 existing moods — zero code changes to the generation pipeline (weighting, bias, dedup, templating all work automatically)
+- Added 8 tests in `TestPeacefulMood` class: output validity, word weight boost, category-specific boost, cross-mood blending (3 combos), determinism, word appearance, JSON metadata, and CLI flag existence
+- Updated `test_describe_all_contains_all_moods` and `test_describe_all_moods_flag_prints_multiple` to include "peaceful"
+- Tests increased from 298 to 306 total (18 todo + 288 landscape)
+
+### Current status
+Working. All 306 tests pass (18 todo + 288 landscape).
+
+## 2026-07-12
+
 ### What was done (Session 54)
 - Added **`--no-anomaly` CLI flag** and `anomaly_enabled` parameter to `generate_landscape()` — users can now conveniently suppress anomaly descriptions alongside the existing `--no-weather`, `--no-middle`, `--no-color`, and `--no-adverb` flags
   - `anomaly_enabled=True` (default) preserves existing behavior

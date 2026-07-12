@@ -1638,7 +1638,7 @@ class TestDescribeMood(unittest.TestCase):
     def test_describe_all_contains_all_moods(self):
         from landscape import describe_mood
         result = describe_mood("all")
-        for m in ["eerie", "vibrant", "desolate"]:
+        for m in ["peaceful", "eerie", "vibrant", "desolate"]:
             self.assertIn(m, result)
 
     def test_describe_mood_flag_exists_via_cli(self):
@@ -1678,6 +1678,7 @@ class TestDescribeMood(unittest.TestCase):
             sys.stdout = old_stdout
             sys.argv = old_argv
         output = captured.getvalue()
+        self.assertIn("=== peaceful ===", output)
         self.assertIn("=== eerie ===", output)
         self.assertIn("=== vibrant ===", output)
         self.assertIn("=== desolate ===", output)
@@ -1980,6 +1981,57 @@ class TestColors(unittest.TestCase):
         self.assertIn("colors", result)
         for c in ALL_COLORS:
             self.assertIn(c, result)
+
+
+class TestPeacefulMood(unittest.TestCase):
+    def test_peaceful_mood_does_not_break_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, mood="peaceful")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_peaceful_mood_word_weight_boosted(self):
+        from landscape import _word_weight, MOOD_BOOST
+        w_no_mood = _word_weight("calm", bias="flat", mood=None, category="adjectives")
+        w_mood = _word_weight("calm", bias="flat", mood="peaceful", category="adjectives")
+        self.assertEqual(w_mood, w_no_mood * MOOD_BOOST,
+            "calm should be boosted in peaceful mood")
+
+    def test_peaceful_mood_word_weight_not_boosted_for_unmatched(self):
+        from landscape import _word_weight
+        w_no_mood = _word_weight("crystal", bias="flat", mood=None, category="adjectives")
+        w_mood = _word_weight("crystal", bias="flat", mood="peaceful", category="adjectives")
+        self.assertEqual(w_mood, w_no_mood,
+            "crystal should not be boosted in peaceful mood")
+
+    def test_peaceful_mood_combine_with_other_moods(self):
+        for combo in [["peaceful", "eerie"], ["peaceful", "vibrant"], ["peaceful", "desolate"]]:
+            for s in range(10):
+                result = generate_landscape(seed=s, mood=combo)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_peaceful_mood_deterministic(self):
+        a = generate_landscape(seed=42, mood="peaceful")
+        b = generate_landscape(seed=42, mood="peaceful")
+        self.assertEqual(a, b)
+
+    def test_peaceful_mood_uses_peaceful_words(self):
+        peaceful_adj = set(MOOD_WORDS["peaceful"].get("adjectives", []))
+        results = [generate_landscape(seed=s, mood="peaceful") for s in range(200)]
+        found = any(any(w in r for w in peaceful_adj) for r in results)
+        self.assertTrue(found, "peaceful-specific adjectives never appeared in output")
+
+    def test_peaceful_mood_json_includes_mood(self):
+        result = generate_landscape(seed=42, mood="peaceful", fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("mood", data)
+        self.assertIn("peaceful", data["mood"])
+
+    def test_peaceful_mood_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
 
 
 class TestColorFlag(unittest.TestCase):

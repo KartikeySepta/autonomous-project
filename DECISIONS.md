@@ -1,5 +1,22 @@
 # Decisions
 
+## 2026-07-12 — Fourth Mood: "Peaceful"
+
+### What
+Added a new `"peaceful"` mood entry to `MOOD_WORDS` with 8 adjectives, 6 elements, 6 nouns, 6 verbs, 6 colors, 6 adverbs, 4 weathers, and 4 anomalies — all curated to evoke calm, serene, gentle atmospheres. Updates affected tests (`test_describe_all_contains_all_moods`, `test_describe_all_moods_flag_prints_multiple`) and added 8 new tests in `TestPeacefulMood` class.
+
+### Why
+The existing 3 moods (eerie, vibrant, desolate) all lean toward the dramatic or intense: eerie is uncanny, vibrant is radiant, desolate is bleak. There was no option for a gentle, restful, or serene emotional palette. A peaceful mood fills this gap, giving users access to landscapes that feel calm, comfortable, and inviting — opening up new creative territory like pastoral descriptions of a dew-soaked meadow at dawn, light mist settling in hollows.
+
+This also enables new mood blends: `--mood peaceful --mood desolate` = quiet desolation (a frozen lake at dusk); `--mood peaceful --mood vibrant` = luminous calm (sun-dappled glade); `--mood peaceful --mood eerie` = gentle eeriness (a foggy moor at twilight). The blending system (Session 25) means the new mood adds combinatorial variety: 3 two-mood blends + 1 three-mood blend with peaceful, for 7 new blended palettes.
+
+### Tradeoffs
+- Zero code changes to the generation pipeline — `MOOD_WORDS` is purely a data structure; weighting, bias, dedup, templating, overrides, and JSON output all work automatically through the existing mood system
+- Word lists are hand-curated and sized similarly to existing moods (6–8 words per category) — large enough for variety, small enough for the mood boost (5x) to reliably skew output tone
+- Some words overlap with global pools (e.g., "gently", "softly" are already in `ADVERBS`) — this is fine because the mood boost is orthogonal: the word was already selectable, now it's more likely when peaceful mood is active
+- The peaceful colors ("pale", "soft", "gentle", "mellow", "warm", "milky") are deliberately distinct from the 3 existing mood color lists — they describe soft, warm tones rather than vivid/luminous (vibrant) or dark/bleached (eerie, desolate) colors
+- 8 new tests, 306 total
+
 ## 2026-07-12 — Configurable Color Suppression (`--no-color`)
 
 ### What

@@ -97,6 +97,26 @@ BIAS_MODES = {
 MOOD_BOOST = 5
 
 MOOD_WORDS = {
+    "peaceful": {
+        "adjectives": ["calm", "serene", "gentle", "tranquil", "placid", "lulling", "sleepy", "soft"],
+        "elements": ["stillness", "warmth", "soft light", "quiet", "breeze", "lullaby"],
+        "nouns": ["glades", "shallows", "meadows", "clearings", "reflections", "coves"],
+        "verbs": ["rest", "glide", "settle", "bloom", "ripple", "cradle"],
+        "colors": ["pale", "soft", "gentle", "mellow", "warm", "milky"],
+        "adverbs": ["gently", "softly", "peacefully", "calmly", "tranquilly", "serenely"],
+        "weathers": [
+            "a soft breeze carries the scent of flowers",
+            "warm sunlight filters through gently",
+            "the air is still and comfortable",
+            "a light mist settles in the hollows",
+        ],
+        "anomalies": [
+            "Everything seems to hum in harmony.",
+            "The world holds its breath.",
+            "Colors seem more vivid here.",
+            "Time moves like honey here.",
+        ],
+    },
     "eerie": {
         "adjectives": ["shadow", "silent", "forgotten", "bone", "obsidian", "pale", "deep"],
         "elements": ["echo", "silence", "darkness", "stillness", "cave wind"],
