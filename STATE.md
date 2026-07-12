@@ -578,3 +578,17 @@ Working. All 306 tests pass (18 todo + 288 landscape).
 
 ### Current status
 Working. All 311 tests pass (18 todo + 293 landscape).
+
+## 2026-07-12
+
+### What was done (Session 57)
+- Added **`{element}` to weather templates** — the weather slot now references the per-sentence-pair element word, following the same pattern as Session 56 (element in openings) and making weather descriptions richer and more cohesive
+  - Template 0: `"{Weather} {adverb} through the {element}."` — "A gentle rain falls softly through the mist."
+  - Template 2: `"{Weather}, as if the {display} itself breathes {element} {adverb}."` — "A gentle rain falls, as if the forest itself breathes mist softly."
+  - Template 3 (new): `"Through the {element}, {weather} {adverb}."` — "Through the mist, a gentle rain falls softly."
+  - Template 1 (`"The air tells its own story: ..."`) is unchanged — no natural insertion point for element
+- **Moved element pick outside the `middle_enabled` block** in the detail loop — element is now always picked per-sentence-pair (used by both middle and weather), even when middle sentences are suppressed via `--no-middle`. This is consistent with how the per-sentence-pair adverb is always picked for weather regardless of middle state (Session 37/48 tradeoff).
+- `element=element` kwarg passed to weather `_format_tmpl()` call — unmodified templates silently ignore the extra kwarg
+- Updated `test_template_variety_weather_has_varied_structure` to check for new "Through the " pattern and fixed the `has_as_if` check (now matches on " itself breathes " instead of " itself breathes.")
+- Added 9 tests: element appearance in weather, "Through the" template statistical appearance, works with middle-disabled, determinism, detail=3, JSON format, template count, element placeholder assertion, works with no-adverb
+- Tests increased from 311 to 320 total (18 todo + 302 landscape)

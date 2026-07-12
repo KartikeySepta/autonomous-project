@@ -846,3 +846,23 @@ The opening templates have always only used `{adj}`, `{display}`, and `{adverb}`
 - Template_set "third" still maps to index 2 (the `"The {adj}..."` template), unchanged. The new template at index 3 is only accessible via random selection.
 - `test_pick_template_selects_correct_index` and `test_template_set_third_uses_third_opening` are unaffected.
 - 5 new tests, 311 total.
+
+## 2026-07-12 — `{element}` in Weather Templates
+
+### What
+Added `{element}` to weather templates — the weather slot now references the per-sentence-pair element word, extending the element-awareness from openings (Session 56) into weather descriptions. Three changes:
+1. **Template 0**: `"{Weather} {adverb}."` → `"{Weather} {adverb} through the {element}."` — "A gentle rain falls softly through the mist."
+2. **Template 2**: `"{Weather}, as if the {display} itself breathes {adverb}."` → `"{Weather}, as if the {display} itself breathes {element} {adverb}."` — "A gentle rain falls, as if the forest itself breathes mist softly."
+3. **New template 3 (index 3)**: `"Through the {element}, {weather} {adverb}."` — "Through the mist, a gentle rain falls softly."
+
+The element pick was moved outside the `if middle_enabled:` block in the detail loop so it's always available for weather regardless of middle state. Template 1 (`"The air tells its own story: ..."`) is unchanged — there's no natural insertion point for element in that template.
+
+### Why
+Session 56 added element to the opening templates, making openings consistently richer by referencing the sensory quality (mist, light, echo) alongside the visual quality (adj) and the biome name (display). But the weather slot — the other major descriptive slot alongside middle sentences — had no element reference, meaning weather descriptions like "A gentle rain falls softly." were disconnected from the landscape's elemental vocabulary. Adding element to weather creates cross-sentence cohesion: "A gentle rain falls softly through the mist." feels grounded in the same sensory world as "A vast crystal forest of mist stretches silently before you."
+
+### Tradeoffs
+- **Element is now always picked per-pair in the loop**, not just when middle is enabled. This uses one extra dedup slot and one extra `_pick()` call per pair when middle is disabled. The tradeoff is the same as the per-sentence-pair adverb (Sessions 37/48): weather benefits from having element even when middle sentences are suppressed, justifying the extra cost.
+- **Template 1 unchanged**: `"The air tells its own story: {weather} {adverb}."` has no natural place for element without restructuring the sentence. Adding element would produce "The air tells its own story: a gentle rain falls softly carried by mist." which is grammatically awkward.
+- **Seed-breaking change**: existing seed-based output differs because the element pick now happens for every weather iteration regardless of middle state, and the new weather templates change the output. Since no seed-based output has been published, this is acceptable.
+- **4 weather templates now**: weather goes from 3 to 4 templates. Template_set "third" still maps to index 2 (unchanged); the new template at index 3 is only accessible via random selection, matching the same pattern as the opening's em-dash template (Session 56).
+- **9 new tests**, 320 total (18 todo + 302 landscape).

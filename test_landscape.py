@@ -449,11 +449,74 @@ class TestLandscape(unittest.TestCase):
     def test_template_variety_weather_has_varied_structure(self):
         results = [generate_landscape(seed=s, biome="forest") for s in range(200)]
         has_air_tells = any("The air tells its own story: " in r for r in results)
-        has_as_if = any(" itself breathes." in r for r in results)
+        has_as_if = any(" itself breathes " in r for r in results)
+        has_through = any("Through the " in r for r in results)
         self.assertTrue(
-            has_air_tells or has_as_if,
+            has_air_tells or has_as_if or has_through,
             "Neither alternative weather template appeared across 200 seeds",
         )
+
+    def test_weather_contains_known_element(self):
+        results = [generate_landscape(seed=s, biome="forest") for s in range(200)]
+        self.assertTrue(
+            any(e in r for r in results for e in ALL_ELEMENTS),
+            "No known element word appeared in weather across 200 seeds",
+        )
+
+    def test_weather_element_through_template_appears_across_seeds(self):
+        results = [generate_landscape(seed=s, biome="tundra") for s in range(300)]
+        through_matches = sum(
+            1 for r in results if "Through the " in r
+        )
+        self.assertGreater(through_matches, 0,
+            "'Through the {element}' weather template should appear across 300 seeds",
+        )
+
+    def test_weather_element_works_with_middle_disabled(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, middle_enabled=False, detail=2)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertTrue(result.endswith("."))
+
+    def test_weather_element_is_deterministic(self):
+        a = generate_landscape(seed=42, detail=2)
+        b = generate_landscape(seed=42, detail=2)
+        self.assertEqual(a, b,
+            "Weather with element templates should be deterministic")
+
+    def test_weather_element_works_with_detail_three(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, detail=3)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 50)
+
+    def test_weather_element_works_with_json_format(self):
+        result = generate_landscape(seed=42, fmt="json", detail=2)
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_weather_element_template_count_increased(self):
+        weather_templates = SENTENCE_TEMPLATES["weather"]
+        self.assertGreaterEqual(len(weather_templates), 4,
+            "Should have at least 4 weather templates")
+
+    def test_weather_element_templates_use_element_placeholder(self):
+        weather_templates = SENTENCE_TEMPLATES["weather"]
+        element_tmpls = [t for t in weather_templates if "{element}" in t]
+        self.assertGreaterEqual(len(element_tmpls), 2,
+            "At least 2 weather templates should reference {element}")
+
+    def test_weather_element_works_with_no_adverb(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, adverb_enabled=False, detail=2)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertNotIn("  ", result)
+            self.assertTrue(result.endswith("."))
 
     def test_template_variety_anomaly_has_varied_structure(self):
         results = [generate_landscape(seed=s, biome="forest") for s in range(200)]

@@ -316,9 +316,10 @@ SENTENCE_TEMPLATES = {
         "The {color} light of {element} {verb_conjugated} {adverb}.",
     ],
     "weather": [
-        "{Weather} {adverb}.",
+        "{Weather} {adverb} through the {element}.",
         "The air tells its own story: {weather} {adverb}.",
-        "{Weather}, as if the {display} itself breathes {adverb}.",
+        "{Weather}, as if the {display} itself breathes {element} {adverb}.",
+        "Through the {element}, {weather} {adverb}.",
     ],
     "anomaly": [
         "{anomaly}",
@@ -620,9 +621,9 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
     parts = [_format_tmpl(opening_tmpl, adj=adj, display=display, adverb=adverb, element=element, Element=element.capitalize())]
 
     for _ in range(max(detail, 0)):
+        element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
         if middle_enabled:
             adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
-            element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
             noun = _pick("nouns", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
             verb = _pick("verbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
             verb_conjugated = _conjugate(verb)
@@ -644,7 +645,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
             weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
             weather_tmpl = _pick_template("weather", template_set, template_overrides, rng=rng)
             parts.append(
-                _format_tmpl(weather_tmpl, Weather=weather.capitalize(), weather=weather, display=display, adverb=adverb)
+                _format_tmpl(weather_tmpl, Weather=weather.capitalize(), weather=weather, display=display, adverb=adverb, element=element)
             )
 
     if anomaly_enabled and detail >= 1 and anomaly_count > 0:
