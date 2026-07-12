@@ -478,7 +478,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
     return chosen
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None):
     if seed is not None:
         random.seed(seed)
     elif show_seed:
@@ -494,7 +494,14 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
             biomes = [random.choice(BIOMES)]
         display = " and ".join(biomes)
     else:
-        chosen = random.choice(BIOMES)
+        if biome_weights:
+            weights = [biome_weights.get(b, 1) for b in BIOMES]
+            if all(w == 0 for w in weights):
+                chosen = random.choice(BIOMES)
+            else:
+                chosen = random.choices(BIOMES, weights=weights, k=1)[0]
+        else:
+            chosen = random.choice(BIOMES)
         biomes = [chosen]
         display = chosen
 
@@ -556,6 +563,8 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
             data["mood_weight_overrides"] = mood_weight_overrides
         if template_overrides:
             data["template_overrides"] = template_overrides
+        if biome_weights:
+            data["biome_weights"] = biome_weights
         return json.dumps(data)
 
     if show_biome:
@@ -674,6 +683,10 @@ def main():
         "--no-adverb", action="store_true",
         help="Disable adverb insertion in landscape descriptions",
     )
+    parser.add_argument(
+        "--biome-weight", type=str, default=None,
+        help="Weight biomes for random selection (comma-separated biome=weight pairs, e.g. forest=5,desert=1)",
+    )
     args = parser.parse_args()
 
     bias_overrides = {}
@@ -716,10 +729,17 @@ def main():
         if val is not None:
             template_overrides[slot] = val
 
+    biome_weights = None
+    if args.biome_weight:
+        biome_weights = {}
+        for pair in args.biome_weight.split(","):
+            b, w = pair.split("=")
+            biome_weights[b.strip().lower()] = float(w)
+
     lines = []
     for i in range(args.count):
         effective_seed = args.seed + i if args.seed is not None else None
-        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb))
+        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights))
     if args.format == "json" and len(lines) > 1:
         output = "[" + ",\n".join(lines) + "]\n"
     else:

@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-12 — Biome Frequency Weights (`--biome-weight`)
+
+### What
+Added `--biome-weight` CLI flag and `biome_weights` parameter to `generate_landscape()` (default: `None`). Accepts comma-separated `biome=weight` pairs (e.g. `forest=5,desert=1,sky_islands=10`). When set, random biome selection uses `random.choices()` with the given weights instead of `random.choice()`. Biomes not mentioned get weight 1. Weight 0 suppresses a biome entirely.
+
+### Why
+With 13 biomes (10 natural + 3 weird), `random.choice(BIOMES)` treats all equally. A user who wants more sky-islands and fewer ruined cities had no way to express that. The `--biome-weight` flag is the biome-distribution equivalent of `--bias` (word frequency) and `--mood-blend` (emotional tone) — it gives users fine-grained control over *which worlds* get generated. It also enables use cases like "exclude biome X" (by setting its weight to 0) without a separate `--exclude` flag.
+
+### Tradeoffs
+- Comma-separated `key=value` pairs in a single string rather than repeated `--biome-weight` flags — simpler typing and parsing, consistent with `--combine`'s comma-separated biome list
+- Only affects random selection (`--biome` and `--combine` are unchanged) — if the user explicitly names biomes, weights are irrelevant
+- If all biomes have weight 0, falls back to equal probability — prevents crashes from degenerate input
+- Weight 0 is a natural way to "exclude" a biome without needing a separate `--exclude` flag, following the precedent of `--anomaly-prob 0` for suppressing anomalies
+- 6 new tests, 206 total.
+
 ## 2026-07-12 — JSON Array Output for `--format json --count N`
 
 ### What

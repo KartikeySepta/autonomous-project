@@ -320,5 +320,18 @@
 - Added 4 tests in `TestJsonWithCount` class: `test_format_json_count_one_is_single_object`, `test_format_json_count_two_is_array`, `test_format_json_count_three_all_valid_json`, `test_format_json_count_array_items_have_unique_biomes`
 - Tests increased from 196 to 200 total (18 todo + 182 landscape)
 
+## 2026-07-12
+
+### What was done (Session 36)
+- Added **`--biome-weight` CLI flag** and `biome_weights` parameter to `generate_landscape()` — users can now control how often specific biomes appear during random selection
+  - Accepts comma-separated `biome=weight` pairs (e.g. `--biome-weight forest=5,desert=1,sky_islands=10`)
+  - Biomes with higher weights are more likely to be selected; weight 0 suppresses a biome entirely
+  - If all biomes have weight 0, falls back to equal probability (doesn't crash)
+  - Only affects random biome selection — has no effect when `--biome` or `--combine` is used
+  - Included in JSON metadata output as `biome_weights`
+- Backward compatible: default (`None` or `{}`) produces identical output to before
+- Added 6 tests in `TestBiomeWeights` class: `test_biome_weights_default_does_not_change_output`, `test_biome_weights_produces_valid_output`, `test_biome_weights_zero_suppresses_biome`, `test_biome_weights_all_zero_falls_back`, `test_biome_weights_flag_exists_via_cli`, `test_biome_weights_json_includes_field`
+- Tests increased from 200 to 206 total (18 todo + 188 landscape)
+
 ### Current status
-Working. All 200 tests pass (18 todo + 182 landscape).
+Working. All 206 tests pass (18 todo + 188 landscape).

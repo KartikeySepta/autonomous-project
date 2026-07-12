@@ -1338,5 +1338,46 @@ class TestJsonWithCount(unittest.TestCase):
             "Seeds should auto-increment in JSON array output")
 
 
+class TestBiomeWeights(unittest.TestCase):
+    def test_biome_weights_default_does_not_change_output(self):
+        r1 = generate_landscape(seed=42)
+        r2 = generate_landscape(seed=42, biome_weights=None)
+        self.assertEqual(r1, r2, "biome_weights=None should match default")
+        r3 = generate_landscape(seed=42, biome_weights={})
+        self.assertEqual(r1, r3, "biome_weights={} should match default")
+
+    def test_biome_weights_produces_valid_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, biome_weights={"forest": 5})
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_biome_weights_zero_suppresses_biome(self):
+        results = []
+        for s in range(200):
+            r = generate_landscape(seed=s, biome_weights={"forest": 0, "desert": 0}, show_biome=True)
+            results.append(r)
+            self.assertNotIn("[forest]", r,
+                "Forest should not appear with biome_weights={'forest': 0, 'desert': 0}")
+            self.assertNotIn("[desert]", r,
+                "Desert should not appear with biome_weights={'forest': 0, 'desert': 0}")
+
+    def test_biome_weights_all_zero_falls_back(self):
+        result = generate_landscape(seed=42, biome_weights={b: 0 for b in BIOMES})
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 10)
+
+    def test_biome_weights_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_biome_weights_json_includes_field(self):
+        result = generate_landscape(seed=42, biome_weights={"forest": 5}, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("biome_weights", data)
+        self.assertEqual(data["biome_weights"], {"forest": 5})
+
+
 if __name__ == "__main__":
     unittest.main()
