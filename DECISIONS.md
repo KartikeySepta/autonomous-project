@@ -951,3 +951,17 @@ Adding biome-specific colors and adverbs closes this gap: the same biome system 
 - **No seed-breaking change**: Adding data to `BIOME_WORDS` doesn't change the random call order — only the pool of available words changes. Seed-based output is preserved for biomes whose random selections don't draw from the new pools (though in practice most will, since colors and adverbs are picked per-sentence-pair).
 - **`describe_biome()` now includes 8 categories** (was 6). The `test_describe_known_biome_contains_categories` test checked for "adjectives:", "elements:", "nouns:" but didn't assert "only these categories" — so no update was needed. A new test verifies the new categories appear.
 - **12 new tests**, 360 total (18 todo + 342 landscape).
+
+## 2026-07-12 — Template Set Modes "Fourth" and "Fifth"
+
+### What
+Added `"fourth": 3` and `"fifth": 4` to the `TEMPLATE_SETS` dict, extending the template selection system beyond the original `"first"`/`"second"`/`"third"` preset indices. Users can now force any template index up to 4 via `--template-set fourth` or `--template-set fifth`.
+
+### Why
+The original TEMPLATE_SETS (Session 15) only defined indices 0–2, leaving templates at indices 3+ only accessible via random selection. With 4 opening templates, 7 middle templates, 5 weather templates, and 4 anomaly templates, the `"third"` mode only reached the middle of the pool. Adding `"fourth"` and `"fifth"` gives users explicit access to the em-dash opening template, the "Through the {element}" weather template, the color-in-weather template, and deeper middle templates — making the template set system more useful as the template pool has grown.
+
+### Tradeoffs
+- `"fifth"` clamps to index `len(templates) - 1` for slots with ≤4 templates (opening → index 3, anomaly → index 3) via `_pick_template()`'s existing `min()` logic. This is consistent with how `"third"` already clamps when a slot has only 2 templates.
+- When `"fifth"` is used, the opening and anomaly slots use the same templates as `"fourth"`, but middle and weather slots use their distinct index-4 templates. This is a minor UX inconsistency — users who want consistent index-4 across all slots will get mixed index-3/index-4 output. A per-slot override system (`--template-opening`, etc.) already exists for this case; the general `--template-set` flag is a convenience for uniform selection.
+- The `choices` list in argparse automatically picks up the new keys from `TEMPLATE_SETS` — no CLI code changes needed.
+- 7 new tests, 367 total.

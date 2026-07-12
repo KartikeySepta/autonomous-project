@@ -811,6 +811,38 @@ class TestLandscape(unittest.TestCase):
             self.assertIn(" itself breathes", result,
                 f"template_set=third weather should use the 'as if the' pattern at seed {s}")
 
+    def test_template_set_fourth_uses_fourth_opening(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, biome="forest", template_set="fourth")
+            self.assertTrue(
+                " — " in result[:60],
+                f"template_set=fourth should use the em-dash opening template at seed {s}: {result!r}",
+            )
+
+    def test_template_set_fifth_uses_fifth_opening(self):
+        # Fifth clamps to last template for slots with <5 templates (opening=4)
+        for s in range(20):
+            result = generate_landscape(seed=s, biome="forest", template_set="fifth")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_template_set_fourth_is_deterministic(self):
+        a = generate_landscape(seed=42, template_set="fourth")
+        b = generate_landscape(seed=42, template_set="fourth")
+        self.assertEqual(a, b)
+
+    def test_template_set_fifth_is_deterministic(self):
+        a = generate_landscape(seed=42, template_set="fifth")
+        b = generate_landscape(seed=42, template_set="fifth")
+        self.assertEqual(a, b)
+
+    def test_template_set_fourth_fifth_produce_valid_output(self):
+        for tset in ["fourth", "fifth"]:
+            for s in range(10):
+                result = generate_landscape(seed=s, template_set=tset)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
     def test_template_set_flag_exists_via_cli(self):
         from landscape import main
         self.assertTrue(callable(main))
@@ -827,6 +859,18 @@ class TestLandscape(unittest.TestCase):
         self.assertEqual(
             _pick_template("opening", "third"),
             SENTENCE_TEMPLATES["opening"][2],
+        )
+
+    def test_pick_template_selects_correct_fourth_index(self):
+        self.assertEqual(
+            _pick_template("opening", "fourth"),
+            SENTENCE_TEMPLATES["opening"][3],
+        )
+
+    def test_pick_template_selects_correct_fifth_index(self):
+        self.assertEqual(
+            _pick_template("weather", "fifth"),
+            SENTENCE_TEMPLATES["weather"][4],
         )
 
     def test_middle_third_template_uses_bare_verb(self):

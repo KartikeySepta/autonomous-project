@@ -670,3 +670,16 @@ Working. All 333 tests pass (18 todo + 315 landscape).
 
 ### Current status
 Working. All 360 tests pass (18 todo + 342 landscape).
+
+## 2026-07-12
+
+### What was done (Session 63)
+- Added **`"fourth"` and `"fifth"` template set modes** to `TEMPLATE_SETS` — users can now force index 3 and index 4 templates via `--template-set fourth` or `--template-set fifth`
+  - `"fourth"` maps to index 3: opens the em-dash opening template (`"{Element} — the {adj} {display}..."`), the 4th middle template (`"{Element} {verb_conjugated} {adverb} through the {color} {adj} {noun}."`), the 4th weather template (`"Through the {element}, {weather} {adverb}."`), and the 4th anomaly template (`"There is a quiet wrongness here {adverb}: {anomaly_lower}"`)
+  - `"fifth"` maps to index 4: opens the 5th middle template (`"Beneath the {adj} {noun}, {color} {element} {verb_conjugated} {adverb}."`) and the 5th weather template (`"{Weather} {adverb} in {color} light."`); clamps to the last template for slots with ≤4 templates (opening, anomaly)
+  - `_pick_template()` handles out-of-range indices via its existing `min(idx, len(templates) - 1)` clamping — no overflow crashes
+- Added 7 tests: `test_pick_template_selects_correct_fourth_index`, `test_pick_template_selects_correct_fifth_index`, `test_template_set_fourth_uses_fourth_opening`, `test_template_set_fifth_uses_fifth_opening`, `test_template_set_fourth_is_deterministic`, `test_template_set_fifth_is_deterministic`, `test_template_set_fourth_fifth_produce_valid_output`
+- Tests increased from 360 to 367 total (18 todo + 349 landscape)
+
+### Current status
+Working. All 367 tests pass (18 todo + 349 landscape).
