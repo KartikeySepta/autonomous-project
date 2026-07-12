@@ -16,8 +16,8 @@ ALL_ELEMENTS = set(ELEMENTS) | {w for bw in BIOME_WORDS.values() for w in bw.get
 ALL_NOUNS = set(NOUNS) | {w for bw in BIOME_WORDS.values() for w in bw.get("nouns", [])}
 ALL_WEATHERS = set(WEATHERS) | {w for bw in BIOME_WORDS.values() for w in bw.get("weathers", [])}
 ALL_ANOMALIES = set(ANOMALIES) | {w for bw in BIOME_WORDS.values() for w in bw.get("anomalies", [])}
-ALL_ADVERBS = set(ADVERBS)
-ALL_COLORS = set(COLORS)
+ALL_ADVERBS = set(ADVERBS) | {w for bw in BIOME_WORDS.values() for w in bw.get("adverbs", [])}
+ALL_COLORS = set(COLORS) | {w for bw in BIOME_WORDS.values() for w in bw.get("colors", [])}
 
 
 class TestLandscape(unittest.TestCase):
@@ -2258,10 +2258,10 @@ class TestColors(unittest.TestCase):
         self.assertGreater(len(data["text"]), 0)
 
     def test_describe_global_includes_colors(self):
-        from landscape import describe_global
+        from landscape import describe_global, COLORS
         result = describe_global()
         self.assertIn("colors", result)
-        for c in ALL_COLORS:
+        for c in COLORS:
             self.assertIn(c, result)
 
     def test_weather_contains_known_color(self):

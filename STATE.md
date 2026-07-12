@@ -706,4 +706,12 @@ Working. All 367 tests pass (18 todo + 349 landscape).
 - Tests: still 384 total (18 todo + 366 landscape) — assertion updated in existing test
 
 ### Current status
-Working. All 366 tests pass (18 todo + 366 landscape).
+Working. All 384 tests pass (18 todo + 366 landscape).
+
+## 2026-07-12
+
+### What was done (Session 66)
+- Fixed **`ALL_ADVERBS` and `ALL_COLORS` test sets** — when Session 62 added biome-specific color and adverb word pools to `BIOME_WORDS`, the test module's `ALL_ADVERBS` and `ALL_COLORS` sets were not updated to include biome-specific words. Unlike all other `ALL_*` sets (adjectives, elements, nouns, verbs, weathers, anomalies), which include biome-specific words via `{w for bw in BIOME_WORDS.values() for w in bw.get("cat", [])}`, adverbs and colors only contained the global pool. This meant tests checking for adverb/color presence in output (e.g. `test_output_contains_known_adverb`, `test_color_in_middle_templates`) could miss biome-specific words.
+- Updated `ALL_ADVERBS` and `ALL_COLORS` definitions to include biome-specific words — consistent with the other 6 `ALL_*` sets.
+- Fixed `test_describe_global_includes_colors` to assert against `COLORS` (global pool) instead of `ALL_COLORS` (global + biome-specific) — biome-specific colors are correctly not listed by `describe_global()`, which only shows global word pools.
+- Tests increased from 366 to 366 (unchanged — this was a test data fix, not a new feature).

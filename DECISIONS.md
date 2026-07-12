@@ -982,3 +982,16 @@ The original TEMPLATE_SETS (Session 15) only defined indices 0–2, leaving temp
 - When `"fifth"` is used, the opening and anomaly slots use the same templates as `"fourth"`, but middle and weather slots use their distinct index-4 templates. This is a minor UX inconsistency — users who want consistent index-4 across all slots will get mixed index-3/index-4 output. A per-slot override system (`--template-opening`, etc.) already exists for this case; the general `--template-set` flag is a convenience for uniform selection.
 - The `choices` list in argparse automatically picks up the new keys from `TEMPLATE_SETS` — no CLI code changes needed.
 - 7 new tests, 367 total.
+
+## 2026-07-12 — ALL_ADVERBS/ALL_COLORS Test Data Fix
+
+### What
+Updated `ALL_ADVERBS` and `ALL_COLORS` in `test_landscape.py` to include biome-specific words from `BIOME_WORDS` (like all other `ALL_*` sets already do). Fixed `test_describe_global_includes_colors` to assert against global `COLORS` instead of `ALL_COLORS`, since `describe_global()` only lists global pools.
+
+### Why
+Session 62 added biome-specific color and adverb pools to `BIOME_WORDS`, but the test module's combined detection sets (`ALL_ADVERBS` and `ALL_COLORS`) were not updated to include them. All other categories (adjectives, elements, nouns, verbs, weathers, anomalies) correctly included biome-specific words via their `ALL_*` set definitions. This inconsistency meant tests that check for word presence in output (e.g. `test_output_contains_known_adverb`, `test_color_in_middle_templates`) could miss biome-specific words, creating a false-negative risk.
+
+### Tradeoffs
+- No functional change to the landscape generator — purely a test data correction.
+- `test_describe_global_includes_colors` now correctly tests that `describe_global()` shows global colors (not biome-specific ones), matching the behavior of `describe_global()` which intentionally lists only the global word pools.
+- 366 landscape tests pass (unchanged count — no new tests added).
