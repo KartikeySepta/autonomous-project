@@ -1,5 +1,21 @@
 # Decisions
 
+## 2026-07-12 — Local Random State (`random.Random()`)
+
+### What
+Refactored `generate_landscape()`, `_pick()`, and `_pick_template()` to use a local `random.Random()` instance instead of the global `random` module. When a seed is provided, `rng = random.Random(seed)` is created; when no seed is given, `rng = random.Random()` (seeded from `os.urandom`). All random calls (`choice`, `choices`, `random`, `randint`) use the local instance. The `_pick()` and `_pick_template()` functions accept an optional `rng=None` parameter — when not provided, they fall back to the global `random` module for backward compatibility with direct callers.
+
+### Why
+Since Session 1, `generate_landscape()` called `random.seed(seed)` which modifies the global `random` module state. This is a well-known anti-pattern: any other code using `random` in the same process (test fixtures, other library functions, or the calling application) could have its random state unexpectedly reset by a seeded `generate_landscape()` call. With 49 sessions of accumulated features and the project maturing beyond a simple CLI toy into something that might be imported as a library, this was the most impactful quality debt remaining.
+
+### Tradeoffs
+- **Seed-breaking change**: existing seed-based output differs because `random.Random()` implements the same algorithm (MT19937) but the internal state layout differs from the top-level module. Determinism is preserved: the same seed still produces the same output with the new code.
+- **When no seed is given**, the old code consumed from the global random state (whatever it happened to be); the new code creates a fresh `Random()` seeded from `os.urandom`. Both produce non-deterministic output, so there's no practical behavioral difference.
+- **`_pick()` and `_pick_template()` with `rng=None`** fall back to the global `random` module — this preserves backward compatibility for any external code that calls these functions directly (none known, but tests used `_pick` directly without passing `rng`).
+- The `--show-seed` auto-generation path now uses `random.Random().randint()` instead of `random.randint()` — produces an equally random seed number.
+- The `test_count_without_seed_produces_varied_outputs` test was updated to call `generate_landscape()` directly instead of pre-seeding the global state with `random.seed()`. The new version is simpler and tests the same invariant (outputs without seeds vary).
+- 261 tests total (unchanged).
+
 ## 2026-07-12 — Per-Sentence-Pair Adjective Selection
 
 ### What

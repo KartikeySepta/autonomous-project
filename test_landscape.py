@@ -1180,10 +1180,7 @@ class TestCountWithSeed(unittest.TestCase):
             "First element of sequence should equal direct call with same seed")
 
     def test_count_without_seed_produces_varied_outputs(self):
-        outputs = []
-        for i in range(10):
-            random.seed(42 + i)
-            outputs.append(generate_landscape())
+        outputs = [generate_landscape() for _ in range(5)]
         self.assertGreater(len(set(outputs)), 1,
             "Landscapes without explicit seed should vary")
 

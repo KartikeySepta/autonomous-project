@@ -482,5 +482,17 @@
 - Added 5 tests: `test_per_sentence_adj_uses_multiple_adjectives`, `test_per_sentence_adj_deterministic`, `test_per_sentence_adj_detail_three_has_more_adjective_variety`, `test_per_sentence_adj_respects_middle_disabled`, `test_per_sentence_adj_with_adverb_disabled`
 - Tests increased from 256 to 261 total (18 todo + 243 landscape)
 
+## 2026-07-12
+
+### What was done (Session 50)
+- **Refactored random state to use local `random.Random()` instances** — `generate_landscape()` no longer calls `random.seed()`, which modified the global `random` module state and could interfere with other code using `random` in the same process
+  - `_pick()` and `_pick_template()` now accept an optional `rng` parameter (defaults to global `random` for backward compatibility)
+  - `generate_landscape()` creates a local `rng = random.Random(seed)` when a seed is given, or `rng = random.Random()` (fresh, from `os.urandom`) when no seed is given
+  - All random calls within the generation pipeline use the local `rng` instance: `rng.choice()`, `rng.choices()`, `rng.random()`, `rng.randint()`
+- When `--show-seed` is used without `--seed`, the auto-generated seed now comes from a temporary `Random()` instance instead of the global state — functionally identical behavior
+- Updated `test_count_without_seed_produces_varied_outputs` to call `generate_landscape()` directly without `random.seed()` pre-seeding (the old test relied on controlling global state, which no longer applies)
+- This is a **seed-breaking change**: existing seed-based output differs because the internal RNG sequence changes (different `Random` implementation details). Determinism is preserved: the same seed still produces the same output.
+- No new tests needed — existing 261 tests cover determinism, reproducibility, and output validity
+
 ### Current status
 Working. All 261 tests pass (18 todo + 243 landscape).

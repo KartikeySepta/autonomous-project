@@ -189,11 +189,11 @@ TEMPLATE_SETS = {
 }
 
 
-def _pick_template(slot, template_set, template_overrides=None):
+def _pick_template(slot, template_set, template_overrides=None, rng=None):
     effective = (template_overrides or {}).get(slot, template_set)
     templates = SENTENCE_TEMPLATES[slot]
     if effective == "random":
-        return random.choice(templates)
+        return (rng or random).choice(templates)
     idx = min(TEMPLATE_SETS[effective], len(templates) - 1)
     return templates[idx]
 
@@ -507,7 +507,7 @@ BIOME_WORDS = {
 }
 
 
-def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bias_overrides=None, mood_weight_overrides=None, used_words=None):
+def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bias_overrides=None, mood_weight_overrides=None, used_words=None, rng=None):
     """Pick a random word from the biome-specific pool(s) blended with the global pool.
     `biomes` is a list of biome names; words from all specified biomes are included.
     Words are weighted per the given bias mode and optionally boosted for mood.
@@ -516,7 +516,8 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
     `mood_weight_overrides` is an optional dict mapping category name -> float,
     allowing per-category mood-weight that takes precedence over the global `mood_weight`.
     `used_words` is an optional set of words already used in this generation — the
-    chosen word is added to it, and already-used words are excluded from selection."""
+    chosen word is added to it, and already-used words are excluded from selection.
+    `rng` is an optional random.Random instance; if None, the global random module is used."""
     effective_bias = (bias_overrides or {}).get(category, bias)
     specific = []
     for b in biomes:
@@ -536,7 +537,8 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
         if available:
             pool = available
     weights = [_word_weight(w, effective_bias, mood, category, mood_weight, mood_weight_overrides) for w in pool]
-    chosen = random.choices(pool, weights=weights, k=1)[0]
+    rng = rng or random
+    chosen = rng.choices(pool, weights=weights, k=1)[0]
     if used_words is not None:
         used_words.add(chosen)
     return chosen
@@ -544,10 +546,12 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
 
 def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, middle_enabled=True):
     if seed is not None:
-        random.seed(seed)
+        rng = random.Random(seed)
     elif show_seed:
-        seed = random.randint(0, 2**31 - 1)
-        random.seed(seed)
+        seed = random.Random().randint(0, 2**31 - 1)
+        rng = random.Random(seed)
+    else:
+        rng = random.Random()
 
     if biome is not None:
         biomes = [biome.lower()]
@@ -555,59 +559,59 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
     elif combine is not None:
         biomes = [b.strip().lower() for b in combine.split(",")]
         if len(biomes) == 0:
-            biomes = [random.choice(BIOMES)]
+            biomes = [rng.choice(BIOMES)]
         display = " and ".join(biomes)
     else:
         if biome_weights:
             weights = [biome_weights.get(b, 1) for b in BIOMES]
             if all(w == 0 for w in weights):
-                chosen = random.choice(BIOMES)
+                chosen = rng.choice(BIOMES)
             else:
-                chosen = random.choices(BIOMES, weights=weights, k=1)[0]
+                chosen = rng.choices(BIOMES, weights=weights, k=1)[0]
         else:
-            chosen = random.choice(BIOMES)
+            chosen = rng.choice(BIOMES)
         biomes = [chosen]
         display = chosen
 
     used_words = set() if dedup else None
 
-    adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
+    adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
     if adverb_enabled:
-        adverb = _pick("adverbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
+        adverb = _pick("adverbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
     else:
         adverb = ""
-    opening_tmpl = _pick_template("opening", template_set, template_overrides)
+    opening_tmpl = _pick_template("opening", template_set, template_overrides, rng=rng)
     parts = [_format_tmpl(opening_tmpl, adj=adj, display=display, adverb=adverb)]
 
     for _ in range(max(detail, 0)):
         if middle_enabled:
-            adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
-            element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
-            noun = _pick("nouns", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
-            verb = _pick("verbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
+            adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
+            element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
+            noun = _pick("nouns", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
+            verb = _pick("verbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
             verb_conjugated = _conjugate(verb)
         if adverb_enabled:
-            adverb = _pick("adverbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
+            adverb = _pick("adverbs", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
         else:
             adverb = ""
         if middle_enabled:
-            middle_tmpl = _pick_template("middle", template_set, template_overrides)
+            middle_tmpl = _pick_template("middle", template_set, template_overrides, rng=rng)
             parts.append(
                 _format_tmpl(middle_tmpl, Element=element.capitalize(), element=element, adj=adj, noun=noun, verb=verb, verb_conjugated=verb_conjugated, adverb=adverb, display=display)
             )
 
         if weather_enabled:
-            weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
-            weather_tmpl = _pick_template("weather", template_set, template_overrides)
+            weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
+            weather_tmpl = _pick_template("weather", template_set, template_overrides, rng=rng)
             parts.append(
                 _format_tmpl(weather_tmpl, Weather=weather.capitalize(), weather=weather, display=display, adverb=adverb)
             )
 
     if detail >= 1 and anomaly_count > 0:
         for _ in range(anomaly_count):
-            if random.random() < anomaly_prob:
-                anomaly_tmpl = _pick_template("anomaly", template_set, template_overrides)
-                anomaly_word = _pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)
+            if rng.random() < anomaly_prob:
+                anomaly_tmpl = _pick_template("anomaly", template_set, template_overrides, rng=rng)
+                anomaly_word = _pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
                 anomaly_lower = anomaly_word[0].lower() + anomaly_word[1:]
                 parts.append(_format_tmpl(anomaly_tmpl, anomaly=anomaly_word, anomaly_lower=anomaly_lower, adverb=adverb))
 
