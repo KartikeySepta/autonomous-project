@@ -1,5 +1,19 @@
 # Decisions
 
+## 2026-07-12 — Mood Introspection (`--describe-mood`)
+
+### What
+Added `--describe-mood` CLI flag and `describe_mood()` function. When invoked with a mood name (e.g. `--describe-mood eerie`), it prints that mood's word bank — all words in all 7 categories — and exits without generating a landscape. When invoked without an argument (`--describe-mood` alone) or with `all`, it prints all 3 moods' word banks.
+
+### Why
+Session 43 added `--describe-biome` for biome introspection, and the DECISIONS.md entry for that session explicitly noted: "No `--describe-mood` flag (yet) — moods follow the same pattern but are simpler. Could be added later if users need it." This session fills that gap. With 3 moods (and mood blending in Session 25), users have no way to discover what vocabulary each mood contributes without reading `landscape.py` directly. The `--describe-mood` flag is the introspection counterpart to `--describe-biome`, completing the discovery UX for all major generative controls.
+
+### Tradeoffs
+- `describe_mood()` is a pure function that returns a string — same pattern as `describe_biome()`, callers can reuse it programmatically, tests assert on the returned string without capturing stdout.
+- `--describe-mood` without an argument defaults to `all` — same `nargs="?"` with `const="all"` pattern as `--describe-biome`.
+- The function lists mood-specific words in 7 categories (including `adverbs`, which biomes don't have as a separate category) — this is the full set of word categories that `MOOD_WORDS` supports.
+- 7 new tests, 228 total.
+
 ## 2026-07-12 — Biome Introspection (`--describe-biome`)
 
 ### What

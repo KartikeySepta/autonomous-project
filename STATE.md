@@ -409,5 +409,17 @@
 - Added 7 tests in `TestDescribeBiome` class: `test_describe_known_biome_contains_name`, `test_describe_known_biome_contains_categories`, `test_describe_unknown_biome_returns_error`, `test_describe_all_contains_all_biomes`, `test_describe_biome_flag_exists_via_cli`, `test_describe_biome_flag_prints_to_stdout`, `test_describe_all_flag_prints_multiple_biomes`
 - Tests increased from 214 to 221 total (18 todo + 203 landscape)
 
+## 2026-07-12
+
+### What was done (Session 44)
+- Added **`--describe-mood` CLI flag** and `describe_mood()` function — users can now inspect the word bank for any mood without reading the source code
+  - `--describe-mood eerie` prints all word categories (adjectives, elements, nouns, verbs, adverbs, weathers, anomalies) for the eerie mood
+  - `--describe-mood` (no argument) or `--describe-mood all` lists all 3 moods with their word banks
+  - Unknown mood names produce a clear error message
+  - The function returns a string (pure, no side effects) so it can be tested and reused programmatically
+  - CLI exits immediately after printing — no landscape generation occurs when `--describe-mood` is used
+- Added 7 tests in `TestDescribeMood` class: `test_describe_known_mood_contains_name`, `test_describe_known_mood_contains_categories`, `test_describe_unknown_mood_returns_error`, `test_describe_all_contains_all_moods`, `test_describe_mood_flag_exists_via_cli`, `test_describe_mood_flag_prints_to_stdout`, `test_describe_all_moods_flag_prints_multiple`
+- Tests increased from 221 to 228 total (18 todo + 210 landscape)
+
 ### Current status
-Working. All 221 tests pass (18 todo + 203 landscape).
+Working. All 228 tests pass (18 todo + 210 landscape).

@@ -222,6 +222,24 @@ def describe_biome(biome):
     return "\n".join(lines)
 
 
+def describe_mood(mood):
+    """Return a string describing the given mood's word bank.
+    If mood is 'all', describe all moods."""
+    if mood == "all":
+        lines = []
+        for m in MOOD_WORDS:
+            lines.append(describe_mood(m))
+        return "\n\n".join(lines)
+    words = MOOD_WORDS.get(mood)
+    if words is None:
+        return f"Unknown mood: {mood!r}"
+    lines = [f"=== {mood} ==="]
+    for cat in ["adjectives", "elements", "nouns", "verbs", "adverbs", "weathers", "anomalies"]:
+        pool = words.get(cat, [])
+        lines.append(f"  {cat}: {', '.join(pool)}")
+    return "\n".join(lines)
+
+
 SENTENCE_TEMPLATES = {
     "opening": [
         "A vast {adj} {display} stretches {adverb} before you.",
@@ -623,6 +641,11 @@ def main():
         help="Show word bank for a biome (or 'all' for all biomes, default: all)",
     )
     parser.add_argument(
+        "--describe-mood", type=str, default=None, nargs="?",
+        const="all",
+        help="Show word bank for a mood (or 'all' for all moods, default: all)",
+    )
+    parser.add_argument(
         "--show-biome", action="store_true",
         help="Reveal the biome name in the output",
     )
@@ -766,6 +789,9 @@ def main():
 
     if args.describe_biome is not None:
         print(describe_biome(args.describe_biome))
+        return
+    if args.describe_mood is not None:
+        print(describe_mood(args.describe_mood))
         return
 
     lines = []

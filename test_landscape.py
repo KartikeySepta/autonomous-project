@@ -1501,5 +1501,73 @@ class TestDescribeBiome(unittest.TestCase):
         self.assertIn("=== desert ===", output)
 
 
+class TestDescribeMood(unittest.TestCase):
+    def test_describe_known_mood_contains_name(self):
+        from landscape import describe_mood
+        result = describe_mood("eerie")
+        self.assertIn("eerie", result)
+
+    def test_describe_known_mood_contains_categories(self):
+        from landscape import describe_mood
+        result = describe_mood("vibrant")
+        self.assertIn("adjectives:", result)
+        self.assertIn("elements:", result)
+        self.assertIn("nouns:", result)
+        self.assertIn("verbs:", result)
+        self.assertIn("adverbs:", result)
+
+    def test_describe_unknown_mood_returns_error(self):
+        from landscape import describe_mood
+        result = describe_mood("nonexistent")
+        self.assertIn("Unknown mood", result)
+
+    def test_describe_all_contains_all_moods(self):
+        from landscape import describe_mood
+        result = describe_mood("all")
+        for m in ["eerie", "vibrant", "desolate"]:
+            self.assertIn(m, result)
+
+    def test_describe_mood_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_mood_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-mood", "eerie"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("eerie", output)
+        self.assertIn("adjectives:", output)
+
+    def test_describe_all_moods_flag_prints_multiple(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-mood"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("=== eerie ===", output)
+        self.assertIn("=== vibrant ===", output)
+        self.assertIn("=== desolate ===", output)
+
+
 if __name__ == "__main__":
     unittest.main()
