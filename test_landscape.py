@@ -711,6 +711,31 @@ class TestLandscape(unittest.TestCase):
             self.assertIsInstance(result, str)
             self.assertGreater(len(result), 10)
 
+    def test_middle_template_display_exists_in_pool(self):
+        middle_templates = SENTENCE_TEMPLATES["middle"]
+        self.assertGreaterEqual(len(middle_templates), 6,
+            "Should have at least 6 middle templates")
+        display_tmpl = [t for t in middle_templates if "{display}" in t]
+        self.assertEqual(len(display_tmpl), 1,
+            "Exactly one middle template should reference {display}")
+        self.assertIn("Across the {display}", display_tmpl[0])
+
+    def test_middle_template_with_display_appears_in_output(self):
+        results = [generate_landscape(seed=s, biome="tundra") for s in range(300)]
+        display_matches = sum(
+            1 for r in results if "Across the tundra" in r
+        )
+        self.assertGreater(display_matches, 0,
+            "Middle template with {display} should appear across 300 random seeds")
+
+    def test_middle_template_display_composable_with_combine(self):
+        results = [generate_landscape(seed=s, combine="forest,desert") for s in range(300)]
+        display_matches = sum(
+            1 for r in results if "Across the forest and desert" in r
+        )
+        self.assertGreater(display_matches, 0,
+            "Middle template with {display} should appear with combine across 300 seeds")
+
 
     def test_template_overrides_default_does_not_change_output(self):
         a = generate_landscape(seed=42, template_set="first")

@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-12 — Biome Name in Middle Sentences (`{display}` Template)
+
+### What
+Added a 6th middle template `"Across the {display}, {element} {verb_conjugated} {adverb}."` that references the biome name in the middle of the landscape description. Also added `display=display` to the `_format_tmpl()` call for middle templates so the kwarg is available.
+
+### Why
+The biome name (`display`) previously only appeared in the opening sentence and weather templates. Middle sentences used generic vocabulary that could feel disconnected from the biome context. The new template ties middle sentences back to the biome — "Across the tundra, frost echoes silently." — making the description feel more cohesive and grounded. This is a natural extension of recent template improvements: Session 37 added `{adj}` to middle templates, Session 38 made that `adj` refer to the opening's adjective, and this session adds `{display}` to middle templates for the same reason (richer cross-sentence coherence).
+
+### Tradeoffs
+- The `{display}` kwarg is passed to all middle templates as an extra kwarg that existing templates silently ignore — same pattern as `{adj}` (Session 38) and `{adverb}` (Sessions 24/37). No backward compatibility impact.
+- The new template uses lowercase `{element}` (singular, mid-sentence) and `{verb_conjugated}` (third-person singular), which are grammatically correct for element-as-subject ("Across the desert, heat shimmer shimmers gently." is correct). Element words are already singular concepts.
+- The template uses `{adverb}` as an optional closing word — "Across the forest, birdsong whispers softly." reads naturally; if `adverb_enabled=False`, the `_format_tmpl` helper cleans up trailing spaces.
+- No new CLI flags — this is an automatic quality improvement, same as `{adj}` in middle templates (Session 38).
+- 3 new tests, 196 total.
+
 ## 2026-07-12 — Biome Frequency Weights (`--biome-weight`)
 
 ### What

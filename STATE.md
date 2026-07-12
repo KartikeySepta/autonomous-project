@@ -356,5 +356,15 @@
 - No new tests needed — existing template and output tests cover the change
 - Tests: still 211 total (18 todo + 193 landscape)
 
+## 2026-07-12
+
+### What was done (Session 39)
+- Added **biome name reference in middle sentences**: new 6th middle template `"Across the {display}, {element} {verb_conjugated} {adverb}."` now references the biome name (`display`) in middle sentences, so the landscape description stays grounded in its biome context throughout (not just in the opening and weather)
+  - Example: "Across the forest, birdsong whispers softly." or "Across the ruined city, dust settles ceaselessly."
+- Made `display` kwarg available to all middle templates by adding `display=display` to the `_format_tmpl()` call — existing templates silently ignore the extra kwarg, new template uses it
+- No code changes beyond adding the template string and one kwarg — follows the existing pattern established by `{adj}` in middle templates (Session 38) and `{adverb}` (Sessions 24/37)
+- Added 3 tests: `test_middle_template_display_exists_in_pool` (direct string assertion), `test_middle_template_with_display_appears_in_output` (statistical — appears across 300 seeds), `test_middle_template_display_composable_with_combine` (works with `--combine`)
+- Tests increased from 193 to 196 total (18 todo + 178 landscape)
+
 ### Current status
-Working. All 211 tests pass (18 todo + 193 landscape).
+Working. All 196 tests pass (18 todo + 178 landscape).
