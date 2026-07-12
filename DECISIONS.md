@@ -1,5 +1,23 @@
 # Decisions
 
+## 2026-07-12 — Configurable Middle Sentence Suppression (`--no-middle`)
+
+### What
+Added `--no-middle` CLI flag and `middle_enabled` parameter to `generate_landscape()` (default: `True`). When `middle_enabled=False`, the element/noun/verb picks and middle template rendering are skipped in the detail loop — only weather sentences are generated for each detail iteration.
+
+### Why
+Weather has always had a suppression flag (`--no-weather`, Session 46), and `--detail 0` suppresses everything except the opening. But there was no way to suppress *middle* sentences while keeping weather and anomalies. A user who wants atmospheric descriptions without explicit action (e.g., a purely visual vignette of opening + weather, or weather-only landscapes at higher detail levels) had no option. The `--no-middle` flag fills this gap, completing the triad of component-level suppression flags alongside `--no-dedup`, `--no-adverb`, and `--no-weather`.
+
+### Tradeoffs
+- `middle_enabled=True` is the default, preserving backward compatibility and all existing seed-based output
+- When disabled, element/noun/verb words are not picked at all (saves 3 `_pick()` calls and 3 dedup slots per iteration), making the output more efficient
+- The per-sentence-pair adverb is still picked even when middle is disabled — all 3 weather templates use `{adverb}`, so weather benefits from the adverb regardless of middle state
+- `--no-middle --no-weather` is a valid degenerate case that produces opening + anomaly only (if anomaly triggers), which is useful for ultra-minimal vignettes
+- `--no-middle --detail 0` produces opening only (same as `--detail 0` alone) — middle suppression is a no-op when no sentences are generated
+- Works orthogonally with all other controls: mood, bias, detail, anomaly settings, template sets, etc.
+- JSON output does not include `middle_enabled` — follows the same convention as `weather_enabled`, `adverb_enabled`, and `dedup`, which are also omitted from JSON metadata
+- 10 new tests, 256 total.
+
 ## 2026-07-12 — `{adverb}` in All Middle Templates
 
 ### What

@@ -456,5 +456,17 @@
 - No new tests — existing adverb and template tests cover the change
 - Tests: still 246 total (18 todo + 228 landscape)
 
+## 2026-07-12
+
+### What was done (Session 48)
+- Added **`--no-middle` CLI flag** and `middle_enabled` parameter to `generate_landscape()` — users can now suppress middle sentences while keeping opening, weather, and anomaly sentences
+  - `middle_enabled=True` (default) preserves existing behavior
+  - `middle_enabled=False` skips element/noun/verb picks and middle template rendering in the detail loop — only weather sentences are generated for each detail iteration
+  - The per-sentence-pair adverb pick still happens even when middle is disabled, so weather templates get their adverb
+  - Composes orthogonally with all other controls: `--no-middle --no-weather` produces opening + anomaly only
+  - Follows the same pattern as `--no-dedup` (Session 33), `--no-adverb` (Session 34), and `--no-weather` (Session 46)
+- Added 10 tests in `TestMiddleFlag` class: `test_middle_enabled_default_same_as_before`, `test_middle_disabled_still_produces_valid_output`, `test_middle_disabled_differs_from_enabled`, `test_middle_disabled_has_fewer_sentences`, `test_middle_disabled_deterministic`, `test_middle_disabled_works_with_detail_three`, `test_middle_disabled_works_with_mood_and_bias`, `test_middle_disabled_works_with_json_format`, `test_middle_disabled_works_with_no_weather`, `test_middle_disabled_flag_exists_via_cli`
+- Tests increased from 246 to 256 total (18 todo + 238 landscape)
+
 ### Current status
-Working. All 246 tests pass (18 todo + 228 landscape).
+Working. All 256 tests pass (18 todo + 238 landscape).

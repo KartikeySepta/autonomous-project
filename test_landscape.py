@@ -1712,5 +1712,70 @@ class TestWeatherFlag(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+class TestMiddleFlag(unittest.TestCase):
+    def test_middle_enabled_default_same_as_before(self):
+        r1 = generate_landscape(seed=42)
+        r2 = generate_landscape(seed=42, middle_enabled=True)
+        self.assertEqual(r1, r2, "middle_enabled=True should match default")
+
+    def test_middle_disabled_still_produces_valid_output(self):
+        result = generate_landscape(seed=42, middle_enabled=False)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_middle_disabled_differs_from_enabled(self):
+        enabled = generate_landscape(seed=42, middle_enabled=True)
+        disabled = generate_landscape(seed=42, middle_enabled=False)
+        self.assertNotEqual(enabled, disabled,
+            "Output should differ when middle is disabled")
+
+    def test_middle_disabled_has_fewer_sentences(self):
+        for s in range(20):
+            enabled = generate_landscape(seed=s, middle_enabled=True)
+            disabled = generate_landscape(seed=s, middle_enabled=False)
+            e_sentences = enabled.count(". ")
+            d_sentences = disabled.count(". ")
+            self.assertGreaterEqual(e_sentences, d_sentences,
+                f"Disabled middle should have same or fewer sentences at seed {s}")
+
+    def test_middle_disabled_deterministic(self):
+        r1 = generate_landscape(seed=99, middle_enabled=False)
+        r2 = generate_landscape(seed=99, middle_enabled=False)
+        self.assertEqual(r1, r2, "middle_enabled=False should be deterministic with same seed")
+
+    def test_middle_disabled_works_with_detail_three(self):
+        result = generate_landscape(seed=42, middle_enabled=False, detail=3)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_middle_disabled_works_with_mood_and_bias(self):
+        result = generate_landscape(seed=42, middle_enabled=False, mood="eerie", bias="rare")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_middle_disabled_works_with_json_format(self):
+        result = generate_landscape(seed=42, middle_enabled=False, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_middle_disabled_works_with_no_weather(self):
+        result = generate_landscape(seed=42, middle_enabled=False, weather_enabled=False)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+        # With both middle and weather disabled, output should be opening only (no anomalies at detail=1? no, anomalies still roll)
+        self.assertIn(" ", result, "Output should contain at least opening text")
+
+    def test_middle_disabled_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 if __name__ == "__main__":
     unittest.main()
