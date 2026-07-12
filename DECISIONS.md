@@ -1,5 +1,26 @@
 # Decisions
 
+## 2026-07-12 — `{adverb}` in All Middle Templates
+
+### What
+Added `{adverb}` to `SENTENCE_TEMPLATES["middle"][0]`, `[1]`, and `[2]` — the last 3 middle templates that didn't use the per-sentence-pair adverb. Now all 6 middle templates use `{adverb}`:
+- Template 0: `"{Element} {verb_conjugated} {adverb} between the {adj} {noun}."`
+- Template 1: `"Among the {adj} {noun}, {element} {verb_conjugated} {adverb}."`
+- Template 2: `"The {adj} {noun} {verb} {adverb} with {element}."`
+
+### Why
+After Sessions 30, 37, 42, the adverb was used in all 3 opening and all 3 weather templates, but only 3 of 6 middle templates. This left the non-adverb middle templates (the classic pattern "Mist whispers between the crystal trees.") feeling flatter at lower detail levels where fewer sentences are generated. Adding `{adverb}` to the remaining middle templates completes the consistency improvement: now the adverb is useful in every generated middle sentence regardless of which template is randomly selected, matching the coverage of opening and weather templates. The adverb is now used in 11 of 15 templates (73%), up from 8 of 15 (53%).
+
+### Tradeoffs
+- Template-level change only — `adverb` was already in scope and threaded through `_format_tmpl` since Session 24/37
+- Seed-breaking change: existing seed-based output differs when middle template 0, 1, or 2 is selected, because the adverb now renders in those slots. Since no seed-based output has been published, this is acceptable.
+- Template 0 reads as `"Mist whispers softly between the crystal trees."` — adverb between verb and preposition reads naturally
+- Template 1 reads as `"Among the crystal trees, mist whispers softly."` — end-of-clause adverb placement is grammatically natural
+- Template 2 reads as `"The crystal trees whisper softly with light."` — adverb between verb and "with" reads as natural spoken English
+- When `adverb_enabled=False`, `_format_tmpl` handles the trailing space before the period via its existing `" ."` → `"."` cleanup for template 1 (where adverb was the last element before the period)
+- No new tests — existing coverage (adverb appearance, template variety, output validity, `adverb_enabled=False` formatting) covers the change
+- 246 tests total (unchanged).
+
 ## 2026-07-12 — Configurable Weather Suppression (`--no-weather`)
 
 ### What

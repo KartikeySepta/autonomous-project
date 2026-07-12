@@ -274,9 +274,9 @@ SENTENCE_TEMPLATES = {
         "The {adj} {display} lies {adverb} ahead.",
     ],
     "middle": [
-        "{Element} {verb_conjugated} between the {adj} {noun}.",
-        "Among the {adj} {noun}, {element} {verb_conjugated}.",
-        "The {adj} {noun} {verb} with {element}.",
+        "{Element} {verb_conjugated} {adverb} between the {adj} {noun}.",
+        "Among the {adj} {noun}, {element} {verb_conjugated} {adverb}.",
+        "The {adj} {noun} {verb} {adverb} with {element}.",
         "{Element} {verb_conjugated} {adverb} through the {adj} {noun}.",
         "Beneath the {adj} {noun}, {element} {verb_conjugated} {adverb}.",
         "Across the {display}, {element} {verb_conjugated} {adverb}.",

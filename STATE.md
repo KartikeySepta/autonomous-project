@@ -444,5 +444,17 @@
 - Added 9 tests in `TestWeatherFlag` class: `test_weather_enabled_default_same_as_before`, `test_weather_disabled_still_produces_valid_output`, `test_weather_disabled_differs_from_enabled`, `test_weather_disabled_has_fewer_sentences`, `test_weather_disabled_deterministic`, `test_weather_disabled_works_with_detail_three`, `test_weather_disabled_works_with_mood_and_bias`, `test_weather_disabled_works_with_json_format`, `test_weather_disabled_flag_exists_via_cli`
 - Tests increased from 237 to 246 total (18 todo + 228 landscape)
 
+## 2026-07-12
+
+### What was done (Session 47)
+- Added **`{adverb}` to middle templates 0, 1, and 2** — the last 3 middle templates that didn't use the per-sentence-pair adverb. Now all 6 middle templates use `{adverb}`:
+  - Template 0: `"{Element} {verb_conjugated} {adverb} between the {adj} {noun}."` (was `"...between the {adj} {noun}."`)
+  - Template 1: `"Among the {adj} {noun}, {element} {verb_conjugated} {adverb}."` (was `"...{element} {verb_conjugated}."`)
+  - Template 2: `"The {adj} {noun} {verb} {adverb} with {element}."` (was `"...{verb} with {element}."`)
+- No code changes needed — `adverb` was already threaded through all middle template format calls (since Session 24/37); `_format_tmpl` handles the `adverb_enabled=False` cleanup
+- The adverb now appears in 11 of 15 templates (opening: 3/3, middle: 6/6, weather: 3/3, anomaly: 0/4) — up from 8 of 15
+- No new tests — existing adverb and template tests cover the change
+- Tests: still 246 total (18 todo + 228 landscape)
+
 ### Current status
 Working. All 246 tests pass (18 todo + 228 landscape).
