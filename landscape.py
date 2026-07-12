@@ -720,7 +720,10 @@ def main():
     for i in range(args.count):
         effective_seed = args.seed + i if args.seed is not None else None
         lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb))
-    output = "\n\n".join(lines) + ("\n" if lines else "")
+    if args.format == "json" and len(lines) > 1:
+        output = "[" + ",\n".join(lines) + "]\n"
+    else:
+        output = "\n\n".join(lines) + ("\n" if lines else "")
     if args.output:
         with open(args.output, "w") as f:
             f.write(output)

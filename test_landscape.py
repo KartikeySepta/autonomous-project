@@ -1265,5 +1265,78 @@ class TestAdverbFlag(unittest.TestCase):
         self.assertTrue(result.endswith("."))
 
 
+class TestJsonWithCount(unittest.TestCase):
+    def test_format_json_count_one_is_single_object(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIsInstance(data, dict)
+
+    def test_format_json_count_two_is_array(self):
+        import sys
+        from landscape import main
+        import io
+        import json
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--seed", "42", "--count", "2", "--format", "json"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue().strip()
+        data = json.loads(output)
+        self.assertIsInstance(data, list)
+        self.assertEqual(len(data), 2)
+
+    def test_format_json_count_three_all_valid_json(self):
+        import sys
+        from landscape import main
+        import io
+        import json
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--seed", "42", "--count", "3", "--format", "json"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue().strip()
+        data = json.loads(output)
+        self.assertIsInstance(data, list)
+        self.assertEqual(len(data), 3)
+        for item in data:
+            self.assertIn("text", item)
+            self.assertIn("biome", item)
+            self.assertIn("seed", item)
+
+    def test_format_json_count_array_items_have_unique_biomes(self):
+        import sys
+        from landscape import main
+        import io
+        import json
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--seed", "42", "--count", "3", "--format", "json"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue().strip()
+        data = json.loads(output)
+        seeds = [item["seed"] for item in data]
+        self.assertEqual(seeds, [42, 43, 44],
+            "Seeds should auto-increment in JSON array output")
+
+
 if __name__ == "__main__":
     unittest.main()

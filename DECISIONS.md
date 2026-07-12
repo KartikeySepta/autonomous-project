@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-12 — JSON Array Output for `--format json --count N`
+
+### What
+Fixed `main()` so that when `fmt="json"` and `count > 1`, the output is wrapped in a JSON array (`[item1,\nitem2,\n...]`) instead of concatenating JSON objects with `\n\n`. Single-landscape JSON output (`--count 1`) is unchanged.
+
+### Why
+`--format json --count 3` previously produced three JSON objects separated by blank lines — an invalid JSON document that tools like `jq`, `json.loads()`, and HTTP APIs cannot parse. Each individual object was valid, but the composite was not. This made the JSON output mode unusable for batch generation. The fix makes `--format json --count N` produce a valid JSON array, which is the standard way to represent multiple homogeneous items in JSON.
+
+### Tradeoffs
+- Only the CLI `main()` path is affected; `generate_landscape()` still returns individual JSON strings — callers who iterate themselves are unchanged
+- Single-landscape JSON output is not wrapped in a single-element array — preserves backward compatibility and avoids breaking existing consumers
+- The array uses `",\n"` (comma-newline) separators for readability; output is a single valid JSON document ending with `\n`
+- Prose and poetic formats are unaffected — they still use `\n\n` separation
+- 4 new tests, 200 total.
+
 ## 2026-07-12 — Configurable Adverb Suppression (`--no-adverb`)
 
 ### What

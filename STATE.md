@@ -309,5 +309,16 @@
 - Added 8 tests in `TestAdverbFlag` class: `test_adverb_enabled_default_same_as_before`, `test_adverb_disabled_still_produces_valid_output`, `test_adverb_disabled_differs_from_enabled`, `test_adverb_disabled_deterministic`, `test_adverb_disabled_no_formatting_artifacts`, `test_adverb_disabled_flag_exists_via_cli`, `test_adverb_disabled_works_with_detail_three`, `test_adverb_disabled_works_with_mood_and_bias`
 - Tests increased from 188 to 196 total (18 todo + 178 landscape)
 
+## 2026-07-12
+
+### What was done (Session 35)
+- Fixed **`--format json --count N` output**: previously, each landscape was a valid JSON object but they were concatenated with `\n\n`, producing an invalid JSON document that tools like `jq` could not parse
+  - When `--format json` is used with `--count N` (N > 1), `main()` now wraps the items in a JSON array (`[...]`) separated by commas
+  - Single-landscape JSON output (`--count 1` or default) is unchanged — still a single JSON object
+  - Prose and poetic output formats are unaffected — still joined by `\n\n`
+- One-line change in `main()`: added an `if`/`else` block that checks `args.format == "json" and len(lines) > 1`
+- Added 4 tests in `TestJsonWithCount` class: `test_format_json_count_one_is_single_object`, `test_format_json_count_two_is_array`, `test_format_json_count_three_all_valid_json`, `test_format_json_count_array_items_have_unique_biomes`
+- Tests increased from 196 to 200 total (18 todo + 182 landscape)
+
 ### Current status
-Working. All 196 tests pass (18 todo + 178 landscape).
+Working. All 200 tests pass (18 todo + 182 landscape).
