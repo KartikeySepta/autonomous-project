@@ -515,3 +515,15 @@ Working. All 261 tests pass (18 todo + 243 landscape).
 - Added **`--mood-weight-adverb` and `--mood-weight-color` CLI flags** — same gap in the per-category mood-weight override system (Session 17): flags existed for 6 categories but not adverbs/colors. Now all 8 categories have per-category mood-weight CLI control.
 - Added 8 new tests: `test_bias_adverb_override_rare_reduces_common_adverbs`, `test_bias_color_override_common_increases_common_colors`, `test_bias_overrides_multiple_with_new_categories`, `test_bias_overrides_produces_valid_output_adverb_color`, `test_mood_weight_adverb_override_high_boosts_mood_adverbs`, `test_mood_weight_color_override_zero_suppresses_mood_colors`, `test_mood_weight_overrides_multiple_with_new_categories`, `test_mood_weight_overrides_produces_valid_output_adverb_color`
 - Tests increased from 274 to 282 total (18 todo + 264 landscape)
+
+### What was done (Session 53)
+- Added **`--no-color` CLI flag** and `color_enabled` parameter to `generate_landscape()` — users can now disable color word insertion in landscape descriptions
+  - `color_enabled=True` (default) preserves existing behavior — a color word is picked per-sentence-pair and used in the `{color}` middle template
+  - `color_enabled=False` skips the color pick entirely and passes an empty string to the template format call; `_format_tmpl` cleans up any double-space artifacts (same pattern as `adverb_enabled=False` from Session 34)
+  - Follows the same pattern as `--no-adverb` (Session 34), `--no-weather` (Session 46), `--no-middle` (Session 48): automatic quality improvement made configurable
+  - Fills the gap explicitly noted as a tradeoff in DECISIONS.md (Session 51): "A `--no-color` flag could be added later if needed (parallel to `--no-adverb`)"
+- Added 8 tests in `TestColorFlag` class: `test_color_enabled_default_same_as_before`, `test_color_disabled_still_produces_valid_output`, `test_color_disabled_differs_from_enabled`, `test_color_disabled_deterministic`, `test_color_disabled_no_formatting_artifacts`, `test_color_disabled_flag_exists_via_cli`, `test_color_disabled_works_with_detail_three`, `test_color_disabled_works_with_mood_and_bias`
+- Tests increased from 282 to 290 total (18 todo + 272 landscape)
+
+### Current status
+Working. All 290 tests pass (18 todo + 272 landscape).

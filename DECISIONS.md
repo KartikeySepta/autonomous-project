@@ -1,5 +1,19 @@
 # Decisions
 
+## 2026-07-12 — Configurable Color Suppression (`--no-color`)
+
+### What
+Added `--no-color` CLI flag and `color_enabled` parameter to `generate_landscape()` (default: `True`). When `color_enabled=False`, the color word pick is skipped and an empty string is passed to the template format call. `_format_tmpl` handles the double-space cleanup (`"The  light of"` → `"The light of"`) the same way it handles empty `{adverb}`.
+
+### Why
+The color word bank (Session 51) was an automatic quality improvement with no off switch. While colors generally improve output, some users may want to suppress them — for shorter/more direct descriptions, for consistency with pre-color seeds, or to avoid the specific "The {color} light of..." template pattern. This was explicitly anticipated as a future gap in the Session 51 DECISIONS.md entry: "A `--no-color` flag could be added later if needed (parallel to `--no-adverb`)."
+
+### Tradeoffs
+- `color_enabled=True` is the default, preserving backward compatibility and existing seed-based output
+- When disabled, the color template (`"The {color} light of..."`) can still be selected — since `color=""`, the template renders as `"The  light of..."` and `_format_tmpl` collapses the double space to `"The light of..."`. This produces valid, natural-sounding output without the color word
+- The empty-string approach (rather than removing the template from the pool) follows the exact same pattern as `adverb_enabled=False` (Session 34): templates that reference the disabled feature still work, just without the word
+- 8 new tests, 290 total (18 todo + 272 landscape)
+
 ## 2026-07-12 — Color Word Bank (`COLORS`)
 
 ### What
