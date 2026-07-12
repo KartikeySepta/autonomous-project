@@ -1,5 +1,22 @@
 # Decisions
 
+## 2026-07-12 — Template Set Coverage & Template Introspection
+
+### What
+Added `"sixth"` (index 5) and `"seventh"` (index 6) to `TEMPLATE_SETS`, completing template-set coverage for all 7 middle templates and 5 weather templates. Added `--describe-templates` CLI flag and `describe_templates()` function, completing the introspection feature set alongside `--describe-biome`, `--describe-mood`, and `--describe-global`.
+
+### Why
+**Template sets**: Session 63 added "fourth" and "fifth" template set modes (indices 3 and 4), but middle has 7 templates and weather has 5, so indices 5 and 6 were still accessible only via random choice or template overrides. Adding "sixth" and "seventh" completes the set coverage — now every template index across all 4 slots is directly addressable via `--template-set`. As the TEMPLATE_SETS comment says, "random uses random.choice per slot; others force a fixed index" — with "sixth" and "seventh", all 7 middle indices and all 5 weather indices are now forceable.
+
+**Template introspection**: Sessions 43–45 added `--describe-biome`, `--describe-mood`, and `--describe-global` for word bank introspection, but there was no way to discover what templates are available without reading `landscape.py`. With 4 opening, 7 middle, 5 weather, and 4 anomaly templates, the template system has as much variety as the word banks. A `--describe-templates` flag fills this gap, completing the introspection UX.
+
+### Tradeoffs
+- **"sixth" and "seventh" are shallow for slots with fewer templates**: opening (4), weather (5), and anomaly (4) all clamp to their max index when "sixth" or "seventh" is used. Only the middle slot gets a unique index. This is the same pattern as "fifth" (Session 63) — the clamping via `min(idx, len(templates) - 1)` makes it safe but means some template-set values are equivalent for certain slots. No behavioral ambiguity since the clamped index is deterministic.
+- **`describe_templates()` is a pure function**: follows the same pattern as `describe_biome()`, `describe_mood()`, and `describe_global()` — returns a string with no side effects, making it testable and reusable.
+- **No --template-set option added for six/seven in per-slot overrides**: the existing `--template-opening`, `--template-middle`, `--template-weather`, and `--template-anomaly` flags already accept choices from `TEMPLATE_SETS.keys()`, so "sixth" and "seventh" are automatically available there too.
+- **17 new tests, 384 total** (18 todo + 366 landscape).
+- **No seed-breaking change**: TEMPLATE_SETS is purely a lookup dict; no random call order changes.
+
 ## 2026-07-12 — Fourth Mood: "Peaceful"
 
 ### What

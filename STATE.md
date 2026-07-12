@@ -683,3 +683,21 @@ Working. All 360 tests pass (18 todo + 342 landscape).
 
 ### Current status
 Working. All 367 tests pass (18 todo + 349 landscape).
+
+## 2026-07-12
+
+### What was done (Session 64)
+- Added **`"sixth"` and `"seventh"` template set modes** to `TEMPLATE_SETS` — completing coverage for all 7 middle templates and 5 weather templates
+  - `"sixth"` maps to index 5: opens middle template 5 (`"Across the {display}, {color} {element} {verb_conjugated} {adverb}."`); opening/weather/anomaly clamp to max index (3/4/3)
+  - `"seventh"` maps to index 6: opens middle template 6 (`"The {color} light of {element} {verb_conjugated} {adverb}."`); opening/weather/anomaly clamp to max index
+  - Backward compatible — existing `--template-set first` through `--fifth` choices are unchanged
+- Added **`--describe-templates` CLI flag** and `describe_templates()` function — users can now inspect all available sentence templates per slot (opening, middle, weather, anomaly) with index numbers, without reading the source code
+  - Pure function returns a string with all template strings grouped by slot, annotated with count and index
+  - Similar pattern to `describe_biome()`, `describe_mood()`, and `describe_global()` — introspection without landscape generation
+  - CLI exits immediately after printing — no landscape generation occurs when `--describe-templates` is used
+- Updated `--template-set` help text to list all 8 modes (random + first–seventh)
+- Added 7 template set tests and 10 describe_templates tests
+- Tests increased from 367 to 384 total (18 todo + 366 landscape)
+
+### Current status
+Working. All 384 tests pass (18 todo + 366 landscape).

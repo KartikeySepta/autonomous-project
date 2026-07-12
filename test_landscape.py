@@ -873,6 +873,47 @@ class TestLandscape(unittest.TestCase):
             SENTENCE_TEMPLATES["weather"][4],
         )
 
+    def test_pick_template_selects_correct_sixth_index(self):
+        self.assertEqual(
+            _pick_template("middle", "sixth"),
+            SENTENCE_TEMPLATES["middle"][5],
+        )
+
+    def test_pick_template_selects_correct_seventh_index(self):
+        self.assertEqual(
+            _pick_template("middle", "seventh"),
+            SENTENCE_TEMPLATES["middle"][6],
+        )
+
+    def test_template_set_sixth_middle_has_expected_pattern(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, biome="forest", template_set="sixth")
+            self.assertIn("Across the ", result,
+                f"template_set=sixth middle should use 'Across the' pattern at seed {s}")
+
+    def test_template_set_seventh_middle_has_expected_pattern(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, biome="forest", template_set="seventh")
+            self.assertIn(" light of ", result,
+                f"template_set=seventh middle should use 'light of' pattern at seed {s}")
+
+    def test_template_set_sixth_is_deterministic(self):
+        a = generate_landscape(seed=42, template_set="sixth")
+        b = generate_landscape(seed=42, template_set="sixth")
+        self.assertEqual(a, b)
+
+    def test_template_set_seventh_is_deterministic(self):
+        a = generate_landscape(seed=42, template_set="seventh")
+        b = generate_landscape(seed=42, template_set="seventh")
+        self.assertEqual(a, b)
+
+    def test_template_set_sixth_seventh_produce_valid_output(self):
+        for tset in ["sixth", "seventh"]:
+            for s in range(10):
+                result = generate_landscape(seed=s, template_set=tset)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
     def test_middle_third_template_uses_bare_verb(self):
         middle_third = SENTENCE_TEMPLATES["middle"][2]
         self.assertNotIn("{verb_conjugated}", middle_third,
@@ -1909,6 +1950,102 @@ class TestDescribeGlobal(unittest.TestCase):
             "No landscape should be generated when --describe-global is used")
         self.assertNotIn("\n\n", output,
             "No landscape should be generated when --describe-global is used")
+
+
+class TestDescribeTemplates(unittest.TestCase):
+    def test_describe_templates_returns_string(self):
+        from landscape import describe_templates
+        result = describe_templates()
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_describe_templates_contains_header(self):
+        from landscape import describe_templates
+        result = describe_templates()
+        self.assertIn("templates", result)
+
+    def test_describe_templates_contains_all_slots(self):
+        from landscape import describe_templates
+        result = describe_templates()
+        for slot in ["opening", "middle", "weather", "anomaly"]:
+            self.assertIn(f"{slot} (", result,
+                f"Template description should contain slot '{slot}'")
+
+    def test_describe_templates_contains_known_templates(self):
+        from landscape import describe_templates, SENTENCE_TEMPLATES
+        result = describe_templates()
+        for slot in ["opening", "middle", "weather", "anomaly"]:
+            for tmpl in SENTENCE_TEMPLATES[slot][:2]:
+                self.assertIn(tmpl, result,
+                    f"Template description should contain template string: {tmpl}")
+
+    def test_describe_templates_contains_placeholder_info(self):
+        from landscape import describe_templates
+        result = describe_templates()
+        self.assertIn("{adj}", result, "Template description should contain {adj}")
+        self.assertIn("{adverb}", result, "Template description should contain {adverb}")
+        self.assertIn("{color}", result, "Template description should contain {color}")
+        self.assertIn("{element}", result, "Template description should contain {element}")
+        self.assertIn("{display}", result, "Template description should contain {display}")
+
+    def test_describe_templates_contains_index_numbers(self):
+        from landscape import describe_templates
+        result = describe_templates()
+        self.assertIn("[0]", result, "Template description should contain index [0]")
+        self.assertIn("[1]", result, "Template description should contain index [1]")
+
+    def test_describe_templates_shows_template_count(self):
+        from landscape import describe_templates, SENTENCE_TEMPLATES
+        result = describe_templates()
+        for slot in ["opening", "middle", "weather", "anomaly"]:
+            count = len(SENTENCE_TEMPLATES[slot])
+            self.assertIn(f"({count} template", result,
+                f"Template description should show count for '{slot}'")
+
+    def test_describe_templates_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_templates_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-templates"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("templates", output)
+        self.assertIn("opening", output)
+        self.assertIn("middle", output)
+        self.assertIn("weather", output)
+        self.assertIn("anomaly", output)
+
+    def test_describe_templates_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-templates", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-templates is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-templates is used")
 
 
 class TestWeatherFlag(unittest.TestCase):

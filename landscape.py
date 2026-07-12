@@ -219,6 +219,8 @@ TEMPLATE_SETS = {
     "third": 2,
     "fourth": 3,
     "fifth": 4,
+    "sixth": 5,
+    "seventh": 6,
 }
 
 
@@ -298,6 +300,17 @@ def describe_global():
         if rare:
             parts.append(f"rare: {', '.join(rare)}")
         lines.append(f"  {cat_name} ({', '.join(parts)})")
+    return "\n".join(lines)
+
+
+def describe_templates():
+    """Return a string describing all available sentence templates per slot."""
+    lines = ["=== templates ==="]
+    for slot in ["opening", "middle", "weather", "anomaly"]:
+        templates = SENTENCE_TEMPLATES[slot]
+        lines.append(f"  {slot} ({len(templates)} templates):")
+        for i, tmpl in enumerate(templates):
+            lines.append(f"    [{i}] {tmpl}")
     return "\n".join(lines)
 
 
@@ -755,7 +768,11 @@ def main():
     )
     parser.add_argument(
         "--describe-global", action="store_true",
-        help="Show all global word pools with weight tiers",
+        help="Show all global word pools with weight tiers (common/normal/rare)",
+    )
+    parser.add_argument(
+        "--describe-templates", action="store_true",
+        help="Show all sentence templates per slot with their index numbers",
     )
     parser.add_argument(
         "--show-biome", action="store_true",
@@ -832,7 +849,7 @@ def main():
     )
     parser.add_argument(
         "--template-set", type=str, default="random", choices=list(TEMPLATE_SETS.keys()),
-        help="Template selection mode: random (default), first, second, or third",
+        help="Template selection mode: random (default), first–seventh (fixed index)",
     )
     parser.add_argument("--template-opening", type=str, default=None, choices=list(TEMPLATE_SETS.keys()),
         help="Per-slot override: template for opening (overrides --template-set)")
@@ -935,6 +952,9 @@ def main():
         return
     if args.describe_global:
         print(describe_global())
+        return
+    if args.describe_templates:
+        print(describe_templates())
         return
 
     lines = []
