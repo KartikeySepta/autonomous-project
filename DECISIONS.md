@@ -1,5 +1,21 @@
 # Decisions
 
+## 2026-07-12 — `{adj}` in Middle Templates 3 and 4 (Adverb Templates)
+
+### What
+Added `{adj}` to `SENTENCE_TEMPLATES["middle"][3]` and `[4]`: changed `"Beneath the {noun}, {element} {verb_conjugated} {adverb}."` to `"Beneath the {adj} {noun}, {element} {verb_conjugated} {adverb}."`, and `"{Element} {verb_conjugated} {adverb} through the {noun}."` to `"{Element} {verb_conjugated} {adverb} through the {adj} {noun}."`. The `adj` kwarg was already passed to the format call (Session 38) and was simply unused by these two templates.
+
+### Why
+Templates 3 and 4 were the last middle templates without `{adj}` — templates 0, 1, and 2 received it in Sessions 38 and 40. This left the adverb templates (3 and 4) producing flatter output ("Mist whispers softly through the trees.") compared to templates with adjectives ("Mist whispers softly through the crystal trees."). Adding `{adj}` completes the consistency improvement: now all 6 middle templates use the landscape's chosen adjective, making descriptions uniformly richer across all template slots.
+
+### Tradeoffs
+- Template-level change only — `adj` was already in scope and threaded through `_format_tmpl` since Session 38
+- No seed-breaking change: no new `_pick()` calls
+- Template 3 now reads as `"Mist whispers softly through the crystal trees."` — the adjective sits naturally before the noun
+- Template 4 now reads as `"Beneath the ancient stones, light glows softly."` — same natural placement
+- No new tests — existing coverage (template variety, output validity, deterministic seed) covers the change
+- 214 tests total (unchanged).
+
 ## 2026-07-12 — `{adj}` in Middle Template 0 (Classic Template)
 
 ### What

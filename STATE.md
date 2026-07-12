@@ -375,5 +375,16 @@
 - No new tests — existing template and output tests cover the change
 - Tests: still 196 total (18 todo + 178 landscape)
 
+## 2026-07-12
+
+### What was done (Session 41)
+- Added `{adj}` to middle templates 3 and 4 — the last two middle templates that didn't use the landscape's adjective:
+  - Template 3: `"Mist whispers softly through the crystal trees."` (was `"Mist whispers softly through the trees."`)
+  - Template 4: `"Beneath the ancient stones, light glows softly."` (was `"Beneath the stones, light glows softly."`)
+  - The `adj` kwarg was already passed to the middle template format call (from Session 38), so this is a template-level change only — no code changes
+- Now all 6 middle templates use `{adj}`, making descriptions consistently richer across all template slots
+- No new tests — existing template and output tests cover the change
+- Tests: 214 total (18 todo + 196 landscape)
+
 ### Current status
-Working. All 196 tests pass (18 todo + 178 landscape).
+Working. All 214 tests pass (18 todo + 196 landscape).
