@@ -468,5 +468,19 @@
 - Added 10 tests in `TestMiddleFlag` class: `test_middle_enabled_default_same_as_before`, `test_middle_disabled_still_produces_valid_output`, `test_middle_disabled_differs_from_enabled`, `test_middle_disabled_has_fewer_sentences`, `test_middle_disabled_deterministic`, `test_middle_disabled_works_with_detail_three`, `test_middle_disabled_works_with_mood_and_bias`, `test_middle_disabled_works_with_json_format`, `test_middle_disabled_works_with_no_weather`, `test_middle_disabled_flag_exists_via_cli`
 - Tests increased from 246 to 256 total (18 todo + 238 landscape)
 
+## 2026-07-12
+
+### What was done (Session 49)
+- Changed **adjective from single-per-landscape to per-sentence-pair**: previously the same adjective was used for the opening and every middle sentence; now each sentence pair (and the opening) gets its own adjective pick
+  - Opening still picks its own adjective once before the template
+  - Inside the `detail` loop, a fresh adjective is picked for each middle+weather pair
+  - Middle templates get the per-pair adjective instead of the opening's adjective
+  - Follows the exact same pattern as the per-sentence-pair adverb change (Session 37)
+- This is a **seed-breaking change**: existing seed-based output differs because the random call order changes (one extra `_pick` call per detail level). Determinism is preserved: the same seed still produces the same output.
+- Per-sentence adjectives make detail=2 and detail=3 outputs richer by allowing different adjectival flavors across sentence pairs (e.g., "crystal" in the first pair, "ancient" in the second)
+- Fixed `test_bias_common_increases_common_word_frequency` to count total occurrences instead of binary presence/absence — the old test had a ceiling effect flake (both counts near 300/300)
+- Added 5 tests: `test_per_sentence_adj_uses_multiple_adjectives`, `test_per_sentence_adj_deterministic`, `test_per_sentence_adj_detail_three_has_more_adjective_variety`, `test_per_sentence_adj_respects_middle_disabled`, `test_per_sentence_adj_with_adverb_disabled`
+- Tests increased from 256 to 261 total (18 todo + 243 landscape)
+
 ### Current status
-Working. All 256 tests pass (18 todo + 238 landscape).
+Working. All 261 tests pass (18 todo + 243 landscape).

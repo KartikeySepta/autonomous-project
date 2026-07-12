@@ -314,6 +314,43 @@ class TestLandscape(unittest.TestCase):
         self.assertEqual(a, b,
             "adverb_enabled=True should match default with per-sentence adverb")
 
+    def test_per_sentence_adj_uses_multiple_adjectives(self):
+        all_adjs = ALL_ADJECTIVES
+        multi_count = 0
+        for s in range(100):
+            result = generate_landscape(seed=s, template_set="first", detail=2, dedup=True)
+            found = [a for a in all_adjs if a in result]
+            if len(set(found)) >= 2:
+                multi_count += 1
+        self.assertGreater(multi_count, 50,
+            "Per-sentence adjective should produce multiple distinct adjectives in most outputs")
+
+    def test_per_sentence_adj_deterministic(self):
+        a = generate_landscape(seed=42, detail=2)
+        b = generate_landscape(seed=42, detail=2)
+        self.assertEqual(a, b,
+            "Per-sentence adjective should be deterministic with same seed")
+
+    def test_per_sentence_adj_detail_three_has_more_adjective_variety(self):
+        adjs_found = set()
+        for s in range(50):
+            result = generate_landscape(seed=s, template_set="first", detail=3, dedup=True)
+            adjs_found.update(a for a in ALL_ADJECTIVES if a in result)
+        self.assertGreaterEqual(len(adjs_found), 3,
+            "With detail=3 and per-sentence adjective, should see varied adjectives across many outputs")
+
+    def test_per_sentence_adj_respects_middle_disabled(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, middle_enabled=False, detail=2)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_per_sentence_adj_with_adverb_disabled(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, adverb_enabled=False, detail=2)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
     def test_combine_two_biomes_contains_both_names(self):
         result = generate_landscape(seed=42, combine="forest,desert")
         self.assertIn("forest", result)
@@ -507,15 +544,13 @@ class TestLandscape(unittest.TestCase):
             self.assertGreater(len(result), 10)
 
     def test_bias_common_increases_common_word_frequency(self):
-        common_hits_normal = 0
-        common_hits_common = 0
+        total_normal = 0
+        total_common = 0
         for s in range(300):
-            if any(c in generate_landscape(seed=s, bias="normal") for c in COMMON_WORDS):
-                common_hits_normal += 1
-            if any(c in generate_landscape(seed=s, bias="common") for c in COMMON_WORDS):
-                common_hits_common += 1
-        self.assertGreater(common_hits_common, common_hits_normal,
-            "bias=common should produce more outputs with common words than bias=normal")
+            total_normal += sum(1 for c in COMMON_WORDS if c in generate_landscape(seed=s, bias="normal"))
+            total_common += sum(1 for c in COMMON_WORDS if c in generate_landscape(seed=s, bias="common"))
+        self.assertGreater(total_common, total_normal,
+            "bias=common should produce more common word occurrences total than bias=normal")
 
     def test_bias_rare_increases_rare_word_frequency(self):
         rare_hits_normal = 0

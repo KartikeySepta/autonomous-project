@@ -1,5 +1,21 @@
 # Decisions
 
+## 2026-07-12 — Per-Sentence-Pair Adjective Selection
+
+### What
+Changed adjective from single-per-landscape to **per-sentence-pair**: previously the adjective was picked once and shared across all templates (opening + all middle sentences); now each sentence pair (and the opening) gets its own adjective pick. The opening's adjective is picked before the template, and inside the `detail` loop a fresh adjective is picked for each middle+weather pair.
+
+### Why
+After Session 37 made adverbs per-sentence-pair, the adjective was the last word category locked to a single pick for the entire landscape. This meant the opening's adjective set the tone for all middle sentences — "crystal" in the opening forced "crystal" in every middle sentence, making detail=2 and detail=3 landscapes feel repetitive. Making adjectives per-sentence-pair follows the established pattern (same as adverb per-sentence-pair in Session 37) and allows different adjectival flavors across sentence pairs (e.g., "crystal forest... among the ancient trees..." instead of "crystal forest... among the crystal trees...").
+
+### Tradeoffs
+- Opening still picks its own adjective once before the template loop — preserves the single-adjective opening feel while allowing middle sentences to vary.
+- The per-pair adjective is picked inside the `if middle_enabled:` block (not outside like adverbs), because weather templates don't use `{adj}` — no need to waste a dedup slot on an unused adjective for weather-only iterations.
+- Seed-breaking change: existing seed-based output differs because the random call order changes (one extra `_pick` call per detail level). Since no seed-based output has been published, this is acceptable.
+- Per-sentence adjectives compose naturally with dedup (each new adj is added to the shared `used_words` set, preventing cross-sentence repetition).
+- `test_bias_common_increases_common_word_frequency` was refactored from binary presence/absence counting to total-occurrence counting — the old approach suffered from a ceiling effect at near-300/300 hit rates.
+- 5 new tests, 261 total.
+
 ## 2026-07-12 — Configurable Middle Sentence Suppression (`--no-middle`)
 
 ### What
