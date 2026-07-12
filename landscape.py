@@ -739,6 +739,10 @@ def main():
         help="Per-category override: bias for weathers")
     parser.add_argument("--bias-anomaly", type=str, default=None, choices=["normal", "common", "rare", "flat"],
         help="Per-category override: bias for anomalies")
+    parser.add_argument("--bias-adverb", type=str, default=None, choices=["normal", "common", "rare", "flat"],
+        help="Per-category override: bias for adverbs")
+    parser.add_argument("--bias-color", type=str, default=None, choices=["normal", "common", "rare", "flat"],
+        help="Per-category override: bias for colors")
     parser.add_argument(
         "--mood", action="append", type=str, default=None,
         choices=list(MOOD_WORDS.keys()),
@@ -760,6 +764,10 @@ def main():
         help="Per-category override: mood weight for weathers")
     parser.add_argument("--mood-weight-anomaly", type=float, default=None,
         help="Per-category override: mood weight for anomalies")
+    parser.add_argument("--mood-weight-adverb", type=float, default=None,
+        help="Per-category override: mood weight for adverbs")
+    parser.add_argument("--mood-weight-color", type=float, default=None,
+        help="Per-category override: mood weight for colors")
     parser.add_argument(
         "--show-seed", action="store_true",
         help="Display the random seed used for reproducibility",
@@ -810,6 +818,8 @@ def main():
         "bias_verb": "verbs",
         "bias_weather": "weathers",
         "bias_anomaly": "anomalies",
+        "bias_adverb": "adverbs",
+        "bias_color": "colors",
     }
     for flag_cat, internal_cat in cat_map.items():
         val = getattr(args, flag_cat)
@@ -824,6 +834,8 @@ def main():
         "mood_weight_verb": "verbs",
         "mood_weight_weather": "weathers",
         "mood_weight_anomaly": "anomalies",
+        "mood_weight_adverb": "adverbs",
+        "mood_weight_color": "colors",
     }
     for flag_cat, internal_cat in mw_cat_map.items():
         val = getattr(args, flag_cat)

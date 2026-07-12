@@ -507,3 +507,11 @@
 
 ### Current status
 Working. All 261 tests pass (18 todo + 243 landscape).
+
+## 2026-07-12
+
+### What was done (Session 52)
+- Added **`--bias-adverb` and `--bias-color` CLI flags** — the per-category bias override system (Session 16) had CLI flags for 6 categories (adjectives, elements, nouns, verbs, weathers, anomalies) but missed adverbs and colors. These two new flags complete coverage for all 8 word categories that `_pick()` supports.
+- Added **`--mood-weight-adverb` and `--mood-weight-color` CLI flags** — same gap in the per-category mood-weight override system (Session 17): flags existed for 6 categories but not adverbs/colors. Now all 8 categories have per-category mood-weight CLI control.
+- Added 8 new tests: `test_bias_adverb_override_rare_reduces_common_adverbs`, `test_bias_color_override_common_increases_common_colors`, `test_bias_overrides_multiple_with_new_categories`, `test_bias_overrides_produces_valid_output_adverb_color`, `test_mood_weight_adverb_override_high_boosts_mood_adverbs`, `test_mood_weight_color_override_zero_suppresses_mood_colors`, `test_mood_weight_overrides_multiple_with_new_categories`, `test_mood_weight_overrides_produces_valid_output_adverb_color`
+- Tests increased from 274 to 282 total (18 todo + 264 landscape)

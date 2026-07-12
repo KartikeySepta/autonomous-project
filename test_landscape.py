@@ -891,6 +891,54 @@ class TestLandscape(unittest.TestCase):
         from landscape import main
         self.assertTrue(callable(main))
 
+    def test_bias_adverb_override_rare_reduces_common_adverbs(self):
+        common_adv = {"softly", "gently", "silently", "quietly"}
+        normal_results = [
+            generate_landscape(seed=s, biome="tundra") for s in range(300)
+        ]
+        override_results = [
+            generate_landscape(seed=s, biome="tundra", bias_overrides={"adverbs": "rare"})
+            for s in range(300)
+        ]
+        normal_hits = sum(1 for r in normal_results if any(w in r for w in common_adv))
+        override_hits = sum(1 for r in override_results if any(w in r for w in common_adv))
+        self.assertGreater(
+            normal_hits, override_hits,
+            "bias_overrides={'adverbs': 'rare'} should reduce common adverb frequency vs default",
+        )
+
+    def test_bias_color_override_common_increases_common_colors(self):
+        common_col = {"vivid", "murky", "burnished", "stark"}
+        normal_results = [
+            generate_landscape(seed=s, biome="tundra") for s in range(300)
+        ]
+        override_results = [
+            generate_landscape(seed=s, biome="tundra", bias_overrides={"colors": "common"})
+            for s in range(300)
+        ]
+        normal_hits = sum(1 for r in normal_results if any(w in r for w in common_col))
+        override_hits = sum(1 for r in override_results if any(w in r for w in common_col))
+        self.assertGreater(
+            override_hits, normal_hits,
+            "bias_overrides={'colors': 'common'} should increase common color frequency vs default",
+        )
+
+    def test_bias_overrides_multiple_with_new_categories(self):
+        overrides = {"adverbs": "flat", "colors": "rare"}
+        results = [
+            generate_landscape(seed=s, bias_overrides=overrides) for s in range(50)
+        ]
+        for r in results:
+            self.assertIsInstance(r, str)
+            self.assertGreater(len(r), 10)
+
+    def test_bias_overrides_produces_valid_output_adverb_color(self):
+        for override_bias in ["normal", "common", "rare", "flat"]:
+            for cat in ["adverbs", "colors"]:
+                for s in range(5):
+                    result = generate_landscape(seed=s, bias_overrides={cat: override_bias})
+                    self.assertIsInstance(result, str)
+                    self.assertGreater(len(result), 10)
 
     def test_mood_weight_overrides_default_does_not_change_output(self):
         a = generate_landscape(seed=42, mood="eerie", mood_weight=5)
@@ -942,6 +990,39 @@ class TestLandscape(unittest.TestCase):
         from landscape import main
         self.assertTrue(callable(main))
 
+    def test_mood_weight_adverb_override_high_boosts_mood_adverbs(self):
+        from landscape import _word_weight
+        w_normal = _word_weight("silently", bias="flat", mood="eerie", category="adverbs", mood_weight=5)
+        w_high = _word_weight("silently", bias="flat", mood="eerie", category="adverbs",
+                              mood_weight=5, mood_weight_overrides={"adverbs": 20})
+        self.assertEqual(w_high, w_normal * 4)
+
+    def test_mood_weight_color_override_zero_suppresses_mood_colors(self):
+        from landscape import _word_weight
+        w_normal = _word_weight("murky", bias="flat", mood="eerie", category="colors", mood_weight=MOOD_BOOST)
+        w_zero = _word_weight("murky", bias="flat", mood="eerie", category="colors",
+                              mood_weight=MOOD_BOOST, mood_weight_overrides={"colors": 0})
+        self.assertEqual(w_zero, 0)
+
+    def test_mood_weight_overrides_multiple_with_new_categories(self):
+        overrides = {"adverbs": 1, "colors": 20}
+        results = [
+            generate_landscape(seed=s, mood="vibrant", mood_weight_overrides=overrides) for s in range(50)
+        ]
+        for r in results:
+            self.assertIsInstance(r, str)
+            self.assertGreater(len(r), 10)
+
+    def test_mood_weight_overrides_produces_valid_output_adverb_color(self):
+        for mw_val in [0, 1, 10, 20]:
+            for cat in ["adverbs", "colors"]:
+                for s in range(5):
+                    result = generate_landscape(
+                        seed=s, mood="eerie",
+                        mood_weight_overrides={cat: mw_val}
+                    )
+                    self.assertIsInstance(result, str)
+                    self.assertGreater(len(result), 10)
 
     def test_word_dedup_via_used_words_parameter(self):
         from landscape import _pick

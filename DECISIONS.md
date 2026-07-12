@@ -769,3 +769,17 @@ With a single adverb per landscape, detail=2 and detail=3 outputs used the same 
 - **Clutter risk**: Multiple adverbs could make output feel busy ("softly... gently... quietly..."). Mitigated by: (1) only 5 of 11 templates actually use `{adverb}`, (2) dedup prevents the same adverb from appearing twice, (3) `--no-adverb` is always available to disable adverbs entirely.
 - **Per-sentence, not per-template**: Each middle+weather pair shares one adverb, which avoids the "every sentence a different adverb" excess that the original Session 24 decision warned about. The pair shares a common adverbial flavor, which reads naturally as part of the same descriptive moment.
 - 5 new tests, 211 total.
+
+## 2026-07-12 — Per-Category Bias and Mood-Weight Overrides for Adverbs and Colors
+
+### What
+Added 4 new CLI flags to `landscape.py`: `--bias-adverb`, `--bias-color`, `--mood-weight-adverb`, and `--mood-weight-color`. Each flag follows the exact same pattern as the existing 6 per-category override flags per category — `--bias-adverb` accepts `normal`/`common`/`rare`/`flat` and overrides the global `--bias` for adverb selection; `--mood-weight-color` accepts a float and overrides the global `--mood-weight` for color mood boosts. The entries were added to `cat_map` and `mw_cat_map` in `main()`.
+
+### Why
+When per-category bias overrides were added (Session 16) and per-category mood-weight overrides were added (Session 17), the landscape generator had only 6 word categories. Sessions 24 (adverbs) and 51 (colors) added two more categories but didn't add corresponding override CLI flags. This meant users who wanted fine-grained control over adverb frequency ("I want common words everywhere except rare adverbs") or color mood intensity ("make colors strongly mood-biased but keep everything else normal") had no way to express that, even though the `_word_weight()` and `_pick()` functions already supported it via the `bias_overrides` and `mood_weight_overrides` dict parameters. These 4 flags close the gap, completing the per-category override coverage for all 8 word categories.
+
+### Tradeoffs
+- Zero code changes to the generation pipeline — `_word_weight()`, `_pick()`, and `generate_landscape()` already accept `bias_overrides` and `mood_weight_overrides` dicts with arbitrary category keys. The change is purely additive to `main()`: 4 new argparse arguments + 4 entries in existing mapping dicts.
+- `--bias-color` affects color word selection probability; `--bias-adverb` affects adverb word selection probability — exactly the same behavior as the existing 6 override flags for their respective categories.
+- `--mood-weight-color` controls how strongly mood-matched colors are boosted (e.g., "murky" for eerie mood); `--mood-weight-adverb` does the same for mood-matched adverbs (e.g., "silently" for eerie). Both accept any float, including 0 (suppress) and 1 (no boost).
+- 8 new tests, 282 total (18 todo + 264 landscape).
