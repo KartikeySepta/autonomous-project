@@ -2141,6 +2141,32 @@ class TestColors(unittest.TestCase):
             self.assertNotIn("  ", result)
             self.assertTrue(result.endswith("."))
 
+    def test_opening_contains_known_color(self):
+        results = {generate_landscape(seed=s) for s in range(200)}
+        self.assertTrue(
+            any(c in r for r in results for c in ALL_COLORS),
+            "No known color word appeared in output across 200 seeds",
+        )
+
+    def test_opening_color_works_with_color_disabled(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, color_enabled=False)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertNotIn("  ", result)
+
+    def test_opening_color_is_deterministic(self):
+        a = generate_landscape(seed=42)
+        b = generate_landscape(seed=42)
+        self.assertEqual(a, b)
+
+    def test_opening_color_appears_in_opening_templates(self):
+        results = [generate_landscape(seed=s, biome="tundra", template_set="first") for s in range(300)]
+        self.assertTrue(
+            any(c in r for r in results for c in ALL_COLORS),
+            "No color word appeared in opening across 300 seeds with template_set=first",
+        )
+
 
 class TestPeacefulMood(unittest.TestCase):
     def test_peaceful_mood_does_not_break_output(self):

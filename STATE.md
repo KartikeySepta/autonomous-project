@@ -607,3 +607,20 @@ Working. All 311 tests pass (18 todo + 293 landscape).
 
 ### Current status
 Working. All 329 tests pass (18 todo + 311 landscape).
+
+## 2026-07-12
+
+### What was done (Session 59)
+- Added **`{color}` to opening templates 0, 1, and 2** — the opening slot now references a color word (picked from the `colors` category before the opening), making opening descriptions more visually evocative
+  - Template 0: `"A vast {adj} {display} of {color} {element} stretches {adverb} before you."` — "A vast crystal forest of vivid mist stretches silently before you."
+  - Template 1: `"Before you, a {adj} {display} of {color} {element} comes into view {adverb}."`
+  - Template 2: `"The {adj} {display} of {color} {element} lies {adverb} ahead."`
+  - Template 3 (em-dash) is unchanged — no natural insertion point for color
+- Color is picked before the opening template (if `color_enabled`) in the same block as `adj`, `element`, and `adverb` — a second color pick per sentence pair still happens inside the detail loop for middle/weather templates
+- When `color_enabled=False`, `color=""` is passed and `_format_tmpl` collapses the resulting `"of  "` → `"of "` (reads naturally without the color word)
+- Seed-breaking change: existing seed-based output differs because the random call order changes (one extra `_pick()` before the opening template). Determinism is preserved.
+- Added 4 tests: `test_opening_contains_known_color`, `test_opening_color_works_with_color_disabled`, `test_opening_color_is_deterministic`, `test_opening_color_appears_in_opening_templates`
+- Tests increased from 329 to 333 total (18 todo + 315 landscape)
+
+### Current status
+Working. All 333 tests pass (18 todo + 315 landscape).

@@ -31,6 +31,21 @@ The color word bank (Session 51) was an automatic quality improvement with no of
 - The empty-string approach (rather than removing the template from the pool) follows the exact same pattern as `adverb_enabled=False` (Session 34): templates that reference the disabled feature still work, just without the word
 - 8 new tests, 290 total (18 todo + 272 landscape)
 
+## 2026-07-12 — `{color}` in Opening Templates
+
+### What
+Added `{color}` to `SENTENCE_TEMPLATES["opening"][0]`, `[1]`, and `[2]` — the three `of {element}` opening templates now render as `of {color} {element}`, e.g. "A vast crystal forest of vivid mist stretches silently before you." The color word is picked once before the opening (alongside `adj`, `element`, and `adverb`), and `color=color` is passed to the opening format call. The em-dash template (index 3) is unchanged.
+
+### Why
+After Session 56 (element in openings) and Session 58 (color in weather), color was the only major word category absent from the opening slot. The opening is the first thing a reader sees — adding color makes first impressions more visually striking. "A vast crystal forest of vivid mist" is more evocative than "A vast crystal forest of mist." This follows the established pattern of enriching templates with available word categories: `{adj}` in all middle templates (Sessions 38/40/41), `{adverb}` in all templates (Sessions 30/37/42/47), `{element}` in openings/weather (Sessions 56/57), `{color}` in weather (Session 58), and now `{color}` in openings.
+
+### Tradeoffs
+- Template-level change plus one code change (color pick before opening) — the `color` kwarg was already passed to `_format_tmpl` in other slots; the opening format call now receives it too.
+- Seed-breaking change: existing seed-based output differs because the random call order gains one `_pick()` call before the opening template. Since no seed-based output has been published, this is acceptable.
+- When `color_enabled=False`, `color=""` produces `"of  "` → `_format_tmpl` collapses to `"of "` — reads naturally without the color word.
+- The em-dash template is unchanged because it uses `{Element}` at the start of the sentence rather than `of {element}` — there's no natural insertion point for a color word.
+- 4 new tests, 333 total (18 todo + 315 landscape).
+
 ## 2026-07-12 — Color Word Bank (`COLORS`)
 
 ### What
