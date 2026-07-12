@@ -212,8 +212,8 @@ SENTENCE_TEMPLATES = {
     ],
     "middle": [
         "{Element} {verb_conjugated} between the {noun}.",
-        "Among the {noun}, {element} {verb_conjugated}.",
-        "The {noun} {verb} with {element}.",
+        "Among the {adj} {noun}, {element} {verb_conjugated}.",
+        "The {adj} {noun} {verb} with {element}.",
         "{Element} {verb_conjugated} {adverb} through the {noun}.",
         "Beneath the {noun}, {element} {verb_conjugated} {adverb}.",
     ],
@@ -526,7 +526,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
             adverb = ""
         middle_tmpl = _pick_template("middle", template_set, template_overrides)
         parts.append(
-            _format_tmpl(middle_tmpl, Element=element.capitalize(), element=element, noun=noun, verb=verb, verb_conjugated=verb_conjugated, adverb=adverb)
+            _format_tmpl(middle_tmpl, Element=element.capitalize(), element=element, adj=adj, noun=noun, verb=verb, verb_conjugated=verb_conjugated, adverb=adverb)
         )
 
         weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words)

@@ -346,5 +346,15 @@
 - Added 5 tests: `test_per_sentence_adverb_uses_multiple_adverbs`, `test_per_sentence_adverb_deterministic`, `test_per_sentence_adverb_detail_three_has_more_adverb_variety`, `test_per_sentence_adverb_respects_adverb_disabled`, `test_per_sentence_adverb_with_adverb_enabled_default`
 - Tests increased from 206 to 211 total (18 todo + 193 landscape)
 
+## 2026-07-12
+
+### What was done (Session 38)
+- Added **`{adj}` to middle templates 1 and 2** — the opening's adjective is now visible in middle sentences for richer descriptions
+  - Template 1: `"Among the {noun}, {element} {verb_conjugated}."` → `"Among the {adj} {noun}, {element} {verb_conjugated}."` (e.g. "Among the crystal trees, mist whispers.")
+  - Template 2: `"The {noun} {verb} with {element}."` → `"The {adj} {noun} {verb} with {element}."` (e.g. "The crystal stones glow with light.")
+- Added `adj=adj` kwarg to `_format_tmpl(middle_tmpl, ...)` call — the `adj` variable was already in scope (picked per-landscape at line 510) and unused by middle templates. Now templates that include `{adj}` resolve to the opening's adjective, while unmodified templates (0, 3, 4) silently ignore the extra kwarg.
+- No new tests needed — existing template and output tests cover the change
+- Tests: still 211 total (18 todo + 193 landscape)
+
 ### Current status
 Working. All 211 tests pass (18 todo + 193 landscape).

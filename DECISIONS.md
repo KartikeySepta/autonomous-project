@@ -530,6 +530,22 @@ Due dates are the next natural extension after priorities — they let users tra
 - Due date stored only when provided (`"due"` key is absent for tasks without one), keeping JSON clean
 - No sorting by due date yet — follows the same deferred approach as priority ordering
 
+## 2026-07-12 — Adjective in Middle Templates (`{adj}`)
+
+### What
+Added `{adj}` to two of five middle templates (indices 1 and 2) and passed `adj=adj` to the middle template format call. The adjective was already picked once per landscape (line 510) but was only used in the opening template — the middle templates had no adjective slot at all.
+
+### Why
+Middle sentences described elements, nouns, verbs, and adverbs without any adjective, making them feel flat compared to the opening. "Among the trees, mist whispers" is descriptive but lacks the texture of "Among the crystal trees, mist whispers." Adding `{adj}` to natural insertion points (before `{noun}` in templates 1 and 2) makes the output richer without picking any new words — reusing the opening's adjective maintains a consistent tonal palette across the entire landscape.
+
+### Tradeoffs
+- Single landscape-wide adjective (not per-sentence-pair): The same adjective is used in the opening and all middle sentences that include `{adj}`. This is intentional — a single adjective creates cohesion; varying it per pair (like adverb) would be a natural next step but changes seed-based output.
+- Only 2 of 5 middle templates modified: templates 0, 3, 4 are unchanged. Template 0 ("{Element} {verb_conjugated} between the {noun}.") and templates 3–4 already have adverb slots, so adding an adjective there would crowd the sentence. Templates 1 and 2 had the cleanest insertion points.
+- `adj` kwarg added to the format call: unused by unmodified templates (str.format silently ignores extra kwargs), so no conditional logic needed.
+- No seed-breaking change: since no new `_pick()` calls are added, existing seed-based output is preserved. The change only affects output when `template_set` or randomness selects templates 1 or 2.
+- No new tests: existing template/verb/adverb/output tests already cover the change indirectly.
+- 211 tests total (unchanged).
+
 ## 2026-07-12 — Per-Sentence Adverbs
 
 ### What
