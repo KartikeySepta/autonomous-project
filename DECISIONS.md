@@ -1,5 +1,19 @@
 # Decisions
 
+## 2026-07-12 — Configurable Word Dedup (`--no-dedup`)
+
+### What
+Added `--no-dedup` CLI flag and `dedup` parameter to `generate_landscape()` (default: `True`). When `dedup=False`, the `used_words` set is set to `None` instead of `set()`, bypassing the cross-sentence word deduplication logic in `_pick()` entirely.
+
+### Why
+Cross-sentence word dedup (Session 19) was an automatic quality improvement with no off switch. While dedup generally improves output, some users may want repetition — for poetic effect, for very short outputs where the word pool can handle it, or for specific creative purposes where repeating a word feels intentional rather than broken. Making dedup configurable follows the established pattern of exposing automatic behavior as user-facing controls (same pattern as `--anomaly-prob` for the hardcoded 0.3 magic number).
+
+### Tradeoffs
+- `dedup=True` is the default, preserving backward compatibility and existing seed-based output
+- No change to `_pick()` — the existing `used_words=None` default already means "no dedup"; the change is only in `generate_landscape()` where the set is created
+- The flag name `--no-dedup` (negation) rather than `--dedup` follows the convention of flags that disable features (like `git --no-verify`), making the default behavior (dedup on) unstated and the deviation explicit
+- 6 new tests, 188 total.
+
 ## 2026-07-11 — File Output Flag (`--output` / `-o`)
 
 ### What

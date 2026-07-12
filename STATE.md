@@ -286,5 +286,16 @@
 - Added 5 tests in `TestOutputFlag` class: `test_output_flag_writes_to_file`, `test_output_file_contains_generated_text`, `test_output_file_matches_stdout_output`, `test_output_with_count_writes_all_landscapes`, `test_output_flag_exists_via_cli`
 - Tests increased from 177 to 182 total (18 todo + 164 landscape)
 
+## 2026-07-12
+
+### What was done (Session 33)
+- Added **`--no-dedup` CLI flag** and `dedup` parameter to `generate_landscape()` — users can now disable cross-sentence word deduplication when they want to allow repeated words in the output
+  - `dedup=True` (default) preserves existing behavior — `used_words` set is created and threaded through all `_pick()` calls
+  - `dedup=False` passes `used_words=None`, so the dedup logic in `_pick()` is entirely bypassed
+  - No changes to `_pick()` — `used_words=None` (the default for that parameter) already means "no dedup"
+  - Follows the pattern of `--anomaly-prob` and other quality-of-life flags: automatic improvements are configurable
+- Added 6 tests in `TestDedupFlag` class: `test_dedup_default_is_true`, `test_dedup_disabled_still_produces_valid_output`, `test_dedup_flag_exists_via_cli`, `test_dedup_disabled_produces_deterministic_output`, `test_dedup_disabled_works_with_detail_three`, `test_dedup_disabled_works_with_mood_and_bias`
+- Tests increased from 182 to 188 total (18 todo + 170 landscape)
+
 ### Current status
-Working. All 182 tests pass (18 todo + 164 landscape).
+Working. All 188 tests pass (18 todo + 170 landscape).

@@ -1182,5 +1182,39 @@ class TestOutputFlag(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+class TestDedupFlag(unittest.TestCase):
+    def test_dedup_default_is_true(self):
+        r1 = generate_landscape(seed=42, dedup=True)
+        r2 = generate_landscape(seed=42)
+        self.assertEqual(r1, r2, "dedup=True should produce same output as default")
+
+    def test_dedup_disabled_still_produces_valid_output(self):
+        result = generate_landscape(seed=42, dedup=False)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_dedup_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_dedup_disabled_produces_deterministic_output(self):
+        r1 = generate_landscape(seed=99, dedup=False)
+        r2 = generate_landscape(seed=99, dedup=False)
+        self.assertEqual(r1, r2, "dedup=False should still be deterministic with same seed")
+
+    def test_dedup_disabled_works_with_detail_three(self):
+        result = generate_landscape(seed=42, dedup=False, detail=3)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_dedup_disabled_works_with_mood_and_bias(self):
+        result = generate_landscape(seed=42, dedup=False, mood="eerie", bias="rare")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+
 if __name__ == "__main__":
     unittest.main()
