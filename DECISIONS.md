@@ -912,3 +912,23 @@ The color word bank (Session 51) was previously only used in one middle template
 - **Only 1 new template** (rather than modifying existing ones) — keeps the change minimal. Color in weather could be extended to more templates in the future.
 - **Works with `color_enabled=False`** — the empty-string pattern handles suppression identically to `adverb_enabled=False`: the template renders without the color word and spacing is cleaned up by `_format_tmpl`.
 - **9 new tests**, 329 total (18 todo + 311 landscape).
+
+## 2026-07-12 — `{adverb}` in Anomaly Framing + `{color}` in Remaining Middle Templates
+
+### What
+Two template enrichments in one session:
+1. Added `{adverb}` to anomaly framing templates 2 and 3 ("A strange detail catches your eye {adverb}: ..." and "There is a quiet wrongness here {adverb}: ...")
+2. Added `{color}` to middle templates 0 and 3 ("...between the {color} {adj} {noun}" and "...through the {color} {adj} {noun}")
+
+### Why
+**Anomaly adverb**: Anomaly templates were the only template slot that didn't use any per-sentence-pair word categories (adverb, color, element, adj). The `adverb=adverb` kwarg was already passed to anomaly format calls but unused by any template. Adding `{adverb}` makes anomalies feel more connected to the landscape's adverbial flavor — an anomaly in an eerie mood might be "noticed silently" while one in a vibrant mood might be "noticed gently."
+
+**Middle color**: Templates 0 and 3 were the only middle templates without `{color}`. Session 60 skipped them citing "leading-space artifacts when color is disabled" — but that only applies when `{color}` is placed sentence-initially (before `{Element}`). Placing `{color}` before `{adj}` and after a preposition avoids the leading-space issue entirely.
+
+### Tradeoffs
+- **`{adverb}` before colon, modifying the framing**: Adverb sits between the framing verb and the colon ("catches your eye softly:"), modifying the act of noticing rather than the anomaly itself. This reads naturally because the adverb describes *how* the detail is perceived.
+- **`_format_tmpl` colon cleanup**: Added `.replace(" :", ":")` to prevent space-before-colon when `adverb_enabled=False`. This is a general quality improvement that benefits any template with a dynamic word before a colon.
+- **`{color}` before `{adj}`**: "vivid crystal" (color then biome-adj) flows naturally as a two-adjective stack. When `color_enabled=False`, `_format_tmpl` collapses `"the  crystal"` → `"the crystal"` without artifacts.
+- **No seed-breaking change from new `_pick()` calls**: Template string changes only, no new random calls. Seed-based output differs only for landscapes that happen to select affected templates — and the content is strictly richer.
+- **All 7 middle templates now use `{color}`**: Complete coverage across the middle slot, joining `{adj}` (6/6), `{adverb}` (6/6), and `{element}` (in all templates that have element kwarg support).
+- **11 new tests**, 348 total (18 todo + 330 landscape).

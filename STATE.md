@@ -638,3 +638,20 @@ Working. All 333 tests pass (18 todo + 315 landscape).
 - Updated `test_color_light_template_exists_in_pool` to expect ≥5 `{color}` templates (was 1)
 - Added 4 tests: `test_color_in_middle_templates`, `test_color_middle_works_with_color_disabled`, `test_color_middle_is_deterministic`, `test_color_middle_works_with_no_adverb`
 - Tests increased from 333 to 337 total (18 todo + 319 landscape)
+
+## 2026-07-12
+
+### What was done (Session 61)
+- Added **`{adverb}` to anomaly framing templates (indices 2 and 3)** — the anomaly slot now uses the per-sentence-pair adverb word, making anomaly descriptions feel more integrated with the landscape's adverbial flavor:
+  - Template 2: `"A strange detail catches your eye {adverb}: {anomaly_lower}"` — "A strange detail catches your eye softly: the gravity here feels wrong."
+  - Template 3: `"There is a quiet wrongness here {adverb}: {anomaly_lower}"` — "There is a quiet wrongness here silently: the horizon curves upward."
+  - Templates 0 and 1 unchanged (no natural insertion point)
+  - Adverb kwarg was already passed to anomaly format calls (line 661), so this is a template-level change only
+- Added **`{color}` to middle templates 0 and 3** — the last two middle templates that didn't use the per-sentence-pair color word. Now all 7 middle templates use `{color}`:
+  - Template 0: `"{Element} {verb_conjugated} {adverb} between the {color} {adj} {noun}."` — "Mist whispers softly between the vivid crystal trees." (was `"...between the {adj} {noun}."`)
+  - Template 3: `"{Element} {verb_conjugated} {adverb} through the {color} {adj} {noun}."` — "Mist whispers softly through the vivid crystal trees." (was `"...through the {adj} {noun}."`)
+  - `{color}` placed before `{adj}` creates a natural adjective stack ("vivid crystal") — no leading-space artifacts when `color_enabled=False` because `_format_tmpl` collapses `"the  crystal"` → `"the crystal"`
+- Improved **`_format_tmpl()`** to clean up space-before-colon artifacts: added `.replace(" :", ":")` to the sanitization chain — a general quality improvement that prevents `"eye  :"` → `"eye :"` from appearing when `adverb_enabled=False`
+- Updated 2 existing tests: `test_template_variety_anomaly_has_varied_structure` and `test_anomaly_colon_template_lowercases` — the detection strings no longer assume a colon immediately follows "your eye"/"here" since the adverb now sits between them
+- Added 11 tests: `TestAnomalyAdverb` class (8 tests: placeholder presence, output validity, adverb appearance, determinism, no-adverb composition, mood+bias composition, detail=3, JSON format) + `test_color_in_all_middle_templates`, `test_color_middle_template_zero_and_three_have_color`, `test_color_middle_zero_and_three_produce_valid_output`
+- Tests increased from 337 to 348 total (18 todo + 330 landscape)

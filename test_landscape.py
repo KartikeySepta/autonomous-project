@@ -520,8 +520,8 @@ class TestLandscape(unittest.TestCase):
 
     def test_template_variety_anomaly_has_varied_structure(self):
         results = [generate_landscape(seed=s, biome="forest") for s in range(200)]
-        has_strange = any("A strange detail catches your eye: " in r for r in results)
-        has_wrongness = any("There is a quiet wrongness here: " in r for r in results)
+        has_strange = any("A strange detail catches your eye" in r for r in results)
+        has_wrongness = any("There is a quiet wrongness here" in r for r in results)
         self.assertTrue(
             has_strange or has_wrongness,
             "Neither alternative anomaly template appeared across 200 seeds",
@@ -544,7 +544,7 @@ class TestLandscape(unittest.TestCase):
                                template_overrides={"anomaly": "third"}, anomaly_prob=1.0)
             for s in range(200)
         ]
-        colon_lines = [r for r in results if "A strange detail catches your eye: " in r or "There is a quiet wrongness here: " in r]
+        colon_lines = [r for r in results if "A strange detail catches your eye" in r or "There is a quiet wrongness here" in r]
         lowercases = sum(
             1 for r in colon_lines
             for a in ALL_ANOMALIES
@@ -2197,6 +2197,27 @@ class TestColors(unittest.TestCase):
             self.assertNotIn("  ", result)
             self.assertTrue(result.endswith("."))
 
+    def test_color_in_all_middle_templates(self):
+        middle_tmpls = SENTENCE_TEMPLATES["middle"]
+        color_tmpls = [t for t in middle_tmpls if "{color}" in t]
+        self.assertGreaterEqual(len(color_tmpls), 7,
+            "All 7 middle templates should reference {color}")
+
+    def test_color_middle_template_zero_and_three_have_color(self):
+        tmpls = SENTENCE_TEMPLATES["middle"]
+        self.assertIn("{color}", tmpls[0],
+            "Middle template 0 should have {color}")
+        self.assertIn("{color}", tmpls[3],
+            "Middle template 3 should have {color}")
+
+    def test_color_middle_zero_and_three_produce_valid_output(self):
+        for s in range(30):
+            for ts in ["first", "second", "third"]:
+                result = generate_landscape(seed=s, template_set=ts, detail=2)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+                self.assertTrue(result.endswith("."))
+
 
 class TestPeacefulMood(unittest.TestCase):
     def test_peaceful_mood_does_not_break_output(self):
@@ -2341,6 +2362,63 @@ class TestAnomalyFlag(unittest.TestCase):
         self.assertIsInstance(result, str)
         self.assertGreater(len(result), 0)
         self.assertTrue(result.endswith("."))
+
+
+class TestAnomalyAdverb(unittest.TestCase):
+    def test_anomaly_templates_have_adverb_placeholder(self):
+        anomaly_tmpls = SENTENCE_TEMPLATES["anomaly"]
+        adverb_tmpls = [t for t in anomaly_tmpls if "{adverb}" in t]
+        self.assertGreaterEqual(len(adverb_tmpls), 2,
+            "At least 2 anomaly templates should reference {adverb}")
+
+    def test_anomaly_adverb_does_not_break_output(self):
+        for s in range(30):
+            result = generate_landscape(seed=s, anomaly_prob=1.0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_anomaly_adverb_uses_known_adverb(self):
+        results = [generate_landscape(seed=s, anomaly_prob=1.0) for s in range(300)]
+        self.assertTrue(
+            any(adv in r for r in results for adv in ALL_ADVERBS),
+            "No known adverb appeared in anomaly text across 300 seeds",
+        )
+
+    def test_anomaly_adverb_is_deterministic(self):
+        a = generate_landscape(seed=42, anomaly_prob=1.0)
+        b = generate_landscape(seed=42, anomaly_prob=1.0)
+        self.assertEqual(a, b,
+            "Anomaly with adverb should be deterministic")
+
+    def test_anomaly_adverb_works_with_adverb_disabled(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, adverb_enabled=False, anomaly_prob=1.0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertNotIn(" :", result,
+                "Space before colon should not appear when adverb is disabled")
+            self.assertTrue(result.endswith("."))
+
+    def test_anomaly_adverb_works_with_mood_and_bias(self):
+        result = generate_landscape(seed=42, mood="eerie", bias="rare", anomaly_prob=1.0)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_anomaly_adverb_works_with_detail_three(self):
+        result = generate_landscape(seed=42, detail=3, anomaly_prob=1.0)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 50)
+        self.assertTrue(result.endswith("."))
+
+    def test_anomaly_adverb_works_with_json_format(self):
+        result = generate_landscape(seed=42, fmt="json", anomaly_prob=1.0)
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
 
 
 if __name__ == "__main__":

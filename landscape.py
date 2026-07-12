@@ -232,7 +232,7 @@ def _pick_template(slot, template_set, template_overrides=None, rng=None):
 # Sentence templates for landscape generation — randomly selected each time for variety
 def _format_tmpl(template, **kwargs):
     result = template.format(**kwargs)
-    return result.replace("  ", " ").replace(" .", ".")
+    return result.replace("  ", " ").replace(" .", ".").replace(" :", ":")
 
 
 def describe_biome(biome):
@@ -307,10 +307,10 @@ SENTENCE_TEMPLATES = {
         "{Element} — the {adj} {display} stretches {adverb} before you.",
     ],
     "middle": [
-        "{Element} {verb_conjugated} {adverb} between the {adj} {noun}.",
+        "{Element} {verb_conjugated} {adverb} between the {color} {adj} {noun}.",
         "Among the {adj} {noun}, {color} {element} {verb_conjugated} {adverb}.",
         "The {adj} {noun} {verb} {adverb} with {color} {element}.",
-        "{Element} {verb_conjugated} {adverb} through the {adj} {noun}.",
+        "{Element} {verb_conjugated} {adverb} through the {color} {adj} {noun}.",
         "Beneath the {adj} {noun}, {color} {element} {verb_conjugated} {adverb}.",
         "Across the {display}, {color} {element} {verb_conjugated} {adverb}.",
         "The {color} light of {element} {verb_conjugated} {adverb}.",
@@ -325,8 +325,8 @@ SENTENCE_TEMPLATES = {
     "anomaly": [
         "{anomaly}",
         "Something is not right — {anomaly}",
-        "A strange detail catches your eye: {anomaly_lower}",
-        "There is a quiet wrongness here: {anomaly_lower}",
+        "A strange detail catches your eye {adverb}: {anomaly_lower}",
+        "There is a quiet wrongness here {adverb}: {anomaly_lower}",
     ],
 }
 
