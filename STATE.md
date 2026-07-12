@@ -386,5 +386,16 @@
 - No new tests — existing template and output tests cover the change
 - Tests: 214 total (18 todo + 196 landscape)
 
+## 2026-07-12
+
+### What was done (Session 42)
+- Added `{adverb}` to weather templates 1 and 2 — the adverb is now used in all 3 weather templates (was only in template 0)
+  - Template 1: `"The air tells its own story: {weather}."` → `"The air tells its own story: {weather} {adverb}."` (e.g. "The air tells its own story: a gentle rain falls softly.")
+  - Template 2: `"{Weather}, as if the {display} itself breathes."` → `"{Weather}, as if the {display} itself breathes {adverb}."` (e.g. "A gentle rain falls, as if the forest itself breathes softly.")
+  - No code changes needed — `adverb` was already threaded through all weather format calls; `_format_tmpl` handles the trailing-space cleanup when `adverb_enabled=False`
+- The adverb now appears in 8 of 15 templates (opening: 3/3, middle: 2/6, weather: 3/3, anomaly: 0/4) — up from 6 of 15
+- No new tests — existing adverb and template tests cover the change
+- Tests: still 214 total (18 todo + 196 landscape)
+
 ### Current status
 Working. All 214 tests pass (18 todo + 196 landscape).

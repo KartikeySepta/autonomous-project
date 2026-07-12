@@ -1,5 +1,23 @@
 # Decisions
 
+## 2026-07-12 — `{adverb}` in Weather Templates 1 and 2
+
+### What
+Added `{adverb}` to `SENTENCE_TEMPLATES["weather"][1]` and `[2]`: changed `"The air tells its own story: {weather}."` to `"The air tells its own story: {weather} {adverb}."`, and `"{Weather}, as if the {display} itself breathes."` to `"{Weather}, as if the {display} itself breathes {adverb}."`. The `adverb` kwarg was already passed to all weather format calls (since Session 24/37) and was used only by weather template 0.
+
+### Why
+Weather template 0 (`"{Weather} {adverb}."`) has used the adverb since Session 30, but templates 1 and 2 had no adverb slot, making the adverb invisible in ~67% of weather sentences. Adding `{adverb}` to the remaining weather templates makes the adverb useful in every weather sentence, not just template 0. This follows the same pattern as Sessions 38–41 (adding `{adj}` to all middle templates) and Session 30 (adding `{adverb}` to more opening/weather templates) — reusing existing data to improve output without new word banks or code.
+
+### Tradeoffs
+- Template-level change only — `adverb` was already in scope and threaded through `_format_tmpl` since Session 24
+- Seed-breaking change: existing seed-based output differs when weather template 1 or 2 is selected, because the adverb now renders in those slots. Since no seed-based output has been published, this is acceptable.
+- Template 1 now reads as `"The air tells its own story: a gentle rain falls softly."` — the adverb sits naturally at the end of the embedded weather clause
+- Template 2 now reads as `"A gentle rain falls, as if the forest itself breathes softly."` — the adverb modifies "breathes" naturally
+- When `adverb_enabled=False`, `_format_tmpl` handles the trailing space before the period via its existing `" ."` → `"."` cleanup — no `_format_tmpl` changes needed
+- Now 8 of 15 templates use `{adverb}` (opening: 3/3, middle: 2/6, weather: 3/3, anomaly: 0/4) — up from 6 of 15
+- No new tests — existing coverage (adverb appearance, template variety, output validity, `adverb_enabled=False` formatting) covers the change
+- 214 tests total (unchanged).
+
 ## 2026-07-12 — `{adj}` in Middle Templates 3 and 4 (Adverb Templates)
 
 ### What

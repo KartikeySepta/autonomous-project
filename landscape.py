@@ -220,8 +220,8 @@ SENTENCE_TEMPLATES = {
     ],
     "weather": [
         "{Weather} {adverb}.",
-        "The air tells its own story: {weather}.",
-        "{Weather}, as if the {display} itself breathes.",
+        "The air tells its own story: {weather} {adverb}.",
+        "{Weather}, as if the {display} itself breathes {adverb}.",
     ],
     "anomaly": [
         "{anomaly}",
