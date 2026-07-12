@@ -308,11 +308,11 @@ SENTENCE_TEMPLATES = {
     ],
     "middle": [
         "{Element} {verb_conjugated} {adverb} between the {adj} {noun}.",
-        "Among the {adj} {noun}, {element} {verb_conjugated} {adverb}.",
-        "The {adj} {noun} {verb} {adverb} with {element}.",
+        "Among the {adj} {noun}, {color} {element} {verb_conjugated} {adverb}.",
+        "The {adj} {noun} {verb} {adverb} with {color} {element}.",
         "{Element} {verb_conjugated} {adverb} through the {adj} {noun}.",
-        "Beneath the {adj} {noun}, {element} {verb_conjugated} {adverb}.",
-        "Across the {display}, {element} {verb_conjugated} {adverb}.",
+        "Beneath the {adj} {noun}, {color} {element} {verb_conjugated} {adverb}.",
+        "Across the {display}, {color} {element} {verb_conjugated} {adverb}.",
         "The {color} light of {element} {verb_conjugated} {adverb}.",
     ],
     "weather": [

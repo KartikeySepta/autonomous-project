@@ -862,6 +862,22 @@ The opening templates have always only used `{adj}`, `{display}`, and `{adverb}`
 - `test_pick_template_selects_correct_index` and `test_template_set_third_uses_third_opening` are unaffected.
 - 5 new tests, 311 total.
 
+## 2026-07-12 — `{color}` in Middle Templates 1, 2, 4, 5
+
+### What
+Added `{color}` to `SENTENCE_TEMPLATES["middle"][1]`, `[2]`, `[4]`, and `[5]` — 4 of the 6 middle templates that didn't reference the per-sentence-pair color word. Now 5 of 7 middle templates use `{color}` (the 6th template from Session 51 already used it). Templates 1, 2, 4, 5 place `{color}` before `{element}` in a natural mid-sentence position.
+
+### Why
+The color word bank (Session 51) was previously used in only 1 of 7 middle templates (the `"The {color} light of {element}"` template), making color invisible in most middle sentences — the word was picked but only appeared in ~14% of middle sentences. Session 58 and 59 added `{color}` to weather and opening templates, but middle templates (besides index 6) still had no color. Adding `{color}` to the remaining middle templates that have a natural insertion point follows the established pattern of enriching templates with available word categories: `{adj}` in all middle templates (Sessions 38/40/41), `{adverb}` in all templates (Sessions 30/37/42/47), `{element}` in openings/weather (Sessions 56/57), `{color}` in weather/openings (Sessions 58/59), and now `{color}` in middle templates.
+
+### Tradeoffs
+- **Template-level change only** — `color=color` was already threaded through the middle format call since Session 51. No code changes to the generation pipeline.
+- **No seed-breaking change** — no new `_pick()` calls are added, so existing seed-based output is preserved. The same templates are selected; they now render with an additional word.
+- **Templates 0 and 3 unchanged** — both start with `{Element}` (sentence-initial, capitalized), and adding `{color}` before it would produce a leading-space artifact when `color_enabled=False` (`"  Mist whispers..."`). This is the same reason Session 59 skipped the em-dash opening template for color. Templates 1, 2, 4, 5 all have a comma or preposition before the insertion point, so `_format_tmpl` cleans up `",  "` → `", "` naturally when color is disabled.
+- **`{color} {element}` reads naturally** — "vivid mist", "murky silence", "iridescent echo" are poetic but grammatical. The color word modifies the element, which is a sensory quality of the landscape.
+- **`color_enabled=False` compatibility** — when disabled, templates render with an empty color string, producing `",  mist"` which `_format_tmpl` collapses to `", mist"` — reads naturally without the color word.
+- **4 new tests**, 337 total (18 todo + 319 landscape).
+
 ## 2026-07-12 — `{element}` in Weather Templates
 
 ### What

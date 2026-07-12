@@ -2046,9 +2046,12 @@ class TestColors(unittest.TestCase):
     def test_color_light_template_exists_in_pool(self):
         middle_templates = SENTENCE_TEMPLATES["middle"]
         color_tmpl = [t for t in middle_templates if "{color}" in t]
-        self.assertEqual(len(color_tmpl), 1,
-            "Exactly one middle template should reference {color}")
-        self.assertIn("The {color} light of {element}", color_tmpl[0])
+        self.assertGreaterEqual(len(color_tmpl), 5,
+            "At least 5 middle templates should reference {color}")
+        self.assertTrue(
+            any("The {color} light of {element}" in t for t in color_tmpl),
+            "The {color} light template should be one of them",
+        )
 
     def test_color_light_template_appears_in_output(self):
         results = [generate_landscape(seed=s, biome="tundra") for s in range(500)]
@@ -2166,6 +2169,33 @@ class TestColors(unittest.TestCase):
             any(c in r for r in results for c in ALL_COLORS),
             "No color word appeared in opening across 300 seeds with template_set=first",
         )
+
+    def test_color_in_middle_templates(self):
+        results = [generate_landscape(seed=s, biome="tundra", detail=2) for s in range(300)]
+        color_count = sum(1 for r in results if any(c in r for c in ALL_COLORS))
+        self.assertGreater(color_count, 100,
+            "Color words should appear in middle sentences across 300 seeds")
+
+    def test_color_middle_works_with_color_disabled(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, color_enabled=False, detail=2)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertNotIn("  ", result)
+
+    def test_color_middle_is_deterministic(self):
+        a = generate_landscape(seed=42, detail=2)
+        b = generate_landscape(seed=42, detail=2)
+        self.assertEqual(a, b,
+            "Color-in-middle should be deterministic with same seed")
+
+    def test_color_middle_works_with_no_adverb(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, adverb_enabled=False, detail=2)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertNotIn("  ", result)
+            self.assertTrue(result.endswith("."))
 
 
 class TestPeacefulMood(unittest.TestCase):

@@ -624,3 +624,17 @@ Working. All 329 tests pass (18 todo + 311 landscape).
 
 ### Current status
 Working. All 333 tests pass (18 todo + 315 landscape).
+
+## 2026-07-12
+
+### What was done (Session 60)
+- Added **`{color}` to middle templates 1, 2, 4, and 5** — the middle sentence slot now references the per-sentence-pair color word in more templates, making middle descriptions richer:
+  - Template 1: `"Among the {adj} {noun}, {color} {element} {verb_conjugated} {adverb}."` — "Among the crystal trees, vivid mist whispers softly."
+  - Template 2: `"The {adj} {noun} {verb} {adverb} with {color} {element}."` — "The crystal trees whisper softly with vivid mist."
+  - Template 4: `"Beneath the {adj} {noun}, {color} {element} {verb_conjugated} {adverb}."` — "Beneath the crystal trees, vivid mist whispers softly."
+  - Template 5: `"Across the {display}, {color} {element} {verb_conjugated} {adverb}."` — "Across the forest, vivid mist whispers softly."
+  - Templates 0 and 3 unchanged (sentence-initial `{Element}` would produce leading-space artifacts when color is disabled — same reason Session 59 skipped the em-dash opening template)
+- Template-level change only — `color=color` was already passed to the middle format call (since Session 51), `_format_tmpl` handles disabled-color cleanup of `",  "` → `", "` naturally
+- Updated `test_color_light_template_exists_in_pool` to expect ≥5 `{color}` templates (was 1)
+- Added 4 tests: `test_color_in_middle_templates`, `test_color_middle_works_with_color_disabled`, `test_color_middle_is_deterministic`, `test_color_middle_works_with_no_adverb`
+- Tests increased from 333 to 337 total (18 todo + 319 landscape)
