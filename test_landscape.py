@@ -3028,6 +3028,41 @@ class TestEcho(unittest.TestCase):
         self.assertEqual(a, b,
             "Echo with {adverb} should be deterministic with same seed")
 
+    def test_echo_element_injection_contains_element(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, detail=2) for s in range(200)]
+        element_phrases = ["by the ", " itself"]
+        self.assertTrue(
+            any(p in r for r in results for p in [f"by the {e} itself" for e in ALL_ELEMENTS]),
+            "Echo with {element} should inject element words across 200 seeds",
+        )
+
+    def test_echo_element_in_in_time_phrase(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, biome="tundra", detail=2) for s in range(300)]
+        self.assertTrue(
+            any("outside of time, in the " in r for r in results),
+            "Echo phrase with {element} should produce 'outside of time, in the {element}' pattern",
+        )
+
+    def test_echo_element_is_deterministic(self):
+        a = generate_landscape(seed=42, echo_enabled=True, biome="tundra")
+        b = generate_landscape(seed=42, echo_enabled=True, biome="tundra")
+        self.assertEqual(a, b,
+            "Echo with {element} should be deterministic with same seed")
+
+    def test_echo_element_works_with_detail_zero(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, echo_enabled=True, detail=0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_echo_element_works_with_combine(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, combine="forest,desert", detail=2) for s in range(200)]
+        self.assertTrue(
+            any(e in r for r in results for e in ALL_ELEMENTS),
+            "Echo with {element} should contain element words when biomes are combined",
+        )
+
 
 class TestEchoCount(unittest.TestCase):
     def test_echo_count_default_is_one(self):

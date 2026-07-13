@@ -30,8 +30,17 @@
 - Added 3 new tests in `TestEcho`: `test_echo_adverb_injection_contains_adverb`, `test_echo_adverb_respects_no_adverb`, `test_echo_adverb_is_deterministic`
 - Tests increased from 438 to 441 total (18 todo + 423 landscape)
 
+### What was done (Session 82)
+- Added **`{element}` injection into 2 echo phrases** — the echo system now passes `element=element` to `_format_tmpl()`, so phrases that contain `{element}` render with the last-picked element word (from the detail loop), grounding abstract atmospheric echoes in the landscape's sensory substance:
+  - "You feel as though you are being watched by the landscape itself." → "You feel as though you are being watched by the {element} itself." — "You feel as though you are being watched by the mist itself." / "...by the silence itself."
+  - "This place exists outside of time." → "This place exists outside of time, in the {element}." — "...outside of time, in the mist." / "...in the silence."
+- Added `element=element` kwarg to the echo `_format_tmpl()` call — `element` was already in scope (last-picked from the detail loop, or opening element for detail=0) but was not passed to echo templates
+- 5 remaining echo phrases without `{element}` kept as-is for structural variety — the element injection split (2 of 10) is smaller than display (5 of 10) and adverb (5 of 10) because element words are more concrete and not all echo phrases benefit from referencing the physical element
+- Added 5 new tests in `TestEcho`: `test_echo_element_injection_contains_element`, `test_echo_element_in_in_time_phrase`, `test_echo_element_is_deterministic`, `test_echo_element_works_with_detail_zero`, `test_echo_element_works_with_combine`
+- Tests increased from 441 to 446 total (18 todo + 428 landscape)
+
 ### Current status
-Working. All 441 tests pass (18 todo + 423 landscape).
+Working. All 446 tests pass (18 todo + 428 landscape).
 
 ## 2026-07-12
 

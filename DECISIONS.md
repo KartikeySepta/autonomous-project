@@ -1,5 +1,22 @@
 # Decisions
 
+## 2026-07-13 — `{element}` Injection in Echo Phrases
+
+### What
+Added `{element}` placeholder support to 2 of 10 ECHOES phrases — the echo system now passes `element=element` to `_format_tmpl()`, so phrases that contain `{element}` render with the last-picked element word from the detail loop. The 8 remaining phrases without `{element}` are unchanged.
+
+### Why
+The echo system (Sessions 80–81) gained `{display}` and `{adverb}` injection for biome awareness and adverbial texture, but all echo phrases remained element-free — they used generic references like "the landscape itself" and "outside of time" without connecting to the landscape's sensory substance (mist, silence, light, echoes). The Session 80 DECISIONS.md entry explicitly noted: "A future enhancement could inject {display} or {element} into echo templates" — this completes the injection triad for the echo system.
+
+Adding `{element}` to 2 of 10 phrases makes echoes feel grounded in the physical landscape: "You feel as though you are being watched by the mist itself." evokes a different feeling than "…by the silence itself." The time phrase "This place exists outside of time, in the mist." is more evocative than the abstract original.
+
+### Tradeoffs
+- **2 of 10 phrases modified** — deliberately fewer than display (5) and adverb (5). Element words are more concrete and sensory than display names or adverbs, so they don't fit naturally into every echo phrase. "The stones remember what the wind has forgotten." would lose its specific imagery if "wind" were replaced by a generic {element}. The smaller split is intentional.
+- **Uses the last-picked element from the detail loop**: same pattern as adverb — the most recently selected element (last sentence pair, or opening element for detail=0). Echo is suppressed at detail=0, so in practice it's always the last sentence-pair element.
+- **Not seed-breaking**: no new `_pick()` calls were added, only the rendering of existing phrases changed. Echo is off by default, so all existing seed-based output is unaffected.
+- **No ECHO_INDICATORS changes**: both modified phrases retain their invariant substrings ("being watched" and "outside of time").
+- **5 new tests, 446 total** (18 todo + 428 landscape).
+
 ## 2026-07-13 — `{adverb}` Injection in Echo Phrases
 
 ### What
