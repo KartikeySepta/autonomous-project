@@ -319,7 +319,7 @@ SENTENCE_TEMPLATES = {
         "A vast {adj} {display} of {color} {element} stretches {adverb} before you.",
         "Before you, a {adj} {display} of {color} {element} comes into view {adverb}.",
         "The {adj} {display} of {color} {element} lies {adverb} ahead.",
-        "{Element} — the {adj} {display} stretches {adverb} before you.",
+        "{Element} — the {adj} {display} of {color} light stretches {adverb} before you.",
     ],
     "middle": [
         "{Element} {verb_conjugated} {adverb} between the {color} {adj} {noun}.",

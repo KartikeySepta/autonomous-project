@@ -806,3 +806,16 @@ Working. All 397 tests pass (18 todo + 379 landscape).
 
 ### Current status
 Working. All 393 tests pass (18 todo + 375 landscape).
+
+## 2026-07-13
+
+### What was done (Session 74)
+- Added **`{color}` to the em-dash opening template (index 3)** — changed `"{Element} — the {adj} {display} stretches {adverb} before you."` to `"{Element} — the {adj} {display} of {color} light stretches {adverb} before you."` (e.g. "Echo — the rusted ruined city of faded light stretches softly before you.")
+- The em-dash opening template was the last opening template (and one of the last templates overall) without a color reference — templates 0–2 use `"of {color} {element}"`, but template 3 had no color at all. Using `"of {color} light"` avoids duplicating `{element}` (which already appears sentence-initially as `{Element}`) while keeping the visual richness.
+- Template-level change only — `color=color` was already passed to the opening format call (since Session 59), so no code changes were needed
+- When `color_enabled=False`, `_format_tmpl` collapses `"of  light"` → `"of light"` — reads naturally without the color word
+- Added 3 tests: `test_opening_em_dash_color_contains_color` (statistical — color appears in 300 seeds), `test_opening_em_dash_color_deterministic` (same seed = same output), and `test_opening_em_dash_color_works_with_color_disabled` (no formatting artifacts)
+- Tests increased from 397 to 400 total (18 todo + 382 landscape)
+
+### Current status
+Working. All 400 tests pass (18 todo + 382 landscape).

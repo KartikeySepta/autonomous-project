@@ -2352,6 +2352,25 @@ class TestColors(unittest.TestCase):
             "No color word appeared in opening across 300 seeds with template_set=first",
         )
 
+    def test_opening_em_dash_color_contains_color(self):
+        results = [generate_landscape(seed=s, template_set="fourth") for s in range(300)]
+        self.assertTrue(
+            any(c in r for r in results for c in ALL_COLORS),
+            "No color word appeared in em-dash openings across 300 seeds",
+        )
+
+    def test_opening_em_dash_color_deterministic(self):
+        a = generate_landscape(seed=42, template_set="fourth")
+        b = generate_landscape(seed=42, template_set="fourth")
+        self.assertEqual(a, b)
+
+    def test_opening_em_dash_color_works_with_color_disabled(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, template_set="fourth", color_enabled=False)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertNotIn("  ", result)
+
     def test_color_in_middle_templates(self):
         results = [generate_landscape(seed=s, biome="tundra", detail=2) for s in range(300)]
         color_count = sum(1 for r in results if any(c in r for c in ALL_COLORS))

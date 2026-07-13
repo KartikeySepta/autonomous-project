@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-13 — `{color}` in Em-Dash Opening Template
+
+### What
+Added `{color}` to `SENTENCE_TEMPLATES["opening"][3]`: changed `"{Element} — the {adj} {display} stretches {adverb} before you."` to `"{Element} — the {adj} {display} of {color} light stretches {adverb} before you."` (e.g. "Echo — the rusted ruined city of faded light stretches softly before you.").
+
+### Why
+The em-dash opening template was the last opening template (4 of 4) and one of the last templates overall without a color reference. Templates 0–2 use `"of {color} {element}"` for their color+element stack, but template 3 has `{Element}` sentence-initially (the element word capitalized, e.g. "Mist — ..."), making a second `{element}` reference redundant. Using `"of {color} light"` instead introduces color through a different construction — "of faded light" — that avoids duplicating the element word while adding visual richness. This also creates a useful template-level distinction: templates 0–2 pair color with element, while the em-dash template pairs color with the generic "light", giving the generator two different color-expression patterns.
+
+### Tradeoffs
+- Template-level change only — `color=color` was already passed to the opening format call since Session 59
+- No seed-breaking change: no new `_pick()` calls, only the template string changed
+- The `"of {color} light"` construction is grammatically distinct from the other openings' `"of {color} {element}"` — adds useful variety to how color is expressed in opening descriptions
+- When `color_enabled=False`, `_format_tmpl` collapses `"of  light"` → `"of light"` — reads naturally without the color word (e.g. "Mist — the crystal forest of light stretches silently before you.")
+- 3 new tests, 400 total (18 todo + 382 landscape).
+
 ## 2026-07-13 — `{adj}` in Anomaly Template 4
 
 ### What
