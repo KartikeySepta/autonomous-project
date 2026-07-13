@@ -3110,6 +3110,61 @@ class TestEcho(unittest.TestCase):
             self.assertGreater(len(result), 0)
             self.assertNotIn("  ", result, f"Output has double space: {result!r}")
             self.assertTrue(result.endswith("."))
+
+    def test_echo_adj_injection_contains_adj(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, detail=2) for s in range(200)]
+        self.assertTrue(
+            any(a in r for r in results for a in ALL_ADJECTIVES),
+            "Echo with {adj} should contain adjective words across 200 seeds",
+        )
+
+    def test_echo_adj_in_remembers_phrase(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, biome="tundra", detail=2) for s in range(300)]
+        self.assertTrue(
+            any(a + " " + b in r for r in results
+                for a in ALL_ADJECTIVES
+                for b in ["tundra remembers", "tundra has been waiting",
+                          "tundra has changed", "in the tundra once"]
+                if a + " " + b in r),
+            "Echo phrase with {adj} should produce 'adj biome ...' pattern",
+        )
+
+    def test_echo_adj_is_deterministic(self):
+        a = generate_landscape(seed=42, echo_enabled=True, biome="tundra")
+        b = generate_landscape(seed=42, echo_enabled=True, biome="tundra")
+        self.assertEqual(a, b,
+            "Echo with {adj} should be deterministic with same seed")
+
+    def test_echo_adj_works_with_detail_zero(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, echo_enabled=True, detail=0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_echo_adj_works_with_combine(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, combine="forest,desert", detail=2) for s in range(200)]
+        self.assertTrue(
+            any(a in r for r in results for a in ALL_ADJECTIVES),
+            "Echo with {adj} should contain adjective words when biomes are combined",
+        )
+
+    def test_echo_adj_works_with_no_adverb(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, echo_enabled=True, adverb_enabled=False)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertNotIn("  ", result, f"Output has double space: {result!r}")
+            self.assertTrue(result.endswith("."))
+
+    def test_echo_adj_works_with_all_biomes(self):
+        for biome in ["forest", "desert", "tundra", "ruined city", "sky islands", "fungal grove"]:
+            with self.subTest(biome=biome):
+                result = generate_landscape(seed=42, echo_enabled=True, biome=biome)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+                self.assertTrue(result.endswith("."))
+
     def test_echo_count_default_is_one(self):
         a = generate_landscape(seed=42, echo_enabled=True)
         b = generate_landscape(seed=42, echo_enabled=True, echo_count=1)

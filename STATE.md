@@ -39,6 +39,16 @@
 - Added 5 new tests in `TestEcho`: `test_echo_element_injection_contains_element`, `test_echo_element_in_in_time_phrase`, `test_echo_element_is_deterministic`, `test_echo_element_works_with_detail_zero`, `test_echo_element_works_with_combine`
 - Tests increased from 441 to 446 total (18 todo + 428 landscape)
 
+### What was done (Session 84)
+- Added **`{adj}` injection into 2 echo phrases** — the echo system now passes `adj=adj` to `_format_tmpl()`, so phrases that contain `{adj}` render with the per-sentence-pair adjective word, making echo phrases feel connected to the landscape's adjectival palette:
+  - "The {display} remembers {adverb}." → "The {adj} {display} remembers {adverb}." — "The crystal tundra remembers silently."
+  - "Something important happened in the {display} once." → "Something important happened in the {adj} {display} once." — "Something important happened in the crystal tundra once."
+- Added `adj=adj` kwarg to the echo `_format_tmpl()` call — `adj` was already in scope (last per-sentence-pair adjective) but was not passed to echo templates
+- 8 remaining echo phrases without `{adj}` kept as-is for structural variety — the adjective injection split (2 of 10) matches the element and color injection splits (also 2 of 10), since adjectives pair most naturally with biome names in phrases that already reference the biome
+- No ECHO_INDICATORS changes needed — both modified phrases retain their invariant substrings ("remembers" and "important happened")
+- Added 7 new tests in `TestEcho`: `test_echo_adj_injection_contains_adj`, `test_echo_adj_in_remembers_phrase`, `test_echo_adj_is_deterministic`, `test_echo_adj_works_with_detail_zero`, `test_echo_adj_works_with_combine`, `test_echo_adj_works_with_no_adverb`, `test_echo_adj_works_with_all_biomes`
+- Tests increased from 453 to 460 total (18 todo + 442 landscape)
+
 ### What was done (Session 83)
 - Added **`{color}` injection into 2 echo phrases** — the echo system now passes `color=color` to `_format_tmpl()`, so phrases that contain `{color}` render with the per-sentence-pair color word, grounding abstract atmospheric echoes in the landscape's visual palette:
   - "You feel as though you are being watched by the {element} itself." → "You feel as though you are being watched by the {color} {element} itself." — "You feel as though you are being watched by the vivid mist itself." / "...by the murky silence itself."

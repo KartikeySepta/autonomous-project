@@ -1,5 +1,22 @@
 # Decisions
 
+## 2026-07-13 — `{adj}` Injection in Echo Phrases
+
+### What
+Added `{adj}` placeholder support to 2 of 10 ECHOES phrases — the echo system now passes `adj=adj` to `_format_tmpl()`, so phrases that contain `{adj}` render with the per-sentence-pair adjective word from the detail loop. The 8 remaining phrases without `{adj}` are unchanged.
+
+### Why
+The echo system (Sessions 80–83) gained `{display}`, `{adverb}`, `{element}`, and `{color}` injection, completing the word-category coverage that the template system already used. However, `{adj}` (the adjective) was the last word category missing from echo injection — phrases used biome names, adverbs, elements, and colors, but never the landscape's core descriptive adjective. Adding `{adj}` to 2 phrases that already use `{display}` creates a natural adjective-noun stack: "The crystal tundra remembers silently." is more evocative than "The tundra remembers silently."
+
+This completes the injection system for the echo phrases: `{display}` (biome name), `{adverb}` (adverbial flavor), `{element}` (sensory substance), `{color}` (visual palette), and now `{adj}` (descriptive quality). All five word categories that are available in the template system are now also available in the echo system.
+
+### Tradeoffs
+- **2 of 10 phrases modified** — deliberately the same 2 phrases that already use `{display}`, since adjectives pair most naturally with biome names ("crystal tundra", "ancient forest"). Adding `{adj}` to phrases without biome references would require awkward restructuring.
+- **Uses the last-picked adjective from the detail loop**: same pattern as element, color, and adverb — the most recently selected adjective (last sentence pair, or opening adjective for detail=0).
+- **Not seed-breaking**: no new `_pick()` calls were added, only the rendering of existing phrases changed. Echo is off by default, so all existing seed-based output is unaffected.
+- **No ECHO_INDICATORS changes**: both modified phrases retain their invariant substrings ("remembers" and "important happened").
+- **7 new tests, 460 total** (18 todo + 442 landscape).
+
 ## 2026-07-13 — `{color}` Injection in Echo Phrases
 
 ### What
