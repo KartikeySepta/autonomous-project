@@ -126,12 +126,14 @@ PRESETS = {
         "echo_enabled": True,
         "echo_prob": 0.7,
         "echo_count": 2,
+        "legend_enabled": True,
     },
     "pastoral": {
         "mood": ["peaceful"],
         "anomaly_prob": 0.0,
         "echo_enabled": True,
         "echo_prob": 0.5,
+        "legend_enabled": True,
     },
     "sublime": {
         "mood": ["vibrant", "peaceful"],
@@ -140,6 +142,7 @@ PRESETS = {
         "echo_enabled": True,
         "echo_prob": 1.0,
         "echo_count": 3,
+        "legend_enabled": True,
     },
     "wasteland": {
         "mood": ["desolate"],
@@ -147,6 +150,7 @@ PRESETS = {
         "anomaly_prob": 1.0,
         "anomaly_count": 3,
         "echo_enabled": True,
+        "legend_enabled": True,
     },
     "dreamscape": {
         "mood": ["eerie", "vibrant"],
@@ -156,6 +160,7 @@ PRESETS = {
         "echo_prob": 1.0,
         "echo_count": 2,
         "detail": 2,
+        "legend_enabled": True,
     },
 }
 
@@ -846,6 +851,8 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         if echo_enabled:
             data["echo_prob"] = echo_prob
             data["echo_count"] = echo_count
+        if legend_enabled:
+            data["legend_enabled"] = True
         if bias_overrides:
             data["bias_overrides"] = bias_overrides
         if mood_weight_overrides:
@@ -1130,6 +1137,8 @@ def main():
             args.echo_count = preset["echo_count"]
         if "echo_prob" in preset and args.echo_prob == 1.0:
             args.echo_prob = preset["echo_prob"]
+        if "legend_enabled" in preset and args.legend is False:
+            args.legend = preset["legend_enabled"]
         if "color_enabled" in preset and args.no_color is False:
             args.no_color = not preset["color_enabled"]
 

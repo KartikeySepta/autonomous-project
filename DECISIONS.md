@@ -1,5 +1,28 @@
 # Decisions
 
+## 2026-07-13 — Legends in Presets and JSON Metadata
+
+### What
+Added `legend_enabled=True` to all 5 presets (nightfall, pastoral, sublime, wasteland, dreamscape), so each preset includes a folkloric legend by default. Added `legend_enabled` preset gating in `main()` so explicit `--legend` still overrides the preset. Added `"legend_enabled": true` to JSON metadata when legends are enabled.
+
+### Why
+Legends (Session 96) were only accessible via the explicit `--legend` flag — presets, which are the curated on-ramp for new users, didn't use them. This meant a `--preset nightfall` landscape would get eerie mood, rare bias, high anomalies, and an atmospheric echo — but no cultural/historical folkloric context. Adding legends to all presets makes them richer out of the box without requiring users to know about `--legend`.
+
+Each preset benefits narratively:
+- **nightfall**: eerie mood + folk legend → ominous, historically charged
+- **pastoral**: peaceful mood + folk legend → serene but storied
+- **sublime**: vibrant+peaceful + folk legend → transcendent, mythic
+- **wasteland**: desolate + folk legend → post-mythic, forgotten
+- **dreamscape**: surreal + folk legend → oneiric, folkloric
+
+The JSON metadata gap was a parallel concern: `echo_enabled` emitted `echo_prob` and `echo_count` in JSON, but `legend_enabled` had no representation. Adding `"legend_enabled": true` makes the JSON format complete.
+
+### Tradeoffs
+- **Not seed-breaking**: Presets are convenience layer only — no existing seed-based output has been published relying on preset behavior, and the `--legend` flag was default-off (so all prior `--preset` output is unaffected). Only new `--preset` invocations will differ.
+- **Preset gating follows the same pattern as echo**: `if "legend_enabled" in preset and args.legend is False: args.legend = preset["legend_enabled"]` — explicit flags always override presets.
+- **JSON metadata follows the same pattern as echo**: a simple boolean field, present only when `legend_enabled=True`. No need for `legend_count` or `legend_prob` since legends are always exactly one per landscape when enabled.
+- **4 new tests, 549 total** (18 todo + 531 landscape), 93 subtests.
+
 ## 2026-07-13 — Folkloric Legends System (`--legend`)
 
 ### What

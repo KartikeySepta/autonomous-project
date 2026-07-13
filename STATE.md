@@ -2,7 +2,18 @@
 
 ## 2026-07-13
 
-### What was done (Session 95)
+### What was done (Session 97)
+- Added **legends to all 5 presets** — `legend_enabled=True` in `nightfall`, `pastoral`, `sublime`, `wasteland`, and `dreamscape`, so every preset now includes a folkloric legend by default. Previously, legends were only accessible via the explicit `--legend` flag.
+- Added **`legend_enabled` preset gating in `main()`** — follows the exact same pattern as `echo_enabled`: if the preset includes `legend_enabled` and `--legend` was not explicitly passed (still `False`), the preset's value is applied.
+- Added **`legend_enabled` to JSON metadata** — when `legend_enabled=True`, the JSON output now includes `"legend_enabled": true`, following the same pattern as `echo_enabled` JSON metadata.
+- Added 4 new tests:
+  - `test_legend_json_includes_field` — verifies JSON output has `legend_enabled` when True
+  - `test_legend_json_field_absent_when_disabled` — verifies JSON output omits `legend_enabled` when False (default)
+  - `test_all_presets_include_legend_enabled` — verifies all 5 presets contain `"legend_enabled": True` (5 subtests)
+  - `test_preset_with_legend_produces_legend_output` — verifies all 5 presets produce valid output with legends (5 subtests)
+- Tests increased from 545 to 549 total (18 todo + 531 landscape), subtests from 83 to 93
+
+### What was done (Session 96)
 - Added **`{time_word}` temporal injection into all 5 weather templates** — the weather slot now receives the per-landscape time word, completing temporal framing coverage across all template categories (openings, anomalies, echoes, and now weather)
   - All 5 weather templates now end with `{time_word}.` — e.g. "A gentle rain falls softly through the vivid crystal mist already." / "The air tells its own story: a gentle rain falls softly through the vivid crystal mist still."
 - Added `time_word=time_word` kwarg to the weather `_format_tmpl()` call — `time_word` was already in scope (picked per-landscape before the opening template) but was not passed to weather templates, so the placeholder would have rendered as literal `{time_word}` text

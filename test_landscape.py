@@ -3658,6 +3658,24 @@ class TestPresets(unittest.TestCase):
             self.assertIn(name, result,
                 f"Preset description should contain preset name '{name}'")
 
+    def test_all_presets_include_legend_enabled(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("legend_enabled", PRESETS[name],
+                    f"Preset {name} should include 'legend_enabled'")
+                self.assertTrue(PRESETS[name]["legend_enabled"],
+                    f"Preset {name} should have legend_enabled=True")
+
+    def test_preset_with_legend_produces_legend_output(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                result = generate_landscape(seed=42, **PRESETS[name])
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+                self.assertTrue(result.endswith("."))
+
     def test_describe_presets_flag_exists_via_cli(self):
         from landscape import main
         self.assertTrue(callable(main))
@@ -3986,6 +4004,19 @@ class TestLegend(unittest.TestCase):
         self.assertIsInstance(result, str)
         self.assertGreater(len(result), 0)
         self.assertTrue(result.endswith("."))
+
+    def test_legend_json_includes_field(self):
+        result = generate_landscape(seed=42, legend_enabled=True, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("legend_enabled", data)
+        self.assertTrue(data["legend_enabled"])
+
+    def test_legend_json_field_absent_when_disabled(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertNotIn("legend_enabled", data)
 
 
 if __name__ == "__main__":
