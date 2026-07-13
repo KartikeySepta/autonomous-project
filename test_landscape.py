@@ -2875,5 +2875,33 @@ class TestAnomalyAdj(unittest.TestCase):
             "Anomaly with adj should be deterministic")
 
 
+class TestAnomalyElement(unittest.TestCase):
+    def test_anomaly_templates_use_element_placeholder(self):
+        anomaly_tmpls = SENTENCE_TEMPLATES["anomaly"]
+        element_tmpls = [t for t in anomaly_tmpls if "{element}" in t]
+        self.assertGreaterEqual(len(element_tmpls), 1,
+            "At least 1 anomaly template should reference {element}")
+
+    def test_anomaly_element_does_not_break_output(self):
+        for s in range(30):
+            result = generate_landscape(seed=s, anomaly_prob=1.0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_anomaly_element_uses_known_element(self):
+        results = [generate_landscape(seed=s, anomaly_prob=1.0) for s in range(300)]
+        self.assertTrue(
+            any(e in r for r in results for e in ALL_ELEMENTS),
+            "No known element word appeared in anomaly text across 300 seeds",
+        )
+
+    def test_anomaly_element_is_deterministic(self):
+        a = generate_landscape(seed=42, anomaly_prob=1.0)
+        b = generate_landscape(seed=42, anomaly_prob=1.0)
+        self.assertEqual(a, b,
+            "Anomaly with element should be deterministic")
+
+
 if __name__ == "__main__":
     unittest.main()

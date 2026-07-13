@@ -340,7 +340,7 @@ SENTENCE_TEMPLATES = {
     "anomaly": [
         "{anomaly}",
         "Something is not right with the {display} — {anomaly}",
-        "A strange {color} detail catches your eye {adverb}: {anomaly_lower}",
+        "A strange {color} detail catches your eye {adverb} through the {element}: {anomaly_lower}",
         "There is a quiet wrongness here {adverb}: {anomaly_lower}",
         "In the {color} {adj} light of the {display}, {anomaly_lower}",
     ],
@@ -700,7 +700,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
                 anomaly_tmpl = _pick_template("anomaly", template_set, template_overrides, rng=rng)
                 anomaly_word = _pick("anomalies", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
                 anomaly_lower = anomaly_word[0].lower() + anomaly_word[1:]
-                parts.append(_format_tmpl(anomaly_tmpl, anomaly=anomaly_word, anomaly_lower=anomaly_lower, adverb=adverb, color=color, display=display, adj=adj))
+                parts.append(_format_tmpl(anomaly_tmpl, anomaly=anomaly_word, anomaly_lower=anomaly_lower, adverb=adverb, color=color, element=element, display=display, adj=adj))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)

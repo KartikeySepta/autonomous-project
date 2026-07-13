@@ -830,4 +830,13 @@ Working. All 400 tests pass (18 todo + 382 landscape).
 - No new tests — existing anomaly template and output tests cover the change
 
 ### Current status
-Working. All 400 tests pass (18 todo + 382 landscape).
+Working. All 404 tests pass (18 todo + 386 landscape).
+
+## 2026-07-13
+
+### What was done (Session 76)
+- Added **`{element}` to anomaly template 2** — changed `"A strange {color} detail catches your eye {adverb}: {anomaly_lower}"` to `"A strange {color} detail catches your eye {adverb} through the {element}: {anomaly_lower}"` (e.g. "A strange vivid detail catches your eye softly through the mist: the gravity here feels wrong.") — grounds anomaly descriptions in the landscape's elemental vocabulary
+- Added `element=element` kwarg to the anomaly `_format_tmpl()` call — `element` was already in scope (last per-sentence-pair element) but was not passed to anomaly templates, so the placeholder would have rendered as literal `{element}` text
+- `{element}` was the last word category completely missing from the anomaly slot — openings, middle, and weather all used it, but no anomaly template referenced it. This change closes the last category gap in anomaly templates.
+- Added 4 tests in `TestAnomalyElement` class: template placeholder presence, output validity, element word appearance in anomaly output, determinism
+- Tests increased from 400 to 404 total (18 todo + 386 landscape)

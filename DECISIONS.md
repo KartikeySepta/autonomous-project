@@ -1119,3 +1119,20 @@ Color is the project's newest word category (Session 51), and since then it's be
 - **Scope-based color value**: The anomaly block runs after the `detail` loop, so `color` holds the last-per-sentence-pair color (or `""` when middle is disabled). This is the same pattern as `adverb` in anomaly templates. When middle is disabled and color is enabled, color is `""` (reset at loop start), so anomaly gets no color — acceptable since anomaly framing without middle is a minimal-output edge case.
 - **5 anomaly templates**: Anomaly goes from 4 to 5 templates. Template_set "fourth" (index 3) and "fifth" (index 4) now both map to distinct templates for the anomaly slot (was 3→3 clamped to index 3; now 3→3 and 4→4). Backward compatible index clamping still applies for "sixth" (→4) and "seventh" (→4).
 - **9 new tests**, 393 total (18 todo + 375 landscape).
+
+## 2026-07-13 — `{element}` in Anomaly Template 2
+
+### What
+Added `{element}` to `SENTENCE_TEMPLATES["anomaly"][2]`: changed `"A strange {color} detail catches your eye {adverb}: {anomaly_lower}"` to `"A strange {color} detail catches your eye {adverb} through the {element}: {anomaly_lower}"` (e.g. "A strange vivid detail catches your eye softly through the mist: the gravity here feels wrong."). Added `element=element` kwarg to the anomaly `_format_tmpl()` call — `element` was already in scope (last per-sentence-pair element) but was not passed to anomaly templates, so the placeholder would have rendered as literal `{element}` text.
+
+### Why
+`{element}` was the only word category completely missing from the anomaly slot. Every other template slot (opening, middle, weather) used `{element}` in at least one template — the element word (mist, light, echo, etc.) is one of the most evocative categories, grounding descriptions in a sensory quality. Anomaly template 2 already used `{color}` and `{adverb}`, making it the natural candidate for adding `{element}` as well. The resulting template reads as "A strange X detail catches your eye Y through the Z: anomaly" — a framing that connects the observation to the landscape's elemental context.
+
+### Tradeoffs
+- **Template-level change plus one kwarg addition** — follows the same pattern as every previous template enrichment: add a kwarg that existing templates silently ignore, update one template to use it.
+- **No seed-breaking change** — no new `_pick()` calls, only the template string and format kwarg changed. Seed-based output is preserved for landscapes that don't select template 2.
+- **Template 2 now uses 3 word categories** (`{color}`, `{adverb}`, `{element}`) — the most heavily enriched anomaly template, joining anomaly template 4 which uses 3 categories (`{color}`, `{adj}`, `{display}`). Templates 0 and 1 remain intentionally sparse for stylistic variety.
+- **Element scope**: The anomaly block runs after the `detail` loop, so `element` holds the last per-sentence-pair element value. When `detail=0` (no loop iterations), anomalies are not generated (condition `detail >= 1`), so `element` is always defined when anomalies run.
+- **When `adverb_enabled=False`**, `_format_tmpl` collapses `"catches your eye  through"` → `"catches your eye through"` — reads naturally without the adverb.
+- **`{element}` now used in all 4 template slots**: opening (all 4 templates), middle (all 7), weather (all 5), anomaly (1 of 5 — this change). Template 0 remains bare `{anomaly}` by design.
+- **4 new tests**, 404 total (18 todo + 386 landscape).
