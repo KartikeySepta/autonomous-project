@@ -3042,6 +3042,93 @@ class TestAnomalyElement(unittest.TestCase):
             "Anomaly with element should be deterministic")
 
 
+class TestAnomalyTimeWord(unittest.TestCase):
+    def test_anomaly_templates_have_time_word_placeholder(self):
+        anomaly_tmpls = SENTENCE_TEMPLATES["anomaly"]
+        time_word_tmpls = [t for t in anomaly_tmpls if "{time_word}" in t]
+        self.assertGreaterEqual(len(time_word_tmpls), 1,
+            "At least 1 anomaly template should reference {time_word}")
+
+    def test_anomaly_time_word_does_not_break_output(self):
+        for s in range(30):
+            result = generate_landscape(seed=s, anomaly_prob=1.0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_anomaly_time_word_uses_known_time_word(self):
+        results = [generate_landscape(seed=s, anomaly_prob=1.0) for s in range(300)]
+        self.assertTrue(
+            any(t in r for r in results for t in ALL_TIME_WORDS),
+            "No known time word appeared in anomaly text across 300 seeds",
+        )
+
+    def test_anomaly_time_word_works_with_time_word_disabled(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, time_word_enabled=False, anomaly_prob=1.0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertNotIn(" :", result,
+                "Space before colon should not appear when time word is disabled")
+            self.assertTrue(result.endswith("."))
+
+    def test_anomaly_time_word_is_deterministic(self):
+        a = generate_landscape(seed=42, anomaly_prob=1.0)
+        b = generate_landscape(seed=42, anomaly_prob=1.0)
+        self.assertEqual(a, b,
+            "Anomaly with time word should be deterministic")
+
+    def test_anomaly_time_word_works_with_mood_and_bias(self):
+        result = generate_landscape(seed=42, mood="eerie", bias="rare", anomaly_prob=1.0)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_anomaly_time_word_works_with_detail_three(self):
+        result = generate_landscape(seed=42, detail=3, anomaly_prob=1.0)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 50)
+        self.assertTrue(result.endswith("."))
+
+    def test_anomaly_time_word_works_with_json_format(self):
+        result = generate_landscape(seed=42, fmt="json", anomaly_prob=1.0)
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_anomaly_time_word_disabled_differs_from_enabled(self):
+        enabled = generate_landscape(seed=42, anomaly_prob=1.0)
+        disabled = generate_landscape(seed=42, anomaly_prob=1.0, time_word_enabled=False)
+        self.assertNotEqual(enabled, disabled,
+            "Output should differ when time word is disabled in anomalies")
+
+    def test_anomaly_time_word_works_with_combine(self):
+        result = generate_landscape(seed=42, anomaly_prob=1.0, combine="forest,desert")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 10)
+        self.assertTrue(result.endswith("."))
+
+    def test_anomaly_time_word_appears_in_something_is_not_right_phrase(self):
+        results = [generate_landscape(seed=s, anomaly_prob=1.0, biome="forest") for s in range(300)]
+        not_right_results = [r for r in results if "not right" in r]
+        if not_right_results:
+            self.assertTrue(
+                any(t in r for r in not_right_results for t in ALL_TIME_WORDS),
+                "No time word appeared in 'not right' anomaly across 300 seeds",
+            )
+
+    def test_anomaly_time_word_appears_in_quiet_wrongness_phrase(self):
+        results = [generate_landscape(seed=s, anomaly_prob=1.0, biome="forest") for s in range(300)]
+        wrongness_results = [r for r in results if "wrongness" in r]
+        if wrongness_results:
+            self.assertTrue(
+                any(t in r for r in wrongness_results for t in ALL_TIME_WORDS),
+                "No time word appeared in 'wrongness' anomaly across 300 seeds",
+            )
+
+
 class TestDescribeEchoes(unittest.TestCase):
     def test_describe_echoes_returns_string(self):
         from landscape import describe_echoes

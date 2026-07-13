@@ -1,5 +1,24 @@
 # Decisions
 
+## 2026-07-13 — `{time_word}` Injection in Anomaly Templates
+
+### What
+Added `{time_word}` placeholder support to 2 of 5 anomaly templates — the anomaly system now passes `time_word=time_word` to `_format_tmpl()`, so phrases that contain `{time_word}` render with the per-landscape time word. The 3 remaining phrases without `{time_word}` are unchanged:
+  - Template 1: `"Something is not right with the {display} {time_word} — {anomaly}"` — "Something is not right with the forest already — The gravity here feels wrong."
+  - Template 3: `"There is a quiet wrongness here {adverb} {time_word}: {anomaly_lower}"` — "There is a quiet wrongness here silently now: the horizon curves upward."
+
+### Why
+The time word system (Sessions 89–91) was injected into all 4 opening templates and 2 echo phrases, making temporal framing available in narrative positioning (openings) and atmospheric reflection (echoes). But the anomaly slot — which describes uncanny, surreal wrongness — had no temporal frame. Anomalies described *what* was wrong but never *when relative to now* it was wrong: whether the wrongness was already present, still persisting, or just now manifesting. Adding time words to 2 anomaly templates fills this gap with minimal changes (one kwarg addition, 2 template strings), giving anomaly descriptions a new dimension: temporal position of the wrongness.
+
+This follows the same pattern as every previous anomaly enrichment: `{adverb}` (Session 61), `{color}` (Session 67), `{display}` (Session 71/75), `{element}` (Session 76), and `{adj}` (Sessions 73/84) — add a kwarg that existing templates silently ignore, update 2 templates to use it, let `_format_tmpl` handle disabled-feature cleanup.
+
+### Tradeoffs
+- **2 of 5 phrases modified** — deliberately the 2 framing templates (not raw `{anomaly}`) that already had injection slots. Templates 0 (bare anomaly) and 2 and 4 don't have a natural insertion point without restructuring the sentence.
+- **`_format_tmpl` handles cleanup naturally**: When `time_word_enabled=False`, template 1 produces `"with the forest  —"` (double space before em-dash) and template 3 produces `"here silently :"` (space before colon). The existing `_format_tmpl` replace chain (`"  " → " "`, `" :" → ":"`) handles both.
+- **Not seed-breaking when anomaly_prob is default**: Adding `time_word=time_word` kwarg to the format call doesn't change the random sequence (no new `_pick()` or `rng.choice()` calls). Only the rendered output changes when an anomaly template with `{time_word}` is selected. Since `anomaly_prob=0.3` by default, seed-based output without explicit `--anomaly-prob 1.0` may or may not differ depending on whether an anomaly triggered.
+- **Completes `{time_word}` coverage**: Now all 4 template slots that support word-category injection have `{time_word}` available — openings (Sessions 89–90), echoes (Session 91), and anomalies (this session). Middle and weather templates remain time-word-free by design (temporal framing is less natural in procedural middle descriptions and weather sentences).
+- **12 new tests, 522 total** (18 todo + 504 landscape), 78 subtests.
+
 ## 2026-07-13 — Configurable Time Word Suppression (`--no-time-word`)
 
 ### What

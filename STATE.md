@@ -2,6 +2,16 @@
 
 ## 2026-07-13
 
+### What was done (Session 94)
+- Added **`{time_word}` injection into 2 anomaly templates** — the anomaly slot now receives the per-landscape time word, grounding surreal/uncanny descriptions in the same temporal frame as openings and echoes
+  - Template 1: `"Something is not right with the {display} — {anomaly}"` → `"Something is not right with the {display} {time_word} — {anomaly}"` — e.g. "Something is not right with the forest already — The gravity here feels wrong."
+  - Template 3: `"There is a quiet wrongness here {adverb}: {anomaly_lower}"` → `"There is a quiet wrongness here {adverb} {time_word}: {anomaly_lower}"` — e.g. "There is a quiet wrongness here silently now: the horizon curves upward."
+- Added `time_word=time_word` kwarg to the anomaly `_format_tmpl()` call — `time_word` was already in scope (picked per-landscape before the opening template) but was not passed to anomaly templates, so the placeholder would have rendered as literal `{time_word}` text
+- The anomaly slot was the last template category completely missing `{time_word}` — openings (Session 89–90) and echoes (Session 91) already had it, now anomalies complete the coverage
+- When `time_word_enabled=False`, `_format_tmpl` handles spacing cleanup naturally: `"  —"` → `" —"` (template 1) and `" :"` → `":"` (template 3) via its existing replace chain
+- Added 12 tests in `TestAnomalyTimeWord` class: placeholder presence, output validity, time word appearance, determinism, time-word-disabled formatting, mood+bias, detail=3, JSON, disabled differs, combine, and per-template statistical tests (both "not right" and "wrongness" phrases)
+- Tests increased from 511 to 522 total (18 todo + 504 landscape), subtests unchanged at 78
+
 ### What was done (Session 93)
 - Added **`--no-time-word` CLI flag** and `time_word_enabled` parameter to `generate_landscape()` — users can now suppress temporal time words in landscape descriptions, following the exact same pattern as `--no-element` (Session 92) and the previous `--no-*` flags
   - `time_word_enabled=True` (default) preserves existing behavior — a time word is picked per-landscape via `rng.choice()` and injected into all 4 opening templates and 2 echo phrases
