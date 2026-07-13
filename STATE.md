@@ -768,5 +768,13 @@ Working. All 393 tests pass (18 todo + 375 landscape).
 - The fix is a one-word addition: `"colors"` added to the expected-categories list in the `for` loop. The previously separate `test_describe_global_includes_colors` in `TestColors` covered the behavioral assertion, but `TestDescribeGlobal.test_describe_global_contains_all_categories` now also correctly enumerates colors as one of the global categories.
 - Tests: still 393 total (18 todo + 375 landscape) — updated assertion in existing test.
 
+## 2026-07-13
+
+### What was done (Session 71)
+- Added **`{display}` to anomaly template 4** — changed `"In the {color} light, {anomaly_lower}"` to `"In the {color} light of the {display}, {anomaly_lower}"` (e.g. "In the vivid light of the forest, the gravity here feels wrong.")
+- Added `display=display` kwarg to the anomaly `_format_tmpl()` call — `display` was in scope but not passed to anomaly templates, so the placeholder would have rendered as literal `{display}` text
+- Previously, only middle and weather templates referenced the biome name; now the anomaly slot can also anchor its description in the biome context
+- No new tests — existing anomaly template and output tests cover the change (template 4 still renders with `{color}`, still matches the `"In the " ... " light"` pattern in `test_anomaly_color_in_light_template_appears`)
+
 ### Current status
 Working. All 393 tests pass (18 todo + 375 landscape).

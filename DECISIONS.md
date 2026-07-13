@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-13 — `{display}` in Anomaly Template
+
+### What
+Added `{display}` to `SENTENCE_TEMPLATES["anomaly"][4]`: changed `"In the {color} light, {anomaly_lower}"` to `"In the {color} light of the {display}, {anomaly_lower}"`. Also added `display=display` kwarg to the anomaly `_format_tmpl()` call — this was the last template slot that didn't receive the biome display name.
+
+### Why
+The anomaly slot was the only template category that never referenced the biome name. Opening, middle, and weather templates all use `{display}` in at least one template, grounding descriptions in their biome context. Anomalies were the outlier — they could mention colors and adverbs but never the biome itself. Adding `{display}` to the "In the light" anomaly template makes anomaly descriptions feel cohesive with their setting ("In the vivid light of the forest, the gravity here feels wrong.") rather than floating in a generic space.
+
+### Tradeoffs
+- Template-level change plus one kwarg addition — follows the same pattern as every previous template enrichment (Sessions 38–42, 47, 56–61, 67–69): add a kwarg that existing templates silently ignore, update one template to use it.
+- The `{display}` kwarg is added to the anomaly format call alongside `{adverb}` and `{color}`, which were already passed — unmodified templates (0, 1, 2, 3) silently ignore the extra kwarg.
+- No seed-breaking change: no new `_pick()` calls, just a change in how an existing kwarg is used.
+- No new tests — existing coverage (`test_anomaly_color_in_light_template_appears`, `test_anomaly_color_does_not_break_output`, `test_describe_templates_contains_placeholder_info`) covers the change.
+- 393 tests total (18 todo + 375 landscape) — unchanged.
+
 ## 2026-07-12 — Template Set Coverage & Template Introspection
 
 ### What
