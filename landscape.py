@@ -335,7 +335,7 @@ SENTENCE_TEMPLATES = {
         "The air tells its own story: {weather} {adverb} through the {adj} {element}.",
         "{Weather}, as if the {adj} {display} itself breathes {element} {adverb}.",
         "Through the {adj} {element}, {weather} {adverb}.",
-        "{Weather} {adverb} in {color} light.",
+        "{Weather} {adverb} in {color} {adj} light.",
     ],
     "anomaly": [
         "{anomaly}",

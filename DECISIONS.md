@@ -1,5 +1,19 @@
 # Decisions
 
+## 2026-07-13 — `{adj}` in Weather Template 4
+
+### What
+Added `{adj}` to `SENTENCE_TEMPLATES["weather"][4]`: changed `"{Weather} {adverb} in {color} light."` to `"{Weather} {adverb} in {color} {adj} light."` (e.g. "A gentle rain falls softly in vivid crystal light.") — the `adj` kwarg was already passed to the weather format call (since Session 69) and was simply unused by this template.
+
+### Why
+Weather template 4 was the only weather template that didn't use `{adj}` — templates 0–3 received it in Session 69, leaving template 4 as the last holdout. Adding `{adj}` completes adjective coverage across all 5 weather templates, making descriptions richer and more consistent regardless of which template is selected.
+
+### Tradeoffs
+- Template-level change only — `adj` was already in scope and threaded through `_format_tmpl` since Session 69
+- No seed-breaking change: no new `_pick()` calls, only the template string itself changed
+- `{adj}` placed between `{color}` and `light` creates a natural adjective-color stack: "in vivid crystal light" — when `color_enabled=False`, `_format_tmpl` collapses `"in  crystal light"` → `"in crystal light"` (reads naturally)
+- 393 tests total (unchanged)
+
 ## 2026-07-13 — `{display}` in Anomaly Template
 
 ### What

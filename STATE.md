@@ -778,3 +778,17 @@ Working. All 393 tests pass (18 todo + 375 landscape).
 
 ### Current status
 Working. All 393 tests pass (18 todo + 375 landscape).
+
+## 2026-07-13
+
+### What was done (Session 72)
+- Added **`{adj}` to weather template 4** — changed `"{Weather} {adverb} in {color} light."` to `"{Weather} {adverb} in {color} {adj} light."` (e.g. "A gentle rain falls softly in vivid crystal light.")
+- Weather template 4 was the only weather template that didn't use `{adj}` — templates 0–3 received it in Session 69, leaving template 4 (`"in {color} light"`) as the last template without the per-sentence adjective
+- Template-level change only — `adj=adj` was already passed to the weather format call (since Session 69), so no code changes were needed
+- Now all 5 weather templates use `{adj}` — complete adjective coverage across the weather slot
+- No seed-breaking change: the random call order is unchanged (no new `_pick()` calls), only the template string changed
+- No new tests needed (existing `test_weather_templates_use_adj_placeholder` checks `>= 4`, passes with 5/5)
+- Tests: still 393 total (18 todo + 375 landscape)
+
+### Current status
+Working. All 393 tests pass (18 todo + 375 landscape).
