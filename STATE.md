@@ -1,5 +1,23 @@
 # State
 
+## 2026-07-13
+
+### What was done (Session 80)
+- Added **`{display}` injection into echo phrases** — 5 of 10 ECHOES now contain `{display}` placeholders that render the biome name, making echo phrases feel connected to the landscape context instead of reading as generic atmospheric text
+  - "The land remembers." → "The {display} remembers." — "The forest remembers."
+  - "This place has been waiting for you." → "The {display} has been waiting for you." — "The tundra has been waiting for you."
+  - "Nothing here has changed in a thousand years." → "Nothing in the {display} has changed in a thousand years." — "Nothing in the ruined city has changed in a thousand years."
+  - "The echoes of the past linger in the air." → "The echoes of the past linger in the air of the {display}." — "The echoes of the past linger in the air of the desert."
+  - "Something important happened here once." → "Something important happened in the {display} once." — "Something important happened in the plain once."
+- Changed the echo block in `generate_landscape()` to use `_format_tmpl(echo, display=display)` instead of bare `parts.append(echo)` — templates without `{display}` are unaffected (str.format silently ignores extra kwargs)
+- 5 remaining echoes without `{display}` (e.g. "The silence here is older than any sound.") kept as-is for structural variety — not every echo needs to reference the biome
+- Refactored existing echo tests to use `ECHO_INDICATORS` (invariant substrings) instead of raw `ECHOES` strings, since `{display}` in the source strings no longer matches rendered output
+- Added 6 new tests in `TestEcho`: `test_echo_display_injection_contains_biome_name`, `test_echo_display_respects_combine`, `test_echo_display_without_display_phrase_still_works`, `test_echo_display_is_deterministic`, `test_echo_display_works_with_all_biomes` (with 5 subtests)
+- Tests increased from 433 to 438 total (18 todo + 420 landscape)
+
+### Current status
+Working. All 438 tests pass (18 todo + 420 landscape).
+
 ## 2026-07-12
 
 ### What was done (Session 51)

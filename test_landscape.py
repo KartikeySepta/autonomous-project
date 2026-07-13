@@ -2909,17 +2909,26 @@ class TestAnomalyElement(unittest.TestCase):
             "Anomaly with element should be deterministic")
 
 
+# Unique substrings that appear in rendered echo output regardless of biome injection
+ECHO_INDICATORS = [
+    "remembers.", "has been waiting", "has changed in",
+    "linger in the air", "being watched", "deep time",
+    "outside of time", "stones remember", "important happened",
+    "older than any sound",
+]
+
+
 class TestEcho(unittest.TestCase):
     def test_echo_disabled_default(self):
         result = generate_landscape(seed=42)
-        for e in ECHOES:
-            self.assertNotIn(e, result,
-                "Echo should not appear by default")
+        for ind in ECHO_INDICATORS:
+            self.assertNotIn(ind, result,
+                f"Echo indicator {ind!r} should not appear by default")
 
     def test_echo_enabled_appends_echo(self):
         results = [generate_landscape(seed=s, echo_enabled=True) for s in range(100)]
         self.assertTrue(
-            any(e in r for r in results for e in ECHOES),
+            any(ind in r for r in results for ind in ECHO_INDICATORS),
             "No echo phrase appeared across 100 seeds with echo_enabled=True",
         )
 
@@ -2952,13 +2961,50 @@ class TestEcho(unittest.TestCase):
 
     def test_echo_detail_zero_suppresses_echo(self):
         result = generate_landscape(seed=42, echo_enabled=True, detail=0)
-        for e in ECHOES:
-            self.assertNotIn(e, result,
-                "Echo should not appear with detail=0")
+        for ind in ECHO_INDICATORS:
+            self.assertNotIn(ind, result,
+                f"Echo indicator {ind!r} should not appear with detail=0")
 
     def test_echo_flag_exists_via_cli(self):
         from landscape import main
         self.assertTrue(callable(main))
+
+    def test_echo_display_injection_contains_biome_name(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, biome="tundra") for s in range(100)]
+        display_phrases = ["tundra remembers", "tundra has been waiting",
+                           "in the tundra has changed", "in the tundra once"]
+        self.assertTrue(
+            any(p in r for r in results for p in display_phrases),
+            "Echo with {display} should reference the biome name across 100 seeds",
+        )
+
+    def test_echo_display_respects_combine(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, combine="forest,desert") for s in range(100)]
+        self.assertTrue(
+            any("forest and desert" in r for r in results),
+            "Echo with {display} should show combined biome name",
+        )
+
+    def test_echo_display_without_display_phrase_still_works(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, echo_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_echo_display_is_deterministic(self):
+        a = generate_landscape(seed=42, echo_enabled=True, biome="tundra")
+        b = generate_landscape(seed=42, echo_enabled=True, biome="tundra")
+        self.assertEqual(a, b,
+            "Echo with display should be deterministic with same seed")
+
+    def test_echo_display_works_with_all_biomes(self):
+        for biome in ["forest", "desert", "tundra", "ruined city", "sky islands"]:
+            with self.subTest(biome=biome):
+                result = generate_landscape(seed=42, echo_enabled=True, biome=biome)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+                self.assertTrue(result.endswith("."))
 
 
 class TestEchoCount(unittest.TestCase):
@@ -2976,16 +3022,16 @@ class TestEchoCount(unittest.TestCase):
 
     def test_echo_count_two_sometimes_has_multiple(self):
         results = [generate_landscape(seed=s, echo_enabled=True, echo_count=3) for s in range(100)]
-        multi = [r for r in results if sum(1 for e in ECHOES if e in r) >= 2]
+        multi = [r for r in results if sum(1 for ind in ECHO_INDICATORS if ind in r) >= 2]
         self.assertGreater(len(multi), 10,
             "echo_count=3 should often produce multi-echo outputs")
 
     def test_echo_count_does_not_repeat_same_echo(self):
         results = [generate_landscape(seed=s, echo_enabled=True, echo_count=3) for s in range(200)]
         for r in results:
-            for e in ECHOES:
-                self.assertLessEqual(r.count(e), 1,
-                    f"Echo '{e}' should appear at most once: {r!r}")
+            for ind in ECHO_INDICATORS:
+                self.assertLessEqual(r.count(ind), 1,
+                    f"Echo indicator {ind!r} should appear at most once: {r!r}")
 
     def test_echo_count_produces_valid_output(self):
         for count in [0, 1, 2, 3]:

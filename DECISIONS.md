@@ -1,5 +1,23 @@
 # Decisions
 
+## 2026-07-13 — `{display}` Injection in Echo Phrases
+
+### What
+Added `{display}` placeholder support to 5 of 10 ECHOES phrases — the echo system now formats each chosen phrase with `_format_tmpl(echo, display=display)`, so phrases that contain `{display}` render with the biome name (or combined biome display string). The 5 remaining phrases without `{display}` are unchanged.
+
+### Why
+The echo system (Session 78) always produced fixed, generic phrases like "The land remembers." or "This place has been waiting for you." that read identically regardless of whether the landscape is a forest, desert, or ruined city — creating a subtle disconnect between the atmospheric echo and the described setting. The DECISIONS.md entry for Session 78 explicitly noted: "A future enhancement could inject {display} or {element} into echo templates."
+
+This change makes the echo system feel cohesive with the landscape: "The forest remembers." or "Something important happened in the desert once." are more evocative than their generic counterparts. The biome reference is injected for only 5 of 10 phrases, so the echo system retains stylistic variety — some echoes are intimate and biome-specific, others remain universal and timeless.
+
+### Tradeoffs
+- **Added formatting dependency**: Echoes are now formatted strings rather than raw static text. This means any future echo phrase containing literal `{` or `}` characters would need escaping. Current biome names contain no such characters, so this is a non-issue in practice.
+- **Not seed-breaking**: Echo is still disabled by default. When enabled, the same seed produces the same echo phrase (just formatted with the biome display name). Existing seed-based output without `--echo` is unaffected.
+- **`_format_tmpl` handles cleanup**: The `_format_tmpl` helper handles spacing artifacts from template formatting, which is a no-op for echo phrases (none produce double-space patterns). This is a trivial overhead per echo.
+- **Works naturally with `--combine`**: When biomes are combined (e.g. `--combine forest,desert`), `display` becomes "forest and desert" and echoes render as "The forest and desert remembers." — which reads as a compound subject and is grammatically correct.
+- **5 of 10 phrases modified** — deliberately not all. Some echoes are more powerful as universal statements independent of location ("The silence here is older than any sound."). The split mirrors how templates use `{display}` in some but not all variants.
+- **6 new tests, 438 total** (18 todo + 420 landscape).
+
 ## 2026-07-13 — Configurable Echo Count (`--echo-count`)
 
 ### What
