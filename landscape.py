@@ -854,6 +854,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         data["anomaly_prob"] = anomaly_prob
         data["anomaly_count"] = anomaly_count
         if echo_enabled:
+            data["echo_enabled"] = True
             data["echo_prob"] = echo_prob
             data["echo_count"] = echo_count
         if legend_enabled:

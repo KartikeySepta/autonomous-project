@@ -3534,6 +3534,19 @@ class TestEcho(unittest.TestCase):
         from landscape import main
         self.assertTrue(callable(main))
 
+    def test_echo_json_includes_field(self):
+        result = generate_landscape(seed=42, echo_enabled=True, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("echo_enabled", data)
+        self.assertTrue(data["echo_enabled"])
+
+    def test_echo_json_field_absent_when_disabled(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertNotIn("echo_enabled", data)
+
     def test_echo_count_can_exhaust_pool_falls_back(self):
         # With echo_count > len(ECHOES), fallback should allow repeats
         result = generate_landscape(seed=42, echo_enabled=True, echo_count=15)

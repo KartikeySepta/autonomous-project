@@ -1,5 +1,18 @@
 # Decisions
 
+## 2026-07-13 — `echo_enabled` in JSON Metadata
+
+### What
+Added `"echo_enabled": true` to JSON output when `echo_enabled=True`, matching the same pattern as `legend_enabled` (Session 97). Previously, echo metadata only emitted `echo_prob` and `echo_count` when echo was enabled, with no explicit boolean field. Added 2 tests verifying presence when enabled and absence when disabled.
+
+### Why
+When legends were added to JSON metadata (Session 97), the pattern was `"legend_enabled": true` — an explicit boolean. But echo — which preceded legends by 20+ sessions — never got the same treatment: echo metadata relied on the presence of `echo_prob` and `echo_count` as implicit indicators. This asymmetry meant JSON consumers needed to check whether `echo_prob` exists in the output to infer echo state, rather than reading an explicit boolean. Adding `echo_enabled` makes the JSON format consistent across both atmospheric echo and folkloric legend features, so every feature that has an on/off switch (echo, legend) emits an explicit `_enabled` boolean in JSON.
+
+### Tradeoffs
+- **Backward compatible**: Existing JSON output without `echo_enabled` is unaffected; the field is only added when `echo_enabled=True`, which mirrors the legend pattern.
+- **Not seed-breaking**: No random call order changes — only a metadata field addition.
+- **2 new tests**, 577 total (18 todo + 559 landscape), 93 subtests.
+
 ## 2026-07-13 — Describe-Legends Introspection Tests
 
 ### What

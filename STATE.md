@@ -2,6 +2,13 @@
 
 ## 2026-07-13
 
+### What was done (Session 100)
+- **Added `echo_enabled` to JSON metadata** — when `echo_enabled=True`, the JSON output now includes `"echo_enabled": true`, matching the same pattern as `legend_enabled` (Session 97). Previously, echo metadata only emitted `echo_prob` and `echo_count`, with no explicit boolean for whether echo was active.
+- Added 2 new tests:
+  - `test_echo_json_includes_field` — verifies JSON has `echo_enabled` when True
+  - `test_echo_json_field_absent_when_disabled` — verifies JSON omits `echo_enabled` when False (default)
+- Tests increased from 575 to 577 total (18 todo + 559 landscape), 93 subtests unchanged
+
 ### What was done (Session 99)
 - **Added `TestDescribeLegends` test class** — 8 new introspection tests for `describe_legends()` and `--describe-legends`, following the exact same pattern as `TestDescribeEchoes` (Session 86):
   - `test_describe_legends_returns_string` — verifies `describe_legends()` returns a string
