@@ -1,5 +1,23 @@
 # Decisions
 
+## 2026-07-13 — Atmospheric Echo Phrases (`--echo`)
+
+### What
+Added a new `ECHOES` word bank — 10 curated atmospheric phrases that evoke a sense of deep time, presence, and experiential depth — and a `--echo` CLI flag (default: off) that appends one random echo to the generated landscape. Each echo is a complete sentence that stands alone after the main description.
+
+### Why
+After 77 sessions of enriching vocabulary, templates, moods, biomes, and introspection, the landscape generator could produce richly textured descriptions but they all read as purely observational — a detached third-person view of a place. The project had no mechanism for *emotional resonance* or *experiential presence*. The echo phrases fill this gap: "The land remembers." or "The silence here is older than any sound." add a sense that the landscape has a history, a memory, a weight. This is the difference between looking at a photograph and standing in the place itself.
+
+This directly serves the project's creative goal: it's an unusual, non-obvious addition to a landscape generator. Most landscape/text generators focus on visual description; adding a memory/echo dimension is a small step toward something more literary and emotionally resonant.
+
+### Tradeoffs
+- **Curated phrases rather than generated**: All 10 echoes are hand-written complete sentences rather than procedurally composed from word banks. This ensures each one lands emotionally and avoids the grammatical oddities that template-generated echoes could produce. The tradeoff is lower variety per-session (10 phrases vs potentially hundreds of combinations), but the quality bar for an echo is higher — a clunky echo breaks the spell, while a missing echo is invisible.
+- **No word-category injection**: Echoes are picked `rng.choice(ECHOES)` rather than drawn from `_pick()`. This means they don't consume dedup slots, don't participate in mood/bias/weight systems, and don't reference biome-specific vocabulary. This is intentional — echoes are universal atmospheric flourishes, not landscape-specific details. A future enhancement could inject `{display}` or `{element}` into echo templates, but that would require templating each echo string, adding complexity for marginal gain.
+- **No seed-breaking change**: `echo_enabled=False` by default, so all existing seed-based output is preserved. When enabled, one extra `rng.choice()` call is introduced after all other generation, preserving the random sequence of all existing features.
+- **`detail=0` suppresses echoes**: Echoes only appear when `detail >= 1` (same as anomalies). This ensures the most minimal output mode remains purely about the opening sentence.
+- **JSON format**: Echo text is part of the `text` field, not a separate metadata field. Echoes are content, not metadata, so they belong in the prose text alongside all other generated sentences.
+- **8 new tests**, 422 total (18 todo + 404 landscape).
+
 ## 2026-07-13 — `{color}` in All Weather Templates
 
 ### What

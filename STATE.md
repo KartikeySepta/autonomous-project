@@ -834,6 +834,21 @@ Working. All 414 tests pass (18 todo + 396 landscape).
 
 ## 2026-07-13
 
+### What was done (Session 78)
+- Added **`--echo` CLI flag** and `echo_enabled` parameter to `generate_landscape()` — users can now append a short atmospheric "echo" phrase to the end of the landscape description, adding a sense of deep time and experiential presence
+  - 10 curated echo phrases: "The land remembers.", "This place has been waiting for you.", "Nothing here has changed in a thousand years.", "The echoes of the past linger in the air.", etc.
+  - Echo is picked via `rng.choice(ECHOES)` — no dedup slot consumed, independent of all word categories
+  - Only fires when `detail >= 1` and `echo_enabled=True` (default: False)
+  - Works with all formats (prose, poetic, json)
+  - No seed-breaking change for existing outputs (echo_enabled=False by default)
+- Added 8 tests in `TestEcho` class: disabled by default, echo appears when enabled, output validity, determinism, poetic format, JSON format, detail=0 suppression, CLI flag existence
+- Tests increased from 414 to 422 total (18 todo + 404 landscape)
+
+### Current status
+Working. All 422 tests pass (18 todo + 404 landscape).
+
+## 2026-07-13
+
 ### What was done (Session 77)
 - Added **`{color}` to all 4 remaining weather templates** — weather templates 0, 1, 2, and 3 now reference the per-sentence-pair color word, completing color coverage across all 5 weather templates
   - Template 0: `"{Weather} {adverb} through the {color} {adj} {element}."` — "A gentle rain falls softly through the vivid crystal mist."

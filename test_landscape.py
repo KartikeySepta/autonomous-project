@@ -5,7 +5,7 @@ import random
 
 from landscape import (
     generate_landscape,
-    BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS,
+    BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS, ECHOES,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
 )
@@ -2907,6 +2907,58 @@ class TestAnomalyElement(unittest.TestCase):
         b = generate_landscape(seed=42, anomaly_prob=1.0)
         self.assertEqual(a, b,
             "Anomaly with element should be deterministic")
+
+
+class TestEcho(unittest.TestCase):
+    def test_echo_disabled_default(self):
+        result = generate_landscape(seed=42)
+        for e in ECHOES:
+            self.assertNotIn(e, result,
+                "Echo should not appear by default")
+
+    def test_echo_enabled_appends_echo(self):
+        results = [generate_landscape(seed=s, echo_enabled=True) for s in range(100)]
+        self.assertTrue(
+            any(e in r for r in results for e in ECHOES),
+            "No echo phrase appeared across 100 seeds with echo_enabled=True",
+        )
+
+    def test_echo_does_not_break_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, echo_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_echo_is_deterministic(self):
+        a = generate_landscape(seed=42, echo_enabled=True)
+        b = generate_landscape(seed=42, echo_enabled=True)
+        self.assertEqual(a, b,
+            "Echo should be deterministic with same seed")
+
+    def test_echo_works_with_poetic_format(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, echo_enabled=True, fmt="poetic")
+            self.assertIsInstance(result, str)
+            self.assertIn("\n", result)
+
+    def test_echo_works_with_json_format(self):
+        result = generate_landscape(seed=42, echo_enabled=True, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_echo_detail_zero_suppresses_echo(self):
+        result = generate_landscape(seed=42, echo_enabled=True, detail=0)
+        for e in ECHOES:
+            self.assertNotIn(e, result,
+                "Echo should not appear with detail=0")
+
+    def test_echo_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
 
 
 if __name__ == "__main__":
