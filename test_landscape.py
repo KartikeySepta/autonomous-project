@@ -2287,6 +2287,13 @@ class TestColors(unittest.TestCase):
             self.assertGreater(len(result), 10)
             self.assertTrue(result.endswith("."))
 
+    def test_weather_color_appears_with_middle_disabled(self):
+        results = [generate_landscape(seed=s, middle_enabled=False, detail=2) for s in range(200)]
+        self.assertTrue(
+            any(c in r for r in results for c in ALL_COLORS),
+            "No color word appeared in weather with middle_enabled=False across 200 seeds",
+        )
+
     def test_weather_color_is_deterministic(self):
         a = generate_landscape(seed=42, detail=2)
         b = generate_landscape(seed=42, detail=2)

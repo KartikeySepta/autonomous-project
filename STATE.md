@@ -49,6 +49,14 @@
 - Added 7 new tests in `TestEcho`: `test_echo_adj_injection_contains_adj`, `test_echo_adj_in_remembers_phrase`, `test_echo_adj_is_deterministic`, `test_echo_adj_works_with_detail_zero`, `test_echo_adj_works_with_combine`, `test_echo_adj_works_with_no_adverb`, `test_echo_adj_works_with_all_biomes`
 - Tests increased from 453 to 460 total (18 todo + 442 landscape)
 
+### What was done (Session 85)
+- **Fixed color-pick bug with `--no-middle`**: when `middle_enabled=False`, the per-sentence-pair color pick was skipped because it was nested inside the `if middle_enabled:` block. Weather templates reference `{color}`, so `--no-middle` always produced weather sentences without color words (even when `color_enabled=True`).
+  - Moved the color pick (`if color_enabled: color = _pick("colors", ...)`) outside the `if middle_enabled:` block, so it runs every iteration regardless of middle state.
+  - The opening color pick (before the loop) was already correct — only per-sentence-pair colors were affected.
+- **Seed-breaking**: the random call order changes for all cases (color is now picked before noun/verb instead of after), so existing seed-based output shifts. This is acceptable for a correctness fix.
+- Added 1 new test: `test_weather_color_appears_with_middle_disabled` in `TestColors`
+- Tests increased from 460 to 461 total (18 todo + 443 landscape)
+
 ### What was done (Session 83)
 - Added **`{color}` injection into 2 echo phrases** — the echo system now passes `color=color` to `_format_tmpl()`, so phrases that contain `{color}` render with the per-sentence-pair color word, grounding abstract atmospheric echoes in the landscape's visual palette:
   - "You feel as though you are being watched by the {element} itself." → "You feel as though you are being watched by the {color} {element} itself." — "You feel as though you are being watched by the vivid mist itself." / "...by the murky silence itself."

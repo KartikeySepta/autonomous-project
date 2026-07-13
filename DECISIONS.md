@@ -1,5 +1,19 @@
 # Decisions
 
+## 2026-07-13 — Fix Color Pick When Middle Disabled
+
+### What
+Moved the per-sentence-pair color pick outside the `if middle_enabled:` block in `generate_landscape()`, so weather templates always receive a color word regardless of middle sentence state. Previously, `--no-middle` with `color_enabled=True` produced weather sentences without color references because the color pick was gated behind the middle-enabled check.
+
+### Why
+This was a latent bug introduced when `{color}` was added to weather templates (Sessions 58+): the color pick in the detail loop was placed inside the `if middle_enabled:` block because color was originally only used by middle templates. When weather templates later gained `{color}`, the placement was never updated. The opening color pick (before the loop) was always correct — only per-sentence-pair colors were nested incorrectly.
+
+### Tradeoffs
+- **Seed-breaking**: the random call order changes for all cases (color is now picked before noun/verb instead of after). Since no seed-based output has been published, this is acceptable for a correctness fix.
+- **Minimal code change**: moved 3 lines (color pick + empty-string fallback) up by 4 lines in the loop body. No new `_pick()` calls, no behavioral changes other than fixing the bug.
+- **New test** verifies colors appear with `middle_enabled=False` across 200 seeds.
+- 461 tests total (18 todo + 443 landscape).
+
 ## 2026-07-13 — `{adj}` Injection in Echo Phrases
 
 ### What
