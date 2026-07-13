@@ -781,6 +781,20 @@ Working. All 393 tests pass (18 todo + 375 landscape).
 
 ## 2026-07-13
 
+### What was done (Session 73)
+- Added **`{adj}` to anomaly template 4** — changed `"In the {color} light of the {display}, {anomaly_lower}"` to `"In the {color} {adj} light of the {display}, {anomaly_lower}"` (e.g. "In the vivid crystal light of the forest, the gravity here feels wrong.")
+- Added `adj=adj` kwarg to the anomaly `_format_tmpl()` call — `adj` was already in scope (last per-sentence-pair adjective) but was not passed to anomaly templates, so the placeholder would have rendered as literal `{adj}` text
+- Anomaly template 4 was the last template in any slot that didn't reference `{adj}` — now all 20 templates (4 opening, 7 middle, 5 weather, 5 anomaly) that support word-category injection use `{adj}` where grammatically natural
+- Template-level change plus one kwarg addition — follows the same pattern as every previous template enrichment (Sessions 38–42, 47, 56–61, 67–69, 72): add a kwarg that existing templates silently ignore, update one template to use it
+- No seed-breaking change: no new `_pick()` calls, only the template string and format kwarg changed
+- Added 4 tests in `TestAnomalyAdj` class: placeholder presence, output validity, adjective appearance in anomaly output, determinism
+- Tests increased from 393 to 397 total (18 todo + 379 landscape)
+
+### Current status
+Working. All 397 tests pass (18 todo + 379 landscape).
+
+## 2026-07-13
+
 ### What was done (Session 72)
 - Added **`{adj}` to weather template 4** — changed `"{Weather} {adverb} in {color} light."` to `"{Weather} {adverb} in {color} {adj} light."` (e.g. "A gentle rain falls softly in vivid crystal light.")
 - Weather template 4 was the only weather template that didn't use `{adj}` — templates 0–3 received it in Session 69, leaving template 4 (`"in {color} light"`) as the last template without the per-sentence adjective

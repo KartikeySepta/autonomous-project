@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-13 — `{adj}` in Anomaly Template 4
+
+### What
+Added `{adj}` to `SENTENCE_TEMPLATES["anomaly"][4]`: changed `"In the {color} light of the {display}, {anomaly_lower}"` to `"In the {color} {adj} light of the {display}, {anomaly_lower}"` (e.g. "In the vivid crystal light of the forest, the gravity here feels wrong."). Added `adj=adj` kwarg to the anomaly `_format_tmpl()` call — `adj` was already in scope (last per-sentence-pair adjective from the detail loop) but was not passed to anomaly templates, so the placeholder would have rendered as literal `{adj}` text.
+
+### Why
+Every other template slot had complete `{adj}` coverage: all 4 opening templates (Sessions 38–41), all 7 middle templates (Sessions 38/40/41), and all 5 weather templates (Sessions 69/72). Anomaly templates were the last slot without `{adj}` anywhere — templates 0–3 had no natural insertion point, and template 4 (`"In the {color} light of the {display}"`) was the only one where `{adj}` fit naturally before "light". Adding `{adj}` completes adjective coverage across all 20 templates that support word-category injection, making the anomaly slot as descriptively rich as every other slot.
+
+### Tradeoffs
+- Template-level change plus one kwarg addition — follows the same established pattern as every previous template enrichment: add a kwarg that existing templates silently ignore, update one template to use it.
+- No seed-breaking change: no new `_pick()` calls, only the template string and format kwarg changed.
+- When `color_enabled=False`, `_format_tmpl` collapses `"in  crystal light"` → `"in crystal light"` — reads naturally without the color word.
+- `{adj}` placed between `{color}` and `light` creates a natural adjective-color stack: "in vivid crystal light" — same placement as weather template 4 (Session 72), which also uses `{color} {adj} light`.
+- 4 new tests, 397 total (18 todo + 379 landscape).
+
 ## 2026-07-13 — `{adj}` in Weather Template 4
 
 ### What

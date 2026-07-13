@@ -2828,5 +2828,33 @@ class TestWeatherAdj(unittest.TestCase):
         self.assertTrue(result.endswith("."))
 
 
+class TestAnomalyAdj(unittest.TestCase):
+    def test_anomaly_templates_use_adj_placeholder(self):
+        anomaly_tmpls = SENTENCE_TEMPLATES["anomaly"]
+        adj_tmpls = [t for t in anomaly_tmpls if "{adj}" in t]
+        self.assertGreaterEqual(len(adj_tmpls), 1,
+            "At least 1 anomaly template should reference {adj}")
+
+    def test_anomaly_adj_does_not_break_output(self):
+        for s in range(30):
+            result = generate_landscape(seed=s, anomaly_prob=1.0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_anomaly_adj_uses_known_adjective(self):
+        results = [generate_landscape(seed=s, anomaly_prob=1.0) for s in range(300)]
+        self.assertTrue(
+            any(a in r for r in results for a in ALL_ADJECTIVES),
+            "No known adjective appeared in anomaly text across 300 seeds",
+        )
+
+    def test_anomaly_adj_is_deterministic(self):
+        a = generate_landscape(seed=42, anomaly_prob=1.0)
+        b = generate_landscape(seed=42, anomaly_prob=1.0)
+        self.assertEqual(a, b,
+            "Anomaly with adj should be deterministic")
+
+
 if __name__ == "__main__":
     unittest.main()
