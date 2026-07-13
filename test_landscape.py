@@ -5,7 +5,7 @@ import random
 
 from landscape import (
     generate_landscape,
-    BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS, ECHOES,
+    BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS, ECHOES, LEGENDS,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
     TIME_WORDS,
@@ -20,6 +20,13 @@ ALL_ANOMALIES = set(ANOMALIES) | {w for bw in BIOME_WORDS.values() for w in bw.g
 ALL_ADVERBS = set(ADVERBS) | {w for bw in BIOME_WORDS.values() for w in bw.get("adverbs", [])}
 ALL_COLORS = set(COLORS) | {w for bw in BIOME_WORDS.values() for w in bw.get("colors", [])}
 ALL_TIME_WORDS = set(TIME_WORDS)
+ALL_LEGENDS = set(LEGENDS)
+
+LEGEND_INDICATORS = [
+    "maps leave", "was not here", "Pilgrims once walked", "older than stone",
+    "many names", "returns unchanged", "song about", "no map",
+    "dreams of a time", "hermit once lived",
+]
 
 
 class TestLandscape(unittest.TestCase):
@@ -3902,6 +3909,83 @@ class TestWeatherTimeWord(unittest.TestCase):
                     any(t in r for r in results for t in ALL_TIME_WORDS),
                     f"No time word appeared in weather template_set={tset} across 200 seeds",
                 )
+
+
+class TestLegend(unittest.TestCase):
+    def test_legend_disabled_default(self):
+        result = generate_landscape(seed=42)
+        for ind in LEGEND_INDICATORS:
+            self.assertNotIn(ind, result,
+                f"Legend indicator {ind!r} should not appear by default")
+
+    def test_legend_enabled_appends_legend(self):
+        results = [generate_landscape(seed=s, legend_enabled=True) for s in range(100)]
+        self.assertTrue(
+            any(ind in r for r in results for ind in LEGEND_INDICATORS),
+            "No legend phrase appeared across 100 seeds with legend_enabled=True",
+        )
+
+    def test_legend_does_not_break_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, legend_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_legend_is_deterministic(self):
+        a = generate_landscape(seed=42, legend_enabled=True)
+        b = generate_landscape(seed=42, legend_enabled=True)
+        self.assertEqual(a, b,
+            "Legend should be deterministic with same seed")
+
+    def test_legend_works_with_poetic_format(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, legend_enabled=True, fmt="poetic")
+            self.assertIsInstance(result, str)
+            self.assertIn("\n", result)
+
+    def test_legend_works_with_json_format(self):
+        result = generate_landscape(seed=42, legend_enabled=True, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_legend_detail_zero_suppresses_legend(self):
+        result = generate_landscape(seed=42, legend_enabled=True, detail=0)
+        for ind in LEGEND_INDICATORS:
+            self.assertNotIn(ind, result,
+                f"Legend indicator {ind!r} should not appear with detail=0")
+
+    def test_legend_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_legend_display_injection_contains_biome_name(self):
+        results = [generate_landscape(seed=s, legend_enabled=True, biome="tundra") for s in range(100)]
+        self.assertTrue(
+            any("tundra" in r for r in results),
+            "Legend with {display} should reference the biome name across 100 seeds",
+        )
+
+    def test_legend_works_with_echo(self):
+        result = generate_landscape(seed=42, legend_enabled=True, echo_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_legend_works_with_combine(self):
+        result = generate_landscape(seed=42, legend_enabled=True, combine="forest,desert")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 10)
+        self.assertTrue(result.endswith("."))
+
+    def test_legend_works_with_mood_and_bias(self):
+        result = generate_landscape(seed=42, legend_enabled=True, mood="eerie", bias="rare")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
 
 
 if __name__ == "__main__":

@@ -1,5 +1,25 @@
 # Decisions
 
+## 2026-07-13 — Folkloric Legends System (`--legend`)
+
+### What
+Added a `LEGENDS` word bank — 10 curated folkloric/historical phrases — and a `--legend` CLI flag (default: off) that appends one random legend to the generated landscape. Each legend references `{display}` (the biome name), so phrases feel grounded in the landscape context. Added `--describe-legends` for introspection (same pattern as `--describe-echoes`).
+
+### Why
+After 95 sessions of enriching vocabulary (adjectives, elements, nouns, verbs, weathers, anomalies, adverbs, colors, time words), templates (4 opening, 7 middle, 5 weather, 5 anomaly), moods (4 with blending), and atmospheric dimension (echoes — Session 78), the landscape generator had a rich palette for *describing what a place looks like and feels like* — but nothing that positioned the landscape in **cultural or historical time**. Echoes evoke a timeless, emotional presence ("The land remembers."). Legends evoke a specific cultural memory or folk knowledge ("The oldest maps leave the forest blank.") — the difference between *being in a place that remembers itself* and *being in a place that has been named, mapped, and mythologized by people*.
+
+This directly serves the GOAL.md directive to "build something genuinely novel or interesting." Adding cultural context — the idea that landscapes carry human stories, names, and warnings — is a distinct creative dimension from the existing atmospheric/emotional/visual systems. It makes each generated landscape feel like a place with a history, not just a description of a scene.
+
+### Tradeoffs
+- **10 curated phrases** — same size as the echo bank. Hand-written for quality and emotional resonance. Each phrase has a different cultural angle: blank maps (mystery), recent arrival (disorientation), pilgrim silence (reverence), buried things (age), forgotten names (loss), unchanged return (transformation), unsung songs (erasure), unknown maps (paradox), dreams before people (deep time), hermit's silence (solitude).
+- **Only `{display}` injection** — unlike echoes which have `{adj}`, `{adverb}`, `{element}`, `{color}`, and `{time_word}` injection, legends only use `{display}`. This is intentional: legends are folk sayings about a *place*, not about its visual qualities or atmospheric texture. Adding other word categories would make legends feel like descriptions rather than cultural artifacts. `{display}` is the only natural injection point.
+- **No count or probability** — unlike echoes (which have `--echo-count` and `--echo-prob`) and anomalies (which have `--anomaly-count` and `--anomaly-prob`), legends are a simpler on/off switch. One legend per landscape when `--legend` is used. This keeps scope small and follows the Session 78 `--echo` pattern (the initial echo implementation was also a simple on/off before echo-count and echo-prob were added in later sessions).
+- **No seed-breaking change**: `legend_enabled=False` by default, so all existing seed-based output is preserved. When enabled, one extra `rng.choice()` call is introduced after all other generation, preserving the random sequence of all existing features.
+- **`detail=0` suppresses legends** — same pattern as echoes and anomalies. The most minimal output mode remains purely about the opening sentence.
+- **Works orthogonally with all other features**: echoes can be enabled alongside legends (both append independently), all moods/biases/presets work, combine works (legend references the merged display name), and all output formats (prose, poetic, json) work.
+- **12 new tests, 545 total** (18 todo + 527 landscape), 83 subtests.
+- **Test count**: 545 total (18 todo + 527 landscape), 83 subtests.
+
 ## 2026-07-13 — `{time_word}` Injection in Weather Templates
 
 ### What

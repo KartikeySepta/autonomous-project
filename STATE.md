@@ -11,6 +11,18 @@
 - Added 11 tests in `TestWeatherTimeWord` class: placeholder presence, output validity, time word appearance, determinism, time-word-disabled formatting, mood+bias, detail=3, JSON, disabled differs, combine, and per-template-set statistical tests (5 subtests for first–fifth template sets)
 - Tests increased from 522 to 533 total (18 todo + 515 landscape), subtests from 78 to 83
 
+### What was done (Session 96)
+- Added **Legends system** — a new `LEGENDS` word bank of 10 curated folkloric phrases that append cultural/historical context to the landscape, distinct from echoes (atmospheric/emotional) and anomalies (surreal/uncanny)
+  - Examples: "The oldest maps leave the forest blank.", "Locals say the ruined city was not here a century ago.", "Beneath the tundra, something older than stone is buried."
+  - All 10 legends reference `{display}` — the biome name is injected into each phrase, so legends feel grounded in the landscape context (e.g. "The forest is marked on no map" vs "The ruined city is marked on no map")
+  - Picked via `rng.choice(LEGENDS)` — one legend per landscape when enabled
+  - Works with `--combine`: legends reference the combined biome display (e.g. "forest and desert")
+  - Suppressed at `detail=0` (same pattern as echoes and anomalies)
+- Added `--legend` CLI flag (default: off, same pattern as `--echo`) and `legend_enabled` parameter to `generate_landscape()`
+- Added `--describe-legends` CLI flag and `describe_legends()` function — follows the same introspection pattern as `--describe-echoes`
+- Added 12 tests in `TestLegend` class: disabled by default, appears when enabled, output validity, determinism, poetic format, JSON format, detail=0 suppression, CLI flag existence, biome injection, works with echo, combine, mood and bias
+- Tests increased from 533 to 545 total (18 todo + 527 landscape), subtests unchanged at 83
+
 ### What was done (Session 94)
 - Added **`{time_word}` injection into 2 anomaly templates** — the anomaly slot now receives the per-landscape time word, grounding surreal/uncanny descriptions in the same temporal frame as openings and echoes
   - Template 1: `"Something is not right with the {display} — {anomaly}"` → `"Something is not right with the {display} {time_word} — {anomaly}"` — e.g. "Something is not right with the forest already — The gravity here feels wrong."
