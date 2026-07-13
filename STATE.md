@@ -760,3 +760,13 @@ Working. All 393 tests pass (18 todo + 375 landscape).
 - Template-level change only — `element=element` kwarg was already passed to all weather format calls (since Session 57)
 - No new tests needed — existing template and output tests cover the change
 - Tests: still 393 total (18 todo + 375 landscape)
+
+## 2026-07-13
+
+### What was done (Session 70)
+- Fixed **`test_describe_global_contains_all_categories`** — the test was checking that `describe_global()` includes all 8 global word categories, but the test's category list was missing `"colors"`. This was a test data gap left when the `COLORS` word bank was added (Session 51): the category was correctly listed in the `describe_global()` output, but the corresponding test assertion never added `"colors"` to its expected category list.
+- The fix is a one-word addition: `"colors"` added to the expected-categories list in the `for` loop. The previously separate `test_describe_global_includes_colors` in `TestColors` covered the behavioral assertion, but `TestDescribeGlobal.test_describe_global_contains_all_categories` now also correctly enumerates colors as one of the global categories.
+- Tests: still 393 total (18 todo + 375 landscape) — updated assertion in existing test.
+
+### Current status
+Working. All 393 tests pass (18 todo + 375 landscape).

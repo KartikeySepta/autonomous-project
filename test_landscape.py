@@ -1882,7 +1882,7 @@ class TestDescribeGlobal(unittest.TestCase):
     def test_describe_global_contains_all_categories(self):
         from landscape import describe_global
         result = describe_global()
-        for cat in ["adjectives", "elements", "nouns", "verbs", "weathers", "anomalies", "adverbs"]:
+        for cat in ["adjectives", "elements", "nouns", "verbs", "weathers", "anomalies", "adverbs", "colors"]:
             self.assertIn(f"{cat} (", result,
                 f"Global description should contain category '{cat}'")
 
