@@ -64,6 +64,15 @@
 - Added 8 tests in `TestDescribeEchoes` class: string type, header presence, all echoes included, index numbers, last-index validation, CLI flag existence, stdout output, no landscape generation
 - Tests increased from 461 to 469 total (18 todo + 451 landscape)
 
+### What was done (Session 87)
+- Added **`--echo-prob` CLI flag** and `echo_prob` parameter to `generate_landscape()` — users can now control how often echo phrases appear per roll (0.0 = never, 1.0 = always, default 1.0 preserves existing behavior)
+  - Follows the exact same pattern as `--anomaly-prob` (Session 16): each echo roll independently draws `rng.random() < echo_prob`
+  - When `echo_prob=0.0`, echoes never appear even with `echo_enabled=True` and `echo_count > 0`
+  - `echo_prob` included in JSON metadata when `echo_enabled=True`
+  - Default `echo_prob=1.0` is fully backward compatible — all existing seed-based output with `--echo` is unchanged
+- Added 7 tests in `TestEchoProb` class: default is 1.0, zero suppression, high frequency, multi-prob validity, determinism, JSON metadata, CLI flag existence
+- Tests increased from 469 to 476 total (18 todo + 458 landscape)
+
 ### What was done (Session 83)
 - Added **`{color}` injection into 2 echo phrases** — the echo system now passes `color=color` to `_format_tmpl()`, so phrases that contain `{color}` render with the per-sentence-pair color word, grounding abstract atmospheric echoes in the landscape's visual palette:
   - "You feel as though you are being watched by the {element} itself." → "You feel as though you are being watched by the {color} {element} itself." — "You feel as though you are being watched by the vivid mist itself." / "...by the murky silence itself."

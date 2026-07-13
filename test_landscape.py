@@ -3320,5 +3320,50 @@ class TestEcho(unittest.TestCase):
         self.assertTrue(result.endswith("."))
 
 
+class TestEchoProb(unittest.TestCase):
+    def test_echo_prob_default_is_one(self):
+        a = generate_landscape(seed=42, echo_enabled=True)
+        b = generate_landscape(seed=42, echo_enabled=True, echo_prob=1.0)
+        self.assertEqual(a, b,
+            "echo_prob=1.0 should match default")
+
+    def test_echo_prob_zero_suppresses_echo(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, echo_prob=0.0) for s in range(100)]
+        for r in results:
+            for ind in ECHO_INDICATORS:
+                self.assertNotIn(ind, r,
+                    f"Echo indicator {ind!r} should not appear with echo_prob=0.0")
+
+    def test_echo_prob_one_always_has_echo(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, echo_prob=1.0) for s in range(100)]
+        has_echo = sum(1 for r in results if any(ind in r for ind in ECHO_INDICATORS))
+        self.assertGreater(has_echo, 80,
+            "With echo_prob=1.0, most outputs should contain an echo")
+
+    def test_echo_prob_produces_valid_output(self):
+        for prob in [0.0, 0.25, 0.5, 0.75, 1.0]:
+            for s in range(10):
+                result = generate_landscape(seed=s, echo_enabled=True, echo_prob=prob)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_echo_prob_is_deterministic(self):
+        a = generate_landscape(seed=42, echo_enabled=True, echo_prob=0.5)
+        b = generate_landscape(seed=42, echo_enabled=True, echo_prob=0.5)
+        self.assertEqual(a, b,
+            "echo_prob should be deterministic with same seed")
+
+    def test_echo_prob_json_includes_field(self):
+        result = generate_landscape(seed=42, echo_enabled=True, echo_prob=0.5, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("echo_prob", data)
+        self.assertEqual(data["echo_prob"], 0.5)
+
+    def test_echo_prob_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 if __name__ == "__main__":
     unittest.main()

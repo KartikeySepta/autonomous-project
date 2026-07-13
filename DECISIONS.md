@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-13 — Configurable Echo Probability (`--echo-prob`)
+
+### What
+Added `--echo-prob` CLI flag and `echo_prob` parameter to `generate_landscape()` (default: 1.0). Users can now control how often echo phrases appear per roll, with 0.0 suppressing echoes entirely and 1.0 making them always appear. Each of the `echo_count` rolls independently draws `rng.random() < echo_prob`.
+
+### Why
+The echo system (Sessions 78–86) had `echo_enabled` (on/off) and `echo_count` (how many rolls), but every roll always produced an echo phrase. This meant echoes were all-or-nothing: either every landscape had exactly `echo_count` echoes, or none did. Following the same pattern as `anomaly_prob` (Session 16), adding `echo_prob` gives users fine-grained control over echo frequency — useful for atmospheric variety where echoes feel more organic when they appear unpredictably rather than every time.
+
+### Tradeoffs
+- **Default 1.0 preserves backward compatibility**: all existing seed-based output with `--echo` is unchanged.
+- **Per-roll probability**: each of `echo_count` attempts rolls independently against `echo_prob`, same pattern as `anomaly_prob` with `anomaly_count`. So `--echo-count 3 --echo-prob 0.5` yields ~1–2 echoes on average, with randomness in how many appear.
+- **echo_prob=0.0** is an alternative suppression mechanism to not using `--echo`. Both are valid; `echo_prob=0.0` is more explicit about intent when a script conditionally enables echoes with different probabilities.
+- **Included in JSON metadata** when `echo_enabled=True`, alongside `echo_count`.
+- **7 new tests, 476 total** (18 todo + 458 landscape).
+
 ## 2026-07-13 — Echo Introspection (`--describe-echoes`)
 
 ### What
