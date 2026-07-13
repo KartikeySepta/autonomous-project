@@ -26,6 +26,8 @@ LEGEND_INDICATORS = [
     "maps leave", "was not here", "Pilgrims once walked", "older than stone",
     "many names", "returns unchanged", "song about", "no map",
     "dreams of a time", "hermit once lived",
+    "remembers those who built", "seen from far away", "placed by hand",
+    "sounds like a name", "well in the",
 ]
 
 

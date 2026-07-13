@@ -2,6 +2,17 @@
 
 ## 2026-07-13
 
+### What was done (Session 98)
+- **Expanded LEGENDS bank from 10 to 15 phrases** — 5 new folkloric/historical phrases added, doubling the variety of cultural/folkloric context appended to landscapes:
+  - "The {display} remembers those who built it, even if no one else does." — memory of makers, hidden history
+  - "They say the {display} can be seen from far away, but no path leads to it." — unreachable, mythic distance
+  - "Every stone in the {display} was placed by hand, long before anyone lived here." — ancient construction, deep past
+  - "When the wind moves through the {display}, it sounds like a name you almost recognize." — uncanny familiarity, near-memory
+  - "There is a well in the {display} that no one has ever reached the bottom of." — bottomless mystery, unknowable depth
+- New phrases only use `{display}` injection (same as existing 10) — no changes to generation logic, tests, or CLI
+- Updated `LEGEND_INDICATORS` in test module with 5 new invariant substrings for the new phrases
+- Tests unchanged: still 549 total (18 todo + 531 landscape), 93 subtests
+
 ### What was done (Session 97)
 - Added **legends to all 5 presets** — `legend_enabled=True` in `nightfall`, `pastoral`, `sublime`, `wasteland`, and `dreamscape`, so every preset now includes a folkloric legend by default. Previously, legends were only accessible via the explicit `--legend` flag.
 - Added **`legend_enabled` preset gating in `main()`** — follows the exact same pattern as `echo_enabled`: if the preset includes `legend_enabled` and `--legend` was not explicitly passed (still `False`), the preset's value is applied.

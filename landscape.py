@@ -77,6 +77,11 @@ LEGENDS = [
     "The {display} is marked on no map, yet everyone knows of it.",
     "They say the {display} dreams of a time before people.",
     "A hermit once lived in the {display} — they found only silence.",
+    "The {display} remembers those who built it, even if no one else does.",
+    "They say the {display} can be seen from far away, but no path leads to it.",
+    "Every stone in the {display} was placed by hand, long before anyone lived here.",
+    "When the wind moves through the {display}, it sounds like a name you almost recognize.",
+    "There is a well in the {display} that no one has ever reached the bottom of.",
 ]
 
 ADVERBS = [

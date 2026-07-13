@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-13 — Expanded Legend Bank (15 phrases)
+
+### What
+Added 5 new curated folkloric/historical phrases to the LEGENDS bank, expanding it from 10 to 15 phrases. The new phrases cover additional cultural/mythic themes: hidden history, unreachable places, ancient construction, uncanny familiarity, and bottomless mystery. Added corresponding invariant substrings to `LEGEND_INDICATORS` in the test module.
+
+### Why
+The original 10 legend phrases (Session 96) covered a good range of folkloric tropes but left several natural thematic gaps: construction by unknown hands, unreachable destinations, and names-on-the-wind synesthesia. Adding 5 new phrases (50% increase) meaningfully improves output variety without touching generation logic, tests, or CLI — a purely data-driven improvement. With legends now enabled in all 5 presets (Session 97), the cost of a small legend bank is that preset users see the same 10 phrases repeating more often. Expanding to 15 reduces repetition while keeping the same high quality bar.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, `_format_tmpl()`, CLI flags, or any other logic. Only the LEGENDS list and LEGEND_INDICATORS set were updated.
+- **Single-`{display}` injection preserved**: All new phrases contain exactly one `{display}` reference, matching the existing convention. No other word categories (adj, adverb, color, element, time_word) are injected — consistent with the original design decision that legends are folk sayings about a place, not descriptions of its qualities.
+- **No seed-breaking change**: Adding phrases to `LEGENDS` doesn't change the random sequence — `rng.choice(LEGENDS)` picks from a larger pool but the choice function's behavior is unchanged. Only the rendered output content changes (new phrases appear in the selection pool).
+- **5 new indicators, no new tests**: Existing legend tests (8 tests + 2 preset subtests) cover all behaviors generically — they don't assert on specific phrase counts, so no test changes were needed beyond adding indicator strings.
+- **Test count unchanged**: 549 tests (18 todo + 531 landscape), 93 subtests.
+
 ## 2026-07-13 — Legends in Presets and JSON Metadata
 
 ### What
