@@ -339,7 +339,7 @@ SENTENCE_TEMPLATES = {
     ],
     "anomaly": [
         "{anomaly}",
-        "Something is not right — {anomaly}",
+        "Something is not right with the {display} — {anomaly}",
         "A strange {color} detail catches your eye {adverb}: {anomaly_lower}",
         "There is a quiet wrongness here {adverb}: {anomaly_lower}",
         "In the {color} {adj} light of the {display}, {anomaly_lower}",

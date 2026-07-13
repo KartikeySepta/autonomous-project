@@ -1,5 +1,22 @@
 # Decisions
 
+## 2026-07-13 — `{display}` in Anomaly Template 1
+
+### What
+Added `{display}` to `SENTENCE_TEMPLATES["anomaly"][1]`: changed `"Something is not right — {anomaly}"` to `"Something is not right with the {display} — {anomaly}"` (e.g. "Something is not right with the forest — The gravity here feels wrong.").
+
+### Why
+Anomaly template 1 was one of only two templates (alongside template 0, the raw `{anomaly}` form) that didn't reference any injected word category. Templates 2, 3, and 4 all use at least one of `{color}`, `{adverb}`, `{adj}`, or `{display}` to ground the anomaly in the landscape context, but template 1 remained a bare — `{anomaly}` pair. Adding `{display}` is the least invasive enrichment — it connects the "Something is not right" framing to the biome without adding clutter or changing the punchy style.
+
+### Tradeoffs
+- Template-level change only — `display=display` was already passed to the anomaly format call (since Session 71/73), so no code changes were needed
+- No seed-breaking change: no new `_pick()` calls, only the template string changed
+- `"Something is not right with the {display}"` reads naturally with all biome names: singular ("the forest", "the desert"), compound ("the ruined city", "the sky islands"), and multi-word ("the mountain range", "the volcanic field")
+- When the biome has an article ("the ruined city"), the template reads as `"Something is not right with the the ruined city"` — no, wait: `display` is `"ruined city"`, not `"the ruined city"`. The template says `"the {display}"`, so it renders as `"the ruined city"` and `"the mountain range"` — correct.
+- Template 0 (`{anomaly}`) is intentionally left bare — it's the direct, unadorned anomaly form which is a useful stylistic option
+- No new tests — existing anomaly template and output tests cover the change
+- 400 tests total (unchanged)
+
 ## 2026-07-13 — `{color}` in Em-Dash Opening Template
 
 ### What

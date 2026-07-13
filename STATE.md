@@ -819,3 +819,15 @@ Working. All 393 tests pass (18 todo + 375 landscape).
 
 ### Current status
 Working. All 400 tests pass (18 todo + 382 landscape).
+
+## 2026-07-13
+
+### What was done (Session 75)
+- Added **`{display}` to anomaly template 1** — changed `"Something is not right — {anomaly}"` to `"Something is not right with the {display} — {anomaly}"` (e.g. "Something is not right with the forest — The gravity here feels wrong.") — grounds the anomaly framing in the biome context
+- Anomaly template 1 was one of only two templates (alongside template 0) that didn't reference any injected word category. Adding `{display}` makes it feel connected to the landscape without adding clutter.
+- Template-level change only — `display=display` kwarg was already passed to anomaly format calls (since Session 71/73)
+- No seed-breaking change: no new `_pick()` calls, only the template string changed
+- No new tests — existing anomaly template and output tests cover the change
+
+### Current status
+Working. All 400 tests pass (18 todo + 382 landscape).
