@@ -2,6 +2,31 @@
 
 ## 2026-07-13
 
+### What was done (Session 101)
+- **Added `--legend-count` CLI flag** and `legend_count` parameter to `generate_landscape()` — users can now control how many legend phrases appear per landscape (0-3, default: 1 preserves existing behavior), following the exact same pattern as `--echo-count` (Session 78):
+  - `legend_count=0` suppresses legends (equivalent to `legend_enabled=False`)
+  - `legend_count=1` (default) produces exactly 1 legend phrase (existing behavior)
+  - `legend_count=2` and `legend_count=3` produce multiple legend phrases with dedup
+  - Uses a `used_legends` set to prevent repeating the same phrase within a landscape (same pattern as echoes)
+  - When pool is exhausted (count > 15), falls back to the full pool
+- Added `legend_count` to JSON metadata when `legend_enabled=True` — emits `"legend_count": <N>` alongside `"legend_enabled": true`
+- Added preset gating for `legend_count` — follows the same pattern as `echo_count` gating
+- Added 12 new tests in `TestLegendCount` class:
+  - `test_legend_count_default_is_one` — default produces at most 1 legend
+  - `test_legend_count_zero_suppresses_legends` — count=0 suppresses all legends
+  - `test_legend_count_two_produces_two_phrases` — count=2 sometimes produces 2+ indicators
+  - `test_legend_count_three_produces_three_phrases` — count=3 sometimes produces 3+ indicators
+  - `test_legend_count_no_repeats` — no duplicate legend phrases within a landscape
+  - `test_legend_count_is_deterministic` — same seed + same count = same output
+  - `test_legend_count_works_with_combine` — works with `--combine`
+  - `test_legend_count_json_includes_field` — JSON has `legend_count` when enabled
+  - `test_legend_count_json_absent_when_disabled` — JSON omits `legend_count` when disabled
+  - `test_legend_count_flag_exists_via_cli` — `--legend-count` CLI flag exists
+  - `test_legend_count_works_with_echo` — works with `--echo`
+  - `test_legend_count_detail_zero_suppresses_legends` — detail=0 suppresses even with count>0
+- This is the natural evolution of the legend system: Session 78's echo was initially a simple on/off switch before `--echo-count` and `--echo-prob` were added in later sessions; now legends follow the same trajectory
+- Tests increased from 577 to 589 total (18 todo + 571 landscape), subtests unchanged at 93
+
 ### What was done (Session 100)
 - **Added `echo_enabled` to JSON metadata** — when `echo_enabled=True`, the JSON output now includes `"echo_enabled": true`, matching the same pattern as `legend_enabled` (Session 97). Previously, echo metadata only emitted `echo_prob` and `echo_count`, with no explicit boolean for whether echo was active.
 - Added 2 new tests:

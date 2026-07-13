@@ -1,5 +1,24 @@
 # Decisions
 
+## 2026-07-13 — Configurable Legend Count (`--legend-count`)
+
+### What
+Added `--legend-count` CLI flag (choices 0-3, default: 1) and `legend_count` parameter to `generate_landscape()`. When legend is enabled with count > 1, multiple legend phrases are appended per landscape with dedup (no repeated phrases). Added `legend_count` to JSON metadata and preset gating.
+
+### Why
+The legend system (Session 96) was introduced as a simple on/off switch — exactly the same pattern as echoes (Session 78), which were also initially on/off before `--echo-count` (later Session 78) and `--echo-prob` (Session 87) were added. The Session 96 DECISIONS.md explicitly noted: "No count or probability — unlike echoes [...] keeps scope small and follows the Session 78 `--echo` pattern (the initial echo implementation was also a simple on/off before echo-count and echo-prob were added in later sessions)."
+
+After 5 sessions of legends existing as a on/off feature, adding `--legend-count` is the natural evolution. With 15 legend phrases now in the bank (Session 98), count=2 or 3 produces richer landscapes without repetition (dedup ensures no repeats within a landscape). This gives users the same fine-grained control over legend density that `--echo-count` provides for echoes.
+
+Users who want the existing behavior are unaffected — `--legend` alone still produces exactly 1 legend phrase. The new `--legend-count` is purely additive.
+
+### Tradeoffs
+- **`legend_count=0`** is an alternative suppression mechanism to not using `--legend`. Both are valid; count=0 is more explicit when a script conditionally enables legends with variable counts.
+- **Dedup with fallback**: Same pattern as echoes — a `used_legends` set prevents repeats within a landscape. With 15 legends and max count=3, dedup never exhausts the pool in practice, but the fallback (full pool) is implemented for correctness.
+- **No `legend_prob`**: Unlike echoes (which have `echo_prob`), legends don't have a probability parameter. Each count always produces a legend when enabled. This follows the same trajectory as echoes (count came first, prob came later in Session 87). If users want variable legend density, `--legend-count` with dedup already provides variety.
+- **Seed-breaking**: Adding `rng.choice()` calls for each legend count shifts the random sequence. With `legend_count=1` (default), this adds one extra `rng.choice()` call compared to before (since the old code used `rng.choice(LEGENDS)` and the new code wraps it in a loop). This means existing seed-based output with `--legend` will differ — the same seed produces the same legend phrase, but placed at a different position in the random sequence. This is the same seed-breaking pattern as every other feature addition and is acceptable.
+- **12 new tests**, 589 total (18 todo + 571 landscape), 93 subtests.
+
 ## 2026-07-13 — `echo_enabled` in JSON Metadata
 
 ### What

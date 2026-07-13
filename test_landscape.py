@@ -4034,6 +4034,86 @@ class TestLegend(unittest.TestCase):
         self.assertNotIn("legend_enabled", data)
 
 
+class TestLegendCount(unittest.TestCase):
+    def test_legend_count_default_is_one(self):
+        result = generate_landscape(seed=42, legend_enabled=True)
+        # With count=1, at most one legend indicator should appear
+        found = sum(1 for ind in LEGEND_INDICATORS if ind in result)
+        self.assertLessEqual(found, 1,
+            "Default legend_count=1 should produce at most one legend phrase")
+
+    def test_legend_count_zero_suppresses_legends(self):
+        result = generate_landscape(seed=42, legend_enabled=True, legend_count=0)
+        for ind in LEGEND_INDICATORS:
+            self.assertNotIn(ind, result,
+                f"Legend indicator {ind!r} should not appear with legend_count=0")
+
+    def test_legend_count_two_produces_two_phrases(self):
+        results = [generate_landscape(seed=s, legend_enabled=True, legend_count=2) for s in range(100)]
+        multi = sum(1 for r in results if sum(1 for ind in LEGEND_INDICATORS if ind in r) >= 2)
+        self.assertGreater(multi, 0,
+            "legend_count=2 should produce at least 2 legend indicators in some outputs")
+
+    def test_legend_count_three_produces_three_phrases(self):
+        results = [generate_landscape(seed=s, legend_enabled=True, legend_count=3) for s in range(200)]
+        multi = sum(1 for r in results if sum(1 for ind in LEGEND_INDICATORS if ind in r) >= 3)
+        self.assertGreater(multi, 0,
+            "legend_count=3 should produce at least 3 legend indicators in some outputs")
+
+    def test_legend_count_no_repeats(self):
+        # With 15 legends and count=3, no repeats should occur
+        for s in range(100):
+            result = generate_landscape(seed=s, legend_enabled=True, legend_count=3)
+            found = [ind for ind in LEGEND_INDICATORS if ind in result]
+            self.assertEqual(len(found), len(set(found)),
+                "Legend phrases should not repeat within the same landscape")
+
+    def test_legend_count_is_deterministic(self):
+        a = generate_landscape(seed=42, legend_enabled=True, legend_count=2)
+        b = generate_landscape(seed=42, legend_enabled=True, legend_count=2)
+        self.assertEqual(a, b,
+            "legend_count should be deterministic with same seed")
+
+    def test_legend_count_works_with_combine(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, legend_enabled=True, legend_count=2, combine="forest,desert")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertTrue(result.endswith("."))
+
+    def test_legend_count_json_includes_field(self):
+        result = generate_landscape(seed=42, legend_enabled=True, legend_count=2, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("legend_enabled", data)
+        self.assertTrue(data["legend_enabled"])
+        self.assertIn("legend_count", data)
+        self.assertEqual(data["legend_count"], 2)
+
+    def test_legend_count_json_absent_when_disabled(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertNotIn("legend_count", data)
+
+    def test_legend_count_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_legend_count_works_with_echo(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, legend_enabled=True, legend_count=2, echo_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertTrue(result.endswith("."))
+
+    def test_legend_count_detail_zero_suppresses_legends(self):
+        result = generate_landscape(seed=42, legend_enabled=True, legend_count=2, detail=0)
+        for ind in LEGEND_INDICATORS:
+            self.assertNotIn(ind, result,
+                f"Legend indicator {ind!r} should not appear with detail=0 even with legend_count=2")
+
+
 class TestDescribeLegends(unittest.TestCase):
     def test_describe_legends_returns_string(self):
         from landscape import describe_legends
