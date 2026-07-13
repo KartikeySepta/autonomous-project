@@ -57,6 +57,13 @@
 - Added 1 new test: `test_weather_color_appears_with_middle_disabled` in `TestColors`
 - Tests increased from 460 to 461 total (18 todo + 443 landscape)
 
+### What was done (Session 86)
+- Added **`--describe-echoes` CLI flag** and `describe_echoes()` function — users can now inspect all 10 echo phrases with their index numbers, completing the introspection feature set alongside `--describe-biome`, `--describe-mood`, `--describe-global`, and `--describe-templates`
+  - Pure function returns a string with all echo phrases listed by index, matching the same pattern as `describe_templates()`
+  - CLI exits immediately after printing — no landscape generation occurs when `--describe-echoes` is used
+- Added 8 tests in `TestDescribeEchoes` class: string type, header presence, all echoes included, index numbers, last-index validation, CLI flag existence, stdout output, no landscape generation
+- Tests increased from 461 to 469 total (18 todo + 451 landscape)
+
 ### What was done (Session 83)
 - Added **`{color}` injection into 2 echo phrases** — the echo system now passes `color=color` to `_format_tmpl()`, so phrases that contain `{color}` render with the per-sentence-pair color word, grounding abstract atmospheric echoes in the landscape's visual palette:
   - "You feel as though you are being watched by the {element} itself." → "You feel as though you are being watched by the {color} {element} itself." — "You feel as though you are being watched by the vivid mist itself." / "...by the murky silence itself."

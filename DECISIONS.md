@@ -1,5 +1,22 @@
 # Decisions
 
+## 2026-07-13 — Echo Introspection (`--describe-echoes`)
+
+### What
+Added `--describe-echoes` CLI flag and `describe_echoes()` function. When invoked, it prints all 10 echo phrases with their index numbers and exits without generating a landscape.
+
+### Why
+The introspection suite now includes `--describe-biome` (Session 43), `--describe-mood` (Session 44), `--describe-global` (Session 45), and `--describe-templates` (Session 64) — covering biome word banks, mood word banks, global word pools, and sentence templates. But the echo system (10 curated atmospheric phrases from Session 78) had no introspection, even though echoes are now the second most injected template-like system after sentence templates (they receive `{display}`, `{adverb}`, `{element}`, `{color}`, and `{adj}` injection). Users who want to see what echo phrases are available had no discoverable way to do so without reading `landscape.py` directly.
+
+Adding `--describe-echoes` closes this gap, making the echo system fully introspectable from the CLI and completing the introspection feature set.
+
+### Tradeoffs
+- `describe_echoes()` is a pure function that returns a string — same pattern as `describe_biome()`, `describe_mood()`, `describe_global()`, and `describe_templates()`. Callers can reuse it programmatically, tests assert on the returned string without capturing stdout.
+- `--describe-echoes` is a boolean flag (no argument) — unlike `--describe-biome` and `--describe-mood` which accept an optional name, the echo pool has no sub-selection (there's only one set of 10 phrases). Same pattern as `--describe-global` and `--describe-templates`, which are also single-set introspection.
+- Follows the same output format as `describe_templates()`: `=== echo phrases ===\n  [0] <phrase>\n  [1] <phrase>\n...`
+- No landscape generation when `--describe-echoes` is used — exits immediately after printing. Same pattern as all other describe flags.
+- 8 new tests, 469 total (18 todo + 451 landscape).
+
 ## 2026-07-13 — Fix Color Pick When Middle Disabled
 
 ### What

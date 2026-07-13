@@ -327,6 +327,14 @@ def describe_templates():
     return "\n".join(lines)
 
 
+def describe_echoes():
+    """Return a string describing all available echo phrases."""
+    lines = ["=== echo phrases ==="]
+    for i, echo in enumerate(ECHOES):
+        lines.append(f"  [{i}] {echo}")
+    return "\n".join(lines)
+
+
 SENTENCE_TEMPLATES = {
     "opening": [
         "A vast {adj} {display} of {color} {element} stretches {adverb} before you.",
@@ -800,6 +808,10 @@ def main():
         help="Show all sentence templates per slot with their index numbers",
     )
     parser.add_argument(
+        "--describe-echoes", action="store_true",
+        help="Show all available echo phrases with their index numbers",
+    )
+    parser.add_argument(
         "--show-biome", action="store_true",
         help="Reveal the biome name in the output",
     )
@@ -988,6 +1000,9 @@ def main():
         return
     if args.describe_templates:
         print(describe_templates())
+        return
+    if args.describe_echoes:
+        print(describe_echoes())
         return
 
     lines = []

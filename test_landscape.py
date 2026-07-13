@@ -2916,6 +2916,83 @@ class TestAnomalyElement(unittest.TestCase):
             "Anomaly with element should be deterministic")
 
 
+class TestDescribeEchoes(unittest.TestCase):
+    def test_describe_echoes_returns_string(self):
+        from landscape import describe_echoes
+        result = describe_echoes()
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_describe_echoes_contains_header(self):
+        from landscape import describe_echoes
+        result = describe_echoes()
+        self.assertIn("echo phrases", result)
+
+    def test_describe_echoes_contains_all_echoes(self):
+        from landscape import describe_echoes, ECHOES
+        result = describe_echoes()
+        for echo in ECHOES:
+            self.assertIn(echo, result,
+                f"Echo description should contain echo: {echo!r}")
+
+    def test_describe_echoes_contains_index_numbers(self):
+        from landscape import describe_echoes
+        result = describe_echoes()
+        self.assertIn("[0]", result, "Echo description should contain index [0]")
+        self.assertIn("[1]", result, "Echo description should contain index [1]")
+
+    def test_describe_echoes_shows_all_echoes(self):
+        from landscape import describe_echoes, ECHOES
+        result = describe_echoes()
+        count = len(ECHOES)
+        self.assertIn(f"=== echo phrases ===", result)
+        self.assertIn(f"[{count - 1}]", result,
+            f"Echo description should contain the last index [{count - 1}]")
+
+    def test_describe_echoes_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_echoes_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-echoes"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("echo phrases", output)
+        self.assertIn("[0]", output)
+        self.assertIn("[1]", output)
+
+    def test_describe_echoes_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-echoes", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-echoes is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-echoes is used")
+
+
 # Unique substrings that appear in rendered echo output regardless of biome injection
 ECHO_INDICATORS = [
     "remembers", "has been waiting", "has changed in",
