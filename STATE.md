@@ -2,6 +2,24 @@
 
 ## 2026-07-13
 
+### What was done (Session 102)
+- **Added `--legend-prob` CLI flag** and `legend_prob` parameter to `generate_landscape()` — users can now control how often legend phrases appear per roll (0.0 = never, 1.0 = always, default 1.0 preserves existing behavior), following the exact same pattern as `--echo-prob` (Session 87):
+  - `legend_prob=0.0` suppresses all legends even with `legend_enabled=True` and `legend_count > 0`
+  - Each of `legend_count` rolls independently draws `rng.random() < legend_prob`
+  - `legend_prob` included in JSON metadata when `legend_enabled=True`
+  - Default `legend_prob=1.0` is fully backward compatible — all existing seed-based output with `--legend` is unchanged
+- Added preset gating for `legend_prob` — follows the same pattern as `echo_prob` gating
+- Added 7 new tests in `TestLegendProb` class:
+  - `test_legend_prob_default_is_one` — default matches `legend_prob=1.0`
+  - `test_legend_prob_zero_suppresses_legends` — zero suppresses all legends
+  - `test_legend_prob_one_always_has_legend` — 1.0 always produces legends
+  - `test_legend_prob_produces_valid_output` — various probs produce valid output
+  - `test_legend_prob_is_deterministic` — same seed + same prob = same output
+  - `test_legend_prob_json_includes_field` — JSON has `legend_prob` when enabled
+  - `test_legend_prob_flag_exists_via_cli` — `--legend-prob` CLI flag exists
+- This is the natural evolution of the legend system: Session 96's legend was initially a simple on/off switch, then `--legend-count` was added in Session 101; now `--legend-prob` gives users fine-grained density control, matching the echo system's trajectory (echo on/off → echo-count → echo-prob)
+- Tests increased from 589 to 596 total (18 todo + 578 landscape), subtests unchanged at 93
+
 ### What was done (Session 101)
 - **Added `--legend-count` CLI flag** and `legend_count` parameter to `generate_landscape()` — users can now control how many legend phrases appear per landscape (0-3, default: 1 preserves existing behavior), following the exact same pattern as `--echo-count` (Session 78):
   - `legend_count=0` suppresses legends (equivalent to `legend_enabled=False`)

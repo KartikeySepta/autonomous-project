@@ -732,7 +732,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
     return chosen
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, middle_enabled=True, color_enabled=True, element_enabled=True, anomaly_enabled=True, echo_enabled=False, echo_count=1, echo_prob=1.0, time_word_enabled=True, legend_enabled=False, legend_count=1):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, middle_enabled=True, color_enabled=True, element_enabled=True, anomaly_enabled=True, echo_enabled=False, echo_count=1, echo_prob=1.0, time_word_enabled=True, legend_enabled=False, legend_count=1, legend_prob=1.0):
     if seed is not None:
         rng = random.Random(seed)
     elif show_seed:
@@ -834,10 +834,11 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
     if legend_enabled and detail >= 1 and legend_count > 0:
         used_legends = set()
         for _ in range(legend_count):
-            pool = [l for l in LEGENDS if l not in used_legends] or LEGENDS
-            legend = rng.choice(pool)
-            used_legends.add(legend)
-            parts.append(_format_tmpl(legend, display=display))
+            if rng.random() < legend_prob:
+                pool = [l for l in LEGENDS if l not in used_legends] or LEGENDS
+                legend = rng.choice(pool)
+                used_legends.add(legend)
+                parts.append(_format_tmpl(legend, display=display))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)
@@ -864,6 +865,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         if legend_enabled:
             data["legend_enabled"] = True
             data["legend_count"] = legend_count
+            data["legend_prob"] = legend_prob
         if bias_overrides:
             data["bias_overrides"] = bias_overrides
         if mood_weight_overrides:
@@ -1073,6 +1075,10 @@ def main():
         help="Number of legend phrases per landscape (0-3, default: 1, requires --legend)",
     )
     parser.add_argument(
+        "--legend-prob", type=float, default=1.0,
+        help="Probability of a legend appearing per roll (0.0 to 1.0, default: 1.0)",
+    )
+    parser.add_argument(
         "--describe-legends", action="store_true",
         help="Show all available legend phrases with their index numbers",
     )
@@ -1156,6 +1162,8 @@ def main():
             args.legend = preset["legend_enabled"]
         if "legend_count" in preset and args.legend_count == 1:
             args.legend_count = preset["legend_count"]
+        if "legend_prob" in preset and args.legend_prob == 1.0:
+            args.legend_prob = preset["legend_prob"]
         if "color_enabled" in preset and args.no_color is False:
             args.no_color = not preset["color_enabled"]
 
@@ -1184,7 +1192,7 @@ def main():
     lines = []
     for i in range(args.count):
         effective_seed = args.seed + i if args.seed is not None else None
-        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, middle_enabled=not args.no_middle, color_enabled=not args.no_color, element_enabled=not args.no_element, anomaly_enabled=not args.no_anomaly, echo_enabled=args.echo, echo_count=args.echo_count, echo_prob=args.echo_prob, time_word_enabled=not args.no_time_word, legend_enabled=args.legend, legend_count=args.legend_count))
+        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, middle_enabled=not args.no_middle, color_enabled=not args.no_color, element_enabled=not args.no_element, anomaly_enabled=not args.no_anomaly, echo_enabled=args.echo, echo_count=args.echo_count, echo_prob=args.echo_prob, time_word_enabled=not args.no_time_word, legend_enabled=args.legend, legend_count=args.legend_count, legend_prob=args.legend_prob))
     if args.format == "json" and len(lines) > 1:
         output = "[" + ",\n".join(lines) + "]\n"
     else:

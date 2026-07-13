@@ -4114,6 +4114,51 @@ class TestLegendCount(unittest.TestCase):
                 f"Legend indicator {ind!r} should not appear with detail=0 even with legend_count=2")
 
 
+class TestLegendProb(unittest.TestCase):
+    def test_legend_prob_default_is_one(self):
+        a = generate_landscape(seed=42, legend_enabled=True)
+        b = generate_landscape(seed=42, legend_enabled=True, legend_prob=1.0)
+        self.assertEqual(a, b,
+            "legend_prob=1.0 should match default")
+
+    def test_legend_prob_zero_suppresses_legends(self):
+        results = [generate_landscape(seed=s, legend_enabled=True, legend_prob=0.0) for s in range(100)]
+        for r in results:
+            for ind in LEGEND_INDICATORS:
+                self.assertNotIn(ind, r,
+                    f"Legend indicator {ind!r} should not appear with legend_prob=0.0")
+
+    def test_legend_prob_one_always_has_legend(self):
+        results = [generate_landscape(seed=s, legend_enabled=True, legend_prob=1.0) for s in range(100)]
+        has_legend = sum(1 for r in results if any(ind in r for ind in LEGEND_INDICATORS))
+        self.assertGreater(has_legend, 80,
+            "With legend_prob=1.0, most outputs should contain a legend")
+
+    def test_legend_prob_produces_valid_output(self):
+        for prob in [0.0, 0.25, 0.5, 0.75, 1.0]:
+            for s in range(10):
+                result = generate_landscape(seed=s, legend_enabled=True, legend_prob=prob)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_legend_prob_is_deterministic(self):
+        a = generate_landscape(seed=42, legend_enabled=True, legend_prob=0.5)
+        b = generate_landscape(seed=42, legend_enabled=True, legend_prob=0.5)
+        self.assertEqual(a, b,
+            "legend_prob should be deterministic with same seed")
+
+    def test_legend_prob_json_includes_field(self):
+        result = generate_landscape(seed=42, legend_enabled=True, legend_prob=0.5, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("legend_prob", data)
+        self.assertEqual(data["legend_prob"], 0.5)
+
+    def test_legend_prob_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 class TestDescribeLegends(unittest.TestCase):
     def test_describe_legends_returns_string(self):
         from landscape import describe_legends

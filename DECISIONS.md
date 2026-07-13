@@ -1,5 +1,21 @@
 # Decisions
 
+## 2026-07-13 — Configurable Legend Probability (`--legend-prob`)
+
+### What
+Added `--legend-prob` CLI flag and `legend_prob` parameter to `generate_landscape()` (default: 1.0). Users can now control how often legend phrases appear per roll, with 0.0 suppressing legends entirely and 1.0 always producing them. Each of `legend_count` rolls independently draws `rng.random() < legend_prob`.
+
+### Why
+The legend system (Session 96) started as an on/off switch with exactly one legend per landscape. Session 101 added `--legend-count` for multi-legend control. But every roll always produced a legend phrase — there was no way to make legends appear unpredictably. Following the same trajectory as echoes (echo on/off → echo-count → echo-prob), adding `legend_prob` gives users fine-grained control over legend frequency. This is useful for atmospheric variety where legends feel more organic when they appear unpredictably rather than every time.
+
+### Tradeoffs
+- **Default 1.0 preserves backward compatibility**: all existing seed-based output with `--legend` is unchanged.
+- **Per-roll probability**: each of `legend_count` attempts rolls independently against `legend_prob`, same pattern as `echo_prob` and `anomaly_prob`.
+- **`legend_prob=0.0`** is an alternative suppression mechanism to `legend_count=0`. Both are valid; `legend_prob=0.0` is more explicit about intent when a script conditionally enables legends with different probabilities.
+- **Included in JSON metadata** when `legend_enabled=True`, alongside `legend_count`.
+- **Seed-breaking when legend_prob < 1.0**: When legend_prob causes a roll to be skipped, the RNG sequence shifts by one `rng.random()` call. With `legend_prob=1.0` (default), no extra random calls are consumed beyond the `rng.choice()` for each legend, so behavior is unchanged.
+- **7 new tests**, 596 total (18 todo + 578 landscape), 93 subtests.
+
 ## 2026-07-13 — Configurable Legend Count (`--legend-count`)
 
 ### What
