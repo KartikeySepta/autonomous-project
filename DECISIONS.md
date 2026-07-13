@@ -1,5 +1,19 @@
 # Decisions
 
+## 2026-07-13 — `{time_word}` Expanded to All 4 Opening Templates
+
+### What
+Extended the `{time_word}` injection from opening template 0 to templates 1, 2, and 3. Now all 4 opening templates carry a temporal word that positions the scene in narrative time — whether the landscape "comes into view {adverb} {time_word}" (template 1), "lies {adverb} ahead {time_word}" (template 2), or "stretches {adverb} before you {time_word}" (template 3).
+
+### Why
+Session 89 added time words as an explicit "thin edge of the wedge" — only template 0 was modified, with the decision note stating "if the feature proves useful, it can be expanded to other templates in future sessions." After one session of the feature existing, expanding it to the remaining 3 opening templates is the natural next step: it completes the temporal-injection coverage across the opening slot with zero code changes (time_word was already picked and threaded through all format calls), making every opening description temporally textured regardless of which template is randomly selected.
+
+### Tradeoffs
+- **Template-level change only**: No code changes to `generate_landscape()` or any other function — `time_word` was already picked per-landscape and passed as a kwarg to the opening format call since Session 89. Only the template strings themselves changed.
+- **3 new tests**: statistical tests verify that each of the 3 expanded templates produces time words in output (100 seeds each with forced `template_set`).
+- **Seed-breaking**: Adding `{time_word}` to the template strings doesn't change the random sequence (no new `_pick()` calls), but the rendered output now has an extra word appended to templates 1–3, so existing seed-based output that uses those templates differs. Since no seed-based output has been published and this is a content-improvement change, this is acceptable.
+- **481 tests total** (18 todo + 463 landscape), 72 subtests.
+
 ## 2026-07-13 — Temporal Texture Words (`{time_word}`)
 
 ### What

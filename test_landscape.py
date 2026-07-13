@@ -3527,6 +3527,27 @@ class TestTimeWords(unittest.TestCase):
         for tw in TIME_WORDS:
             self.assertIn(tw, result)
 
+    def test_time_word_appears_in_second_opening(self):
+        results = [generate_landscape(seed=s, biome="forest", template_set="second") for s in range(100)]
+        self.assertTrue(
+            any(t in r for r in results for t in ALL_TIME_WORDS),
+            "No time word appeared in second opening (template_set=second) across 100 seeds",
+        )
+
+    def test_time_word_appears_in_third_opening(self):
+        results = [generate_landscape(seed=s, biome="forest", template_set="third") for s in range(100)]
+        self.assertTrue(
+            any(t in r for r in results for t in ALL_TIME_WORDS),
+            "No time word appeared in third opening (template_set=third) across 100 seeds",
+        )
+
+    def test_time_word_appears_in_fourth_opening(self):
+        results = [generate_landscape(seed=s, biome="forest", template_set="fourth") for s in range(100)]
+        self.assertTrue(
+            any(t in r for r in results for t in ALL_TIME_WORDS),
+            "No time word appeared in fourth opening (template_set=fourth) across 100 seeds",
+        )
+
     def test_time_word_works_with_all_biomes(self):
         for biome in ["forest", "desert", "tundra", "ruined city", "sky islands", "fungal grove"]:
             with self.subTest(biome=biome):

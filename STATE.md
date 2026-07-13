@@ -2,7 +2,18 @@
 
 ## 2026-07-13
 
+### What was done (Session 90)
+- Expanded **`{time_word}` to opening templates 1, 2, and 3** — the temporal injection that was only in template 0 (`"...before you {time_word}."`) now applies to all 4 opening templates:
+  - Template 1 (`Before you,...comes into view`): `"...comes into view {adverb} {time_word}."`
+  - Template 2 (`The...lies ahead`): `"...lies {adverb} ahead {time_word}."`
+  - Template 3 (`{Element} —...stretches before you`): `"...stretches {adverb} before you {time_word}."`
+- No code changes needed — `time_word` was already picked once per landscape and passed to all format calls; only the template strings changed
+- This fulfills the explicit note from Session 89's DECISIONS.md: "if the feature proves useful, it can be expanded to other templates in future sessions"
+- Added 3 new tests in `TestTimeWords`: `test_time_word_appears_in_second_opening`, `test_time_word_appears_in_third_opening`, `test_time_word_appears_in_fourth_opening`
+- Tests increased from 478 to 481 total (18 todo + 463 landscape), subtests unchanged at 72
+
 ### What was done (Session 89)
+- Added **`{time_word}` temporal injection in opening template 0** — a small `TIME_WORDS` bank (6 words: already, still, yet, now, once, always) picked once per landscape via `rng.choice()` and injected into opening template 0 as `"...before you {time_word}."` — e.g. "A vast crystal forest of vivid mist stretches silently before you already." / "...before you still." / "...before you now."
 - Added **`{time_word}` temporal injection in opening template 0** — a small `TIME_WORDS` bank (6 words: already, still, yet, now, once, always) picked once per landscape via `rng.choice()` and injected into opening template 0 as `"...before you {time_word}."` — e.g. "A vast crystal forest of vivid mist stretches silently before you already." / "...before you still." / "...before you now."
 - Time words add **narrative temporal texture** — positioning the scene as something already present, still ongoing, or yet to fully arrive — filling a gap in the vocabulary system that had adjectives (quality), adverbs (manner), colors (visual), elements (sensory), moods (emotional), and echoes (atmospheric) but nothing for temporal framing
 - Picked via `rng.choice()` (not `_pick()`) — intentionally outside the weighted-selection/dedup/mood/bias system, keeping it simple and ensuring it never conflicts with other word categories
