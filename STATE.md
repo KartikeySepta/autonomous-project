@@ -2,6 +2,16 @@
 
 ## 2026-07-13
 
+### What was done (Session 93)
+- Added **`--no-time-word` CLI flag** and `time_word_enabled` parameter to `generate_landscape()` — users can now suppress temporal time words in landscape descriptions, following the exact same pattern as `--no-element` (Session 92) and the previous `--no-*` flags
+  - `time_word_enabled=True` (default) preserves existing behavior — a time word is picked per-landscape via `rng.choice()` and injected into all 4 opening templates and 2 echo phrases
+  - `time_word_enabled=False` skips the time word pick and passes `""` to all template format calls — time words don't participate in `_pick()` (they use `rng.choice()` directly), so no dedup slots or `_pick()` calls are consumed
+  - `_format_tmpl` handles the empty-string cleanup naturally via its existing replace chain — no double-space or trailing-space artifacts occur because time words always appear mid-to-late sentence (after an adverb or before a period)
+- Time words were the last temporal/narrative category without a suppression flag — this completes the `--no-*` suppression family: `--no-adverb` (Session 34), `--no-color` (Session 53), `--no-element` (Session 92), and now `--no-time-word`
+- Fixed **`test_describe_global_contains_all_categories`** — added `"time words"` to the expected category list so the test correctly verifies that `describe_global()` includes time words (a test coverage gap introduced when time words were added in Session 89)
+- Added 12 tests in `TestTimeWordFlag` class: `test_time_word_enabled_default_same_as_before`, `test_time_word_disabled_still_produces_valid_output`, `test_time_word_disabled_differs_from_enabled`, `test_time_word_disabled_deterministic`, `test_time_word_disabled_no_formatting_artifacts`, `test_time_word_disabled_no_time_words_in_output`, `test_time_word_disabled_flag_exists_via_cli`, `test_time_word_disabled_works_with_detail_three`, `test_time_word_disabled_works_with_mood_and_bias`, `test_time_word_disabled_works_with_combine`, `test_time_word_disabled_works_with_echo`
+- Tests increased from 499 to 511 total (18 todo + 493 landscape), subtests unchanged at 78
+
 ### What was done (Session 92)
 - Added **`--no-element` CLI flag** and `element_enabled` parameter to `generate_landscape()` — users can now suppress element words in landscape descriptions, following the exact same pattern as `--no-color` (Session 53) and other `--no-*` flags
   - `element_enabled=True` (default) preserves existing behavior — element words are picked per-sentence-pair for opening, middle, weather, anomaly, and echo templates

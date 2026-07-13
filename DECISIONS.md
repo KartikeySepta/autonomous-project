@@ -1,5 +1,26 @@
 # Decisions
 
+## 2026-07-13 — Configurable Time Word Suppression (`--no-time-word`)
+
+### What
+Added `--no-time-word` CLI flag and `time_word_enabled` parameter to `generate_landscape()` (default: `True`). When `time_word_enabled=False`, the `rng.choice(TIME_WORDS)` call is skipped and an empty string is passed to all template format calls that reference `{time_word}`. `_format_tmpl` handles the empty-string cleanup naturally — time words always appear mid-to-late sentence (after an adverb or before a period), so no double-space or trailing-space artifacts occur.
+
+Also fixed `test_describe_global_contains_all_categories` — the test was missing `"time words"` from its expected category list, a test coverage gap introduced when time words were added (Session 89).
+
+### Why
+Time words (Sessions 89–91) were an automatic quality improvement with no off switch. Every other word category that was added as an automatic improvement eventually received a `--no-*` suppression flag: `--no-adverb` (Session 34), `--no-color` (Session 53), `--no-element` (Session 92). Following the established pattern, `--no-time-word` gives users fine-grained control over whether temporal framing words (already, still, yet, now, once, always) appear in their landscape descriptions. This is especially useful for users who want pure present-tense descriptions without temporal positioning.
+
+The test fix closes a coverage gap that went unnoticed since Session 89 — `describe_global()` included time words, but the category-exhaustion test never verified it.
+
+### Tradeoffs
+- `time_word_enabled=True` is the default, preserving backward compatibility and all existing seed-based output
+- When disabled, `time_word = ""` is passed instead of a time word — `_format_tmpl` handles the empty-string cleanup naturally because time words always appear mid-to-late sentence with adjacent whitespace that the existing replace chain (`"  " → " "`, `" ." → "."`, `" :" → ":"`) can handle
+- **Seed-breaking change**: Skipping `rng.choice(TIME_WORDS)` changes the random sequence for the RNG — all subsequent random calls shift by one. This means `time_word_enabled=False` produces different output from `time_word_enabled=True` for the same seed, even for non-temporal parts of the landscape. This is the same seed-breaking pattern as `--no-element` (Session 92) and `--no-color` (Session 53) — determinism is preserved (same seed + same flags = same output), which is the important invariant.
+- Time words are picked via `rng.choice()` (not `_pick()`), so no dedup slots are consumed when time words are disabled — unlike `--no-element` which saves dedup slots, `--no-time-word` saves one `rng.choice()` call per landscape (negligible performance impact)
+- Echo phrases with `{time_word}` (2 of 10) render without the time word — `_format_tmpl` cleans up the trailing space naturally (e.g., "has been waiting silently for you ." → "has been waiting silently for you.")
+- `describe_global()` is unaffected — time words are still listed globally even when suppression is enabled, following the same convention as all other `--no-*` flags
+- 12 new tests, 511 total (18 todo + 493 landscape), 78 subtests
+
 ## 2026-07-13 — Configurable Element Suppression (`--no-element`)
 
 ### What

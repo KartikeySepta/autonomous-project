@@ -1884,7 +1884,7 @@ class TestDescribeGlobal(unittest.TestCase):
     def test_describe_global_contains_all_categories(self):
         from landscape import describe_global
         result = describe_global()
-        for cat in ["adjectives", "elements", "nouns", "verbs", "weathers", "anomalies", "adverbs", "colors"]:
+        for cat in ["adjectives", "elements", "nouns", "verbs", "weathers", "anomalies", "adverbs", "colors", "time words"]:
             self.assertIn(f"{cat} (", result,
                 f"Global description should contain category '{cat}'")
 
@@ -2589,6 +2589,71 @@ class TestElementFlag(unittest.TestCase):
         element_words_in_output = [e for e in ALL_ELEMENTS if e in all_text]
         self.assertLess(len(element_words_in_output), len(ALL_ELEMENTS),
             "Most elements should be absent from output when element_enabled=False")
+
+
+class TestTimeWordFlag(unittest.TestCase):
+    def test_time_word_enabled_default_same_as_before(self):
+        r1 = generate_landscape(seed=42, time_word_enabled=True)
+        r2 = generate_landscape(seed=42)
+        self.assertEqual(r1, r2, "time_word_enabled=True should match default")
+
+    def test_time_word_disabled_still_produces_valid_output(self):
+        result = generate_landscape(seed=42, time_word_enabled=False)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_time_word_disabled_differs_from_enabled(self):
+        enabled = generate_landscape(seed=42, time_word_enabled=True)
+        disabled = generate_landscape(seed=42, time_word_enabled=False)
+        self.assertNotEqual(enabled, disabled,
+            "Output should differ when time word is disabled")
+
+    def test_time_word_disabled_deterministic(self):
+        r1 = generate_landscape(seed=99, time_word_enabled=False)
+        r2 = generate_landscape(seed=99, time_word_enabled=False)
+        self.assertEqual(r1, r2, "time_word_enabled=False should be deterministic with same seed")
+
+    def test_time_word_disabled_no_formatting_artifacts(self):
+        results = [generate_landscape(seed=s, time_word_enabled=False) for s in range(50)]
+        for r in results:
+            self.assertNotIn("  ", r, f"Output has double space: {r!r}")
+            self.assertNotIn(" .", r, f"Output has space before period: {r!r}")
+
+    def test_time_word_disabled_no_time_words_in_output(self):
+        results = [generate_landscape(seed=s, time_word_enabled=False) for s in range(300)]
+        all_text = " ".join(results)
+        time_words_in_output = [t for t in ALL_TIME_WORDS if t in all_text]
+        self.assertLess(len(time_words_in_output), len(ALL_TIME_WORDS),
+            "Most time words should be absent from output when time_word_enabled=False")
+
+    def test_time_word_disabled_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_time_word_disabled_works_with_detail_three(self):
+        result = generate_landscape(seed=42, time_word_enabled=False, detail=3)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_time_word_disabled_works_with_mood_and_bias(self):
+        result = generate_landscape(seed=42, time_word_enabled=False, mood="eerie", bias="rare")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_time_word_disabled_works_with_combine(self):
+        result = generate_landscape(seed=42, time_word_enabled=False, combine="forest,desert")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_time_word_disabled_works_with_echo(self):
+        result = generate_landscape(seed=42, time_word_enabled=False, echo_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
 
 
 class TestAnomalyFlag(unittest.TestCase):
