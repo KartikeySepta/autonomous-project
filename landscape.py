@@ -331,10 +331,10 @@ SENTENCE_TEMPLATES = {
         "The {color} light of {element} {verb_conjugated} {adverb}.",
     ],
     "weather": [
-        "{Weather} {adverb} through the {adj} {element}.",
-        "The air tells its own story: {weather} {adverb} through the {adj} {element}.",
-        "{Weather}, as if the {adj} {display} itself breathes {element} {adverb}.",
-        "Through the {adj} {element}, {weather} {adverb}.",
+        "{Weather} {adverb} through the {color} {adj} {element}.",
+        "The air tells its own story: {weather} {adverb} through the {color} {adj} {element}.",
+        "{Weather}, as if the {adj} {display} itself breathes {color} {element} {adverb}.",
+        "Through the {color} {adj} {element}, {weather} {adverb}.",
         "{Weather} {adverb} in {color} {adj} light.",
     ],
     "anomaly": [

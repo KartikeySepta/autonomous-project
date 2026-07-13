@@ -1,5 +1,25 @@
 # Decisions
 
+## 2026-07-13 — `{color}` in All Weather Templates
+
+### What
+Added `{color}` to all 4 weather templates that were missing it: templates 0, 1, 2, and 3. Now all 5 weather templates use `{color}`:
+- Template 0: `"... through the {color} {adj} {element}."`
+- Template 1: `"... through the {color} {adj} {element}."`
+- Template 2: `"... breathes {color} {element} {adverb}."`
+- Template 3: `"Through the {color} {adj} {element}, ..."`
+- Template 4: `"... in {color} {adj} light."` (unchanged from Session 58)
+
+### Why
+Session 58 added `{color}` to weather via template 4 (`"{Weather} {adverb} in {color} light."`), but templates 0–3 had no color reference. This meant 80% of weather templates didn't use the per-sentence-pair color word, even though colors were always picked and available as kwargs. Adding `{color}` to the remaining templates makes every weather sentence visually evocative regardless of which template is randomly selected — "a gentle rain falls softly through the vivid crystal mist" is richer than "a gentle rain falls softly through the crystal mist."
+
+### Tradeoffs
+- Template-level change only — `color=color` was already passed to all weather format calls since Session 58
+- No seed-breaking change: no new `_pick()` calls, only template strings changed
+- When `color_enabled=False`, `_format_tmpl` collapses the double-space between `{color}` and `{adj}` naturally — "through the  crystal mist" → "through the crystal mist" reads cleanly without the color word
+- Now all 5 weather templates, all 7 middle templates, all 4 opening templates, and 2 of 5 anomaly templates use `{color}` — complete coverage across weather and middle slots
+- 10 new tests, 414 total (18 todo + 396 landscape)
+
 ## 2026-07-13 — `{display}` in Anomaly Template 1
 
 ### What

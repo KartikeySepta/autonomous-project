@@ -2315,8 +2315,14 @@ class TestColors(unittest.TestCase):
     def test_weather_color_templates_use_color_placeholder(self):
         weather_templates = SENTENCE_TEMPLATES["weather"]
         color_tmpls = [t for t in weather_templates if "{color}" in t]
-        self.assertGreaterEqual(len(color_tmpls), 1,
-            "At least 1 weather template should reference {color}")
+        self.assertGreaterEqual(len(color_tmpls), 5,
+            "All 5 weather templates should reference {color}")
+
+    def test_weather_color_in_all_templates(self):
+        weather_templates = SENTENCE_TEMPLATES["weather"]
+        for i, tmpl in enumerate(weather_templates):
+            self.assertIn("{color}", tmpl,
+                f"Weather template {i} should contain {{color}}: {tmpl!r}")
 
     def test_weather_color_works_with_no_adverb(self):
         for s in range(10):

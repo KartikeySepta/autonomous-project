@@ -830,7 +830,20 @@ Working. All 400 tests pass (18 todo + 382 landscape).
 - No new tests — existing anomaly template and output tests cover the change
 
 ### Current status
-Working. All 404 tests pass (18 todo + 386 landscape).
+Working. All 414 tests pass (18 todo + 396 landscape).
+
+## 2026-07-13
+
+### What was done (Session 77)
+- Added **`{color}` to all 4 remaining weather templates** — weather templates 0, 1, 2, and 3 now reference the per-sentence-pair color word, completing color coverage across all 5 weather templates
+  - Template 0: `"{Weather} {adverb} through the {color} {adj} {element}."` — "A gentle rain falls softly through the vivid crystal mist."
+  - Template 1: `"The air tells its own story: {weather} {adverb} through the {color} {adj} {element}."`
+  - Template 2: `"{Weather}, as if the {adj} {display} itself breathes {color} {element} {adverb}."` — "... itself breathes vivid mist softly."
+  - Template 3: `"Through the {color} {adj} {element}, {weather} {adverb}."` — "Through the vivid crystal mist, a gentle rain falls softly."
+- Template-level change only — `color=color` was already passed to the weather format call (since Session 58), so no code changes were needed
+- Updated `test_weather_color_templates_use_color_placeholder` from `>= 1` to `>= 5`
+- Added `test_weather_color_in_all_templates` — explicitly asserts every weather template contains `{color}`
+- Tests increased from 404 to 414 total (18 todo + 396 landscape)
 
 ## 2026-07-13
 
