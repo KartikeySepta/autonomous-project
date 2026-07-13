@@ -1,5 +1,23 @@
 # Decisions
 
+## 2026-07-13 — `{adverb}` Injection in Echo Phrases
+
+### What
+Added `{adverb}` placeholder support to 5 of 10 ECHOES phrases — the echo system now passes `adverb=adverb` to `_format_tmpl()`, so phrases that contain `{adverb}` render with the per-landscape adverb (last-picked from the detail loop, or the opening adverb for detail=0). The 5 remaining phrases without `{adverb}` are unchanged.
+
+### Why
+The echo system (Session 80) gained `{display}` injection for biome awareness, but all echo phrases remained adverb-free — they read with the same fixed cadence regardless of the landscape's adverbial flavor (slow/silent/gentle/relentless). Adding `{adverb}` to 5 of 10 phrases makes echoes feel connected to the landscape's movement and texture: "The tundra remembers silently." evokes a different feeling than "The tundra remembers patiently."
+
+This follows the same pattern as every previous template enrichment: add a kwarg that existing templates silently ignore, update 5 templates to use it, let `_format_tmpl` handle disabled-feature cleanup. The Session 80 DECISIONS.md entry explicitly noted: "A future enhancement could inject {display} or {element} into echo templates" — this expands the injection system to include adverbs, which were not originally considered for echo injection.
+
+### Tradeoffs
+- **5 of 10 phrases modified** — deliberately not all. Some echoes are more powerful without an adverb ("Nothing in the forest has changed in a thousand years." would lose its starkness with an adverb). The split mirrors the `{display}` injection approach (also 5 of 10).
+- **Phrase 6 loses its hardcoded "gently"**: The phrase "There is a sense of deep time here, pressing down gently." becomes "There is a sense of deep time here, pressing down {adverb}." — the hardcoded "gently" is replaced by whatever adverb was most recently picked. This is a meaningful improvement (the pressure's quality now varies per landscape: "pressing down relentlessly" vs "pressing down softly") but is a minor seed-breaking change for that specific phrase when echo is enabled.
+- **Not seed-breaking for existing seed-based output without `--echo`**: Echo is off by default (`echo_enabled=False`), so existing seed-based output is completely unaffected. When `--echo` is active, the random sequence is unchanged (no new `_pick()` calls), only the rendering of chosen phrases differs.
+- **`adverb_enabled=False` composes cleanly**: When `adverb=""`, `_format_tmpl` collapses "remembers ." → "remembers.", "linger  in" → "linger in", etc. No formatting artifacts.
+- **ECHO_INDICATORS updated**: Two invariant substrings changed — `"remembers."` → `"remembers"` (period no longer adjacent to the word) and `"linger in the air"` → `"echoes of the past"` (adverb separates "linger" from "in the air"). Other indicators are unaffected.
+- **3 new tests, 441 total** (18 todo + 423 landscape).
+
 ## 2026-07-13 — `{display}` Injection in Echo Phrases
 
 ### What

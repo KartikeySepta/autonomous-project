@@ -2911,8 +2911,8 @@ class TestAnomalyElement(unittest.TestCase):
 
 # Unique substrings that appear in rendered echo output regardless of biome injection
 ECHO_INDICATORS = [
-    "remembers.", "has been waiting", "has changed in",
-    "linger in the air", "being watched", "deep time",
+    "remembers", "has been waiting", "has changed in",
+    "echoes of the past", "being watched", "deep time",
     "outside of time", "stones remember", "important happened",
     "older than any sound",
 ]
@@ -3005,6 +3005,28 @@ class TestEcho(unittest.TestCase):
                 self.assertIsInstance(result, str)
                 self.assertGreater(len(result), 0)
                 self.assertTrue(result.endswith("."))
+
+    def test_echo_adverb_injection_contains_adverb(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, detail=2) for s in range(200)]
+        self.assertTrue(
+            any(a in r for r in results for a in ALL_ADVERBS),
+            "Echo with {adverb} should contain adverb words across 200 seeds",
+        )
+
+    def test_echo_adverb_respects_no_adverb(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, echo_enabled=True, adverb_enabled=False)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertNotIn("  ", result, f"Output has double space: {result!r}")
+            self.assertNotIn(" .", result, f"Output has space before period: {result!r}")
+            self.assertTrue(result.endswith("."))
+
+    def test_echo_adverb_is_deterministic(self):
+        a = generate_landscape(seed=42, echo_enabled=True, biome="tundra")
+        b = generate_landscape(seed=42, echo_enabled=True, biome="tundra")
+        self.assertEqual(a, b,
+            "Echo with {adverb} should be deterministic with same seed")
 
 
 class TestEchoCount(unittest.TestCase):

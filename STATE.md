@@ -15,8 +15,23 @@
 - Added 6 new tests in `TestEcho`: `test_echo_display_injection_contains_biome_name`, `test_echo_display_respects_combine`, `test_echo_display_without_display_phrase_still_works`, `test_echo_display_is_deterministic`, `test_echo_display_works_with_all_biomes` (with 5 subtests)
 - Tests increased from 433 to 438 total (18 todo + 420 landscape)
 
+### What was done (Session 81)
+- Added **`{adverb}` injection into 5 echo phrases** — echo phrases now pick up the per-landscape adverb, making them feel connected to the landscape's adverbial flavor instead of reading as fixed text:
+  - "The {display} remembers." → "The {display} remembers {adverb}." — "The tundra remembers silently."
+  - "The {display} has been waiting for you." → "The {display} has been waiting {adverb} for you." — "The tundra has been waiting silently for you."
+  - "The echoes of the past linger in the air of the {display}." → "The echoes of the past linger {adverb} in the air of the {display}." — "...linger softly in the air of the desert."
+  - "There is a sense of deep time here, pressing down gently." → "There is a sense of deep time here, pressing down {adverb}." — "...pressing down slowly." (replaces hardcoded "gently" with the shared adverb pool)
+  - "The stones remember what the wind has forgotten." → "The stones remember {adverb} what the wind has forgotten." — "The stones remember patiently what the wind has forgotten."
+- Added `adverb=adverb` kwarg to the echo `_format_tmpl()` call — `adverb` was already in scope (last per-sentence-pair adverb or opening adverb for detail=0) but was not passed to echo templates
+- Echo phrases without `{adverb}` (remaining 5) are unaffected — `_format_tmpl` silently ignores extra kwargs
+- 5 remaining echoes without `{adverb}` kept as-is for structural variety
+- `_format_tmpl` handles `adverb_enabled=False` cleanup naturally — "remembers ." → "remembers.", "linger  in" → "linger in", etc.
+- Updated `ECHO_INDICATORS` invariant substrings: `"remembers."` → `"remembers"` (since the period is no longer adjacent), `"linger in the air"` → `"echoes of the past"` (since adverb separates "linger" from "in")
+- Added 3 new tests in `TestEcho`: `test_echo_adverb_injection_contains_adverb`, `test_echo_adverb_respects_no_adverb`, `test_echo_adverb_is_deterministic`
+- Tests increased from 438 to 441 total (18 todo + 423 landscape)
+
 ### Current status
-Working. All 438 tests pass (18 todo + 420 landscape).
+Working. All 441 tests pass (18 todo + 423 landscape).
 
 ## 2026-07-12
 
