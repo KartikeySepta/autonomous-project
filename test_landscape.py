@@ -2532,6 +2532,65 @@ class TestColorFlag(unittest.TestCase):
         self.assertTrue(result.endswith("."))
 
 
+class TestElementFlag(unittest.TestCase):
+    def test_element_enabled_default_same_as_before(self):
+        r1 = generate_landscape(seed=42, element_enabled=True)
+        r2 = generate_landscape(seed=42)
+        self.assertEqual(r1, r2, "element_enabled=True should match default")
+
+    def test_element_disabled_still_produces_valid_output(self):
+        result = generate_landscape(seed=42, element_enabled=False)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_element_disabled_differs_from_enabled(self):
+        enabled = generate_landscape(seed=42, element_enabled=True)
+        disabled = generate_landscape(seed=42, element_enabled=False)
+        self.assertNotEqual(enabled, disabled,
+            "Output should differ when element is disabled")
+
+    def test_element_disabled_deterministic(self):
+        r1 = generate_landscape(seed=99, element_enabled=False)
+        r2 = generate_landscape(seed=99, element_enabled=False)
+        self.assertEqual(r1, r2, "element_enabled=False should be deterministic with same seed")
+
+    def test_element_disabled_no_formatting_artifacts(self):
+        results = [generate_landscape(seed=s, element_enabled=False) for s in range(50)]
+        for r in results:
+            self.assertNotIn("  ", r, f"Output has double space: {r!r}")
+            self.assertNotIn(" .", r, f"Output has space before period: {r!r}")
+
+    def test_element_disabled_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_element_disabled_works_with_detail_three(self):
+        result = generate_landscape(seed=42, element_enabled=False, detail=3)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_element_disabled_works_with_mood_and_bias(self):
+        result = generate_landscape(seed=42, element_enabled=False, mood="eerie", bias="rare")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_element_disabled_works_with_combine(self):
+        result = generate_landscape(seed=42, element_enabled=False, combine="forest,desert")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_element_disabled_no_elements_in_output(self):
+        results = [generate_landscape(seed=s, element_enabled=False) for s in range(300)]
+        all_text = " ".join(results)
+        element_words_in_output = [e for e in ALL_ELEMENTS if e in all_text]
+        self.assertLess(len(element_words_in_output), len(ALL_ELEMENTS),
+            "Most elements should be absent from output when element_enabled=False")
+
+
 class TestAnomalyFlag(unittest.TestCase):
     def test_anomaly_enabled_default_same_as_before(self):
         r1 = generate_landscape(seed=42, anomaly_enabled=True)

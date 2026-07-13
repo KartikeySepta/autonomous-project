@@ -2,6 +2,16 @@
 
 ## 2026-07-13
 
+### What was done (Session 92)
+- Added **`--no-element` CLI flag** and `element_enabled` parameter to `generate_landscape()` — users can now suppress element words in landscape descriptions, following the exact same pattern as `--no-color` (Session 53) and other `--no-*` flags
+  - `element_enabled=True` (default) preserves existing behavior — element words are picked per-sentence-pair for opening, middle, weather, anomaly, and echo templates
+  - `element_enabled=False` skips the element pick entirely and passes `""` for both `{element}` and `{Element}` (capitalized) to all template format calls
+  - `_format_tmpl` handles the resulting double-space and leading-space artifacts via `.strip()` and the existing replace chain — `"of  "` → `"of "`, `"  silently"` → `"silently"`, etc.
+- Added **`.strip()` to `_format_tmpl()`** — a general quality improvement that removes leading/trailing whitespace from formatted template output. This is a no-op for all existing templates (none produce leading/trailing spaces in normal operation), but prevents formatting artifacts when `{Element}` (sentence-initial in opening template 3 and middle templates 0/3) evaluates to an empty string due to `element_enabled=False`
+- Elements were the last major word category (alongside adverbs, colors) without an off switch — this completes the `--no-*` suppression flag set for word categories: `--no-adverb` (Session 34), `--no-color` (Session 53), and now `--no-element`
+- Added 10 tests in `TestElementFlag` class: `test_element_enabled_default_same_as_before`, `test_element_disabled_still_produces_valid_output`, `test_element_disabled_differs_from_enabled`, `test_element_disabled_deterministic`, `test_element_disabled_no_formatting_artifacts`, `test_element_disabled_flag_exists_via_cli`, `test_element_disabled_works_with_detail_three`, `test_element_disabled_works_with_mood_and_bias`, `test_element_disabled_works_with_combine`, `test_element_disabled_no_elements_in_output`
+- Tests increased from 489 to 499 total (18 todo + 481 landscape), subtests unchanged at 78
+
 ### What was done (Session 91)
 - Added **`{time_word}` temporal injection into 2 echo phrases** — the echo system now passes `time_word=time_word` to `_format_tmpl()`, so phrases that contain `{time_word}` render with the per-landscape time word, grounding atmospheric echoes in the landscape's temporal frame
   - Echo 1: `"The {display} has been waiting {adverb} for you {time_word}."` — "The forest has been waiting silently for you always."

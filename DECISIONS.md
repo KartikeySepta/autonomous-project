@@ -1,5 +1,22 @@
 # Decisions
 
+## 2026-07-13 — Configurable Element Suppression (`--no-element`)
+
+### What
+Added `--no-element` CLI flag and `element_enabled` parameter to `generate_landscape()` (default: `True`). When `element_enabled=False`, the element word pick is skipped entirely and an empty string is passed to all template format calls (both `{element}` and `{Element}`). Added `.strip()` to `_format_tmpl()` to handle leading-space artifacts from empty `{Element}` in sentence-initial positions (opening template 3, middle templates 0/3).
+
+### Why
+Elements were the last major word category (alongside adverbs and colors) without an off switch. The project had `--no-adverb` (Session 34), `--no-color` (Session 53), `--no-weather` (Session 46), `--no-middle` (Session 48), and `--no-anomaly` (Session 54) — but no way to suppress the element words that appear in all 4 opening templates, 7 middle templates, 5 weather templates, 2 anomaly templates, and 2 echo phrases. Adding `--no-element` completes the `--no-*` suppression family for word categories.
+
+### Tradeoffs
+- `element_enabled=True` is the default, preserving backward compatibility and all existing seed-based output
+- When disabled, element picks are skipped entirely — saves 1 `_pick()` before the opening and 1 per detail iteration (plus the dedup slot), making output slightly more efficient
+- `.strip()` was added to `_format_tmpl()` as a general quality improvement — it's a no-op for all existing templates (none produce leading/trailing spaces in normal operation) but prevents formatting artifacts when `{Element}` evaluates to empty. This is safe because no template has intentional leading/trailing whitespace.
+- Templates with `"of {color} {element}"` pattern render as `"of {color}"` when element is disabled (and `"of "` when both color and element are disabled) — `_format_tmpl` handles the double-space cleanup. The result reads as a slightly truncated phrase (e.g. "A vast crystal forest of vivid stretches silently before you.") — this is an acceptable tradeoff for an explicit opt-in suppression flag.
+- Echo phrases with `{element}` (2 of 10) render without element words — `_format_tmpl` cleans up spacing artifacts naturally
+- Does not affect any preset — all presets use the default `element_enabled=True`
+- 10 new tests, 499 total (18 todo + 481 landscape)
+
 ## 2026-07-13 — `{time_word}` Injection in Echo Phrases
 
 ### What
