@@ -78,6 +78,10 @@ COLORS = [
     "iridescent", "fluorescent", "scintillating", "coruscating",
 ]
 
+TIME_WORDS = [
+    "already", "still", "yet", "now", "once", "always",
+]
+
 # Weight tiers for word selection — common words appear more often, rare words less so
 COMMON_WORDS = {
     "crystal", "shadow", "ancient", "forgotten", "silent",
@@ -342,6 +346,7 @@ def describe_global():
         "anomalies": ANOMALIES,
         "adverbs": ADVERBS,
         "colors": COLORS,
+        "time words": TIME_WORDS,
     }
     lines = ["=== global word pools ==="]
     for cat_name, pool in categories.items():
@@ -389,7 +394,7 @@ def describe_presets():
 
 SENTENCE_TEMPLATES = {
     "opening": [
-        "A vast {adj} {display} of {color} {element} stretches {adverb} before you.",
+        "A vast {adj} {display} of {color} {element} stretches {adverb} before you {time_word}.",
         "Before you, a {adj} {display} of {color} {element} comes into view {adverb}.",
         "The {adj} {display} of {color} {element} lies {adverb} ahead.",
         "{Element} — the {adj} {display} of {color} light stretches {adverb} before you.",
@@ -737,8 +742,9 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         color = _pick("colors", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
     else:
         color = ""
+    time_word = rng.choice(TIME_WORDS)
     opening_tmpl = _pick_template("opening", template_set, template_overrides, rng=rng)
-    parts = [_format_tmpl(opening_tmpl, adj=adj, display=display, adverb=adverb, element=element, Element=element.capitalize(), color=color)]
+    parts = [_format_tmpl(opening_tmpl, adj=adj, display=display, adverb=adverb, element=element, Element=element.capitalize(), color=color, time_word=time_word)]
 
     for _ in range(max(detail, 0)):
         element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)

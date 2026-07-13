@@ -2,6 +2,14 @@
 
 ## 2026-07-13
 
+### What was done (Session 89)
+- Added **`{time_word}` temporal injection in opening template 0** — a small `TIME_WORDS` bank (6 words: already, still, yet, now, once, always) picked once per landscape via `rng.choice()` and injected into opening template 0 as `"...before you {time_word}."` — e.g. "A vast crystal forest of vivid mist stretches silently before you already." / "...before you still." / "...before you now."
+- Time words add **narrative temporal texture** — positioning the scene as something already present, still ongoing, or yet to fully arrive — filling a gap in the vocabulary system that had adjectives (quality), adverbs (manner), colors (visual), elements (sensory), moods (emotional), and echoes (atmospheric) but nothing for temporal framing
+- Picked via `rng.choice()` (not `_pick()`) — intentionally outside the weighted-selection/dedup/mood/bias system, keeping it simple and ensuring it never conflicts with other word categories
+- Added `"time words"` to `describe_global()` categories so time words are discoverable via `--describe-global`
+- 7 new tests in `TestTimeWords` class: output presence, determinism, output validity, detail=0, JSON format, `describe_global` inclusion, and 6 biome subtests
+- Tests increased from 471 to 478 total (18 todo + 460 landscape), subtests from 66 to 72
+
 ### What was done (Session 88)
 - Added **PRESETS system** — 5 named preset configurations that bundle multiple CLI flags into a single `--preset` name:
   - `nightfall`: eerie mood, rare bias, anomaly_prob=0.8, anomaly_count=2, echo on with prob 0.7, echo_count=2

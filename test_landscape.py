@@ -8,6 +8,7 @@ from landscape import (
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS, ECHOES,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
+    TIME_WORDS,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -18,6 +19,7 @@ ALL_WEATHERS = set(WEATHERS) | {w for bw in BIOME_WORDS.values() for w in bw.get
 ALL_ANOMALIES = set(ANOMALIES) | {w for bw in BIOME_WORDS.values() for w in bw.get("anomalies", [])}
 ALL_ADVERBS = set(ADVERBS) | {w for bw in BIOME_WORDS.values() for w in bw.get("adverbs", [])}
 ALL_COLORS = set(COLORS) | {w for bw in BIOME_WORDS.values() for w in bw.get("colors", [])}
+ALL_TIME_WORDS = set(TIME_WORDS)
 
 
 class TestLandscape(unittest.TestCase):
@@ -3480,6 +3482,58 @@ class TestPresets(unittest.TestCase):
             "No landscape should be generated when --describe-presets is used")
         self.assertNotIn("\n\n", output,
             "No landscape should be generated when --describe-presets is used")
+
+
+class TestTimeWords(unittest.TestCase):
+    def test_time_word_appears_in_output(self):
+        results = [generate_landscape(seed=s) for s in range(200)]
+        self.assertTrue(
+            any(t in r for r in results for t in ALL_TIME_WORDS),
+            "No time word appeared across 200 seeds",
+        )
+
+    def test_time_word_is_deterministic(self):
+        a = generate_landscape(seed=42, template_set="first")
+        b = generate_landscape(seed=42, template_set="first")
+        self.assertEqual(a, b,
+            "Time word should be deterministic with same seed")
+
+    def test_time_word_does_not_break_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertTrue(result.endswith("."))
+
+    def test_time_word_works_with_detail_zero(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, detail=0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 5)
+            self.assertTrue(result.endswith("."))
+
+    def test_time_word_works_with_json_format(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_describe_global_includes_time_words(self):
+        from landscape import describe_global
+        result = describe_global()
+        self.assertIn("time words", result)
+        for tw in TIME_WORDS:
+            self.assertIn(tw, result)
+
+    def test_time_word_works_with_all_biomes(self):
+        for biome in ["forest", "desert", "tundra", "ruined city", "sky islands", "fungal grove"]:
+            with self.subTest(biome=biome):
+                result = generate_landscape(seed=42, biome=biome, template_set="first")
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+                self.assertTrue(result.endswith("."))
 
 
 if __name__ == "__main__":

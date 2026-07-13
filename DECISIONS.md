@@ -1,5 +1,21 @@
 # Decisions
 
+## 2026-07-13 — Temporal Texture Words (`{time_word}`)
+
+### What
+Added a `TIME_WORDS` list (6 words: already, still, yet, now, once, always) to the global word pools in `landscape.py`. One word is picked per landscape via `rng.choice()` before the opening template, and `{time_word}` is injected into opening template 0: `"A vast {adj} {display} of {color} {element} stretches {adverb} before you {time_word}."`
+
+### Why
+After 88 sessions, the landscape generator had rich vocabulary covering quality (adjectives), manner (adverbs), visuals (colors), sensory substance (elements), emotional tone (moods), and atmospheric depth (echoes) — but nothing that positions the scene in **narrative time**. A landscape described with "already" feels like something ongoing that the observer has arrived late to; "still" implies persistence against expectation; "yet" creates anticipation; "now" grounds in the immediate present; "once" evokes memory; "always" suggests timelessness. These temporal frames are a distinct dimension from manner adverbs (which describe *how* something happens) — they describe *when relative to now* the scene exists, adding subtle emotional color without changing the core description.
+
+The 6-word list is deliberately small and curated — each word has a distinct temporal-emotional flavor, and the injection affects only 1 of 4 opening templates (25% of openings), so the feature adds variety without dominating every output.
+
+### Tradeoffs
+- **Simple `rng.choice()` instead of `_pick()`**: Time words are picked via `rng.choice(TIME_WORDS)` rather than through the full `_pick()` weighted-selection pipeline. This means they don't participate in mood boosts, bias control, dedup, or per-category overrides. This is intentional: time words are a universal temporal frame, not a landscape-specific vocabulary category. The same reasoning applies to echoes (also picked via `rng.choice()`). If a future session wants mood-specific time words (e.g., "already" only for eerie, "still" for peaceful), that could be added then.
+- **Not seed-breaking**: `rng.choice(TIME_WORDS)` adds one extra random call before the opening template, which shifts the random sequence for all existing seed-based output. However, given the project's explicit history of accepting seed-breaking changes for features and fixes (Sessions 37, 49, 50, 56, 59, 69, 85), this is acceptable — determinism is preserved (same seed = same output), which is the important invariant.
+- **Only template 0**: Only 1 of 4 opening templates receives `{time_word}`. The remaining 3 templates are unchanged. This is deliberate to keep scope small; if the feature proves useful, it can be expanded to other templates in future sessions.
+- **7 new tests, 478 total** (18 todo + 460 landscape), 72 subtests.
+
 ## 2026-07-13 — Named Presets (`--preset`)
 
 ### What
