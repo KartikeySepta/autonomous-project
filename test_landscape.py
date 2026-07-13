@@ -2764,5 +2764,69 @@ class TestBiomeColorsAndAdverbs(unittest.TestCase):
             "describe_biome should include adverb category")
 
 
+class TestWeatherAdj(unittest.TestCase):
+    def test_weather_templates_use_adj_placeholder(self):
+        weather_tmpls = SENTENCE_TEMPLATES["weather"]
+        adj_tmpls = [t for t in weather_tmpls if "{adj}" in t]
+        self.assertGreaterEqual(len(adj_tmpls), 4,
+            "At least 4 weather templates should reference {adj}")
+
+    def test_weather_adj_does_not_break_output(self):
+        for s in range(30):
+            result = generate_landscape(seed=s)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_weather_adj_uses_known_adjective(self):
+        results = [generate_landscape(seed=s, biome="tundra") for s in range(200)]
+        self.assertTrue(
+            any(a in r for r in results for a in ALL_ADJECTIVES),
+            "No known adjective appeared in weather across 200 seeds",
+        )
+
+    def test_weather_adj_is_deterministic(self):
+        a = generate_landscape(seed=42)
+        b = generate_landscape(seed=42)
+        self.assertEqual(a, b,
+            "Weather with adj should be deterministic")
+
+    def test_weather_adj_works_with_middle_disabled(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, middle_enabled=False, detail=2)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertTrue(result.endswith("."))
+
+    def test_weather_adj_works_with_no_adverb(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, adverb_enabled=False, detail=2)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertNotIn("  ", result)
+            self.assertTrue(result.endswith("."))
+
+    def test_weather_adj_works_with_json_format(self):
+        result = generate_landscape(seed=42, fmt="json", detail=2)
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_weather_adj_works_with_detail_three(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, detail=3)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 50)
+            self.assertTrue(result.endswith("."))
+
+    def test_weather_adj_works_with_mood_and_bias(self):
+        result = generate_landscape(seed=42, mood="eerie", bias="rare")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+
 if __name__ == "__main__":
     unittest.main()

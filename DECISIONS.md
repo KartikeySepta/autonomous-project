@@ -996,6 +996,22 @@ Session 62 added biome-specific color and adverb pools to `BIOME_WORDS`, but the
 - `test_describe_global_includes_colors` now correctly tests that `describe_global()` shows global colors (not biome-specific ones), matching the behavior of `describe_global()` which intentionally lists only the global word pools.
 - 366 landscape tests pass (unchanged count — no new tests added).
 
+## 2026-07-13 — `{adj}` in Weather Templates
+
+### What
+Added `{adj}` to 4 of 5 weather templates (0, 1, 2, 3) — the per-sentence-pair adjective now appears in weather descriptions. Template 4 (`"{Weather} {adverb} in {color} light."`) is unchanged because `{adj}` would create a cluttered three-adjective stack (`in {adj} {color} light`). Moved the per-sentence-pair adj pick outside the `if middle_enabled:` block so it's always available for weather regardless of middle sentence state.
+
+### Why
+The adjective was the last major word category missing from weather descriptions. Over recent sessions, weather templates gained `{element}` (Sessions 57/68), `{color}` (Session 58), and `{adverb}` (Sessions 30/42), but never `{adj}` — leaving weather descriptions unable to leverage the landscape's most descriptive word category. "A gentle rain falls softly through the crystal mist" is more evocative than "A gentle rain falls softly through the mist." This completes the coverage pattern: all 5 weather templates now reference at least 3 injected word categories, making weather descriptions uniformly as rich as opening and middle sentences.
+
+### Tradeoffs
+- **Adj pick moved unconditionally**: Previously, the per-sentence-pair adjective was only picked when `middle_enabled=True` (it was picked inside the middle block because weather didn't use it). Now it's always picked per-pair, wasting one adj pick (and dedup slot) when `middle_enabled=False`. This is the same tradeoff as `element` (Session 57: moved outside middle block for weather use) — the benefit (richer weather) justifies the cost.
+- **RNG-preserving for middle_enabled=True**: The adj pick was moved just after `element` and before `noun`/`verb`, preserving the same relative random call order for the common case (middle enabled). Seed-breaking only when `middle_disabled` is used (one extra `_pick()` per iteration).
+- **Template 4 unchanged**: In `"{Weather} {adverb} in {color} light."`, adding `{adj}` would produce `"in {adj} {color} light"` — a three-adjective stack that reads awkwardly. Keeping template 4 adj-free maintains one weather template without adjectives for variety.
+- **Template-level change + one code change**: 4 template strings modified (`{element}` → `{adj} {element}`, `{display}` → `{adj} {display}`), adj pick moved outside the `if middle_enabled:` block, and `adj=adj` kwarg added to the weather format call.
+- **`_format_tmpl` handles disabled-adj edge cases**: When `middle_enabled=False`, adj is still picked so it's always defined — no need for empty-string fallback or spacing cleanup.
+- **9 new tests**, 393 total (18 todo + 375 landscape).
+
 ## 2026-07-13 — `{element}` in Weather Template 1 (The Air Tells)
 
 ### What

@@ -736,6 +736,24 @@ Working. All 393 tests pass (18 todo + 375 landscape).
 
 ## 2026-07-13
 
+### What was done (Session 69)
+- Added **`{adj}` to weather templates 0, 1, 2, and 3** — the per-sentence-pair adjective now appears in weather descriptions, making weather sentences richer and more cohesive with the landscape's adjectival palette:
+  - Template 0: `"{Weather} {adverb} through the {adj} {element}."` — "A gentle rain falls softly through the crystal mist."
+  - Template 1: `"The air tells its own story: {weather} {adverb} through the {adj} {element}."`
+  - Template 2: `"{Weather}, as if the {adj} {display} itself breathes {element} {adverb}."` — "A gentle rain falls, as if the crystal forest itself breathes mist softly."
+  - Template 3: `"Through the {adj} {element}, {weather} {adverb}."` — "Through the crystal mist, a gentle rain falls softly."
+  - Template 4 unchanged (uses `{color}` but no natural adj insertion point)
+- **Moved adj pick outside `if middle_enabled:` block** — the per-sentence-pair adjective is now always picked in the detail loop (like `element`), so it's available for weather templates regardless of middle sentence state. When `middle_enabled=False`, one extra `_pick()` per iteration provides the adjective for weather descriptions.
+- Template-level change to 4 weather templates plus one code change (moved adj pick) and one kwarg addition (`adj=adj` to weather format call)
+- RNG-preserving for `middle_enabled=True` (adj is picked in the same position relative to element/noun/verb as before). Seed-breaking for `middle_enabled=False` (one extra `_pick()` per iteration).
+- Added 9 tests in `TestWeatherAdj` class: placeholder presence, output validity, adjective appearance, determinism, middle-disabled compatibility, adverb-disabled formatting, JSON format, detail=3, and mood+bias composition
+- Tests increased from 384 to 393 total (18 todo + 375 landscape)
+
+### Current status
+Working. All 393 tests pass (18 todo + 375 landscape).
+
+## 2026-07-13
+
 ### What was done (Session 68)
 - Added **`{element}` to weather template 1** — changed `"The air tells its own story: {weather} {adverb}."` to `"The air tells its own story: {weather} {adverb} through the {element}."` (e.g. "The air tells its own story: a gentle rain falls softly through the mist.")
 - Weather template 1 was the only weather template that didn't reference `{element}` — templates 0, 2, and 3 already had it, and template 4 uses `{color}`. This change makes all 5 weather templates use at least one injected word category.
