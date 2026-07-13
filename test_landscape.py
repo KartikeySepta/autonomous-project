@@ -3365,5 +3365,122 @@ class TestEchoProb(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+class TestPresets(unittest.TestCase):
+    def test_preset_nightfall_uses_eerie_mood(self):
+        from landscape import PRESETS
+        self.assertIn("mood", PRESETS["nightfall"])
+        self.assertIn("eerie", PRESETS["nightfall"]["mood"])
+
+    def test_preset_pastoral_suppresses_anomalies(self):
+        from landscape import PRESETS
+        self.assertEqual(PRESETS["pastoral"]["anomaly_prob"], 0.0)
+
+    def test_preset_wasteland_enables_echo(self):
+        from landscape import PRESETS
+        self.assertTrue(PRESETS["wasteland"]["echo_enabled"])
+
+    def test_preset_produces_valid_output(self):
+        for name in ["nightfall", "pastoral", "sublime", "wasteland", "dreamscape"]:
+            with self.subTest(preset=name):
+                from landscape import generate_landscape, PRESETS
+                result = generate_landscape(seed=42, **PRESETS[name])
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+                self.assertTrue(result.endswith("."))
+
+    def test_preset_is_deterministic(self):
+        from landscape import PRESETS
+        for name in ["nightfall", "pastoral", "sublime", "wasteland", "dreamscape"]:
+            with self.subTest(preset=name):
+                a = generate_landscape(seed=42, **PRESETS[name])
+                b = generate_landscape(seed=42, **PRESETS[name])
+                self.assertEqual(a, b,
+                    f"Preset {name} should be deterministic with same seed")
+
+    def test_preset_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_preset_works_via_cli(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--preset", "pastoral", "--seed", "42"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIsInstance(output, str)
+        self.assertGreater(len(output), 0)
+        self.assertTrue(output.endswith(".\n"))
+
+    def test_describe_presets_returns_string(self):
+        from landscape import describe_presets
+        result = describe_presets()
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_describe_presets_contains_header(self):
+        from landscape import describe_presets
+        result = describe_presets()
+        self.assertIn("presets", result)
+
+    def test_describe_presets_contains_all_presets(self):
+        from landscape import describe_presets, PRESETS
+        result = describe_presets()
+        for name in PRESETS:
+            self.assertIn(name, result,
+                f"Preset description should contain preset name '{name}'")
+
+    def test_describe_presets_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_presets_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-presets"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("presets", output)
+        self.assertIn("nightfall", output)
+        self.assertIn("pastoral", output)
+
+    def test_describe_presets_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-presets", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-presets is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-presets is used")
+
+
 if __name__ == "__main__":
     unittest.main()

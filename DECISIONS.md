@@ -1,5 +1,21 @@
 # Decisions
 
+## 2026-07-13 — Named Presets (`--preset`)
+
+### What
+Added a `PRESETS` dict with 5 named configurations (`nightfall`, `pastoral`, `sublime`, `wasteland`, `dreamscape`) and `--preset`/`--describe-presets` CLI flags. Each preset bundles 3–6 settings (mood, bias, anomaly_prob, echo_enabled, etc.) into a single name. Presets apply only when the corresponding CLI arg has its default value — explicit flags always win.
+
+### Why
+After 87 sessions of accumulating CLI flags, `landscape.py` has 25+ flags. While power users benefit from fine-grained control, the most common entry point is `--help` followed by trial and error. Presets give new users a curated on-ramp — they demonstrate the generator's emotional range (eerie nightfall, bright sublime, bleak wasteland, surreal dreamscape) without needing to understand the full CLI surface. They also serve as documentation of "interesting" configurations, similar to how `--describe-biome` documents word banks.
+
+The `--describe-presets` flag follows the same introspection pattern as `--describe-biome`, `--describe-mood`, `--describe-global`, `--describe-templates`, and `--describe-echoes`, making the preset system fully discoverable from the CLI.
+
+### Tradeoffs
+- **Presets are purely a CLI convenience layer**: zero changes to `generate_landscape()` or the generation pipeline. A preset is just a dict of kwargs that get merged at the call site. This means presets can never break seed-based output or change existing behavior.
+- **Default-value gating**: A preset only applies to an arg if that arg has its default value (e.g. `args.bias == "normal"`). If a user explicitly passes `--bias flat`, the preset's `bias: "rare"` is ignored. This is the key design choice: explicit flags are intentional, presets are suggestions. The tradeoff is that `--preset nightfall --anomaly-prob 0.3` doesn't use the preset's `anomaly_prob=0.8` because `0.3` is the default — the user didn't actually pass `--anomaly-prob 0.3`, the parser supplied it. This is an edge case where an explicit-looking arg is actually the default, causing the preset to lose. In practice this is acceptable because: (1) the user can always pass a non-default value like `0.31` to force their intent, and (2) the gating is conservative (it errs on the side of respecting the CLI flag).
+- **5 curated presets**: deliberately limited to cover distinct emotional territories (nightfall=pure eerie, pastoral=pure peaceful, sublime=blended serene, wasteland=pure desolate, dreamscape=blended surreal). More presets can be added later as the project grows.
+- **13 new tests, 489 total** (18 todo + 471 landscape).
+
 ## 2026-07-13 — Configurable Echo Probability (`--echo-prob`)
 
 ### What

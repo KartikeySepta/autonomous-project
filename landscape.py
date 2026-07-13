@@ -100,6 +100,49 @@ RARE_WORDS = {
 }
 
 
+PRESETS = {
+    "nightfall": {
+        "mood": ["eerie"],
+        "bias": "rare",
+        "anomaly_prob": 0.8,
+        "anomaly_count": 2,
+        "echo_enabled": True,
+        "echo_prob": 0.7,
+        "echo_count": 2,
+    },
+    "pastoral": {
+        "mood": ["peaceful"],
+        "anomaly_prob": 0.0,
+        "echo_enabled": True,
+        "echo_prob": 0.5,
+    },
+    "sublime": {
+        "mood": ["vibrant", "peaceful"],
+        "bias": "common",
+        "color_enabled": True,
+        "echo_enabled": True,
+        "echo_prob": 1.0,
+        "echo_count": 3,
+    },
+    "wasteland": {
+        "mood": ["desolate"],
+        "color_enabled": False,
+        "anomaly_prob": 1.0,
+        "anomaly_count": 3,
+        "echo_enabled": True,
+    },
+    "dreamscape": {
+        "mood": ["eerie", "vibrant"],
+        "bias": "flat",
+        "anomaly_prob": 1.0,
+        "echo_enabled": True,
+        "echo_prob": 1.0,
+        "echo_count": 2,
+        "detail": 2,
+    },
+}
+
+
 BIAS_MODES = {
     "normal":  {"common": 10, "normal": 5, "rare": 1},
     "common":  {"common": 20, "normal": 5, "rare": 1},
@@ -332,6 +375,15 @@ def describe_echoes():
     lines = ["=== echo phrases ==="]
     for i, echo in enumerate(ECHOES):
         lines.append(f"  [{i}] {echo}")
+    return "\n".join(lines)
+
+
+def describe_presets():
+    """Return a string describing all available presets."""
+    lines = ["=== presets ==="]
+    for name, params in PRESETS.items():
+        parts = [f"{k}={v}" for k, v in params.items()]
+        lines.append(f"  {name}: {', '.join(parts)}")
     return "\n".join(lines)
 
 
@@ -814,6 +866,14 @@ def main():
         help="Show all available echo phrases with their index numbers",
     )
     parser.add_argument(
+        "--describe-presets", action="store_true",
+        help="Show all available presets with their settings",
+    )
+    parser.add_argument(
+        "--preset", type=str, default=None, choices=list(PRESETS.keys()),
+        help="Apply a named preset configuration (overridable by explicit flags)",
+    )
+    parser.add_argument(
         "--show-biome", action="store_true",
         help="Reveal the biome name in the output",
     )
@@ -995,6 +1055,28 @@ def main():
             b, w = pair.split("=")
             biome_weights[b.strip().lower()] = float(w)
 
+    # Apply preset — only overrides CLI args that have their default values
+    if args.preset is not None:
+        preset = PRESETS[args.preset]
+        if "mood" in preset and args.mood is None:
+            args.mood = preset["mood"]
+        if "bias" in preset and args.bias == "normal":
+            args.bias = preset["bias"]
+        if "detail" in preset and args.detail == 1:
+            args.detail = preset["detail"]
+        if "anomaly_prob" in preset and args.anomaly_prob == 0.3:
+            args.anomaly_prob = preset["anomaly_prob"]
+        if "anomaly_count" in preset and args.anomaly_count == 1:
+            args.anomaly_count = preset["anomaly_count"]
+        if "echo_enabled" in preset and args.echo is False:
+            args.echo = preset["echo_enabled"]
+        if "echo_count" in preset and args.echo_count == 1:
+            args.echo_count = preset["echo_count"]
+        if "echo_prob" in preset and args.echo_prob == 1.0:
+            args.echo_prob = preset["echo_prob"]
+        if "color_enabled" in preset and args.no_color is False:
+            args.no_color = not preset["color_enabled"]
+
     if args.describe_biome is not None:
         print(describe_biome(args.describe_biome))
         return
@@ -1009,6 +1091,9 @@ def main():
         return
     if args.describe_echoes:
         print(describe_echoes())
+        return
+    if args.describe_presets:
+        print(describe_presets())
         return
 
     lines = []

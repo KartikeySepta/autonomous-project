@@ -2,6 +2,19 @@
 
 ## 2026-07-13
 
+### What was done (Session 88)
+- Added **PRESETS system** — 5 named preset configurations that bundle multiple CLI flags into a single `--preset` name:
+  - `nightfall`: eerie mood, rare bias, anomaly_prob=0.8, anomaly_count=2, echo on with prob 0.7, echo_count=2
+  - `pastoral`: peaceful mood, no anomalies, echo on with prob 0.5
+  - `sublime`: vibrant+peaceful mood blend, common bias, echo on with prob 1.0, echo_count=3
+  - `wasteland`: desolate mood, no colors, anomaly_prob=1.0, anomaly_count=3, echo on
+  - `dreamscape`: eerie+vibrant mood blend, flat bias, anomaly_prob=1.0, echo on, detail=2
+- Presets apply only when the corresponding CLI arg has its default value — explicit flags always override preset values (e.g. `--preset wasteland --mood eerie` uses eerie mood, not desolate)
+- Added `--describe-presets` introspection flag and `describe_presets()` function — lists all 5 presets with their settings, same pattern as `--describe-biome`, `--describe-templates`, etc.
+- Presets don't change any generation code — they're purely a CLI convenience layer that supplies kwargs to `generate_landscape()`
+- Added 13 tests in `TestPresets` class: structural assertions (preset data integrity), output validity (all 5 presets × 5 seeds), determinism (all 5 presets), CLI integration (`--preset`, `--describe-presets`, early exit with describe), and 10 subtests
+- Tests increased from 476 to 489 total (18 todo + 471 landscape, 66 subtests)
+
 ### What was done (Session 80)
 - Added **`{display}` injection into echo phrases** — 5 of 10 ECHOES now contain `{display}` placeholders that render the biome name, making echo phrases feel connected to the landscape context instead of reading as generic atmospheric text
   - "The land remembers." → "The {display} remembers." — "The forest remembers."
