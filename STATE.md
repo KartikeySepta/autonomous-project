@@ -715,3 +715,21 @@ Working. All 384 tests pass (18 todo + 366 landscape).
 - Updated `ALL_ADVERBS` and `ALL_COLORS` definitions to include biome-specific words — consistent with the other 6 `ALL_*` sets.
 - Fixed `test_describe_global_includes_colors` to assert against `COLORS` (global pool) instead of `ALL_COLORS` (global + biome-specific) — biome-specific colors are correctly not listed by `describe_global()`, which only shows global word pools.
 - Tests increased from 366 to 366 (unchanged — this was a test data fix, not a new feature).
+
+### Current status
+Working. All 384 tests pass (18 todo + 366 landscape).
+
+## 2026-07-13
+
+### What was done (Session 67)
+- Added **`{color}` to anomaly templates** — color words now appear in anomaly descriptions, closing the last template slot gap (color was used in openings, middle, and weather but not anomalies)
+  - Modified template 2: `"A strange {color} detail catches your eye {adverb}: {anomaly_lower}"` — color word naturally modifies "detail" (e.g. "A strange vivid detail catches your eye softly: the gravity here feels wrong.")
+  - Added template 4 (new): `"In the {color} light, {anomaly_lower}"` — frames the anomaly in the landscape's light palette (e.g. "In the vivid light, the gravity here feels wrong.")
+- Added `color=color` kwarg to the anomaly `_format_tmpl()` call — color was already in scope (last per-sentence-pair color) but was not passed to anomaly templates
+- When `color_enabled=False`, `_format_tmpl` handles the empty-string artifacts (`"In the  light,"` → `"In the light,"` and `"A strange  detail"` → `"A strange detail"`)
+- Updated 3 existing tests to use new detection strings (anomaly template 2 now has a color word between "strange" and "detail")
+- Added 9 tests in `TestAnomalyColor` class: placeholder count, output validity, color appearance, determinism, color-disabled formatting, mood+bias composition, detail=3, JSON format, and "In the {color} light" template statistical appearance
+- Tests increased from 384 to 393 total (18 todo + 375 landscape)
+
+### Current status
+Working. All 393 tests pass (18 todo + 375 landscape).

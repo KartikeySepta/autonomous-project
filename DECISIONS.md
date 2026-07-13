@@ -995,3 +995,19 @@ Session 62 added biome-specific color and adverb pools to `BIOME_WORDS`, but the
 - No functional change to the landscape generator — purely a test data correction.
 - `test_describe_global_includes_colors` now correctly tests that `describe_global()` shows global colors (not biome-specific ones), matching the behavior of `describe_global()` which intentionally lists only the global word pools.
 - 366 landscape tests pass (unchanged count — no new tests added).
+
+## 2026-07-13 — `{color}` in Anomaly Templates
+
+### What
+Added `{color}` to anomaly templates: modified template 2 (`"A strange {color} detail catches your eye {adverb}: {anomaly_lower}"`) and added a new 5th template (`"In the {color} light, {anomaly_lower}"`). Added `color=color` kwarg to the anomaly format call so the existing per-sentence-pair color word is available to anomaly templates.
+
+### Why
+Color is the project's newest word category (Session 51), and since then it's been added to every template slot except anomalies: openings (Session 59), middle (Sessions 60/61), and weather (Session 58). Anomalies were the last slot where color words were picked (consuming a dedup slot) but never visible — they were invisible in ~80% of anomalies. Adding `{color}` to anomalies closes this coverage gap and makes anomaly descriptions richer by connecting them to the landscape's color palette. "A strange vivid detail catches your eye" is more evocative than "A strange detail catches your eye."
+
+### Tradeoffs
+- **Template 2 modification**: Adding `{color}` before "detail" is a natural insertion — "A strange vivid detail" reads as a standard two-adjective stack. When `color_enabled=False`, `_format_tmpl` collapses the resulting double space.
+- **New template 4**: `"In the {color} light, {anomaly_lower}"` — the anomaly is framed as something observed under the landscape's light. This is a structurally different framing from the 4 existing templates (which present the anomaly as a direct observation or wrongness), adding variety to anomaly presentation. When color is disabled, reads naturally as "In the light, the gravity here feels wrong."
+- **No Color kwarg needed**: The lowercase `{color}` is used in both new/modified templates (mid-sentence positions), so `color=color` is sufficient — no separate `Color` kwarg needed.
+- **Scope-based color value**: The anomaly block runs after the `detail` loop, so `color` holds the last-per-sentence-pair color (or `""` when middle is disabled). This is the same pattern as `adverb` in anomaly templates. When middle is disabled and color is enabled, color is `""` (reset at loop start), so anomaly gets no color — acceptable since anomaly framing without middle is a minimal-output edge case.
+- **5 anomaly templates**: Anomaly goes from 4 to 5 templates. Template_set "fourth" (index 3) and "fifth" (index 4) now both map to distinct templates for the anomaly slot (was 3→3 clamped to index 3; now 3→3 and 4→4). Backward compatible index clamping still applies for "sixth" (→4) and "seventh" (→4).
+- **9 new tests**, 393 total (18 todo + 375 landscape).

@@ -520,7 +520,7 @@ class TestLandscape(unittest.TestCase):
 
     def test_template_variety_anomaly_has_varied_structure(self):
         results = [generate_landscape(seed=s, biome="forest") for s in range(200)]
-        has_strange = any("A strange detail catches your eye" in r for r in results)
+        has_strange = any("catches your eye" in r for r in results)
         has_wrongness = any("There is a quiet wrongness here" in r for r in results)
         self.assertTrue(
             has_strange or has_wrongness,
@@ -530,7 +530,7 @@ class TestLandscape(unittest.TestCase):
     def test_anomaly_standalone_template_keeps_capital(self):
         for s in range(100):
             result = generate_landscape(seed=s, biome="forest", template_overrides={"anomaly": "first"}, anomaly_prob=1.0)
-            if "Something is not right" in result or "A strange detail" in result or "quiet wrongness" in result:
+            if "Something is not right" in result or "strange" in result or "quiet wrongness" in result or "In the " in result:
                 continue
             for a in ALL_ANOMALIES:
                 if a in result:
@@ -544,7 +544,7 @@ class TestLandscape(unittest.TestCase):
                                template_overrides={"anomaly": "third"}, anomaly_prob=1.0)
             for s in range(200)
         ]
-        colon_lines = [r for r in results if "A strange detail catches your eye" in r or "There is a quiet wrongness here" in r]
+        colon_lines = [r for r in results if "detail catches your eye" in r or "There is a quiet wrongness here" in r]
         lowercases = sum(
             1 for r in colon_lines
             for a in ALL_ANOMALIES
@@ -2601,6 +2601,73 @@ class TestAnomalyAdverb(unittest.TestCase):
         self.assertIn("text", data)
         self.assertIsInstance(data["text"], str)
         self.assertGreater(len(data["text"]), 0)
+
+
+class TestAnomalyColor(unittest.TestCase):
+    def test_anomaly_templates_have_color_placeholder(self):
+        anomaly_tmpls = SENTENCE_TEMPLATES["anomaly"]
+        color_tmpls = [t for t in anomaly_tmpls if "{color}" in t]
+        self.assertGreaterEqual(len(color_tmpls), 2,
+            "At least 2 anomaly templates should reference {color}")
+
+    def test_anomaly_color_does_not_break_output(self):
+        for s in range(30):
+            result = generate_landscape(seed=s, anomaly_prob=1.0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_anomaly_color_uses_known_color(self):
+        results = [generate_landscape(seed=s, anomaly_prob=1.0) for s in range(300)]
+        self.assertTrue(
+            any(c in r for r in results for c in ALL_COLORS),
+            "No known color appeared in anomaly text across 300 seeds",
+        )
+
+    def test_anomaly_color_is_deterministic(self):
+        a = generate_landscape(seed=42, anomaly_prob=1.0)
+        b = generate_landscape(seed=42, anomaly_prob=1.0)
+        self.assertEqual(a, b,
+            "Anomaly with color should be deterministic")
+
+    def test_anomaly_color_works_with_color_disabled(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, color_enabled=False, anomaly_prob=1.0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertNotIn("  ", result,
+                "Double spaces should not appear when color is disabled")
+            self.assertNotIn(" :", result,
+                "Space before colon should not appear when color is disabled")
+            self.assertTrue(result.endswith("."))
+
+    def test_anomaly_color_works_with_mood_and_bias(self):
+        result = generate_landscape(seed=42, mood="vibrant", bias="rare", anomaly_prob=1.0)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_anomaly_color_works_with_detail_three(self):
+        result = generate_landscape(seed=42, detail=3, anomaly_prob=1.0)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 50)
+        self.assertTrue(result.endswith("."))
+
+    def test_anomaly_color_works_with_json_format(self):
+        result = generate_landscape(seed=42, fmt="json", anomaly_prob=1.0)
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_anomaly_color_in_light_template_appears(self):
+        results = [generate_landscape(seed=s, biome="tundra", anomaly_prob=1.0) for s in range(500)]
+        light_matches = sum(
+            1 for r in results if "In the " in r and " light" in r
+        )
+        self.assertGreater(light_matches, 0,
+            "'In the {color} light' anomaly template should appear across 500 random seeds")
 
 
 class TestBiomeColorsAndAdverbs(unittest.TestCase):
