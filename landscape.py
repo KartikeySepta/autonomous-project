@@ -55,11 +55,11 @@ ANOMALIES = [
 
 ECHOES = [
     "The {adj} {display} remembers {adverb}.",
-    "The {display} has been waiting {adverb} for you.",
+    "The {display} has been waiting {adverb} for you {time_word}.",
     "Nothing in the {display} has changed in a thousand years.",
     "The echoes of the past linger {adverb} in the air of the {display}.",
     "You feel as though you are being watched by the {color} {element} itself.",
-    "There is a sense of deep time here, pressing down {adverb}.",
+    "There is a sense of deep time here, pressing down {adverb} {time_word}.",
     "This place exists outside of time, in the {color} {element}.",
     "The stones remember {adverb} what the wind has forgotten.",
     "Something important happened in the {adj} {display} once.",
@@ -789,7 +789,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
                 pool = [e for e in ECHOES if e not in used_echoes] or ECHOES
                 echo = rng.choice(pool)
                 used_echoes.add(echo)
-                parts.append(_format_tmpl(echo, display=display, adverb=adverb, element=element, color=color, adj=adj))
+                parts.append(_format_tmpl(echo, display=display, adverb=adverb, element=element, color=color, adj=adj, time_word=time_word))
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)

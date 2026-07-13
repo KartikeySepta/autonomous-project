@@ -1,5 +1,24 @@
 # Decisions
 
+## 2026-07-13 — `{time_word}` Injection in Echo Phrases
+
+### What
+Added `{time_word}` placeholder support to 2 of 10 ECHOES phrases — the echo system now passes `time_word=time_word` to `_format_tmpl()`, so phrases that contain `{time_word}` render with the per-landscape time word from the opening template. The 8 remaining phrases without `{time_word}` are unchanged:
+  - Echo 1: `"The {display} has been waiting {adverb} for you {time_word}."` — "The forest has been waiting silently for you always."
+  - Echo 5: `"There is a sense of deep time here, pressing down {adverb} {time_word}."` — "There is a sense of deep time here, pressing down softly yet."
+
+### Why
+Sessions 89–90 added `{time_word}` to all 4 opening templates, giving the opening slot temporal framing (already, still, yet, now, once, always). But the echo system — which received `{display}`, `{adverb}`, `{element}`, `{color}`, and `{adj}` injection across sessions 80–84 — had no temporal injection. This left echo phrases feeling temporally flat compared to openings: they could reference biomes, adverbs, elements, colors, and adjectives, but never positioned themselves in narrative time. Adding `{time_word}` to 2 phrases that already carry temporal themes ("has been waiting" and "deep time") creates a natural fit — "waiting... always" reinforces timelessness; "pressing down... yet" creates anticipation.
+
+This completes the injection system for the echo phrases: `{display}`, `{adverb}`, `{element}`, `{color}`, `{adj}`, and now `{time_word}` — all six word categories that are available in the opening template system are now also available in the echo system.
+
+### Tradeoffs
+- **2 of 10 phrases modified** — deliberately the 2 phrases with temporal themes ("has been waiting" pairs naturally with "always"/"still"/"yet"; "deep time" pairs with "already"/"still"/"yet"). Adding time words to other phrases (e.g., "The stones remember what the wind has forgotten.") could feel forced.
+- **Uses the single per-landscape time word**: same pattern as the opening — picked once per landscape via `rng.choice()`, not via `_pick()`, so it doesn't participate in mood boosts, bias, dedup, or overrides.
+- **Not seed-breaking**: no new `_pick()` or `rng.choice()` calls were added, only the rendering of existing echo phrases changed. Echo is off by default, so all existing seed-based output is unaffected.
+- **`_format_tmpl` handles time_word naturally**: time words are short and have no trailing-space artifacts, so no formatting edge cases.
+- **8 new tests, 489 total** (18 todo + 471 landscape), 78 subtests.
+
 ## 2026-07-13 — `{time_word}` Expanded to All 4 Opening Templates
 
 ### What

@@ -3557,5 +3557,63 @@ class TestTimeWords(unittest.TestCase):
                 self.assertTrue(result.endswith("."))
 
 
+class TestEchoTimeWord(unittest.TestCase):
+    def test_echo_time_word_appears_in_echo_output(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, echo_count=2, biome="forest") for s in range(200)]
+        self.assertTrue(
+            any(t in r for r in results for t in ALL_TIME_WORDS),
+            "No time word appeared in echo output across 200 seeds with echo_enabled=True",
+        )
+
+    def test_echo_time_word_is_deterministic(self):
+        a = generate_landscape(seed=42, echo_enabled=True, biome="forest")
+        b = generate_landscape(seed=42, echo_enabled=True, biome="forest")
+        self.assertEqual(a, b,
+            "Time word in echoes should be deterministic with same seed")
+
+    def test_echo_time_word_in_waiting_phrase(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, biome="forest") for s in range(300)]
+        waiting_results = [r for r in results if "has been waiting" in r]
+        if waiting_results:
+            self.assertTrue(
+                any(t in r for r in waiting_results for t in ALL_TIME_WORDS),
+                "No time word appeared in 'has been waiting' echo across 300 seeds",
+            )
+
+    def test_echo_time_word_in_deep_time_phrase(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, biome="forest") for s in range(300)]
+        deep_time_results = [r for r in results if "deep time" in r]
+        if deep_time_results:
+            self.assertTrue(
+                any(t in r for r in deep_time_results for t in ALL_TIME_WORDS),
+                "No time word appeared in 'deep time' echo across 300 seeds",
+            )
+
+    def test_echo_time_word_works_with_detail_zero(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, detail=0, echo_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 5)
+
+    def test_echo_time_word_works_with_no_adverb(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, echo_enabled=True, adverb_enabled=False, biome="forest")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertTrue(result.endswith("."))
+
+    def test_echo_time_word_works_with_combine(self):
+        result = generate_landscape(seed=42, echo_enabled=True, combine="forest,desert")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 10)
+
+    def test_echo_time_word_works_with_all_biomes(self):
+        for biome in ["forest", "desert", "tundra", "ruined city", "sky islands", "fungal grove"]:
+            with self.subTest(biome=biome):
+                result = generate_landscape(seed=42, biome=biome, echo_enabled=True)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+
 if __name__ == "__main__":
     unittest.main()

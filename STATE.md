@@ -2,6 +2,15 @@
 
 ## 2026-07-13
 
+### What was done (Session 91)
+- Added **`{time_word}` temporal injection into 2 echo phrases** — the echo system now passes `time_word=time_word` to `_format_tmpl()`, so phrases that contain `{time_word}` render with the per-landscape time word, grounding atmospheric echoes in the landscape's temporal frame
+  - Echo 1: `"The {display} has been waiting {adverb} for you {time_word}."` — "The forest has been waiting silently for you always."
+  - Echo 5: `"There is a sense of deep time here, pressing down {adverb} {time_word}."` — "There is a sense of deep time here, pressing down softly yet."
+- Added `time_word=time_word` kwarg to the echo `_format_tmpl()` call — `time_word` was already in scope (picked per-landscape before the opening template) but was not passed to echo templates
+- 8 remaining echo phrases without `{time_word}` kept as-is for structural variety — the time word injection split (2 of 10) matches the element, color, and adj injection splits (also 2 of 10), since time words pair most naturally with phrases that already reference temporal concepts ("has been waiting", "deep time")
+- Added 8 new tests in `TestEchoTimeWord` class: output presence, determinism, waiting-phrase specific, deep-time phrase specific, detail=0 compatibility, adverb-disabled compatibility, combine compatibility, and 6 biome subtests
+- Tests increased from 481 to 489 total (18 todo + 471 landscape), subtests from 72 to 78
+
 ### What was done (Session 90)
 - Expanded **`{time_word}` to opening templates 1, 2, and 3** — the temporal injection that was only in template 0 (`"...before you {time_word}."`) now applies to all 4 opening templates:
   - Template 1 (`Before you,...comes into view`): `"...comes into view {adverb} {time_word}."`
