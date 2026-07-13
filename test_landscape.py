@@ -4021,5 +4021,82 @@ class TestLegend(unittest.TestCase):
         self.assertNotIn("legend_enabled", data)
 
 
+class TestDescribeLegends(unittest.TestCase):
+    def test_describe_legends_returns_string(self):
+        from landscape import describe_legends
+        result = describe_legends()
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_describe_legends_contains_header(self):
+        from landscape import describe_legends
+        result = describe_legends()
+        self.assertIn("legends", result)
+
+    def test_describe_legends_contains_all_legends(self):
+        from landscape import describe_legends, LEGENDS
+        result = describe_legends()
+        for legend in LEGENDS:
+            self.assertIn(legend, result,
+                f"Legend description should contain: {legend!r}")
+
+    def test_describe_legends_contains_index_numbers(self):
+        from landscape import describe_legends
+        result = describe_legends()
+        self.assertIn("[0]", result)
+        self.assertIn("[1]", result)
+
+    def test_describe_legends_shows_all_legends(self):
+        from landscape import describe_legends, LEGENDS
+        result = describe_legends()
+        count = len(LEGENDS)
+        self.assertIn("=== legends ===", result)
+        self.assertIn(f"[{count - 1}]", result,
+            f"Legend description should contain the last index [{count - 1}]")
+
+    def test_describe_legends_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_legends_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-legends"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("legends", output)
+        self.assertIn("[0]", output)
+        self.assertIn("[1]", output)
+
+    def test_describe_legends_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-legends", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-legends is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-legends is used")
+
+
 if __name__ == "__main__":
     unittest.main()

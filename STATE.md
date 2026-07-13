@@ -2,6 +2,19 @@
 
 ## 2026-07-13
 
+### What was done (Session 99)
+- **Added `TestDescribeLegends` test class** — 8 new introspection tests for `describe_legends()` and `--describe-legends`, following the exact same pattern as `TestDescribeEchoes` (Session 86):
+  - `test_describe_legends_returns_string` — verifies `describe_legends()` returns a string
+  - `test_describe_legends_contains_header` — verifies output contains "legends" header
+  - `test_describe_legends_contains_all_legends` — verifies all 15 legend phrases appear in output
+  - `test_describe_legends_contains_index_numbers` — verifies `[0]` and `[1]` index markers
+  - `test_describe_legends_shows_all_legends` — verifies last index `[14]` is present
+  - `test_describe_legends_flag_exists_via_cli` — verifies `main` is callable
+  - `test_describe_legends_flag_prints_to_stdout` — verifies CLI output via stdout capture
+  - `test_describe_legends_no_landscape_generated` — verifies early exit (no landscape generation)
+- This closes a test coverage gap: `describe_legends()` was introduced in Session 96 with functional tests for the legend feature, but the `describe_legends()` introspection function itself had no dedicated test coverage, unlike `describe_echoes()` which has had introspection tests since Session 86
+- Tests increased from 549 to 557 total (18 todo + 539 landscape), 93 subtests unchanged
+
 ### What was done (Session 98)
 - **Expanded LEGENDS bank from 10 to 15 phrases** — 5 new folkloric/historical phrases added, doubling the variety of cultural/folkloric context appended to landscapes:
   - "The {display} remembers those who built it, even if no one else does." — memory of makers, hidden history

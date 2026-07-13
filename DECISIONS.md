@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-13 — Describe-Legends Introspection Tests
+
+### What
+Added `TestDescribeLegends` test class with 8 tests for `describe_legends()` and `--describe-legends`, mirroring the `TestDescribeEchoes` pattern (Session 86). Covers: string return, header, all 15 legends, index numbers, last-index validation, CLI flag, stdout output, and early-exit (no landscape generation).
+
+### Why
+When legends were introduced (Session 96), the feature had 12 functional tests (disabled by default, enabled, output validity, determinism, poetic format, JSON format, detail=0 suppression, CLI flag, biome injection, echo compatibility, combine, mood/bias) — but `describe_legends()` had zero introspection tests. The `--describe-echoes` introspection tests (Session 86) set the pattern for testing describe-* functions, but when `--describe-legends` was added in Session 96 with an identical implementation, the corresponding tests were not added. This was a test coverage gap.
+
+Every other introspection feature (`--describe-biome`, `--describe-mood`, `--describe-global`, `--describe-templates`, `--describe-echoes`, `--describe-presets`) has dedicated test coverage. Adding `TestDescribeLegends` closes this gap and ensures `--describe-legends` continues to work correctly as the legend bank grows.
+
+### Tradeoffs
+- **Data-only test addition**: No changes to `landscape.py`, CLI flags, generation logic, or any feature code. Only `test_landscape.py` was modified (8 new test methods in a new class).
+- **8 new tests, 557 total** (18 todo + 539 landscape), 93 subtests unchanged.
+- **Follows established pattern**: Every test method in `TestDescribeLegends` has a direct counterpart in `TestDescribeEchoes`, making the test suite symmetric and easier to maintain.
+
 ## 2026-07-13 — Expanded Legend Bank (15 phrases)
 
 ### What
