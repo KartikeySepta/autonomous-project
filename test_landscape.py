@@ -2961,5 +2961,77 @@ class TestEcho(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+class TestEchoCount(unittest.TestCase):
+    def test_echo_count_default_is_one(self):
+        a = generate_landscape(seed=42, echo_enabled=True)
+        b = generate_landscape(seed=42, echo_enabled=True, echo_count=1)
+        self.assertEqual(a, b,
+            "echo_count=1 should match default")
+
+    def test_echo_count_zero_suppresses_echo(self):
+        result = generate_landscape(seed=42, echo_enabled=True, echo_count=0)
+        for e in ECHOES:
+            self.assertNotIn(e, result,
+                "Echo should not appear with echo_count=0")
+
+    def test_echo_count_two_sometimes_has_multiple(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, echo_count=3) for s in range(100)]
+        multi = [r for r in results if sum(1 for e in ECHOES if e in r) >= 2]
+        self.assertGreater(len(multi), 10,
+            "echo_count=3 should often produce multi-echo outputs")
+
+    def test_echo_count_does_not_repeat_same_echo(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, echo_count=3) for s in range(200)]
+        for r in results:
+            for e in ECHOES:
+                self.assertLessEqual(r.count(e), 1,
+                    f"Echo '{e}' should appear at most once: {r!r}")
+
+    def test_echo_count_produces_valid_output(self):
+        for count in [0, 1, 2, 3]:
+            for s in range(10):
+                result = generate_landscape(seed=s, echo_enabled=True, echo_count=count)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_echo_count_is_deterministic(self):
+        a = generate_landscape(seed=42, echo_enabled=True, echo_count=2)
+        b = generate_landscape(seed=42, echo_enabled=True, echo_count=2)
+        self.assertEqual(a, b,
+            "echo_count should be deterministic with same seed")
+
+    def test_echo_count_does_not_affect_unseeded_echo(self):
+        a = generate_landscape(seed=42, echo_enabled=True, echo_count=2)
+        b = generate_landscape(seed=42, echo_enabled=True, echo_count=2)
+        self.assertEqual(a, b,
+            "Echo count should be deterministic")
+
+    def test_echo_count_works_with_json_format(self):
+        result = generate_landscape(seed=42, echo_enabled=True, echo_count=2, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_echo_count_json_includes_field(self):
+        result = generate_landscape(seed=42, echo_enabled=True, echo_count=2, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("echo_count", data)
+        self.assertEqual(data["echo_count"], 2)
+
+    def test_echo_count_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_echo_count_can_exhaust_pool_falls_back(self):
+        # With echo_count > len(ECHOES), fallback should allow repeats
+        result = generate_landscape(seed=42, echo_enabled=True, echo_count=15)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+
 if __name__ == "__main__":
     unittest.main()

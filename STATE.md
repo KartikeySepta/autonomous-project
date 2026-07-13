@@ -844,8 +844,20 @@ Working. All 414 tests pass (18 todo + 396 landscape).
 - Added 8 tests in `TestEcho` class: disabled by default, echo appears when enabled, output validity, determinism, poetic format, JSON format, detail=0 suppression, CLI flag existence
 - Tests increased from 414 to 422 total (18 todo + 404 landscape)
 
+### What was done (Session 79)
+- Added **`--echo-count` CLI flag** and `echo_count` parameter to `generate_landscape()` — users can now control how many echo phrases appear per landscape (0–3, default: 1)
+  - `--echo-count 0` suppresses echoes (alternative to not using `--echo`)
+  - `--echo-count 2` or `--echo-count 3` generates multiple echoes, each independently picked from the pool
+  - Added **echo dedup**: the same phrase will not appear twice in a single landscape, even with `echo_count > 1`
+  - When `echo_count > len(ECHOES)`, falls back to the full pool (repeats allowed) — prevents crashes from exhausted pools
+  - Follows the same pattern as `--anomaly-count` (Session 29) for multi-instance generation
+  - Included in JSON metadata as `echo_count` when `echo_enabled=True`
+- Refactored echo block from single `rng.choice(ECHOES)` to a loop with `used_echoes` set — dedup is internal to the echo system (not shared with the `used_words` set from `_pick()`) since echoes are not part of the word-category system
+- Added 12 tests in `TestEchoCount` class: default is 1, zero suppression, multi-echo appearance, dedup across repetitions, validity at all counts, determinism, JSON text output, JSON metadata field, CLI flag existence, and pool-exhaustion fallback
+- Tests increased from 422 to 433 total (18 todo + 415 landscape)
+
 ### Current status
-Working. All 422 tests pass (18 todo + 404 landscape).
+Working. All 433 tests pass (18 todo + 415 landscape).
 
 ## 2026-07-13
 

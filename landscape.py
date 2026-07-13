@@ -636,7 +636,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
     return chosen
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, middle_enabled=True, color_enabled=True, anomaly_enabled=True, echo_enabled=False):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, middle_enabled=True, color_enabled=True, anomaly_enabled=True, echo_enabled=False, echo_count=1):
     if seed is not None:
         rng = random.Random(seed)
     elif show_seed:
@@ -715,9 +715,13 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
                 anomaly_lower = anomaly_word[0].lower() + anomaly_word[1:]
                 parts.append(_format_tmpl(anomaly_tmpl, anomaly=anomaly_word, anomaly_lower=anomaly_lower, adverb=adverb, color=color, element=element, display=display, adj=adj))
 
-    if echo_enabled and detail >= 1:
-        echo = rng.choice(ECHOES)
-        parts.append(echo)
+    if echo_enabled and detail >= 1 and echo_count > 0:
+        used_echoes = set()
+        for _ in range(echo_count):
+            pool = [e for e in ECHOES if e not in used_echoes] or ECHOES
+            echo = rng.choice(pool)
+            used_echoes.add(echo)
+            parts.append(echo)
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)
@@ -737,6 +741,8 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
         data["template_set"] = template_set
         data["anomaly_prob"] = anomaly_prob
         data["anomaly_count"] = anomaly_count
+        if echo_enabled:
+            data["echo_count"] = echo_count
         if bias_overrides:
             data["bias_overrides"] = bias_overrides
         if mood_weight_overrides:
@@ -910,6 +916,10 @@ def main():
         help="Append an atmospheric echo/memory phrase to the landscape",
     )
     parser.add_argument(
+        "--echo-count", type=int, default=1, choices=[0, 1, 2, 3],
+        help="Number of echo phrases per landscape (0-3, default: 1, requires --echo)",
+    )
+    parser.add_argument(
         "--biome-weight", type=str, default=None,
         help="Weight biomes for random selection (comma-separated biome=weight pairs, e.g. forest=5,desert=1)",
     )
@@ -982,7 +992,7 @@ def main():
     lines = []
     for i in range(args.count):
         effective_seed = args.seed + i if args.seed is not None else None
-        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, middle_enabled=not args.no_middle, color_enabled=not args.no_color, anomaly_enabled=not args.no_anomaly, echo_enabled=args.echo))
+        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, middle_enabled=not args.no_middle, color_enabled=not args.no_color, anomaly_enabled=not args.no_anomaly, echo_enabled=args.echo, echo_count=args.echo_count))
     if args.format == "json" and len(lines) > 1:
         output = "[" + ",\n".join(lines) + "]\n"
     else:

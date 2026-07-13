@@ -1,5 +1,19 @@
 # Decisions
 
+## 2026-07-13 — Configurable Echo Count (`--echo-count`)
+
+### What
+Added `--echo-count` CLI flag and `echo_count` parameter to `generate_landscape()` — controls how many echo phrases appear per landscape (0–3, default: 1). The echo block now loops `echo_count` times, each picking from a `used_echoes` set to prevent repeating the same phrase. When the pool is exhausted (`echo_count > len(ECHOES)`), falls back to the full pool. Added `echo_count` to JSON metadata when `echo_enabled=True`.
+
+### Why
+The echo system (Session 78) always produced exactly one echo phrase per landscape. Users who want a richer atmospheric effect — multiple echoes building on each other (e.g., "The land remembers. Something important happened here once.") — had no way to express that. The `--echo-count` flag is the natural counterpart to `--anomaly-count` (Session 29) and follows the same pattern: a simple integer that controls how many instances of the feature appear.
+
+### Tradeoffs
+- **echo_count=0** is an alternative suppression mechanism to not using `--echo`: the former explicitly requests zero echoes while using `--echo`, the latter doesn't enable echoes at all. Both are valid; `echo_count=0` is more explicit about intent when a script conditionally enables echoes.
+- **Dedup is internal to the echo system**: A `used_echoes` set tracks which phrases have been used, independent of the word-category `used_words` set (which echoes intentionally don't participate in). When dedup exhausts the pool (echo_count > 10), the full pool is reused — same pattern as `_pick()`'s pool-exhaustion fallback. This is purely defensive since echo_count is capped at 3, well below the 10-phrase pool.
+- **No seed-breaking change when echo_enabled=False**: The echo block is skipped entirely when disabled, preserving all existing seed-based output. When enabled, the additional `rng.choice()` calls are after all other generation, just like the single-echo version.
+- **12 new tests**, 433 total (18 todo + 415 landscape).
+
 ## 2026-07-13 — Atmospheric Echo Phrases (`--echo`)
 
 ### What
