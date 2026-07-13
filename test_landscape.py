@@ -3826,5 +3826,83 @@ class TestEchoTimeWord(unittest.TestCase):
                 self.assertGreater(len(result), 10)
 
 
+class TestWeatherTimeWord(unittest.TestCase):
+    def test_weather_templates_have_time_word_placeholder(self):
+        weather_tmpls = SENTENCE_TEMPLATES["weather"]
+        time_word_tmpls = [t for t in weather_tmpls if "{time_word}" in t]
+        self.assertGreaterEqual(len(time_word_tmpls), 1,
+            "At least 1 weather template should reference {time_word}")
+
+    def test_weather_time_word_does_not_break_output(self):
+        for s in range(30):
+            result = generate_landscape(seed=s)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_weather_time_word_uses_known_time_word(self):
+        results = [generate_landscape(seed=s) for s in range(300)]
+        self.assertTrue(
+            any(t in r for r in results for t in ALL_TIME_WORDS),
+            "No known time word appeared in weather across 300 seeds",
+        )
+
+    def test_weather_time_word_works_with_time_word_disabled(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, time_word_enabled=False)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertNotIn(" .", result,
+                "Space before period should not appear when time word is disabled")
+            self.assertTrue(result.endswith("."))
+
+    def test_weather_time_word_is_deterministic(self):
+        a = generate_landscape(seed=42)
+        b = generate_landscape(seed=42)
+        self.assertEqual(a, b,
+            "Weather with time word should be deterministic")
+
+    def test_weather_time_word_works_with_mood_and_bias(self):
+        result = generate_landscape(seed=42, mood="eerie", bias="rare")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_weather_time_word_works_with_detail_three(self):
+        result = generate_landscape(seed=42, detail=3)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 50)
+        self.assertTrue(result.endswith("."))
+
+    def test_weather_time_word_works_with_json_format(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_weather_time_word_disabled_differs_from_enabled(self):
+        enabled = generate_landscape(seed=42)
+        disabled = generate_landscape(seed=42, time_word_enabled=False)
+        self.assertNotEqual(enabled, disabled,
+            "Output should differ when time word is disabled in weather")
+
+    def test_weather_time_word_works_with_combine(self):
+        result = generate_landscape(seed=42, combine="forest,desert")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 10)
+        self.assertTrue(result.endswith("."))
+
+    def test_weather_time_word_appears_in_each_template(self):
+        for tset in ["first", "second", "third", "fourth", "fifth"]:
+            with self.subTest(template_set=tset):
+                results = [generate_landscape(seed=s, biome="forest", template_set=tset) for s in range(200)]
+                self.assertTrue(
+                    any(t in r for r in results for t in ALL_TIME_WORDS),
+                    f"No time word appeared in weather template_set={tset} across 200 seeds",
+                )
+
+
 if __name__ == "__main__":
     unittest.main()

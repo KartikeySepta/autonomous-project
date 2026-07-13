@@ -2,6 +2,15 @@
 
 ## 2026-07-13
 
+### What was done (Session 95)
+- Added **`{time_word}` temporal injection into all 5 weather templates** — the weather slot now receives the per-landscape time word, completing temporal framing coverage across all template categories (openings, anomalies, echoes, and now weather)
+  - All 5 weather templates now end with `{time_word}.` — e.g. "A gentle rain falls softly through the vivid crystal mist already." / "The air tells its own story: a gentle rain falls softly through the vivid crystal mist still."
+- Added `time_word=time_word` kwarg to the weather `_format_tmpl()` call — `time_word` was already in scope (picked per-landscape before the opening template) but was not passed to weather templates, so the placeholder would have rendered as literal `{time_word}` text
+- Weather was the last template category completely missing `{time_word}` — openings (Sessions 89–90), echoes (Session 91), and anomalies (Session 94) already had it; now weather completes the coverage
+- When `time_word_enabled=False`, `_format_tmpl` handles spacing cleanup naturally: `"  {time_word}."` → the time word is empty and placed right before the period, so only `" ."` appears → the existing `" ." → "."` replace chain removes it cleanly
+- Added 11 tests in `TestWeatherTimeWord` class: placeholder presence, output validity, time word appearance, determinism, time-word-disabled formatting, mood+bias, detail=3, JSON, disabled differs, combine, and per-template-set statistical tests (5 subtests for first–fifth template sets)
+- Tests increased from 522 to 533 total (18 todo + 515 landscape), subtests from 78 to 83
+
 ### What was done (Session 94)
 - Added **`{time_word}` injection into 2 anomaly templates** — the anomaly slot now receives the per-landscape time word, grounding surreal/uncanny descriptions in the same temporal frame as openings and echoes
   - Template 1: `"Something is not right with the {display} — {anomaly}"` → `"Something is not right with the {display} {time_word} — {anomaly}"` — e.g. "Something is not right with the forest already — The gravity here feels wrong."

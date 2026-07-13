@@ -1,5 +1,27 @@
 # Decisions
 
+## 2026-07-13 — `{time_word}` Injection in Weather Templates
+
+### What
+Added `{time_word}` placeholder support to all 5 weather templates — the weather system now passes `time_word=time_word` to `_format_tmpl()`, so phrases that contain `{time_word}` render with the per-landscape time word, completing temporal framing coverage across all template categories:
+  - Template 0: `"{Weather} {adverb} through the {color} {adj} {element} {time_word}."` — "A gentle rain falls softly through the vivid crystal mist already."
+  - Template 1: `"The air tells its own story: {weather} {adverb} through the {color} {adj} {element} {time_word}."` — "The air tells its own story: a gentle rain falls softly through the vivid crystal mist still."
+  - Template 2: `"{Weather}, as if the {adj} {display} itself breathes {color} {element} {adverb} {time_word}."` — "A gentle rain falls, as if the crystal forest itself breathes vivid mist softly yet."
+  - Template 3: `"Through the {color} {adj} {element}, {weather} {adverb} {time_word}."` — "Through the vivid crystal mist, a gentle rain falls softly now."
+  - Template 4: `"{Weather} {adverb} in {color} {adj} light {time_word}."` — "A gentle rain falls softly in vivid crystal light once."
+
+### Why
+The time word system (Sessions 89–94) was injected into all 4 opening templates, 2 echo phrases, and 2 anomaly templates, making temporal framing available in narrative positioning (openings), atmospheric reflection (echoes), and uncanny description (anomalies). But weather — which describes ongoing conditions and atmospheric activity — had no temporal frame. Weather descriptions described *what* was happening but never *when relative to now*: whether the rain was already falling, still persisting, or just now beginning. Adding time words to all 5 weather templates fills this gap with minimal changes (one kwarg addition, 5 template strings), giving weather descriptions a new dimension: temporal position of the atmospheric state.
+
+This follows the same pattern as every previous weather enrichment: `{adverb}` (Session 42), `{element}` (Session 57), `{color}` (Sessions 58/77), `{adj}` (Sessions 69/72) — add a kwarg that existing templates silently ignore, update all templates to use it, let `_format_tmpl` handle disabled-feature cleanup.
+
+### Tradeoffs
+- **All 5 weather templates modified** — unlike echoes (2 of 10) and anomalies (2 of 5) where time words were selectively placed, weather templates all end with a period and have a natural insertion point at the end of the sentence before the period. There is no reason to leave any weather template time-word-free.
+- **`_format_tmpl` handles cleanup naturally**: When `time_word_enabled=False`, all 5 templates produce `" ."` before the period. The existing `_format_tmpl` replace chain (`" ." → "."`) handles it.
+- **Not seed-breaking**: Adding `time_word=time_word` kwarg to the format call doesn't change the random sequence (no new `_pick()` or `rng.choice()` calls). Only the rendered output changes — existing seed-based output has an extra word appended to weather sentences.
+- **Completes `{time_word}` coverage across all template categories**: Now all 4 template slots that support word-category injection have `{time_word}` available — openings (Sessions 89–90), echoes (Session 91), anomalies (Session 94), and weather (this session). Every generated sentence can now carry temporal texture.
+- **11 new tests, 533 total** (18 todo + 515 landscape), 83 subtests.
+
 ## 2026-07-13 — `{time_word}` Injection in Anomaly Templates
 
 ### What

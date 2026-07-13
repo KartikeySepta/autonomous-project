@@ -409,11 +409,11 @@ SENTENCE_TEMPLATES = {
         "The {color} light of {element} {verb_conjugated} {adverb}.",
     ],
     "weather": [
-        "{Weather} {adverb} through the {color} {adj} {element}.",
-        "The air tells its own story: {weather} {adverb} through the {color} {adj} {element}.",
-        "{Weather}, as if the {adj} {display} itself breathes {color} {element} {adverb}.",
-        "Through the {color} {adj} {element}, {weather} {adverb}.",
-        "{Weather} {adverb} in {color} {adj} light.",
+        "{Weather} {adverb} through the {color} {adj} {element} {time_word}.",
+        "The air tells its own story: {weather} {adverb} through the {color} {adj} {element} {time_word}.",
+        "{Weather}, as if the {adj} {display} itself breathes {color} {element} {adverb} {time_word}.",
+        "Through the {color} {adj} {element}, {weather} {adverb} {time_word}.",
+        "{Weather} {adverb} in {color} {adj} light {time_word}.",
     ],
     "anomaly": [
         "{anomaly}",
@@ -780,7 +780,7 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
             weather = _pick("weathers", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
             weather_tmpl = _pick_template("weather", template_set, template_overrides, rng=rng)
             parts.append(
-                _format_tmpl(weather_tmpl, Weather=weather.capitalize(), weather=weather, display=display, adverb=adverb, element=element, color=color, adj=adj)
+                _format_tmpl(weather_tmpl, Weather=weather.capitalize(), weather=weather, display=display, adverb=adverb, element=element, color=color, adj=adj, time_word=time_word)
             )
 
     if anomaly_enabled and detail >= 1 and anomaly_count > 0:
