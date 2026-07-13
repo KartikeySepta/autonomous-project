@@ -39,10 +39,15 @@
 - Added 5 new tests in `TestEcho`: `test_echo_element_injection_contains_element`, `test_echo_element_in_in_time_phrase`, `test_echo_element_is_deterministic`, `test_echo_element_works_with_detail_zero`, `test_echo_element_works_with_combine`
 - Tests increased from 441 to 446 total (18 todo + 428 landscape)
 
-### Current status
-Working. All 446 tests pass (18 todo + 428 landscape).
-
-## 2026-07-12
+### What was done (Session 83)
+- Added **`{color}` injection into 2 echo phrases** — the echo system now passes `color=color` to `_format_tmpl()`, so phrases that contain `{color}` render with the per-sentence-pair color word, grounding abstract atmospheric echoes in the landscape's visual palette:
+  - "You feel as though you are being watched by the {element} itself." → "You feel as though you are being watched by the {color} {element} itself." — "You feel as though you are being watched by the vivid mist itself." / "...by the murky silence itself."
+  - "This place exists outside of time, in the {element}." → "This place exists outside of time, in the {color} {element}." — "...outside of time, in the vivid mist." / "...in the murky silence."
+- Added `color=color` kwarg to the echo `_format_tmpl()` call — `color` was already in scope (last-picked from the detail loop, or opening color for detail=0) but was not passed to echo templates
+- 8 remaining echo phrases without `{color}` kept as-is for structural variety — the color injection split (2 of 10) matches the element injection split (also 2 of 10), since color words are most natural when paired with element words in the same phrase
+- Updated `test_echo_element_injection_contains_element` to check for `"by the "` and `" itself"` separately (instead of `f"by the {e} itself"`) since the color word now sits between "by the" and the element
+- Added 7 new tests in `TestEcho`: `test_echo_color_injection_contains_color`, `test_echo_color_in_watched_phrase`, `test_echo_color_in_time_phrase`, `test_echo_color_is_deterministic`, `test_echo_color_works_with_detail_zero`, `test_echo_color_works_with_combine`, `test_echo_color_works_with_color_disabled`
+- Tests increased from 446 to 453 total (18 todo + 435 landscape)
 
 ### What was done (Session 51)
 - Added **color word bank** (`COLORS`) to `landscape.py` — a new word category with 12 words across 3 weight tiers (4 common: vivid, burnished, stark, murky; 4 normal: lurid, mottled, bleached, veined; 4 rare: iridescent, fluorescent, scintillating, coruscating)

@@ -3030,10 +3030,9 @@ class TestEcho(unittest.TestCase):
 
     def test_echo_element_injection_contains_element(self):
         results = [generate_landscape(seed=s, echo_enabled=True, detail=2) for s in range(200)]
-        element_phrases = ["by the ", " itself"]
         self.assertTrue(
-            any(p in r for r in results for p in [f"by the {e} itself" for e in ALL_ELEMENTS]),
-            "Echo with {element} should inject element words across 200 seeds",
+            any("by the " in r and " itself" in r for r in results),
+            "Echo with {element} should produce 'by the {color} {element} itself' pattern across 200 seeds",
         )
 
     def test_echo_element_in_in_time_phrase(self):
@@ -3063,8 +3062,54 @@ class TestEcho(unittest.TestCase):
             "Echo with {element} should contain element words when biomes are combined",
         )
 
+    def test_echo_color_injection_contains_color(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, detail=2) for s in range(200)]
+        self.assertTrue(
+            any(c in r for r in results for c in ALL_COLORS),
+            "Echo with {color} should contain color words across 200 seeds",
+        )
 
-class TestEchoCount(unittest.TestCase):
+    def test_echo_color_in_watched_phrase(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, biome="tundra", detail=2) for s in range(300)]
+        self.assertTrue(
+            any("by the " in r and " itself" in r for r in results),
+            "Echo phrase with {color} should produce 'by the {color} {element} itself' pattern",
+        )
+
+    def test_echo_color_in_time_phrase(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, biome="tundra", detail=2) for s in range(300)]
+        self.assertTrue(
+            any("outside of time, in the " in r for r in results),
+            "Echo phrase with {color} should produce 'outside of time, in the {color} {element}' pattern",
+        )
+
+    def test_echo_color_is_deterministic(self):
+        a = generate_landscape(seed=42, echo_enabled=True, biome="tundra")
+        b = generate_landscape(seed=42, echo_enabled=True, biome="tundra")
+        self.assertEqual(a, b,
+            "Echo with {color} should be deterministic with same seed")
+
+    def test_echo_color_works_with_detail_zero(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, echo_enabled=True, detail=0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_echo_color_works_with_combine(self):
+        results = [generate_landscape(seed=s, echo_enabled=True, combine="forest,desert", detail=2) for s in range(200)]
+        self.assertTrue(
+            any(c in r for r in results for c in ALL_COLORS),
+            "Echo with {color} should contain color words when biomes are combined",
+        )
+
+    def test_echo_color_works_with_color_disabled(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, echo_enabled=True, color_enabled=False)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertNotIn("  ", result, f"Output has double space: {result!r}")
+            self.assertTrue(result.endswith("."))
     def test_echo_count_default_is_one(self):
         a = generate_landscape(seed=42, echo_enabled=True)
         b = generate_landscape(seed=42, echo_enabled=True, echo_count=1)

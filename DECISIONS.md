@@ -1,5 +1,23 @@
 # Decisions
 
+## 2026-07-13 — `{color}` Injection in Echo Phrases
+
+### What
+Added `{color}` placeholder support to 2 of 10 ECHOES phrases — the echo system now passes `color=color` to `_format_tmpl()`, so phrases that contain `{color}` render with the per-sentence-pair color word from the detail loop. The 8 remaining phrases without `{color}` are unchanged.
+
+### Why
+The echo system (Sessions 80–82) gained `{display}`, `{adverb}`, and `{element}` injection for biome awareness, adverbial texture, and sensory substance, but all echo phrases remained color-free — they used generic references like "the mist itself" and "in the mist" without connecting to the landscape's visual palette (vivid, murky, iridescent, etc.). Adding `{color}` to the same 2 phrases that received `{element}` creates a natural adjective-color stack: "You feel as though you are being watched by the vivid mist itself." is more evocative than "…by the mist itself."
+
+This completes the injection system for the echo phrases: `{display}` (biome name), `{adverb}` (adverbial flavor), `{element}` (sensory substance), and now `{color}` (visual palette). All four word categories that are available in the template system are now also available in the echo system.
+
+### Tradeoffs
+- **2 of 10 phrases modified** — deliberately the same 2 phrases that received `{element}` injection, since color words pair naturally with element words ("vivid mist", "murky silence"). Adding color to phrases without element would require a different grammatical construction.
+- **Uses the last-picked color from the detail loop**: same pattern as element and adverb — the most recently selected color (last sentence pair, or opening color for detail=0).
+- **Not seed-breaking**: no new `_pick()` calls were added, only the rendering of existing phrases changed. Echo is off by default, so all existing seed-based output is unaffected.
+- **No ECHO_INDICATORS changes**: both modified phrases retain their invariant substrings ("being watched" and "outside of time").
+- **`color_enabled=False` composes cleanly**: When `color=""`, `_format_tmpl` collapses "by the  mist" → "by the mist" and "in the  mist" → "in the mist". No formatting artifacts.
+- **7 new tests, 453 total** (18 todo + 435 landscape).
+
 ## 2026-07-13 — `{element}` Injection in Echo Phrases
 
 ### What
