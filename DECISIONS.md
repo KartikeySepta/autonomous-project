@@ -996,6 +996,22 @@ Session 62 added biome-specific color and adverb pools to `BIOME_WORDS`, but the
 - `test_describe_global_includes_colors` now correctly tests that `describe_global()` shows global colors (not biome-specific ones), matching the behavior of `describe_global()` which intentionally lists only the global word pools.
 - 366 landscape tests pass (unchanged count — no new tests added).
 
+## 2026-07-13 — `{element}` in Weather Template 1 (The Air Tells)
+
+### What
+Added `{element}` to `SENTENCE_TEMPLATES["weather"][1]`: changed `"The air tells its own story: {weather} {adverb}."` to `"The air tells its own story: {weather} {adverb} through the {element}."`. Template-level change only — `element=element` was already passed to all weather format calls since Session 57.
+
+### Why
+Weather template 1 was the only template in the weather slot that didn't reference the per-sentence-pair element word. Templates 0, 2, and 3 all used `{element}`, and template 4 used `{color}`. This left template 1 producing flatter descriptions like "The air tells its own story: a gentle rain falls softly." compared to the more evocative "The air tells its own story: a gentle rain falls softly through the mist." Adding `{element}` closes this coverage gap and makes weather descriptions uniformly richer across all 5 templates.
+
+### Tradeoffs
+- Template-level change only — no code changes, no new `_pick()` calls, no seed-breaking change from RNG sequence alteration (the same random choices are made; only the output content changes when template 1 is selected)
+- "through the {element}" reads naturally with all element types: single-word ("mist"), multi-word ("heat shimmer", "leaf rustle") — just like the same phrase in template 0
+- When `adverb_enabled=False`, the template renders as `"The air tells its own story: {weather}  through the {element}."` — `_format_tmpl` collapses the double space perfectly
+- All 5 weather templates now use at least one injected word category (element, color, or adverb), up from 4 of 5
+- No new tests — existing coverage (template variety, output validity, element presence in weather, `adverb_enabled=False` formatting) covers the change
+- 393 tests total (unchanged)
+
 ## 2026-07-13 — `{color}` in Anomaly Templates
 
 ### What

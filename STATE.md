@@ -733,3 +733,12 @@ Working. All 384 tests pass (18 todo + 366 landscape).
 
 ### Current status
 Working. All 393 tests pass (18 todo + 375 landscape).
+
+## 2026-07-13
+
+### What was done (Session 68)
+- Added **`{element}` to weather template 1** — changed `"The air tells its own story: {weather} {adverb}."` to `"The air tells its own story: {weather} {adverb} through the {element}."` (e.g. "The air tells its own story: a gentle rain falls softly through the mist.")
+- Weather template 1 was the only weather template that didn't reference `{element}` — templates 0, 2, and 3 already had it, and template 4 uses `{color}`. This change makes all 5 weather templates use at least one injected word category.
+- Template-level change only — `element=element` kwarg was already passed to all weather format calls (since Session 57)
+- No new tests needed — existing template and output tests cover the change
+- Tests: still 393 total (18 todo + 375 landscape)
