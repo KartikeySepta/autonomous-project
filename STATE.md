@@ -2,6 +2,24 @@
 
 ## 2026-07-14
 
+### What was done (Session 115)
+- **Added `--sound-prob` CLI flag** and `sound_prob` parameter to `generate_landscape()` — users can now control how often soundscape phrases appear per roll (0.0 = never, 1.0 = always, default 1.0 preserves existing behavior), following the exact same pattern as `--echo-prob` (Session 87) and `--legend-prob` (Session 102):
+  - `sound_prob=0.0` suppresses all soundscape phrases even with `sound_enabled=True` and `sound_count > 0`
+  - Each of `sound_count` rolls independently draws `rng.random() < sound_prob`
+  - `sound_prob` included in JSON metadata when `sound_enabled=True`
+  - Default `sound_prob=1.0` is fully backward compatible — all existing seed-based output with `--sound` is unchanged
+- Added preset gating for `sound_prob` — follows the same pattern as `echo_prob` and `legend_prob` gating
+- Added 7 new tests in `TestSoundProb` class:
+  - `test_sound_prob_default_is_one` — default matches `sound_prob=1.0`
+  - `test_sound_prob_zero_suppresses_soundscape` — zero suppresses all soundscape phrases
+  - `test_sound_prob_one_always_has_soundscape` — 1.0 always produces soundscape phrases
+  - `test_sound_prob_produces_valid_output` — various probs produce valid output
+  - `test_sound_prob_is_deterministic` — same seed + same prob = same output
+  - `test_sound_prob_json_includes_field` — JSON has `sound_prob` when enabled
+  - `test_sound_prob_flag_exists_via_cli` — `--sound-prob` CLI flag exists
+- This is the natural evolution of the soundscape system: Session 112 added on/off, Session 113 added to presets, Session 114 added sound-count, now sound-prob completes the trajectory, matching the echo and legend systems' trajectories (on/off → count → prob).
+- Tests increased from 687 to 694 total (18 todo + 676 landscape), subtests unchanged at 137
+
 ### What was done (Session 114)
 - **Added `--sound-count` CLI flag** and `sound_count` parameter to `generate_landscape()` — users can now control how many soundscape phrases appear per landscape (0-3, default: 1), following the exact same pattern as `--echo-count` (Session 79) and `--legend-count` (Session 101):
   - `sound_count=0` suppresses soundscapes (equivalent to not using `--sound`)

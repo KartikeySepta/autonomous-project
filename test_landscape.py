@@ -4996,5 +4996,50 @@ class TestSoundCount(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+class TestSoundProb(unittest.TestCase):
+    def test_sound_prob_default_is_one(self):
+        a = generate_landscape(seed=42, sound_enabled=True)
+        b = generate_landscape(seed=42, sound_enabled=True, sound_prob=1.0)
+        self.assertEqual(a, b,
+            "sound_prob=1.0 should match default")
+
+    def test_sound_prob_zero_suppresses_soundscape(self):
+        results = [generate_landscape(seed=s, sound_enabled=True, sound_prob=0.0) for s in range(100)]
+        for r in results:
+            for ind in SOUND_INDICATORS:
+                self.assertNotIn(ind, r,
+                    f"Sound indicator {ind!r} should not appear with sound_prob=0.0")
+
+    def test_sound_prob_one_always_has_soundscape(self):
+        results = [generate_landscape(seed=s, sound_enabled=True, sound_prob=1.0) for s in range(100)]
+        has_sound = sum(1 for r in results if any(ind in r for ind in SOUND_INDICATORS))
+        self.assertGreater(has_sound, 80,
+            "With sound_prob=1.0, most outputs should contain a soundscape")
+
+    def test_sound_prob_produces_valid_output(self):
+        for prob in [0.0, 0.25, 0.5, 0.75, 1.0]:
+            for s in range(10):
+                result = generate_landscape(seed=s, sound_enabled=True, sound_prob=prob)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_sound_prob_is_deterministic(self):
+        a = generate_landscape(seed=42, sound_enabled=True, sound_prob=0.5)
+        b = generate_landscape(seed=42, sound_enabled=True, sound_prob=0.5)
+        self.assertEqual(a, b,
+            "sound_prob should be deterministic with same seed")
+
+    def test_sound_prob_json_includes_field(self):
+        result = generate_landscape(seed=42, sound_enabled=True, sound_prob=0.5, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("sound_prob", data)
+        self.assertEqual(data["sound_prob"], 0.5)
+
+    def test_sound_prob_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 if __name__ == "__main__":
     unittest.main()

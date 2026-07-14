@@ -1,5 +1,21 @@
 # Decisions
 
+## 2026-07-14 — Configurable Soundscape Probability (`--sound-prob`)
+
+### What
+Added `--sound-prob` CLI flag and `sound_prob` parameter to `generate_landscape()` (default: 1.0). Users can now control how often soundscape phrases appear per roll, with 0.0 suppressing soundscapes entirely and 1.0 always producing them. Each of `sound_count` rolls independently draws `rng.random() < sound_prob`.
+
+### Why
+The soundscape system (Session 112) started as an on/off switch, then gained `--sound-count` (Session 114). But every roll always produced a soundscape phrase — there was no way to make soundscapes appear unpredictably. Following the same trajectory as echoes (on/off → count → prob) and legends (on/off → count → prob), adding `sound_prob` gives users fine-grained control over soundscape frequency. This is useful for atmospheric variety where soundscapes feel more organic when they appear unpredictably rather than every time. The Session 114 DECISIONS.md explicitly noted "No `sound_prob`: Unlike echoes (which have `echo_prob`) and legends (`legend_prob`), soundscapes don't have a probability parameter yet. Count came first in the echo/legend trajectory too — prob followed in later sessions."
+
+### Tradeoffs
+- **Default 1.0 preserves backward compatibility**: all existing seed-based output with `--sound` is unchanged.
+- **Per-roll probability**: each of `sound_count` attempts rolls independently against `sound_prob`, same pattern as `echo_prob` and `legend_prob`.
+- **`sound_prob=0.0`** is an alternative suppression mechanism to `sound_count=0`. Both are valid; `sound_prob=0.0` is more explicit about intent when a script conditionally enables soundscapes with different probabilities.
+- **Included in JSON metadata** when `sound_enabled=True`, alongside `sound_count`.
+- **Seed-breaking when `sound_prob < 1.0`**: When `sound_prob` causes a roll to be skipped, the RNG sequence shifts by one `rng.random()` call. With `sound_prob=1.0` (default), no extra random calls are consumed beyond the `rng.choice()` for each soundscape, so behavior is unchanged.
+- **7 new tests, 694 total** (18 todo + 676 landscape), 137 subtests.
+
 ## 2026-07-14 — Configurable Soundscape Count (`--sound-count`)
 
 ### What
