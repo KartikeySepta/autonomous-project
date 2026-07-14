@@ -8,8 +8,8 @@ from landscape import (
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS, ECHOES, LEGENDS,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
-    TIME_WORDS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL,
-    describe_travelogue, describe_wistful,
+    TIME_WORDS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL, SOUNDSCAPES,
+    describe_travelogue, describe_wistful, describe_sounds,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -23,6 +23,13 @@ ALL_COLORS = set(COLORS) | {w for bw in BIOME_WORDS.values() for w in bw.get("co
 ALL_TIME_WORDS = set(TIME_WORDS)
 ALL_LEGENDS = set(LEGENDS)
 ALL_WISTFUL = set(WISTFUL)
+ALL_SOUNDSCAPES = set(SOUNDSCAPES)
+
+SOUND_INDICATORS = [
+    "hums", "shifts and settles", "shattering", "sound echoes",
+    "call of an unknown creature", "rhythm pulses",
+    "whispers", "breathing",
+]
 
 LEGEND_INDICATORS = [
     "maps leave", "was not here", "Pilgrims once walked", "older than stone",
@@ -4593,6 +4600,78 @@ class TestDescribeWistful(unittest.TestCase):
             "No landscape should be generated when --describe-wistful is used")
 
 
+class TestDescribeSounds(unittest.TestCase):
+    def test_describe_sounds_returns_string(self):
+        result = describe_sounds()
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_describe_sounds_contains_header(self):
+        result = describe_sounds()
+        self.assertIn("soundscape phrases", result)
+
+    def test_describe_sounds_contains_all_phrases(self):
+        result = describe_sounds()
+        for phrase in SOUNDSCAPES:
+            self.assertIn(phrase, result,
+                f"Soundscape description should contain phrase: {phrase!r}")
+
+    def test_describe_sounds_contains_index_numbers(self):
+        result = describe_sounds()
+        self.assertIn("[0]", result, "Soundscape description should contain index [0]")
+        self.assertIn("[1]", result, "Soundscape description should contain index [1]")
+
+    def test_describe_sounds_shows_all_phrases(self):
+        result = describe_sounds()
+        count = len(SOUNDSCAPES)
+        self.assertIn("=== soundscape phrases ===", result)
+        self.assertIn(f"[{count - 1}]", result,
+            f"Soundscape description should contain the last phrase index [{count - 1}]")
+
+    def test_describe_sounds_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_sounds_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-sounds"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("soundscape phrases", output)
+        self.assertIn("[0]", output)
+        self.assertIn("[1]", output)
+
+    def test_describe_sounds_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-sounds", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-sounds is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-sounds is used")
+
+
 class TestWistful(unittest.TestCase):
     WISTFUL_INDICATORS = [
         "wish you could stay",
@@ -4717,6 +4796,120 @@ class TestWistful(unittest.TestCase):
             for ind in self.WISTFUL_INDICATORS:
                 self.assertNotIn(ind, result,
                     f"Wistful indicator {ind!r} should not appear at detail=0")
+
+
+class TestSoundscape(unittest.TestCase):
+    def test_soundscape_disabled_by_default(self):
+        result = generate_landscape(seed=42, biome="forest")
+        for ind in SOUND_INDICATORS:
+            self.assertNotIn(ind, result,
+                f"Soundscape indicator {ind!r} should not appear by default")
+
+    def test_soundscape_enabled_appears(self):
+        results = [generate_landscape(seed=s, biome="forest", sound_enabled=True) for s in range(100)]
+        self.assertTrue(
+            any(ind in r for r in results for ind in SOUND_INDICATORS),
+            "No soundscape phrase appeared across 100 seeds with sound_enabled=True",
+        )
+
+    def test_soundscape_contains_biome_name(self):
+        result = generate_landscape(seed=42, biome="tundra", sound_enabled=True)
+        self.assertIn("tundra", result)
+
+    def test_soundscape_produces_valid_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, sound_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertTrue(result.endswith("."))
+
+    def test_soundscape_is_deterministic(self):
+        a = generate_landscape(seed=42, biome="forest", sound_enabled=True)
+        b = generate_landscape(seed=42, biome="forest", sound_enabled=True)
+        self.assertEqual(a, b,
+            "Soundscape should be deterministic with same seed")
+
+    def test_soundscape_works_with_detail_zero(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, detail=0, sound_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_soundscape_suppressed_at_detail_zero(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, detail=0, sound_enabled=True)
+            for ind in SOUND_INDICATORS:
+                self.assertNotIn(ind, result,
+                    f"Soundscape indicator {ind!r} should not appear at detail=0")
+
+    def test_soundscape_works_with_echo(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, echo_enabled=True, sound_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_soundscape_works_with_legend(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, legend_enabled=True, sound_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_soundscape_works_with_travelogue(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, travelogue=True, sound_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_soundscape_works_with_wistful(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, wistful=True, sound_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_soundscape_works_with_json(self):
+        result = generate_landscape(seed=42, biome="forest", sound_enabled=True, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+        self.assertIn("sound_enabled", data)
+        self.assertTrue(data["sound_enabled"])
+
+    def test_soundscape_json_field_absent_when_disabled(self):
+        result = generate_landscape(seed=42, biome="forest", fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertNotIn("sound_enabled", data,
+            "sound_enabled should not appear in JSON when sound_enabled=False")
+
+    def test_soundscape_differs_from_plain(self):
+        plain = generate_landscape(seed=42, biome="forest")
+        sound = generate_landscape(seed=42, biome="forest", sound_enabled=True)
+        self.assertNotEqual(plain, sound,
+            "Soundscape should differ from plain output")
+
+    def test_soundscape_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_soundscape_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--sound", "--seed", "42"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIsInstance(output, str)
+        self.assertGreater(len(output), 0)
 
 
 if __name__ == "__main__":

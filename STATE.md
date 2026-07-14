@@ -2,6 +2,23 @@
 
 ## 2026-07-14
 
+### What was done (Session 112)
+- **Added Soundscape system** (`--sound` CLI flag, `sound_enabled` parameter) — a new word bank of 8 curated soundscape phrases that describe what the landscape sounds like, adding an auditory dimension distinct from the existing visual, atmospheric, cultural, and emotional layers:
+  - `SOUNDSCAPES` bank includes phrases like "The forest hums softly with a tone that seems to come from everywhere at once." and "You hear the tundra breathing — a slow, crystal rhythm that shakes the silence."
+  - All 8 phrases use `{display}`, `{adverb}`, `{color}`, `{adj}`, and/or `{element}` injection — matching the injection patterns of echoes
+  - Off by default (`sound_enabled=False`), so all existing seed-based output is unchanged
+  - Phrase picked via `rng.choice(SOUNDSCAPES)` and formatted with current per-landscape word values
+  - Suppressed at `detail=0` (same pattern as echoes, legends, wistful)
+  - Placed after echoes and before legends — creating a sensory flow: atmospheric memory → present sounds → cultural context
+- Added **`describe_sounds()` function** and **`--describe-sounds` CLI flag** — users can inspect all 8 soundscape phrases with index numbers, following the same pattern as every other describe-* feature
+- Added **`"sound_enabled": true` to JSON metadata** when `sound_enabled=True` — follows the same pattern as echo_enabled, legend_enabled, travelogue, and wistful
+- Added 24 new tests:
+  - 8 tests in `TestDescribeSounds` — mirrors `TestDescribeEchoes` pattern (returns string, header, all phrases, index numbers, last-index, CLI flag, stdout, no landscape)
+  - 16 tests in `TestSoundscape` — covers disabled by default, enabled appears, biome name injection, output validity, determinism, detail=0 suppression, compatibility with echo/legend/travelogue/wistful, JSON metadata (present + absent), differs from plain, CLI flag existence, stdout output
+- Tests increased from 652 to 676 total (18 todo + 658 landscape), subtests unchanged at 127
+
+## 2026-07-14
+
 ### What was done (Session 111)
 - **Added `describe_wistful()` function** and `--describe-wistful` CLI flag — users can now inspect all 6 wistful phrases with their index numbers, following the exact same pattern as `describe_travelogue()` (Session 107), `describe_legends()` (Session 99), and `describe_echoes()` (Session 86):
   - Shows all wistful phrases with `[0]`–`[5]` index markers

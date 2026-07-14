@@ -1,5 +1,30 @@
 # Decisions
 
+## 2026-07-14 — Soundscape Auditory Layer (`--sound`)
+
+### What
+Added `SOUNDSCAPES` word bank (8 curated phrases) and `--sound` CLI flag (default: off) that appends one soundscape phrase to the generated landscape, describing what the landscape sounds like. Each phrase uses `{display}`, `{adverb}`, `{color}`, `{adj}`, and `{element}` injection, so soundscape phrases feel grounded in the current landscape's vocabulary palette.
+
+Also added `describe_sounds()` and `--describe-sounds` for introspection, `"sound_enabled": true` in JSON metadata, and 24 tests (8 introspection + 16 functional).
+
+### Why
+After 111 sessions of enriching vocabulary, templates, moods, echoes, legends, travelogue, and wistful framing, the landscape generator could describe what a place *looks like, feels like, sounds like (via weather), remembers, what people say about it, what narrative frame it sits in, and what the observer feels about it* — but it never had a dedicated system for *present-moment auditory sensation as an atmospheric layer*. Weather templates describe wind and rain as weather phenomena, and element words include "sound" and "echo" as abstract qualities — but no feature specifically describes the *sounds of the landscape itself* as a focused sensory dimension.
+
+Echoes are atmospheric memory (timeless presence, the land remembering). Legends are cultural (folk knowledge). Travelogue is narrative framing. Wistful is emotional response. Soundscapes fill a gap: *what you hear right now*. This is a genuinely distinct sensory dimension — hearing — and it changes the landscape's feel from a purely visual/phenomenological description to a multi-sensory one. A landscape that "hums with a tone that seems to come from everywhere at once" or "whispers at the edge of hearing" has an auditory texture that the visual templates and weather system don't provide.
+
+This directly serves the GOAL.md directive to "build something genuinely novel or interesting." An auditory layer for a procedural landscape generator — especially one with poetic, eerie, or sublime phrases — is a genuinely unusual addition that transforms the output from a scenic description into a lived, sensory experience.
+
+### Tradeoffs
+- **8 curated phrases** — small enough to maintain quality, large enough for variety. Each phrase covers a different sound type: hum (subsonic vibration), shift (movement), shatter (crystal/breaking), echo (close-but-invisible), call (creature), pulse (rhythm), whisper (edge-of-hearing), breath (animistic).
+- **Uses existing word categories** — adverb, color, adj, element are all already picked per-landscape before the soundscape block, so no new random calls are added beyond `rng.choice(SOUNDSCAPES)`. The `_format_tmpl` function handles disabled-feature cleanup naturally (e.g. `"shattering ."` → `"shattering."` when adverb is disabled).
+- **Placed after echoes, before legends** — same position as wistful relative to legends/travelogue. In the generation flow: opening → middle/weather → anomalies → echoes → soundscapes → legends → wistful → travelogue. This creates a sensory arc: visual → weather → wrongness → what the place remembers → what you hear → what people say → how you feel → narrative frame.
+- **Suppressed at `detail=0`** — same pattern as echoes, legends, and wistful. Soundscapes need a described landscape context to have resonance.
+- **Not seed-breaking when disabled**: `sound_enabled=False` by default, so all existing seed-based output is preserved. When enabled, one extra `rng.choice()` call shifts the random sequence for legends and beyond.
+- **Simple on/off switch** — no count or probability parameters. Follows the same initial pattern as echoes (Session 78), legends (Session 96), and wistful (Session 108): one phrase per landscape when enabled. Count and prob can be added in future sessions if the feature proves useful.
+- **Not in presets yet** — follows the same trajectory as echoes, legends, travelogue, and wistful, which were all initially only accessible via explicit CLI flags before being integrated into presets in later sessions. If soundscapes prove useful, they can be added to presets in a future session.
+- **Seed-breaking when enabled**: One extra `rng.choice()` call is introduced after echoes and before legends, shifting the random sequence for legends, wistful, and travelogue. Determinism is preserved (same seed + same args = same output).
+- **24 new tests, 676 total** (18 todo + 658 landscape), 127 subtests unchanged.
+
 ## 2026-07-14 — Wistful Introspection (`--describe-wistful`)
 
 ### What
