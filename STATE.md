@@ -2,6 +2,32 @@
 
 ## 2026-07-14
 
+### What was done (Session 128)
+- **Expanded biome-specific color banks for all 13 biomes** — each biome now has +2 colors (26 new entries total), the fourth expansion of biome-specific word banks after Sessions 125 (adjectives/elements), 126 (nouns), and 127 (verbs). Prior to this, all biomes had exactly 4 colors. Now each biome has 6 colors:
+  - **forest** (4→6): +"woodland", "forest green"
+  - **desert** (4→6): +"sand", "terracotta"
+  - **ocean** (4→6): +"aquamarine", "indigo"
+  - **tundra** (4→6): +"permafrost white", "glacier blue"
+  - **mountain range** (4→6): +"stone grey", "alpine"
+  - **swamp** (4→6): +"khaki", "peat brown"
+  - **cave system** (4→6): +"cave-dark", "mineral blue"
+  - **plain** (4→6): +"tawny", "dusty rose"
+  - **volcanic field** (4→6): +"scoria red", "pumice grey"
+  - **coral reef** (4→6): +"scarlet", "coral pink"
+  - **ruined city** (4→6): +"pale grey", "verdigris"
+  - **fungal grove** (4→6): +"mushroom beige", "sporescent"
+  - **sky islands** (4→6): +"dawn pink", "storm grey"
+- Each color is curated to the biome's thematic identity — geological colors for mountain ranges (stone grey, alpine), marine colors for ocean (aquamarine, indigo), ruin colors for ruined city (pale grey, verdigris), aerial colors for sky islands (dawn pink, storm grey), etc.
+- No code, CLI, or test changes — data-only expansion. All 746 tests still pass (18 todo + 728 landscape), 201 subtests.
+- Colors appear in multiple template slots (opening templates, middle templates, weather templates, anomaly templates, echo phrases, soundscape phrases), so expanding them has broad per-word impact on output variety.
+
+### Current status
+Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
+
+### Next likely steps
+- Expand remaining biome word bank categories (adverbs, weathers, anomalies)
+- Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry, inhabitants/wildlife)
+
 ### What was done (Session 127)
 - **Expanded biome-specific verb banks for all 13 biomes** — each biome now has +2 verbs (26 new entries total), the third expansion of biome-specific word banks after Session 125's adjective/element expansion and Session 126's noun expansion. Prior to this, all biomes had exactly 5 verbs. Now each biome has 7 verbs:
   - **forest** (5→7): +"dapple", "sigh"
@@ -20,13 +46,6 @@
 - Each verb is curated to the biome's thematic identity — geological verbs for mountain ranges (sculpt, shelter), marine verbs for ocean (swell, roar), ruin verbs for ruined city (fracture, whine), aerial verbs for sky islands (glide, sail), etc.
 - No code, CLI, or test changes — data-only expansion. All 746 tests still pass (18 todo + 728 landscape), 201 subtests.
 - Verbs appear in multiple middle template slots (e.g. "The {adj} {noun} {verb} {adverb} with {color} {element}"), so expanding them has broad per-word impact on output variety.
-
-### Current status
-Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
-
-### Next likely steps
-- Expand remaining biome word bank categories (weathers, anomalies, colors, adverbs)
-- Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry, inhabitants/wildlife)
 
 ### What was done (Session 126)
 - **Expanded biome-specific noun banks for all 13 biomes** — each biome now has +2 nouns (26 new entries total), the second expansion of biome-specific word banks after Session 125's adjective/element expansion. Prior to this, biome nouns were at 5 entries for 10 biomes and 6 entries for 3 biomes (ruined city, fungal grove, sky islands). Now all biomes have 7–8 nouns:
