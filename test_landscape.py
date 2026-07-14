@@ -61,6 +61,11 @@ LEGEND_INDICATORS = [
     "dreams of a time", "hermit once lived",
     "remembers those who built", "seen from far away", "placed by hand",
     "sounds like a name", "well in the",
+    "appears in the dreams of those who have never",
+    "bell in the",
+    "scent that cannot be described",
+    "leads to the same clearing",
+    "built by no one",
 ]
 
 

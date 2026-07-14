@@ -91,6 +91,11 @@ LEGENDS = [
     "Every stone in the {display} was placed by hand, long before anyone lived here.",
     "When the wind moves through the {display}, it sounds like a name you almost recognize.",
     "There is a well in the {display} that no one has ever reached the bottom of.",
+    "The {display} appears in the dreams of those who have never seen it.",
+    "There is a bell in the {display} that rings only when no one is listening.",
+    "The {display} has a scent that cannot be described, only remembered.",
+    "Every path through the {display} leads to the same clearing, no matter where you start.",
+    "The {display} was built by no one, for no purpose, and yet it endures.",
 ]
 
 ADVERBS = [

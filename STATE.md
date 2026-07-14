@@ -2,6 +2,25 @@
 
 ## 2026-07-14
 
+### What was done (Session 124)
+- **Expanded LEGENDS word bank from 15 to 20 phrases** — 5 new folkloric/historical phrases added, covering underrepresented legend themes:
+  - `"The {display} appears in the dreams of those who have never seen it."` — prophetic dreams, unconscious connection to a place never visited
+  - `"There is a bell in the {display} that rings only when no one is listening."` — paradoxical observation, observer-effect mystery
+  - `"The {display} has a scent that cannot be described, only remembered."` — ineffable sensory quality, the limits of language
+  - `"Every path through the {display} leads to the same clearing, no matter where you start."` — impossible geography, labyrinthine convergence
+  - `"The {display} was built by no one, for no purpose, and yet it endures."` — purposeless endurance, existential mystery
+- Added 5 new indicators to `LEGEND_INDICATORS` (`"appears in the dreams of those who have never"`, `"bell in the"`, `"scent that cannot be described"`, `"leads to the same clearing"`, `"built by no one"`) — each is a unique invariant substring that won't collide with other word bank output.
+- No new tests or code changes beyond word bank expansion — all 728 landscape tests (746 total) still pass.
+- Legends were last expanded in Session 98 (10→15). This is the second expansion (15→20), making legends the largest word bank alongside echoes (15).
+- Tests unchanged: still 746 total (18 todo + 728 landscape), 201 subtests.
+
+### Current status
+Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
+
+### Next likely steps
+- Expand other word banks (more wistful phrases, more soundscapes, more weathers)
+- Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry)
+
 ### What was done (Session 123)
 - **Expanded WISTFUL word bank from 6 to 10 phrases** — 4 new wistful phrases added, covering underrepresented wistful themes:
   - `"You will never be the same after visiting the {display}."` — irreversible transformation, the place changes the observer

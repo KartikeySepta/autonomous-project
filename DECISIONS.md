@@ -1,5 +1,27 @@
 # Decisions
 
+## 2026-07-14 — Expanded LEGENDS Bank (20 phrases)
+
+### What
+Added 5 new curated legend phrases to the LEGENDS bank, expanding it from 15 to 20 phrases. The new phrases cover prophetic dreams, paradoxical observation, ineffable sensory quality, impossible geography, and purposeless endurance — themes absent from the existing 15.
+
+### Why
+The legend system (Session 96) was expanded once before (Session 98: 10→15), but has been at 15 phrases for many sessions while other word banks received more recent expansions: weathers (12, Session 120), soundscapes (12, Session 121), echoes (15, Session 122), and wistful (10, Session 123). Legends are enabled in all 5 presets (since Session 97), so a larger bank reduces repetition in preset output. The "Next likely steps" from Session 123 explicitly called for expanding legends.
+
+The 5 new phrases each cover a folkloric niche not well represented in the existing 15:
+- **Prophetic dreams**: "appears in the dreams of those who have never seen it" — unconscious precognitive connection to a place, distinct from existing "dreams of a time before people" (which is about the landscape dreaming, not people dreaming of the landscape)
+- **Paradoxical observation**: "bell that rings only when no one is listening" — observer-effect mystery, a riddle about perception and reality, distinct from existing "no one returns unchanged" (transformation) and "no path leads to it" (unreachability)
+- **Ineffable sensory quality**: "scent that cannot be described, only remembered" — the limits of language to capture sensory experience, distinct from "sounds like a name you almost recognize" (auditory near-memory)
+- **Impossible geography**: "every path leads to the same clearing" — non-Euclidean landscape, labyrinthine convergence, distinct from "no path leads to it" (unreachability) and "marked on no map" (cartographic absence)
+- **Purposeless endurance**: "built by no one, for no purpose, and yet it endures" — existential mystery, the landscape as an artifact of unknown origin and intent, distinct from "placed by hand" (ancient construction) and "older than stone" (buried antiquity)
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, `_format_tmpl()`, CLI flags, or any logic. Only the LEGENDS list and LEGEND_INDICATORS set were updated.
+- **No seed-breaking**: Adding phrases to LEGENDS doesn't change the random sequence — `rng.choice(LEGENDS)` picks from a larger pool but the choice function is unchanged. Only the rendered output content changes (new phrases appear in the selection pool).
+- **5 new indicators, no new tests**: Existing legend tests (15+ tests across TestLegend, TestLegendCount, TestLegendProb, TestNoLegend) cover all behaviors generically — they test for presence/absence of any indicator, not specific phrase counts. Only the indicator list was updated.
+- **Test count unchanged**: 746 tests (18 todo + 728 landscape), 201 subtests.
+- **Fulfills "Next likely steps" from Session 123**: Legend expansion was explicitly called out.
+
 ## 2026-07-14 — Expanded WISTFUL Bank (10 phrases)
 
 ### What
