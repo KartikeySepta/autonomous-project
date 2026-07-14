@@ -1,5 +1,31 @@
 # Decisions
 
+## 2026-07-14 — Per-Preset Soundscape Count and Probability
+
+### What
+Added `sound_count` and `sound_prob` to all 5 preset configurations (`nightfall`, `pastoral`, `sublime`, `wasteland`, `dreamscape`). Each preset now has curated soundscape density and probability values that match its atmospheric theme, mirroring how `echo_count`/`echo_prob` and `legend_count`/`legend_prob` are already set per-preset.
+
+- **nightfall**: `sound_count=2, sound_prob=0.7` — eerie sounds (whispers, breaths, shattering glass) appear often but not always, matching the nightfall echo config (echo_count=2, echo_prob=0.7) and legend config (legend_count=2, legend_prob=0.7)
+- **pastoral**: `sound_count=1, sound_prob=0.5` — a single gentle soundscape, and only 50% of the time, keeping the serene tone uncluttered. Matches pastoral's sparse echo config (echo_count=1, echo_prob=0.5)
+- **sublime**: `sound_count=2, sound_prob=0.95` — rich auditory texture almost always present, matching sublime's maximalist echo config (echo_count=3, echo_prob=1.0)
+- **wasteland**: `sound_count=2, sound_prob=1.0` — sounds of ruin (glass shattering, wind shifting, slow pulses) always present, matching wasteland's certainty (anomaly_prob=1.0, legend_prob=1.0)
+- **dreamscape**: `sound_count=2, sound_prob=0.9` — surreal sounds usually present, matching dreamscape's high-but-not-certain echo config (echo_count=2, echo_prob=1.0)
+
+### Why
+The soundscape system evolved through 4 sessions: on/off (Session 112), in-presets (Session 113), count (Session 114), and prob (Session 115). After each building block existed independently, the final integration step was wiring them into presets with thoughtfully chosen values. This follows the exact same trajectory as echo and legend, which also went through on/off → presets (on/off only) → count → prob → per-preset tuning.
+
+Before this change, all presets used default `sound_count=1, sound_prob=1.0` — every preset always produced exactly one soundscape phrase. This worked but missed the opportunity to give each preset a distinct auditory density that matches its mood: a tranquil pastoral landscape shouldn't always have sounds (sometimes it should be silent), while a sublime or wasteland landscape should rarely be silent.
+
+This completes the per-preset soundscape tuning, making the soundscape system fully mature alongside echo and legend.
+
+### Tradeoffs
+- **Seed-breaking for presets**: All 5 presets now produce different output from the previous session for the same seed, because `sound_count` and `sound_prob` were not previously in presets. This is acceptable because presets are curated entry points that evolve as features mature, and determinism is preserved (same seed + same args = same output). Users who want the old preset behavior can explicitly pass `--sound-count 1 --sound-prob 1.0`.
+- **Backward compatibility via CLI overrides**: The existing gating code checks `args.sound_count == 1` and `args.sound_prob == 1.0` before applying preset values. Users who explicitly pass `--sound-count 1 --sound-prob 1.0` get the old behavior even with `--preset`. This is the same pattern as all other preset overrides.
+- **No changes to `generate_landscape()`**: Presets are a pure CLI convenience layer — the generation function already accepts `sound_count` and `sound_prob` (Sessions 114/115). Only the PRESETS dict changed.
+- **Consistent with echo and legend preset pattern**: Every preset that has `echo_count`/`echo_prob` and `legend_count`/`legend_prob` now has `sound_count`/`sound_prob` with similar thematic density — high drama presets (sublime, wasteland, dreamscape) use higher counts/probs, while subtle presets (pastoral) use lower values.
+- **Relaxed test `test_preset_with_soundscape_produces_soundscape_output`**: Renamed to `test_preset_with_soundscape_produces_valid_output` and changed to only check for valid output structure, not specific soundscape content. This is because presets now have probabilistic sound_prob values (e.g. pastoral: sound_prob=0.5, sound_count=1 means only ~50% soundscape presence). The structural test `test_all_presets_include_sound_count_and_prob` covers the key configuration validation. This matches the pattern of `test_preset_with_legend_produces_legend_output` which also only checks for valid output.
+- **3 new tests, 697 total** (18 todo + 679 landscape), 146 subtests.
+
 ## 2026-07-14 — Configurable Soundscape Probability (`--sound-prob`)
 
 ### What

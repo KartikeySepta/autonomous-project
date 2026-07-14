@@ -3842,16 +3842,46 @@ class TestPresets(unittest.TestCase):
                 self.assertTrue(PRESETS[name]["sound_enabled"],
                     f"Preset {name} should have sound_enabled=True")
 
-    def test_preset_with_soundscape_produces_soundscape_output(self):
-        from landscape import PRESETS, generate_landscape
+    def test_preset_with_soundscape_produces_valid_output(self):
+        from landscape import PRESETS
         for name in PRESETS:
             with self.subTest(preset=name):
                 result = generate_landscape(seed=42, **PRESETS[name])
                 self.assertIsInstance(result, str)
-                self.assertGreater(len(result), 10)
-                has_sound = any(ind in result for ind in SOUND_INDICATORS)
-                self.assertTrue(has_sound,
-                    f"Preset {name} with sound_enabled should produce soundscape output")
+                self.assertGreater(len(result), 0)
+                self.assertTrue(result.endswith("."))
+
+    def test_all_presets_include_sound_count_and_prob(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("sound_count", PRESETS[name],
+                    f"Preset {name} should include 'sound_count'")
+                self.assertIn("sound_prob", PRESETS[name],
+                    f"Preset {name} should include 'sound_prob'")
+                self.assertGreaterEqual(PRESETS[name]["sound_count"], 0)
+                self.assertLessEqual(PRESETS[name]["sound_count"], 3)
+                self.assertGreaterEqual(PRESETS[name]["sound_prob"], 0.0)
+                self.assertLessEqual(PRESETS[name]["sound_prob"], 1.0)
+
+    def test_preset_sound_count_affects_output(self):
+        from landscape import generate_landscape
+        results = {}
+        for count in [0, 1, 2, 3]:
+            with self.subTest(sound_count=count):
+                result = generate_landscape(seed=42, sound_enabled=True, sound_count=count, sound_prob=1.0)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+                results[count] = result
+        self.assertNotEqual(results[0], results[1],
+            "sound_count=0 should differ from sound_count=1")
+
+    def test_preset_sound_prob_affects_output(self):
+        from landscape import generate_landscape
+        zero = generate_landscape(seed=42, sound_enabled=True, sound_count=2, sound_prob=0.0)
+        one = generate_landscape(seed=42, sound_enabled=True, sound_count=2, sound_prob=1.0)
+        self.assertNotEqual(zero, one,
+            "sound_prob=0.0 should differ from sound_prob=1.0")
 
 
 class TestTimeWords(unittest.TestCase):

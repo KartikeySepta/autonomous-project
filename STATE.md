@@ -20,6 +20,22 @@
 - This is the natural evolution of the soundscape system: Session 112 added on/off, Session 113 added to presets, Session 114 added sound-count, now sound-prob completes the trajectory, matching the echo and legend systems' trajectories (on/off → count → prob).
 - Tests increased from 687 to 694 total (18 todo + 676 landscape), subtests unchanged at 137
 
+### What was done (Session 116)
+- **Added `sound_count` and `sound_prob` to all 5 presets** — each preset now has curated soundscape density and probability values that match its mood/theme:
+  - `nightfall`: `sound_count=2, sound_prob=0.7` — eerie sounds (whispers, breaths) appear often but not always, matching echo_count=2, echo_prob=0.7
+  - `pastoral`: `sound_count=1, sound_prob=0.5` — gentle sounds occasionally, matching echo_count=1, echo_prob=0.5
+  - `sublime`: `sound_count=2, sound_prob=0.95` — rich soundscape almost always, matching echo_count=3, echo_prob=1.0
+  - `wasteland`: `sound_count=2, sound_prob=1.0` — sounds of ruin (glass shattering, wind shifting) always present, matching legend_count=2, legend_prob=1.0
+  - `dreamscape`: `sound_count=2, sound_prob=0.9` — surreal sounds usually present, matching echo_count=2, echo_prob=1.0
+- The gating code for `sound_count` and `sound_prob` was already in place (lines 1321-1324 of `landscape.py`) from Sessions 114/115 — presets were the last part of the soundscape infrastructure not using these parameters. This follows the same trajectory as echo (Session 103 added echo_count/echo_prob to presets after Sessions 78/87) and legend (Session 103 added legend_count/legend_prob to presets after Sessions 101/102).
+- Added 3 new tests in `TestPresets`:
+  - `test_all_presets_include_sound_count_and_prob` — verifies every preset has both fields with valid ranges (5 subtests)
+  - `test_preset_sound_count_affects_output` — verifies sound_count=0 differs from sound_count=1
+  - `test_preset_sound_prob_affects_output` — verifies sound_prob=0.0 differs from sound_prob=1.0
+- **Fixed `test_preset_with_soundscape_produces_soundscape_output`** — renamed to `test_preset_with_soundscape_produces_valid_output` and changed to check for valid output structure only (not specific soundscape content), since presets now have probabilistic sound_prob values that don't guarantee soundscape presence on every seed. This matches the pattern of `test_preset_with_legend_produces_legend_output` which only checks for valid output.
+- This completes the per-preset soundscape tuning, following the same trajectory as echo and legend: on/off → presets (on/off only) → count → prob → per-preset count+prob.
+- Tests increased from 694 to 697 total (18 todo + 679 landscape), subtests from 137 to 146
+
 ### What was done (Session 114)
 - **Added `--sound-count` CLI flag** and `sound_count` parameter to `generate_landscape()` — users can now control how many soundscape phrases appear per landscape (0-3, default: 1), following the exact same pattern as `--echo-count` (Session 79) and `--legend-count` (Session 101):
   - `sound_count=0` suppresses soundscapes (equivalent to not using `--sound`)

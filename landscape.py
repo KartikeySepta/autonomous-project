@@ -171,6 +171,8 @@ PRESETS = {
         "travelogue": True,
         "wistful": True,
         "sound_enabled": True,
+        "sound_count": 2,
+        "sound_prob": 0.7,
     },
     "pastoral": {
         "mood": ["peaceful"],
@@ -183,6 +185,8 @@ PRESETS = {
         "travelogue": True,
         "wistful": True,
         "sound_enabled": True,
+        "sound_count": 1,
+        "sound_prob": 0.5,
     },
     "sublime": {
         "mood": ["vibrant", "peaceful"],
@@ -197,6 +201,8 @@ PRESETS = {
         "travelogue": True,
         "wistful": True,
         "sound_enabled": True,
+        "sound_count": 2,
+        "sound_prob": 0.95,
     },
     "wasteland": {
         "mood": ["desolate"],
@@ -210,6 +216,8 @@ PRESETS = {
         "travelogue": True,
         "wistful": True,
         "sound_enabled": True,
+        "sound_count": 2,
+        "sound_prob": 1.0,
     },
     "dreamscape": {
         "mood": ["eerie", "vibrant"],
@@ -225,6 +233,8 @@ PRESETS = {
         "travelogue": True,
         "wistful": True,
         "sound_enabled": True,
+        "sound_count": 2,
+        "sound_prob": 0.9,
     },
 }
 
