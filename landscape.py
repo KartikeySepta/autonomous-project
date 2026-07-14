@@ -40,6 +40,10 @@ WEATHERS = [
     "ash drifts slowly downward",
     "mist curls along the ground",
     "the air shimmers with heat",
+    "snow falls in heavy flakes",
+    "a cold fog rolls in from nowhere",
+    "the ground exhales a thin vapor",
+    "lightning flickers on the horizon",
 ]
 
 ANOMALIES = [
@@ -140,7 +144,7 @@ COMMON_WORDS = {
     "mist", "light", "silence", "darkness",
     "trees", "stones", "ruins", "crystals",
     "whisper", "glow", "shimmer", "drift",
-    "a gentle rain falls", "a still calm lingers", "mist curls along the ground",
+    "a gentle rain falls", "a still calm lingers", "mist curls along the ground", "snow falls in heavy flakes",
     "softly", "gently", "silently", "quietly",
     "vivid", "burnished", "stark", "murky",
 }

@@ -45,6 +45,10 @@ WEATHER_INDICATORS = [
     "drifts slowly downward",
     "curls along the ground",
     "shimmers with heat",
+    "snow falls",
+    "cold fog rolls",
+    "exhales a thin",
+    "flickers on the",
 ]
 
 LEGEND_INDICATORS = [

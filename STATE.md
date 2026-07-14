@@ -2,6 +2,24 @@
 
 ## 2026-07-14
 
+### What was done (Session 120)
+- **Expanded WEATHERS word bank from 8 to 12 phrases** — 4 new weather patterns added to increase atmospheric variety:
+  - `"snow falls in heavy flakes"` — wintry precipitation, common weight
+  - `"a cold fog rolls in from nowhere"` — mysterious incursion
+  - `"the ground exhales a thin vapor"` — organic/eerie exhalation
+  - `"lightning flickers on the horizon"` — distant electrical drama
+- Added `"snow falls in heavy flakes"` to `COMMON_WORDS` (snow is a common weather phenomenon across many biomes). The other 3 new phrases use normal weight (default, not in COMMON or RARE).
+- Added 4 new `WEATHER_INDICATORS` in the test module (`"snow falls"`, `"cold fog rolls"`, `"exhales a thin"`, `"flickers on the"`) — each is a unique substring that won't collide with other word bank output.
+- No new tests or code changes beyond word bank expansion — all 746 existing tests still pass.
+- This directly fulfills the first "Next likely step" from Session 119: expand word banks (weather phrases).
+
+### Current status
+Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
+
+### Next likely steps
+- Expand other word banks (more soundscapes, more legends)
+- Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry)
+
 ### What was done (Session 119)
 - **Added `--no-echo`, `--no-legend`, and `--no-sound` CLI flags** — users can now explicitly disable echo phrases, legend phrases, and soundscape phrases even when using presets that enable them. This fills the remaining symmetry gap in the `--no-*` flag family called out in Session 118's "Next likely steps."
   - `--no-echo` forces `echo_enabled=False` regardless of preset configuration or `--echo`
