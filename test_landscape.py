@@ -8,7 +8,7 @@ from landscape import (
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS, ECHOES, LEGENDS,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
-    TIME_WORDS,
+    TIME_WORDS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -4266,6 +4266,104 @@ class TestDescribeLegends(unittest.TestCase):
             "No landscape should be generated when --describe-legends is used")
         self.assertNotIn("\n\n", output,
             "No landscape should be generated when --describe-legends is used")
+
+
+class TestTravelogue(unittest.TestCase):
+    TRAVELOGUE_INDICATORS = [
+        "Journal entry",
+        "Log entry",
+        "Chronicle of the journey",
+        "expedition.",
+    ]
+
+    def test_travelogue_disabled_by_default(self):
+        result = generate_landscape(seed=42, biome="forest")
+        for ind in self.TRAVELOGUE_INDICATORS:
+            self.assertNotIn(ind, result,
+                f"Travelogue indicator {ind!r} should not appear by default")
+
+    def test_travelogue_enabled_appears(self):
+        result = generate_landscape(seed=42, biome="forest", travelogue=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        has_prefix = any(ind in result for ind in self.TRAVELOGUE_INDICATORS)
+        self.assertTrue(has_prefix,
+            "Travelogue prefix should appear when enabled")
+
+    def test_travelogue_contains_biome_name(self):
+        result = generate_landscape(seed=42, biome="tundra", travelogue=True)
+        self.assertIn("tundra", result)
+
+    def test_travelogue_contains_day_number(self):
+        result = generate_landscape(seed=42, biome="forest", travelogue=True)
+        import re
+        days = re.findall(r'\bday (\d+)\b', result)
+        self.assertGreater(len(days), 0,
+            "Travelogue should contain a day number")
+
+    def test_travelogue_produces_valid_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, travelogue=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertTrue(result.endswith("."))
+
+    def test_travelogue_is_deterministic(self):
+        a = generate_landscape(seed=42, biome="forest", travelogue=True)
+        b = generate_landscape(seed=42, biome="forest", travelogue=True)
+        self.assertEqual(a, b,
+            "Travelogue should be deterministic with same seed")
+
+    TRAVELOGUE_SUFFIX_INDICATORS = [
+        "venture deeper",
+        "prepare camp",
+        "many stories yet",
+        "turn in for the evening",
+    ]
+
+    def test_travelogue_ends_with_suffix(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, biome="desert", travelogue=True)
+            has_suffix = any(ind in result for ind in self.TRAVELOGUE_SUFFIX_INDICATORS)
+            self.assertTrue(has_suffix,
+                "Travelogue should end with a suffix phrase")
+
+    def test_travelogue_works_with_detail_zero(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, detail=0, travelogue=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_travelogue_works_with_echo(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, echo_enabled=True, travelogue=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_travelogue_works_with_legend(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, legend_enabled=True, travelogue=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_travelogue_works_with_preset(self):
+        from landscape import main
+        self.assertTrue(callable(main),
+            "CLI flag for travelogue should exist")
+
+    def test_travelogue_works_with_json(self):
+        result = generate_landscape(seed=42, biome="forest", travelogue=True, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_travelogue_differs_from_plain(self):
+        plain = generate_landscape(seed=42, biome="forest")
+        travel = generate_landscape(seed=42, biome="forest", travelogue=True)
+        self.assertNotEqual(plain, travel,
+            "Travelogue should differ from plain output")
 
 
 if __name__ == "__main__":

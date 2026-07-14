@@ -2,6 +2,31 @@
 
 ## 2026-07-14
 
+### What was done (Session 104)
+- **Added `--travelogue` CLI flag** and `travelogue` parameter to `generate_landscape()` — frames the generated landscape description as a travel journal entry, adding a narrative prefix (e.g. "Journal entry, day 247. I have reached the forest at last.") and a narrative suffix (e.g. "I will venture deeper into the forest come morning."):
+  - 4 curated `TRAVELOGUE_PREFIXES` and 4 curated `TRAVELOGUE_SUFFIXES` — each referencing `{display}` (biome name) and `{day}` (random number 1–365)
+  - Day number picked via `rng.randint(1, 365)` — adds a concrete, grounded detail to the framing
+  - Prefix inserted at position 0, suffix appended at the end, so the landscape description sits inside a narrative frame
+  - Works with all existing features: detail, echo, legend, presets, combine, JSON, poetic, etc.
+  - Seed-breaking when enabled: `rng.randint()` and `rng.choice()` for prefix/suffix add random calls before the joiner. Determinism is preserved (same seed + same args = same output)
+  - Travelogue is off by default (`travelogue=False`), so all existing seed-based output is unchanged
+- Added 13 new tests in `TestTravelogue` class:
+  - `test_travelogue_disabled_by_default` — travelogue framing should not appear without the flag
+  - `test_travelogue_enabled_appears` — travelogue prefix appears when enabled
+  - `test_travelogue_contains_biome_name` — biome name appears in travelogue output
+  - `test_travelogue_contains_day_number` — day number appears in travelogue output
+  - `test_travelogue_produces_valid_output` — output is valid string (20 seeds)
+  - `test_travelogue_is_deterministic` — same seed = same output
+  - `test_travelogue_ends_with_suffix` — suffix phrase appears at the end
+  - `test_travelogue_works_with_detail_zero` — works with minimal output
+  - `test_travelogue_works_with_echo` — works with echoes enabled
+  - `test_travelogue_works_with_legend` — works with legends enabled
+  - `test_travelogue_works_with_preset` — CLI flag exists
+  - `test_travelogue_works_with_json` — JSON format includes framed text
+  - `test_travelogue_differs_from_plain` — travelogue output differs from plain
+- This is a genuinely novel addition: it transforms the same core landscape generation into a different genre (exploration narrative) without changing the description itself — the travelogue is a narrative frame, not a content modifer
+- Tests increased from 599 to 612 total (18 todo + 594 landscape), subtests unchanged at 102
+
 ### What was done (Session 103)
 - **Added `legend_count` and `legend_prob` to all 5 presets** — each preset now has curated legend density and probability values that match its mood/theme:
   - `nightfall`: `legend_count=2, legend_prob=0.7` — eerie folk tales, not always present

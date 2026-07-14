@@ -1,5 +1,23 @@
 # Decisions
 
+## 2026-07-14 — Travelogue Narrative Framing (`--travelogue`)
+
+### What
+Added `--travelogue` CLI flag (default: off) and `travelogue` parameter to `generate_landscape()`. When enabled, the generated landscape is wrapped in a travel journal entry: a narrative prefix (e.g. "Journal entry, day 247. I have reached the forest at last.") is inserted at the beginning, and a narrative suffix (e.g. "I will venture deeper into the forest come morning.") is appended at the end. The day number is a random integer 1–365, picked per-landscape via `rng.randint()`. The travelogue uses 4 curated prefix templates and 4 curated suffix templates, all referencing `{display}` (the biome name).
+
+### Why
+After 103 sessions of enriching vocabulary, templates, moods, echoes, and legends, the landscape generator could describe *what a place looks like and feels like* from a disembodied, omniscient perspective — but it never positioned the description within an *in-universe narrator's voice*. The travelogue frame transforms the same core generation into an exploration narrative: the landscape becomes a discovered place, documented by an explorer who marks days, journals observations, and plans future exploration. This is a distinct narrative dimension from the existing features — it doesn't change the description's content, it changes who is (implicitly) speaking and why.
+
+This directly serves the GOAL.md directive to "build something genuinely novel or interesting." A travelogue framing is not a new word bank or template system — it's a narrative reframing that gives the output a different genre identity. The same landscape description can be "a prose description of a place" or "an expedition log entry" depending on whether `--travelogue` is used, without any changes to the description itself.
+
+### Tradeoffs
+- **4 prefix and 4 suffix templates** — curated for quality and narrative variety. The small pool (4 each) ensures each template is well-crafted and doesn't repeat too often across multiple runs.
+- **`{display}` and `{day}` only** — prefixes use biome name and day number; suffixes use only biome name. No other word categories (adj, adverb, element, color, etc.) are injected, keeping the travelogue voice consistent and simple.
+- **Seed-breaking when enabled**: `rng.randint(1, 365)` and `rng.choice(TRAVELOGUE_PREFIXES)` and `rng.choice(TRAVELOGUE_SUFFIXES)` add 3 random calls before the joiner, shifting the random sequence. With `travelogue=False` (default), no random calls are added, preserving all existing seed-based output.
+- **No effect on JSON `text` field**: The travelogue framing wraps the output string, so JSON output's `text` field includes the framed text. This is consistent with how `--show-biome` and `--show-seed` append tags to the text.
+- **Consistent with `--format poetic`**: Travelogue works with poetic format — the prefix, landscape sentences, and suffix are all joined with newlines, creating a journal-like structure.
+- **13 new tests, 612 total** (18 todo + 594 landscape), 102 subtests.
+
 ## 2026-07-14 — Preset Legend Count and Probability
 
 ### What

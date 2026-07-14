@@ -100,6 +100,20 @@ TIME_WORDS = [
     "already", "still", "yet", "now", "once", "always",
 ]
 
+TRAVELOGUE_PREFIXES = [
+    "Journal entry, day {day}. I have reached the {display} at last.",
+    "Log entry — {day} days out. The {display} lies before me.",
+    "Chronicle of the journey, day {day}: I have come to the {display}.",
+    "The {display}. Day {day} of the expedition. I record what I see.",
+]
+
+TRAVELOGUE_SUFFIXES = [
+    "I will venture deeper into the {display} come morning.",
+    "I mark this in my journal and prepare camp for the night.",
+    "The {display} has many stories yet to tell. I will listen.",
+    "I note the position on my map and turn in for the evening.",
+]
+
 # Weight tiers for word selection — common words appear more often, rare words less so
 COMMON_WORDS = {
     "crystal", "shadow", "ancient", "forgotten", "silent",
@@ -742,7 +756,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
     return chosen
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, middle_enabled=True, color_enabled=True, element_enabled=True, anomaly_enabled=True, echo_enabled=False, echo_count=1, echo_prob=1.0, time_word_enabled=True, legend_enabled=False, legend_count=1, legend_prob=1.0):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, middle_enabled=True, color_enabled=True, element_enabled=True, anomaly_enabled=True, echo_enabled=False, echo_count=1, echo_prob=1.0, time_word_enabled=True, legend_enabled=False, legend_count=1, legend_prob=1.0, travelogue=False):
     if seed is not None:
         rng = random.Random(seed)
     elif show_seed:
@@ -849,6 +863,13 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
                 legend = rng.choice(pool)
                 used_legends.add(legend)
                 parts.append(_format_tmpl(legend, display=display))
+
+    if travelogue:
+        day = rng.randint(1, 365)
+        prefix = rng.choice(TRAVELOGUE_PREFIXES).format(display=display, day=day)
+        suffix = rng.choice(TRAVELOGUE_SUFFIXES).format(display=display)
+        parts.insert(0, prefix)
+        parts.append(suffix)
 
     joiner = "\n" if fmt == "poetic" else " "
     output = joiner.join(parts)
@@ -1093,6 +1114,10 @@ def main():
         help="Show all available legend phrases with their index numbers",
     )
     parser.add_argument(
+        "--travelogue", action="store_true",
+        help="Frame the landscape as a travel journal entry",
+    )
+    parser.add_argument(
         "--biome-weight", type=str, default=None,
         help="Weight biomes for random selection (comma-separated biome=weight pairs, e.g. forest=5,desert=1)",
     )
@@ -1202,7 +1227,7 @@ def main():
     lines = []
     for i in range(args.count):
         effective_seed = args.seed + i if args.seed is not None else None
-        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, middle_enabled=not args.no_middle, color_enabled=not args.no_color, element_enabled=not args.no_element, anomaly_enabled=not args.no_anomaly, echo_enabled=args.echo, echo_count=args.echo_count, echo_prob=args.echo_prob, time_word_enabled=not args.no_time_word, legend_enabled=args.legend, legend_count=args.legend_count, legend_prob=args.legend_prob))
+        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, middle_enabled=not args.no_middle, color_enabled=not args.no_color, element_enabled=not args.no_element, anomaly_enabled=not args.no_anomaly, echo_enabled=args.echo, echo_count=args.echo_count, echo_prob=args.echo_prob, time_word_enabled=not args.no_time_word, legend_enabled=args.legend, legend_count=args.legend_count, legend_prob=args.legend_prob, travelogue=args.travelogue))
     if args.format == "json" and len(lines) > 1:
         output = "[" + ",\n".join(lines) + "]\n"
     else:
