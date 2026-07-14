@@ -591,7 +591,7 @@ BIOME_WORDS = {
         "nouns": ["canopies", "trunks", "glades", "ferns", "branches", "understory", "clearings"],
         "verbs": ["rustle", "whisper", "breathe", "creak", "shade", "dapple", "sigh"],
         "colors": ["emerald", "deep green", "golden", "dappled", "woodland", "forest green"],
-        "adverbs": ["softly", "gently", "peacefully"],
+        "adverbs": ["softly", "gently", "peacefully", "wistfully", "invitingly"],
         "weathers": [
             "sunlight filters through the canopy in golden beams",
             "a soft wind stirs the leaves overhead",
@@ -609,7 +609,7 @@ BIOME_WORDS = {
         "nouns": ["dunes", "mesas", "canyons", "plateaus", "oases", "wadis", "buttes"],
         "verbs": ["bake", "crack", "drift", "shimmer", "scour", "wither", "glare"],
         "colors": ["amber", "golden", "pale", "crimson", "sand", "terracotta"],
-        "adverbs": ["relentlessly", "harshly", "patiently"],
+        "adverbs": ["relentlessly", "harshly", "patiently", "mercilessly", "brutally"],
         "weathers": [
             "heat ripples rise from the sand in waves",
             "a hot wind scours the dunes",
@@ -627,7 +627,7 @@ BIOME_WORDS = {
         "nouns": ["trenches", "currents", "reefs", "abysses", "swells", "gyres", "thermals"],
         "verbs": ["crash", "surge", "drift", "plunge", "churn", "swell", "roar"],
         "colors": ["sapphire", "deep blue", "teal", "silver", "aquamarine", "indigo"],
-        "adverbs": ["endlessly", "powerfully", "deeply"],
+        "adverbs": ["endlessly", "powerfully", "deeply", "rhythmically", "hypnotically"],
         "weathers": [
             "waves roll in from an unseen horizon",
             "a fine salt mist hangs in the air",
@@ -645,7 +645,7 @@ BIOME_WORDS = {
         "nouns": ["ice fields", "glaciers", "crevasses", "permafrost", "snowdrifts", "moraines", "frost heaves"],
         "verbs": ["freeze", "howl", "crack", "gleam", "drift", "shiver", "blast"],
         "colors": ["pale blue", "silver", "frost-white", "auroral", "permafrost white", "glacier blue"],
-        "adverbs": ["silently", "eternally", "coldly"],
+        "adverbs": ["silently", "eternally", "coldly", "bitterly", "indifferently"],
         "weathers": [
             "the aurora pulses in silent sheets of green",
             "a biting wind carries ice crystals",
@@ -663,7 +663,7 @@ BIOME_WORDS = {
         "nouns": ["peaks", "ridges", "cliffs", "valleys", "crags", "coloirs", "cirques"],
         "verbs": ["tower", "loom", "echo", "rise", "cut", "sculpt", "shelter"],
         "colors": ["granite grey", "snow-white", "purple", "slate", "stone grey", "alpine"],
-        "adverbs": ["majestically", "patiently", "tirelessly"],
+        "adverbs": ["majestically", "patiently", "tirelessly", "steadily", "proudly"],
         "weathers": [
             "wind howls through the narrow passes",
             "clouds cling to the peaks like shawls",
@@ -681,7 +681,7 @@ BIOME_WORDS = {
         "nouns": ["bayous", "mangroves", "bogs", "quicksand", "thickets", "sloughs", "tupelos"],
         "verbs": ["bubble", "fester", "seep", "creep", "stagnate", "sink", "rot"],
         "colors": ["murky", "green-brown", "dark", "rotting", "khaki", "peat brown"],
-        "adverbs": ["thickly", "heavily", "sluggishly"],
+        "adverbs": ["thickly", "heavily", "sluggishly", "sullenly", "lazily"],
         "weathers": [
             "fog rolls low over the black water",
             "the air is thick and heavy with moisture",
@@ -699,7 +699,7 @@ BIOME_WORDS = {
         "nouns": ["stalactites", "caverns", "tunnels", "chambers", "fissures", "flowstones", "pillars"],
         "verbs": ["drip", "echo", "glimmer", "resonate", "collapse", "carve", "murmur"],
         "colors": ["pitch-black", "phosphorescent", "glimmering", "deep violet", "cave-dark", "mineral blue"],
-        "adverbs": ["patiently", "ceaselessly", "endlessly"],
+        "adverbs": ["patiently", "ceaselessly", "endlessly", "remotely", "inexorably"],
         "weathers": [
             "water drips in a slow, endless rhythm",
             "a draft carries the scent of deep earth",
@@ -717,7 +717,7 @@ BIOME_WORDS = {
         "nouns": ["grasses", "horizons", "fields", "bluffs", "meadows", "savannas", "swales"],
         "verbs": ["wave", "stretch", "roll", "sway", "bend", "ripple", "gleam"],
         "colors": ["golden", "pale", "amber", "wide", "tawny", "dusty rose"],
-        "adverbs": ["endlessly", "freely", "peacefully"],
+        "adverbs": ["endlessly", "freely", "peacefully", "tranquilly", "openly"],
         "weathers": [
             "a warm wind sends ripples across the grass",
             "clouds cast slow-moving shadows on the land",
@@ -735,7 +735,7 @@ BIOME_WORDS = {
         "nouns": ["vents", "fissures", "calderas", "magma chambers", "slag heaps", "fumaroles", "tuff cones"],
         "verbs": ["smolder", "hiss", "crack", "erupt", "seethe", "spit", "quake"],
         "colors": ["obsidian black", "crimson", "molten orange", "ash-grey", "scoria red", "pumice grey"],
-        "adverbs": ["violently", "harshly", "relentlessly"],
+        "adverbs": ["violently", "harshly", "relentlessly", "fiercely", "explosively"],
         "weathers": [
             "ash falls like gray snow from a black sky",
             "steam vents hiss in ragged chorus",
@@ -753,7 +753,7 @@ BIOME_WORDS = {
         "nouns": ["polyps", "anemones", "lagoon beds", "drop-offs", "groves", "sea fans", "crevices"],
         "verbs": ["pulse", "drift", "glow", "wave", "filter", "spawn", "flicker"],
         "colors": ["coral", "turquoise", "bioluminescent", "vibrant pink", "scarlet", "coral pink"],
-        "adverbs": ["gently", "softly", "brilliantly"],
+        "adverbs": ["gently", "softly", "brilliantly", "vibrantly", "flowingly"],
         "weathers": [
             "sunlight dances on the water in shifting patterns",
             "warm currents drift through the coral canyons",
@@ -771,7 +771,7 @@ BIOME_WORDS = {
         "nouns": ["facades", "girders", "husks", "plazas", "overpasses", "broken windows", "skeletons", "rubble piles"],
         "verbs": ["creak", "settle", "sway", "crumble", "groan", "fracture", "whine"],
         "colors": ["grey", "rusted", "ashen", "faded", "pale grey", "verdigris"],
-        "adverbs": ["silently", "slowly", "patiently"],
+        "adverbs": ["silently", "slowly", "patiently", "hollowly", "wearily"],
         "weathers": [
             "ash drifts through broken windows like snow",
             "a pale sun filters through smog",
@@ -789,7 +789,7 @@ BIOME_WORDS = {
         "nouns": ["caps", "gills", "stalks", "hyphae", "puffballs", "tendrils", "mycelia", "sporocarps"],
         "verbs": ["pulse", "glow", "release", "expand", "spore", "spiral", "weep"],
         "colors": ["phosphorescent", "neon green", "luminous", "deep purple", "mushroom beige", "sporescent"],
-        "adverbs": ["gently", "silently", "unceasingly"],
+        "adverbs": ["gently", "silently", "unceasingly", "organically", "prolifically"],
         "weathers": [
             "spores drift through the air like slow-motion snow",
             "the ground pulses with faint blue light",
@@ -807,7 +807,7 @@ BIOME_WORDS = {
         "nouns": ["archipelagos", "peaks", "bridges", "precipices", "cloud banks", "updrafts", "thermals", "wind shears"],
         "verbs": ["float", "drift", "soar", "hover", "ride", "glide", "sail"],
         "colors": ["sky-blue", "cloud-white", "golden", "sunset-tinged", "dawn pink", "storm grey"],
-        "adverbs": ["gracefully", "silently", "peacefully"],
+        "adverbs": ["gracefully", "silently", "peacefully", "weightlessly", "distantly"],
         "weathers": [
             "clouds churn far below like a white sea",
             "lightning arcs silently between nearby islands",

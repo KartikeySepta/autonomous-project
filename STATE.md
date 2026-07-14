@@ -2,7 +2,35 @@
 
 ## 2026-07-14
 
+### What was done (Session 129)
+- **Expanded biome-specific adverb banks for all 13 biomes** — each biome now has +2 adverbs (26 new entries total), the fifth expansion of biome-specific word banks after Sessions 125 (adjectives/elements), 126 (nouns), 127 (verbs), and 128 (colors). Prior to this, all biomes had exactly 3 adverbs. Now each biome has 5 adverbs:
+  - **forest** (3→5): +"wistfully", "invitingly"
+  - **desert** (3→5): +"mercilessly", "brutally"
+  - **ocean** (3→5): +"rhythmically", "hypnotically"
+  - **tundra** (3→5): +"bitterly", "indifferently"
+  - **mountain range** (3→5): +"steadily", "proudly"
+  - **swamp** (3→5): +"sullenly", "lazily"
+  - **cave system** (3→5): +"remotely", "inexorably"
+  - **plain** (3→5): +"tranquilly", "openly"
+  - **volcanic field** (3→5): +"fiercely", "explosively"
+  - **coral reef** (3→5): +"vibrantly", "flowingly"
+  - **ruined city** (3→5): +"hollowly", "wearily"
+  - **fungal grove** (3→5): +"organically", "prolifically"
+  - **sky islands** (3→5): +"weightlessly", "distantly"
+- Each adverb is curated to the biome's thematic identity — harsh adverbs for desert (mercilessly, brutally), marine adverbs for ocean (rhythmically, hypnotically), ruin adverbs for ruined city (hollowly, wearily), aerial adverbs for sky islands (weightlessly, distantly), etc.
+- No code, CLI, or test changes — data-only expansion. All 746 tests still pass (18 todo + 728 landscape), 201 subtests.
+- Adverbs appear in multiple template slots (opening templates, middle templates, echo phrases, soundscape phrases), so expanding them has broad per-word impact on output variety.
+- This fulfills the "Expand remaining biome word bank categories (adverbs, weathers, anomalies)" next step from Session 128. Adverbs were the smallest biome category at 3 words each.
+
+### Current status
+Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
+
+### Next likely steps
+- Expand remaining biome word bank categories (weathers, anomalies)
+- Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry, inhabitants/wildlife)
+
 ### What was done (Session 128)
+- **Expanded biome-specific color banks for all 13 biomes** — each biome now has +2 colors (26 new entries total), the fourth expansion of biome-specific word banks after Sessions 125 (adjectives/elements), 126 (nouns), and 127 (verbs). Prior to this, all biomes had exactly 4 colors. Now each biome has 6 colors:
 - **Expanded biome-specific color banks for all 13 biomes** — each biome now has +2 colors (26 new entries total), the fourth expansion of biome-specific word banks after Sessions 125 (adjectives/elements), 126 (nouns), and 127 (verbs). Prior to this, all biomes had exactly 4 colors. Now each biome has 6 colors:
   - **forest** (4→6): +"woodland", "forest green"
   - **desert** (4→6): +"sand", "terracotta"

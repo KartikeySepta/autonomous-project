@@ -1,5 +1,21 @@
 # Decisions
 
+## 2026-07-14 — Expanded Biome-Specific Adverb Banks
+
+### What
+Added 2 new adverbs to each of the 13 biomes in `BIOME_WORDS` — 26 new entries total. Each new adverb is curated to fit the biome's thematic identity: forests get "wistfully" and "invitingly", ruined cities get "hollowly" and "wearily", sky islands get "weightlessly" and "distantly", etc.
+
+### Why
+Sessions 125–128 expanded biome adjectives+elements, nouns, verbs, and colors — adverbs were the last major word category still at their original size (3 per biome). Adverbs appear in opening templates (e.g. "...comes into view {adverb} {time_word}"), middle templates (e.g. "The {adj} {noun} {verb} {adverb} with {color} {element}"), echo phrases (e.g. "The {display} remembers {adverb}"), and soundscape phrases (e.g. "The {display} hums {adverb}"). With only 3 adverbs per biome, variety in adverbial slots was extremely limited. Standardizing to 5 ensures more varied output across all template types.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, `_pick()`, CLI flags, or any logic. Only the `BIOME_WORDS` dict values changed.
+- **No seed-breaking**: Adding words to biome-specific pools doesn't change the random sequence — `_pick()` draws from a larger pool but the weighted-selection function is unchanged. Only the rendered output content changes (new words appear in the selection pool).
+- **No new tests**: Existing biome vocabulary tests cover all behaviors generically — they check for the *existence* of biome-specific words in output, not precise counts or specific words.
+- **Test count unchanged**: 746 tests (18 todo + 728 landscape), 201 subtests.
+- **Not marked common or rare**: New words intentionally left at normal weight tier. Common/rare designation can be tuned per-word in future sessions if needed.
+- **Fulfills "Next likely steps" from Session 128**: Adverb expansion was explicitly called out as the first remaining category. Weathers and anomalies remain.
+
 ## 2026-07-14 — Expanded Biome-Specific Color Banks
 
 ### What
