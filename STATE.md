@@ -2,6 +2,32 @@
 
 ## 2026-07-14
 
+### What was done (Session 127)
+- **Expanded biome-specific verb banks for all 13 biomes** — each biome now has +2 verbs (26 new entries total), the third expansion of biome-specific word banks after Session 125's adjective/element expansion and Session 126's noun expansion. Prior to this, all biomes had exactly 5 verbs. Now each biome has 7 verbs:
+  - **forest** (5→7): +"dapple", "sigh"
+  - **desert** (5→7): +"wither", "glare"
+  - **ocean** (5→7): +"swell", "roar"
+  - **tundra** (5→7): +"shiver", "blast"
+  - **mountain range** (5→7): +"sculpt", "shelter"
+  - **swamp** (5→7): +"sink", "rot"
+  - **cave system** (5→7): +"carve", "murmur"
+  - **plain** (5→7): +"ripple", "gleam"
+  - **volcanic field** (5→7): +"spit", "quake"
+  - **coral reef** (5→7): +"spawn", "flicker"
+  - **ruined city** (5→7): +"fracture", "whine"
+  - **fungal grove** (5→7): +"spiral", "weep"
+  - **sky islands** (5→7): +"glide", "sail"
+- Each verb is curated to the biome's thematic identity — geological verbs for mountain ranges (sculpt, shelter), marine verbs for ocean (swell, roar), ruin verbs for ruined city (fracture, whine), aerial verbs for sky islands (glide, sail), etc.
+- No code, CLI, or test changes — data-only expansion. All 746 tests still pass (18 todo + 728 landscape), 201 subtests.
+- Verbs appear in multiple middle template slots (e.g. "The {adj} {noun} {verb} {adverb} with {color} {element}"), so expanding them has broad per-word impact on output variety.
+
+### Current status
+Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
+
+### Next likely steps
+- Expand remaining biome word bank categories (weathers, anomalies, colors, adverbs)
+- Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry, inhabitants/wildlife)
+
 ### What was done (Session 126)
 - **Expanded biome-specific noun banks for all 13 biomes** — each biome now has +2 nouns (26 new entries total), the second expansion of biome-specific word banks after Session 125's adjective/element expansion. Prior to this, biome nouns were at 5 entries for 10 biomes and 6 entries for 3 biomes (ruined city, fungal grove, sky islands). Now all biomes have 7–8 nouns:
   - **forest** (5→7): +"understory", "clearings"
@@ -20,13 +46,6 @@
 - Each noun is curated to the biome's thematic identity — geological features for mountain ranges, fungal anatomy for fungal groves, wreckage for ruined cities, etc.
 - No code, CLI, or test changes — data-only expansion. All 746 tests still pass (18 todo + 728 landscape), 201 subtests.
 - Nouns are used in multiple template slots (opening templates, middle templates), so expanding them has broad per-word impact on output variety.
-
-### Current status
-Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
-
-### Next likely steps
-- Expand other biome word bank categories (verbs, weathers, anomalies)
-- Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry, inhabitants/wildlife)
 
 ### What was done (Session 124)
 - **Expanded LEGENDS word bank from 15 to 20 phrases** — 5 new folkloric/historical phrases added, covering underrepresented legend themes:
