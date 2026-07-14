@@ -1,5 +1,26 @@
 # Decisions
 
+## 2026-07-14 — Expanded Biome-Specific Word Banks (adjectives + elements)
+
+### What
+Added 2 new adjectives and 2 new elements to each of the 13 biomes in `BIOME_WORDS` — 52 new entries total. Each new word is curated to fit the biome's thematic identity: forests get "wildwood" and "pine scent", ruined cities get "shattered" and "mold scent", sky islands get "aerial" and "upper air", etc.
+
+### Why
+Biome-specific word banks were created when each biome was added (Sessions 2–22) and have never been expanded since. All *global* word banks have received multiple expansions (legends: 10→20, echoes: 10→15, soundscapes: 8→12, weathers: 8→12, wistful: 6→10), but the biome-specific pools — which are blended with global pools via `_pick()` — have been static. This means biome-specific vocabulary makes up a shrinking proportion of the available word pool as global banks grow. Expanding biome banks restores balance: biomes should feel *more* distinctive, not less, as the project matures.
+
+Adjectives and elements were chosen as the first categories to expand because they appear in the most template slots:
+- Adjectives appear in all 4 openings, all 7 middle templates, all 5 weather templates, and 1 anomaly template
+- Elements appear in all 4 openings, all 7 middle templates, all 5 weather templates, and 2 anomaly templates
+
+Adding to these categories has the widest per-word impact on output variety.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, `_pick()`, CLI flags, or any logic. Only the `BIOME_WORDS` dict values changed.
+- **No seed-breaking**: Adding words to biome-specific pools doesn't change the random sequence — `_pick()` draws from a larger pool but the weighted-selection function is unchanged. Only the rendered output content changes (new words appear in the selection pool).
+- **No new tests**: 33 existing biome vocabulary tests (across `TestBiomeWords`, `TestNewBiomes`, `TestBiomeWeights`, etc.) cover all behaviors generically — they check for the *existence* of biome-specific words in output, not precise counts or specific words.
+- **Test count unchanged**: 746 tests (18 todo + 728 landscape), 201 subtests.
+- **Not marked common or rare**: New words intentionally left at normal weight tier. Common/rare designation can be tuned per-word in future sessions if needed.
+
 ## 2026-07-14 — Expanded LEGENDS Bank (20 phrases)
 
 ### What

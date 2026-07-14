@@ -586,8 +586,8 @@ SENTENCE_TEMPLATES = {
 # Biome-specific word enrichments — blended with global pools for more evocative output
 BIOME_WORDS = {
     "forest": {
-        "adjectives": ["dappled", "verdant", "whispering", "mossy", "deep"],
-        "elements": ["birdsong", "leaf rustle", "sap scent", "shade"],
+        "adjectives": ["dappled", "verdant", "whispering", "mossy", "deep", "wildwood", "sun-dappled"],
+        "elements": ["birdsong", "leaf rustle", "sap scent", "shade", "pine scent", "moss damp"],
         "nouns": ["canopies", "trunks", "glades", "ferns", "branches"],
         "verbs": ["rustle", "whisper", "breathe", "creak", "shade"],
         "colors": ["emerald", "deep green", "golden", "dappled"],
@@ -604,8 +604,8 @@ BIOME_WORDS = {
         ],
     },
     "desert": {
-        "adjectives": ["scorched", "barren", "windswept", "blazing", "golden"],
-        "elements": ["heat shimmer", "sand grain", "dry air", "sun flare"],
+        "adjectives": ["scorched", "barren", "windswept", "blazing", "golden", "sere", "sun-scorched"],
+        "elements": ["heat shimmer", "sand grain", "dry air", "sun flare", "dust devil", "mirage light"],
         "nouns": ["dunes", "mesas", "canyons", "plateaus", "oases"],
         "verbs": ["bake", "crack", "drift", "shimmer", "scour"],
         "colors": ["amber", "golden", "pale", "crimson"],
@@ -622,8 +622,8 @@ BIOME_WORDS = {
         ],
     },
     "ocean": {
-        "adjectives": ["deep", "abyssal", "endless", "bioluminescent", "saline"],
-        "elements": ["salt spray", "current pull", "ocean scent", "pressure"],
+        "adjectives": ["deep", "abyssal", "endless", "bioluminescent", "saline", "tide-worn", "brine-soaked"],
+        "elements": ["salt spray", "current pull", "ocean scent", "pressure", "wave crash", "deep current"],
         "nouns": ["trenches", "currents", "reefs", "abysses", "swells"],
         "verbs": ["crash", "surge", "drift", "plunge", "churn"],
         "colors": ["sapphire", "deep blue", "teal", "silver"],
@@ -640,8 +640,8 @@ BIOME_WORDS = {
         ],
     },
     "tundra": {
-        "adjectives": ["frozen", "barren", "windswept", "auroral", "pale"],
-        "elements": ["frost", "aurora light", "wind howl", "hoar"],
+        "adjectives": ["frozen", "barren", "windswept", "auroral", "pale", "ice-bound", "permafrost"],
+        "elements": ["frost", "aurora light", "wind howl", "hoar", "snow whisper", "ice crystal"],
         "nouns": ["ice fields", "glaciers", "crevasses", "permafrost", "snowdrifts"],
         "verbs": ["freeze", "howl", "crack", "gleam", "drift"],
         "colors": ["pale blue", "silver", "frost-white", "auroral"],
@@ -658,8 +658,8 @@ BIOME_WORDS = {
         ],
     },
     "mountain range": {
-        "adjectives": ["jagged", "towering", "snow-capped", "ancient", "granite"],
-        "elements": ["stone echo", "thin air", "alpine scent", "cold light"],
+        "adjectives": ["jagged", "towering", "snow-capped", "ancient", "granite", "cloud-wreathed", "steep"],
+        "elements": ["stone echo", "thin air", "alpine scent", "cold light", "rockfall echo", "alpine frost"],
         "nouns": ["peaks", "ridges", "cliffs", "valleys", "crags"],
         "verbs": ["tower", "loom", "echo", "rise", "cut"],
         "colors": ["granite grey", "snow-white", "purple", "slate"],
@@ -676,8 +676,8 @@ BIOME_WORDS = {
         ],
     },
     "swamp": {
-        "adjectives": ["fetid", "murky", "choked", "rotting", "drowned"],
-        "elements": ["marsh gas", "decay scent", "still water", "humidity"],
+        "adjectives": ["fetid", "murky", "choked", "rotting", "drowned", "brackish", "silt-choked"],
+        "elements": ["marsh gas", "decay scent", "still water", "humidity", "swamp gas", "rotting wood"],
         "nouns": ["bayous", "mangroves", "bogs", "quicksand", "thickets"],
         "verbs": ["bubble", "fester", "seep", "creep", "stagnate"],
         "colors": ["murky", "green-brown", "dark", "rotting"],
@@ -694,8 +694,8 @@ BIOME_WORDS = {
         ],
     },
     "cave system": {
-        "adjectives": ["subterranean", "echoing", "pitch-dark", "limestone", "dripping"],
-        "elements": ["drip sound", "stone scent", "darkness", "cave wind"],
+        "adjectives": ["subterranean", "echoing", "pitch-dark", "limestone", "dripping", "deep-earth", "stalactite"],
+        "elements": ["drip sound", "stone scent", "darkness", "cave wind", "cavern draft", "mineral drip"],
         "nouns": ["stalactites", "caverns", "tunnels", "chambers", "fissures"],
         "verbs": ["drip", "echo", "glimmer", "resonate", "collapse"],
         "colors": ["pitch-black", "phosphorescent", "glimmering", "deep violet"],
@@ -712,8 +712,8 @@ BIOME_WORDS = {
         ],
     },
     "plain": {
-        "adjectives": ["endless", "golden", "wide", "wind-scoured", "open"],
-        "elements": ["grass rustle", "open sky", "distant haze", "earth scent"],
+        "adjectives": ["endless", "golden", "wide", "wind-scoured", "open", "rolling", "sweeping"],
+        "elements": ["grass rustle", "open sky", "distant haze", "earth scent", "distant thunder", "wildflower scent"],
         "nouns": ["grasses", "horizons", "fields", "bluffs", "meadows"],
         "verbs": ["wave", "stretch", "roll", "sway", "bend"],
         "colors": ["golden", "pale", "amber", "wide"],
@@ -730,8 +730,8 @@ BIOME_WORDS = {
         ],
     },
     "volcanic field": {
-        "adjectives": ["scorched", "smoldering", "obsidian", "sulfurous", "cracked"],
-        "elements": ["sulfur scent", "heat haze", "lava glow", "ash fall"],
+        "adjectives": ["scorched", "smoldering", "obsidian", "sulfurous", "cracked", "magmatic", "cinder-strewn"],
+        "elements": ["sulfur scent", "heat haze", "lava glow", "ash fall", "pumice dust", "lava crack"],
         "nouns": ["vents", "fissures", "calderas", "magma chambers", "slag heaps"],
         "verbs": ["smolder", "hiss", "crack", "erupt", "seethe"],
         "colors": ["obsidian black", "crimson", "molten orange", "ash-grey"],
@@ -748,8 +748,8 @@ BIOME_WORDS = {
         ],
     },
     "coral reef": {
-        "adjectives": ["luminous", "vibrant", "underwater", "reef-born", "crystalline"],
-        "elements": ["coral scent", "underwater light", "current hum", "salt"],
+        "adjectives": ["luminous", "vibrant", "underwater", "reef-born", "crystalline", "reef-knitted", "polyp-laden"],
+        "elements": ["coral scent", "underwater light", "current hum", "salt", "tide pool", "coral spawn"],
         "nouns": ["polyps", "anemones", "lagoon beds", "drop-offs", "groves"],
         "verbs": ["pulse", "drift", "glow", "wave", "filter"],
         "colors": ["coral", "turquoise", "bioluminescent", "vibrant pink"],
@@ -766,8 +766,8 @@ BIOME_WORDS = {
         ],
     },
     "ruined city": {
-        "adjectives": ["crumbling", "hollow", "rusted", "fallen", "skeletal", "gutted", "fractured", "ashen"],
-        "elements": ["distant hum", "dust", "rust scent", "broken light", "stifled echo"],
+        "adjectives": ["crumbling", "hollow", "rusted", "fallen", "skeletal", "gutted", "fractured", "ashen", "shattered", "graffitied"],
+        "elements": ["distant hum", "dust", "rust scent", "broken light", "stifled echo", "mold scent", "broken glass"],
         "nouns": ["facades", "girders", "husks", "plazas", "overpasses", "broken windows"],
         "verbs": ["creak", "settle", "sway", "crumble", "groan"],
         "colors": ["grey", "rusted", "ashen", "faded"],
@@ -784,8 +784,8 @@ BIOME_WORDS = {
         ],
     },
     "fungal grove": {
-        "adjectives": ["bioluminescent", "spongy", "spore-filled", "mycelial", "phosphorescent", "thriving", "veined", "delicate"],
-        "elements": ["spore glow", "fungal scent", "mycelium hum", "rot warmth"],
+        "adjectives": ["bioluminescent", "spongy", "spore-filled", "mycelial", "phosphorescent", "thriving", "veined", "delicate", "spore-dusted", "hyphael"],
+        "elements": ["spore glow", "fungal scent", "mycelium hum", "rot warmth", "spore cloud", "mycelium network"],
         "nouns": ["caps", "gills", "stalks", "hyphae", "puffballs", "tendrils"],
         "verbs": ["pulse", "glow", "release", "expand", "spore"],
         "colors": ["phosphorescent", "neon green", "luminous", "deep purple"],
@@ -802,8 +802,8 @@ BIOME_WORDS = {
         ],
     },
     "sky islands": {
-        "adjectives": ["floating", "cloud-wreathed", "sun-bleached", "sky-born", "ethereal", "exposed", "high", "wind-bitten"],
-        "elements": ["cloud vapor", "wind shear", "sky-blue light", "thin air"],
+        "adjectives": ["floating", "cloud-wreathed", "sun-bleached", "sky-born", "ethereal", "exposed", "high", "wind-bitten", "aerial", "cloud-banked"],
+        "elements": ["cloud vapor", "wind shear", "sky-blue light", "thin air", "upper air", "cloud mist"],
         "nouns": ["archipelagos", "peaks", "bridges", "precipices", "cloud banks", "updrafts"],
         "verbs": ["float", "drift", "soar", "hover", "ride"],
         "colors": ["sky-blue", "cloud-white", "golden", "sunset-tinged"],

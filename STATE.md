@@ -2,6 +2,31 @@
 
 ## 2026-07-14
 
+### What was done (Session 125)
+- **Expanded biome-specific adjective and element word banks for all 13 biomes** — each biome now has +2 adjectives and +2 elements (52 new entries total), the first expansion of biome-specific word banks since they were created (Sessions 2–22). Prior to this, biome adjective/element banks had been static since inception while global word banks received repeated expansions (legends 10→20, echoes 10→15, soundscapes 8→12, weathers 8→12, wistful 6→10).
+  - **forest**: +"wildwood", "sun-dappled" / +"pine scent", "moss damp"
+  - **desert**: +"sere", "sun-scorched" / +"dust devil", "mirage light"
+  - **ocean**: +"tide-worn", "brine-soaked" / +"wave crash", "deep current"
+  - **tundra**: +"ice-bound", "permafrost" / +"snow whisper", "ice crystal"
+  - **mountain range**: +"cloud-wreathed", "steep" / +"rockfall echo", "alpine frost"
+  - **swamp**: +"brackish", "silt-choked" / +"swamp gas", "rotting wood"
+  - **cave system**: +"deep-earth", "stalactite" / +"cavern draft", "mineral drip"
+  - **plain**: +"rolling", "sweeping" / +"distant thunder", "wildflower scent"
+  - **volcanic field**: +"magmatic", "cinder-strewn" / +"pumice dust", "lava crack"
+  - **coral reef**: +"reef-knitted", "polyp-laden" / +"tide pool", "coral spawn"
+  - **ruined city**: +"shattered", "graffitied" / +"mold scent", "broken glass"
+  - **fungal grove**: +"spore-dusted", "hyphael" / +"spore cloud", "mycelium network"
+  - **sky islands**: +"aerial", "cloud-banked" / +"upper air", "cloud mist"
+- No code, CLI, or test changes — data-only expansion. All 746 tests still pass (18 todo + 728 landscape), 201 subtests.
+- Biome-specific banks had not been expanded since Session 62 (which added colors and adverbs as new categories) — this is the first content expansion.
+
+### Current status
+Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
+
+### Next likely steps
+- Expand other biome word bank categories (nouns, verbs, weathers, anomalies)
+- Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry, inhabitants/wildlife)
+
 ### What was done (Session 124)
 - **Expanded LEGENDS word bank from 15 to 20 phrases** — 5 new folkloric/historical phrases added, covering underrepresented legend themes:
   - `"The {display} appears in the dreams of those who have never seen it."` — prophetic dreams, unconscious connection to a place never visited
