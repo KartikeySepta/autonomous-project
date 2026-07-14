@@ -3709,6 +3709,34 @@ class TestPresets(unittest.TestCase):
                 self.assertTrue(has_travelogue,
                     f"Preset {name} with travelogue should have travelogue framing")
 
+    def test_all_presets_include_wistful(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("wistful", PRESETS[name],
+                    f"Preset {name} should include 'wistful'")
+                self.assertTrue(PRESETS[name]["wistful"],
+                    f"Preset {name} should have wistful=True")
+
+    def test_preset_with_wistful_produces_wistful_output(self):
+        from landscape import PRESETS, generate_landscape
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                result = generate_landscape(seed=42, **PRESETS[name])
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+                wistful_indicators = [
+                    "wish you could stay",
+                    "always remain",
+                    "calls to you",
+                    "carry a piece",
+                    "return to the",
+                    "half-remembered dream",
+                ]
+                has_wistful = any(ind in result for ind in wistful_indicators)
+                self.assertTrue(has_wistful,
+                    f"Preset {name} with wistful should produce wistful output")
+
     def test_all_presets_include_legend_count_and_prob(self):
         from landscape import PRESETS
         for name in PRESETS:
@@ -4607,7 +4635,7 @@ class TestWistful(unittest.TestCase):
         from landscape import PRESETS
         for name in PRESETS:
             with self.subTest(preset=name):
-                result = generate_landscape(seed=42, wistful=True, **PRESETS[name])
+                result = generate_landscape(seed=42, **PRESETS[name])
                 self.assertIsInstance(result, str)
                 self.assertGreater(len(result), 0)
 

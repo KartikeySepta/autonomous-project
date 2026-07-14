@@ -1,5 +1,30 @@
 # Decisions
 
+## 2026-07-14 — Wistful in Presets
+
+### What
+Added `"wistful": True` to all 5 preset configurations (`nightfall`, `pastoral`, `sublime`, `wasteland`, `dreamscape`). Each preset now includes the wistful emotional coda by default, following the same pattern as `travelogue` (Session 106) and `legend_enabled` (Session 97).
+
+### Why
+Wistful (Session 108) was only accessible via the explicit `--wistful` flag — presets, which are the curated on-ramp for new users, didn't use it. This meant a `--preset nightfall` landscape would get eerie mood, rare bias, high anomalies, atmospheric echoes, folkloric legends, and travelogue framing — but no personal emotional response. Adding wistful to all presets makes them richer out of the box without requiring users to know about `--wistful`.
+
+Each preset benefits emotionally:
+- **nightfall**: eerie mood + rare bias + wistful → the fear of leaving an uncanny place that has begun to feel familiar
+- **pastoral**: peaceful mood + wistful → the gentle ache of leaving a serene, welcoming place
+- **sublime**: vibrant+peaceful blend + common bias + wistful → the bittersweetness of witnessing beauty you know you'll never see again
+- **wasteland**: desolate mood + no colors + high anomalies + wistful → finding something to miss in a place of ruin
+- **dreamscape**: surreal mood blend + flat bias + wistful → waking from a dream you wish was real
+
+This completes the preset integration for wistful, following the same trajectory as travelogue (Session 104 → 106: add feature, then add to presets), legends (Session 96 → 97), and echoes (Session 78 → 88).
+
+### Tradeoffs
+- **Seed-breaking for presets**: All 5 presets now produce different output from the previous session for the same seed, because `wistful=True` was not previously in presets. This is acceptable because presets are curated entry points that evolve as features mature, and determinism is preserved (same seed + same args = same output). Users who want the old preset behavior can explicitly use `--no-wistful` or omit wistful via the non-preset flags.
+- **Backward compatibility via CLI overrides**: The gating code checks `args.wistful is False` before applying the preset value. Users who explicitly pass `--wistful` don't get the preset value. This is the same pattern as all other preset overrides.
+- **No changes to `generate_landscape()`**: Presets are a pure CLI convenience layer — the generation function already accepts `wistful` (Session 108). Only the `PRESETS` dict and `main()` gating code changed.
+- **Existing test fix**: `test_wistful_works_with_preset` passed both `wistful=True` and `**PRESETS[name]` — now that presets contain `wistful`, the explicit kwarg was removed to avoid `multiple values for keyword argument` errors.
+- **Consistent with echo, legend, and travelogue preset pattern**: All features with an on/off switch are now in all presets — echo (since Session 88), legend (Session 97), travelogue (Session 106), and wistful (this session).
+- **2 new tests, 644 total** (18 todo + 626 landscape), 127 subtests.
+
 ## 2026-07-14 — `wistful` in JSON Metadata
 
 ### What

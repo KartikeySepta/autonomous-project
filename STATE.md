@@ -2,6 +2,16 @@
 
 ## 2026-07-14
 
+### What was done (Session 110)
+- **Added `wistful` to all 5 presets** — `nightfall`, `pastoral`, `sublime`, `wasteland`, and `dreamscape` now each include `"wistful": True`, so every preset includes the wistful emotional coda by default. Previously, wistful was only accessible via the explicit `--wistful` flag.
+- Added **preset gating for wistful in `main()`** — follows the exact same pattern as `travelogue`: if the preset includes `wistful` and `--wistful` was not explicitly passed (still `False`), the preset's value is applied.
+- Fixed **`test_wistful_works_with_preset`** — removed the redundant `wistful=True` kwarg now that presets include `wistful` (would cause `multiple values for keyword argument` error).
+- Added 2 new tests in `TestPresets`:
+  - `test_all_presets_include_wistful` — verifies every preset has `"wistful": True` (5 subtests)
+  - `test_preset_with_wistful_produces_wistful_output` — verifies all 5 presets produce wistful output (5 subtests)
+- This completes the wistful integration into presets, following the same pattern as travelogue (Session 106) and legends (Session 97): add to PRESETS dict, add gating in main(), add structural tests. Wistful was the last feature (alongside echoes, legends, travelogue) with an on/off switch that was not in any preset.
+- Tests increased from 642 to 644 landscape tests (660 total), subtests from 117 to 127
+
 ### What was done (Session 109)
 - **Added `wistful` to JSON metadata** — when `wistful=True`, the JSON output now includes `"wistful": true`, following the same pattern as `travelogue` (Session 105) and `echo_enabled`/`legend_enabled` (Sessions 97/100). Previously, wistful framing was invisible in JSON metadata — consumers had no way to detect wistful state without parsing the text field for wistful phrases.
 - Added 2 new tests in `TestWistful`:
