@@ -1,6 +1,20 @@
 # Decisions
 
-## 2026-07-14 — Travelogue in Presets
+## 2026-07-14 — Travelogue Introspection (`--describe-travelogue`)
+
+### What
+Added `--describe-travelogue` CLI flag and `describe_travelogue()` function. When invoked, it prints all 4 travelogue prefixes and 4 travelogue suffixes with their index numbers and exits without generating a landscape.
+
+### Why
+The introspection suite now includes `--describe-biome` (Session 43), `--describe-mood` (Session 44), `--describe-global` (Session 45), `--describe-templates` (Session 64), `--describe-echoes` (Session 86), `--describe-legends` (Session 99), and `--describe-presets` (Session 88) — covering biome word banks, mood word banks, global word pools, sentence templates, echo phrases, legend phrases, and preset configurations. But the travelogue system (4 prefixes, 4 suffixes from Session 104) had no introspection, even though travelogue is now enabled in all 5 presets (Session 106). Users who want to see what travelogue templates are available had no discoverable way to do so without reading `landscape.py` directly.
+
+This follows the same pattern as every other describe-* feature: a pure function that returns a formatted string, a CLI flag that prints it and exits, and tests that verify the output structure.
+
+### Tradeoffs
+- **Data-only addition**: No changes to `generate_landscape()`, CLI flags (beyond the new `--describe-travelogue`), generation logic, or any feature code. Only `landscape.py` (new function + CLI flag + early-exit) and `test_landscape.py` (11 new tests) were modified.
+- **Not seed-breaking**: No random call order changes — only an introspection function and CLI flag addition.
+- **11 new tests, 626 total** (18 todo + 608 landscape), 112 subtests.
+- **Follows established pattern**: Every test method in `TestDescribeTravelogue` has a direct counterpart in `TestDescribeEchoes` and `TestDescribeLegends`, making the test suite symmetric and easier to maintain.
 
 ### What
 Added `"travelogue": True` to all 5 preset configurations (`nightfall`, `pastoral`, `sublime`, `wasteland`, `dreamscape`). Each preset now frames the landscape as a travel journal entry by default, following the same pattern as `legend_enabled` (Session 97) and `echo_enabled` (Session 88).

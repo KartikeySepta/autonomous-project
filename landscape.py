@@ -443,6 +443,17 @@ def describe_legends():
     return "\n".join(lines)
 
 
+def describe_travelogue():
+    """Return a string describing all available travelogue prefixes and suffixes."""
+    lines = ["=== travelogue prefixes ==="]
+    for i, prefix in enumerate(TRAVELOGUE_PREFIXES):
+        lines.append(f"  [{i}] {prefix}")
+    lines.append("=== travelogue suffixes ===")
+    for i, suffix in enumerate(TRAVELOGUE_SUFFIXES):
+        lines.append(f"  [{i}] {suffix}")
+    return "\n".join(lines)
+
+
 def describe_presets():
     """Return a string describing all available presets."""
     lines = ["=== presets ==="]
@@ -964,6 +975,10 @@ def main():
         help="Show all available echo phrases with their index numbers",
     )
     parser.add_argument(
+        "--describe-travelogue", action="store_true",
+        help="Show all available travelogue prefixes and suffixes",
+    )
+    parser.add_argument(
         "--describe-presets", action="store_true",
         help="Show all available presets with their settings",
     )
@@ -1228,6 +1243,9 @@ def main():
         return
     if args.describe_legends:
         print(describe_legends())
+        return
+    if args.describe_travelogue:
+        print(describe_travelogue())
         return
     if args.describe_presets:
         print(describe_presets())

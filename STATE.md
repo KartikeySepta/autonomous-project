@@ -2,6 +2,24 @@
 
 ## 2026-07-14
 
+### What was done (Session 107)
+- **Added `--describe-travelogue` CLI flag** and `describe_travelogue()` function — users can now inspect all 4 travelogue prefixes and 4 travelogue suffixes with their index numbers, following the exact same pattern as `--describe-echoes` (Session 86) and `--describe-legends` (Session 99):
+  - Shows both prefixes and suffixes in separate sections with `[0]`–`[3]` index markers
+  - CLI exits immediately after printing — no landscape generation occurs when `--describe-travelogue` is used
+- Added 11 new tests in `TestDescribeTravelogue` class:
+  - `test_describe_travelogue_returns_string` — verifies `describe_travelogue()` returns a string
+  - `test_describe_travelogue_contains_header` — verifies output contains both "travelogue prefixes" and "travelogue suffixes" headers
+  - `test_describe_travelogue_contains_all_prefixes` — verifies all 4 prefix templates appear in output
+  - `test_describe_travelogue_contains_all_suffixes` — verifies all 4 suffix templates appear in output
+  - `test_describe_travelogue_contains_index_numbers` — verifies `[0]` and `[1]` index markers
+  - `test_describe_travelogue_shows_all_prefixes` — verifies last prefix index `[3]` is present
+  - `test_describe_travelogue_shows_all_suffixes` — verifies last suffix index `[3]` is present
+  - `test_describe_travelogue_flag_exists_via_cli` — verifies `main` is callable
+  - `test_describe_travelogue_flag_prints_to_stdout` — verifies CLI output via stdout capture
+  - `test_describe_travelogue_no_landscape_generated` — verifies early exit (no landscape generation)
+- This closes a test coverage gap: travelogue was introduced in Session 104 with functional tests for the feature, but the travelogue introspection had no dedicated test coverage, unlike echoes (Session 86) and legends (Session 99) which have had introspection tests since their early sessions.
+- Tests increased from 598 to 608 landscape tests (616 → 626 total), subtests unchanged at 112
+
 ### What was done (Session 106)
 - **Added `travelogue` to all 5 presets** — `nightfall`, `pastoral`, `sublime`, `wasteland`, and `dreamscape` now each include `"travelogue": True`, so every preset frames the landscape as a travel journal entry by default. Previously, travelogue was only accessible via the explicit `--travelogue` flag.
 - Added **preset gating for travelogue in `main()`** — follows the exact same pattern as `legend_enabled`: if the preset includes `travelogue` and `--travelogue` was not explicitly passed (still `False`), the preset's value is applied.

@@ -9,6 +9,7 @@ from landscape import (
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
     TIME_WORDS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES,
+    describe_travelogue,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -4291,6 +4292,93 @@ class TestDescribeLegends(unittest.TestCase):
             "No landscape should be generated when --describe-legends is used")
         self.assertNotIn("\n\n", output,
             "No landscape should be generated when --describe-legends is used")
+
+
+class TestDescribeTravelogue(unittest.TestCase):
+    def test_describe_travelogue_returns_string(self):
+        result = describe_travelogue()
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_describe_travelogue_contains_header(self):
+        result = describe_travelogue()
+        self.assertIn("travelogue prefixes", result)
+        self.assertIn("travelogue suffixes", result)
+
+    def test_describe_travelogue_contains_all_prefixes(self):
+        result = describe_travelogue()
+        for prefix in TRAVELOGUE_PREFIXES:
+            self.assertIn(prefix, result,
+                f"Travelogue description should contain prefix: {prefix!r}")
+
+    def test_describe_travelogue_contains_all_suffixes(self):
+        result = describe_travelogue()
+        for suffix in TRAVELOGUE_SUFFIXES:
+            self.assertIn(suffix, result,
+                f"Travelogue description should contain suffix: {suffix!r}")
+
+    def test_describe_travelogue_contains_index_numbers(self):
+        result = describe_travelogue()
+        self.assertIn("[0]", result, "Travelogue description should contain index [0]")
+        self.assertIn("[1]", result, "Travelogue description should contain index [1]")
+
+    def test_describe_travelogue_shows_all_prefixes(self):
+        result = describe_travelogue()
+        count = len(TRAVELOGUE_PREFIXES)
+        self.assertIn(f"=== travelogue prefixes ===", result)
+        self.assertIn(f"[{count - 1}]", result,
+            f"Travelogue description should contain the last prefix index [{count - 1}]")
+
+    def test_describe_travelogue_shows_all_suffixes(self):
+        result = describe_travelogue()
+        count = len(TRAVELOGUE_SUFFIXES)
+        self.assertIn(f"=== travelogue suffixes ===", result)
+        self.assertIn(f"[{count - 1}]", result,
+            f"Travelogue description should contain the last suffix index [{count - 1}]")
+
+    def test_describe_travelogue_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_travelogue_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-travelogue"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("travelogue prefixes", output)
+        self.assertIn("travelogue suffixes", output)
+        self.assertIn("[0]", output)
+        self.assertIn("[1]", output)
+
+    def test_describe_travelogue_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-travelogue", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-travelogue is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-travelogue is used")
 
 
 class TestTravelogue(unittest.TestCase):
