@@ -4565,6 +4565,15 @@ class TestWistful(unittest.TestCase):
         self.assertIn("text", data)
         self.assertIsInstance(data["text"], str)
         self.assertGreater(len(data["text"]), 0)
+        self.assertIn("wistful", data)
+        self.assertTrue(data["wistful"])
+
+    def test_wistful_json_field_absent_when_disabled(self):
+        result = generate_landscape(seed=42, biome="forest", fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertNotIn("wistful", data,
+            "wistful should not appear in JSON when wistful=False")
 
     def test_wistful_differs_from_plain(self):
         plain = generate_landscape(seed=42, biome="forest")

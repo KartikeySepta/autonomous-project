@@ -927,6 +927,8 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
             data["legend_prob"] = legend_prob
         if travelogue:
             data["travelogue"] = True
+        if wistful:
+            data["wistful"] = True
         if bias_overrides:
             data["bias_overrides"] = bias_overrides
         if mood_weight_overrides:

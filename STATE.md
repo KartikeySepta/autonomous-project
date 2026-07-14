@@ -2,6 +2,13 @@
 
 ## 2026-07-14
 
+### What was done (Session 109)
+- **Added `wistful` to JSON metadata** — when `wistful=True`, the JSON output now includes `"wistful": true`, following the same pattern as `travelogue` (Session 105) and `echo_enabled`/`legend_enabled` (Sessions 97/100). Previously, wistful framing was invisible in JSON metadata — consumers had no way to detect wistful state without parsing the text field for wistful phrases.
+- Added 2 new tests in `TestWistful`:
+  - `test_wistful_works_with_json` updated to verify `"wistful"` key exists and is `True`
+  - `test_wistful_json_field_absent_when_disabled` — verifies JSON omits `wistful` when `wistful=False` (default)
+- Tests increased from 623 to 624 landscape tests (641 → 642 total), subtests unchanged at 117
+
 ### What was done (Session 108)
 - **Added `--wistful` CLI flag** and `wistful` parameter to `generate_landscape()` — appends a bittersweet, yearning closing phrase to the landscape, adding an emotional coda in a different register from echoes (atmospheric), legends (folkloric), and travelogue (narrative journaling):
   - 6 curated `WISTFUL` phrases, each referencing `{display}` (biome name): "You wish you could stay longer in the forest.", "Part of you will always remain in the forest.", "The forest calls to you even as you turn away.", "You carry a piece of the forest with you now.", "Someday you will return to the forest.", "The forest lingers in your thoughts like a half-remembered dream."

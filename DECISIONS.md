@@ -1,5 +1,18 @@
 # Decisions
 
+## 2026-07-14 — `wistful` in JSON Metadata
+
+### What
+Added `"wistful": true` to JSON output when `wistful=True`, following the same pattern as `travelogue` (Session 105), `echo_enabled` (Session 100), and `legend_enabled` (Session 97). Previously, wistful framing was invisible in JSON metadata — consumers had no way to detect whether a landscape had a wistful emotional coda without parsing the text field for wistful phrases.
+
+### Why
+When wistful was added (Session 108), the JSON metadata gap was the same one that `echo_enabled` and `travelogue` had before their respective metadata sessions: the feature had an on/off switch but no corresponding boolean in JSON output. Every other feature with an on/off switch (echo, legend, travelogue) emits an explicit boolean in JSON. Adding `wistful` makes the JSON format consistent and lets consumers programmatically detect whether the emotional coda is active.
+
+### Tradeoffs
+- **Backward compatible**: Existing JSON output without `wistful` is unaffected; the field is only added when `wistful=True`.
+- **Not seed-breaking**: No random call order changes — only a metadata field addition.
+- **2 new tests**, 642 total (18 todo + 624 landscape), 117 subtests.
+
 ## 2026-07-14 — Wistful Emotional Coda (`--wistful`)
 
 ### What
@@ -21,7 +34,7 @@ This directly serves the GOAL.md directive to "build something genuinely novel o
 - **Placed after legends, before travelogue suffix** — in the travelogue journal frame, the wistful reflection sits between the content and the journal's closing, creating a natural narrative arc: arrival → observation → emotional reflection → planned next steps.
 - **Suppressed at `detail=0`** — same pattern as echoes and legends. Wistfulness needs context (a described landscape) to have emotional weight.
 - **Not seed-breaking when disabled**: `wistful=False` by default, so all existing seed-based output is preserved. When enabled, one extra `rng.choice()` call is introduced after legends, shifting the random sequence for the travelogue block and beyond.
-- **No JSON metadata field** — unlike echo/legend/travelogue which emit enabled booleans in JSON. This follows the pattern of initial feature releases (echo and legend also lacked JSON metadata in their first session). Can be added in a future session.
+- **JSON metadata added in Session 109** — `wistful` now emits `"wistful": true` in JSON output, following the same pattern as `travelogue` (Session 105), `echo_enabled` (Session 100), and `legend_enabled` (Session 97).
 - **15 new tests**, 641 total (18 todo + 623 landscape), 117 subtests.
 
 ## 2026-07-14 — Travelogue Introspection (`--describe-travelogue`)
