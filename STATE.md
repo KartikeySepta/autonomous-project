@@ -1,6 +1,22 @@
 # State
 
-## 2026-07-13
+## 2026-07-14
+
+### What was done (Session 103)
+- **Added `legend_count` and `legend_prob` to all 5 presets** — each preset now has curated legend density and probability values that match its mood/theme:
+  - `nightfall`: `legend_count=2, legend_prob=0.7` — eerie folk tales, not always present
+  - `pastoral`: `legend_count=1, legend_prob=0.6` — occasional tranquil legend
+  - `sublime`: `legend_count=2, legend_prob=0.9` — rich mythic context, almost always
+  - `wasteland`: `legend_count=2, legend_prob=1.0` — every landscape has a forgotten-history legend
+  - `dreamscape`: `legend_count=2, legend_prob=0.85` — surreal folk tales, usually present
+- The gating code for `legend_count` and `legend_prob` was already in place (lines 1163-1166 of `landscape.py`) from Sessions 101/102 — presets were the last part of the legend infrastructure not using these parameters
+- Complements the existing `echo_count` and `echo_prob` in presets (nightfall: echo_count=2, echo_prob=0.7; pastoral: echo_count=1, echo_prob=0.5; sublime: echo_count=3, echo_prob=1.0; dreamscape: echo_count=2, echo_prob=1.0) — now legends have the same per-preset tuning
+- Added 3 new tests in `TestPresets`:
+  - `test_all_presets_include_legend_count_and_prob` — verifies every preset has both fields with valid ranges (5 subtests)
+  - `test_preset_legend_count_affects_output` — verifies legend_count=0 differs from legend_count=1
+  - `test_preset_legend_prob_affects_output` — verifies legend_prob=0.0 differs from legend_prob=1.0
+- This completes the preset legend integration: on/off (Session 97), count (Session 101), prob (Session 102), now per-preset tuning (this session)
+- Tests increased from 596 to 599 total (18 todo + 581 landscape), subtests from 93 to 102
 
 ### What was done (Session 102)
 - **Added `--legend-prob` CLI flag** and `legend_prob` parameter to `generate_landscape()` — users can now control how often legend phrases appear per roll (0.0 = never, 1.0 = always, default 1.0 preserves existing behavior), following the exact same pattern as `--echo-prob` (Session 87):

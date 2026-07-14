@@ -1,5 +1,26 @@
 # Decisions
 
+## 2026-07-14 — Preset Legend Count and Probability
+
+### What
+Added `legend_count` and `legend_prob` to all 5 preset configurations (`nightfall`, `pastoral`, `sublime`, `wasteland`, `dreamscape`). Each preset now has curated legend density and probability values that match its emotional/atmospheric theme, mirroring how `echo_count` and `echo_prob` are already set per-preset.
+
+### Why
+The legend system evolved through 4 sessions: on/off (Session 96), in-presets (Session 97), count (Session 101), and prob (Session 102). After each building block existed independently, the final integration step was wiring them into presets with thoughtfully chosen values:
+
+- **nightfall** (`legend_count=2, legend_prob=0.7`): Eerie mood + rare bias creates an ominous atmosphere. Multiple legends at moderate probability mirrors the echo config (echo_count=2, echo_prob=0.7) — folk tales appear as frequently as atmospheric echoes.
+- **pastoral** (`legend_count=1, legend_prob=0.6`): Peaceful mood. A single legend, and only 60% of the time — keeps the serene tone from being cluttered. Matches pastoral's sparse echo config (echo_count=1, echo_prob=0.5).
+- **sublime** (`legend_count=2, legend_prob=0.9`): Vibrant+peaceful blend with common bias. Two legends almost always present (prob=0.9), mirroring the maximalist approach of echo_count=3, echo_prob=1.0.
+- **wasteland** (`legend_count=2, legend_prob=1.0`): Desolate mood with full anomalies. Every landscape gets legends — the "forgotten history" tone of legends pairs naturally with wasteland's desolation. Matches the certainty of anomaly_prob=1.0 and anomaly_count=3.
+- **dreamscape** (`legend_count=2, legend_prob=0.85`): Eerie+vibrant blend with detail=2. Two legends at high probability — surreal folk tales that usually appear, matching the high-but-not-certain echo config (echo_count=2, echo_prob=1.0).
+
+### Tradeoffs
+- **Seed-breaking for presets**: All 5 presets now produce different output from the previous session for the same seed, because `legend_count` and `legend_prob` were not previously in presets. This is acceptable because presets are curated entry points that evolve as features mature, and determinism is preserved (same seed + same args = same output). Users who want the old preset behavior can explicitly pass `--legend-count 1 --legend-prob 1.0`.
+- **Backward compatibility via CLI overrides**: The existing gating code checks `args.legend_count == 1` and `args.legend_prob == 1.0` before applying preset values. Users who explicitly pass `--legend-count 1 --legend-prob 1.0` get the old behavior even with `--preset`. This is the same pattern as all other preset overrides.
+- **No changes to `generate_landscape()`**: Presets are a pure CLI convenience layer — the generation function already accepts `legend_count` and `legend_prob` (Sessions 101/102). Only the PRESETS dict changed.
+- **Consistent with echo preset pattern**: Every preset that has `echo_count`/`echo_prob` now has `legend_count`/`legend_prob` with similar thematic density — high drama presets (sublime, wasteland, dreamscape) use higher counts/probs, while subtle presets (pastoral) use lower values.
+- **3 new tests, 599 total** (18 todo + 581 landscape), 102 subtests.
+
 ## 2026-07-13 — Configurable Legend Probability (`--legend-prob`)
 
 ### What

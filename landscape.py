@@ -132,6 +132,8 @@ PRESETS = {
         "echo_prob": 0.7,
         "echo_count": 2,
         "legend_enabled": True,
+        "legend_count": 2,
+        "legend_prob": 0.7,
     },
     "pastoral": {
         "mood": ["peaceful"],
@@ -139,6 +141,8 @@ PRESETS = {
         "echo_enabled": True,
         "echo_prob": 0.5,
         "legend_enabled": True,
+        "legend_count": 1,
+        "legend_prob": 0.6,
     },
     "sublime": {
         "mood": ["vibrant", "peaceful"],
@@ -148,6 +152,8 @@ PRESETS = {
         "echo_prob": 1.0,
         "echo_count": 3,
         "legend_enabled": True,
+        "legend_count": 2,
+        "legend_prob": 0.9,
     },
     "wasteland": {
         "mood": ["desolate"],
@@ -156,6 +162,8 @@ PRESETS = {
         "anomaly_count": 3,
         "echo_enabled": True,
         "legend_enabled": True,
+        "legend_count": 2,
+        "legend_prob": 1.0,
     },
     "dreamscape": {
         "mood": ["eerie", "vibrant"],
@@ -166,6 +174,8 @@ PRESETS = {
         "echo_count": 2,
         "detail": 2,
         "legend_enabled": True,
+        "legend_count": 2,
+        "legend_prob": 0.85,
     },
 }
 

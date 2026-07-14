@@ -3682,6 +3682,38 @@ class TestPresets(unittest.TestCase):
                 self.assertTrue(PRESETS[name]["legend_enabled"],
                     f"Preset {name} should have legend_enabled=True")
 
+    def test_all_presets_include_legend_count_and_prob(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("legend_count", PRESETS[name],
+                    f"Preset {name} should include 'legend_count'")
+                self.assertIn("legend_prob", PRESETS[name],
+                    f"Preset {name} should include 'legend_prob'")
+                self.assertGreaterEqual(PRESETS[name]["legend_count"], 0)
+                self.assertLessEqual(PRESETS[name]["legend_count"], 3)
+                self.assertGreaterEqual(PRESETS[name]["legend_prob"], 0.0)
+                self.assertLessEqual(PRESETS[name]["legend_prob"], 1.0)
+
+    def test_preset_legend_count_affects_output(self):
+        from landscape import generate_landscape
+        results = {}
+        for count in [0, 1, 2, 3]:
+            with self.subTest(legend_count=count):
+                result = generate_landscape(seed=42, legend_enabled=True, legend_count=count, legend_prob=1.0)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+                results[count] = result
+        self.assertNotEqual(results[0], results[1],
+            "legend_count=0 should differ from legend_count=1")
+
+    def test_preset_legend_prob_affects_output(self):
+        from landscape import generate_landscape
+        zero = generate_landscape(seed=42, legend_enabled=True, legend_count=2, legend_prob=0.0)
+        one = generate_landscape(seed=42, legend_enabled=True, legend_count=2, legend_prob=1.0)
+        self.assertNotEqual(zero, one,
+            "legend_prob=0.0 should differ from legend_prob=1.0")
+
     def test_preset_with_legend_produces_legend_output(self):
         from landscape import PRESETS
         for name in PRESETS:
