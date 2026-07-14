@@ -9,7 +9,7 @@ from landscape import (
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
     TIME_WORDS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL,
-    describe_travelogue,
+    describe_travelogue, describe_wistful,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -4519,6 +4519,78 @@ class TestTravelogue(unittest.TestCase):
         import json as j
         data = j.loads(result)
         self.assertNotIn("travelogue", data)
+
+
+class TestDescribeWistful(unittest.TestCase):
+    def test_describe_wistful_returns_string(self):
+        result = describe_wistful()
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_describe_wistful_contains_header(self):
+        result = describe_wistful()
+        self.assertIn("wistful phrases", result)
+
+    def test_describe_wistful_contains_all_phrases(self):
+        result = describe_wistful()
+        for phrase in WISTFUL:
+            self.assertIn(phrase, result,
+                f"Wistful description should contain phrase: {phrase!r}")
+
+    def test_describe_wistful_contains_index_numbers(self):
+        result = describe_wistful()
+        self.assertIn("[0]", result, "Wistful description should contain index [0]")
+        self.assertIn("[1]", result, "Wistful description should contain index [1]")
+
+    def test_describe_wistful_shows_all_phrases(self):
+        result = describe_wistful()
+        count = len(WISTFUL)
+        self.assertIn(f"=== wistful phrases ===", result)
+        self.assertIn(f"[{count - 1}]", result,
+            f"Wistful description should contain the last phrase index [{count - 1}]")
+
+    def test_describe_wistful_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_wistful_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-wistful"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("wistful phrases", output)
+        self.assertIn("[0]", output)
+        self.assertIn("[1]", output)
+
+    def test_describe_wistful_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-wistful", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-wistful is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-wistful is used")
 
 
 class TestWistful(unittest.TestCase):

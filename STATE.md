@@ -2,6 +2,24 @@
 
 ## 2026-07-14
 
+### What was done (Session 111)
+- **Added `describe_wistful()` function** and `--describe-wistful` CLI flag — users can now inspect all 6 wistful phrases with their index numbers, following the exact same pattern as `describe_travelogue()` (Session 107), `describe_legends()` (Session 99), and `describe_echoes()` (Session 86):
+  - Shows all wistful phrases with `[0]`–`[5]` index markers
+  - CLI exits immediately after printing — no landscape generation occurs when `--describe-wistful` is used
+- Added 8 new tests in `TestDescribeWistful` class:
+  - `test_describe_wistful_returns_string` — verifies `describe_wistful()` returns a string
+  - `test_describe_wistful_contains_header` — verifies output contains "wistful phrases" header
+  - `test_describe_wistful_contains_all_phrases` — verifies all 6 wistful phrases appear in output
+  - `test_describe_wistful_contains_index_numbers` — verifies `[0]` and `[1]` index markers
+  - `test_describe_wistful_shows_all_phrases` — verifies last index `[5]` is present
+  - `test_describe_wistful_flag_exists_via_cli` — verifies `main` is callable
+  - `test_describe_wistful_flag_prints_to_stdout` — verifies CLI output via stdout capture
+  - `test_describe_wistful_no_landscape_generated` — verifies early exit (no landscape generation)
+- This closes a test coverage gap: wistful was introduced in Session 108 with functional tests for the feature, but the wistful introspection had no dedicated test coverage, unlike travelogue (Session 107), legends (Session 99), and echoes (Session 86) which all have introspection tests.
+- Tests increased from 626 to 634 landscape tests (644 → 652 total), subtests unchanged at 127
+
+## 2026-07-14
+
 ### What was done (Session 110)
 - **Added `wistful` to all 5 presets** — `nightfall`, `pastoral`, `sublime`, `wasteland`, and `dreamscape` now each include `"wistful": True`, so every preset includes the wistful emotional coda by default. Previously, wistful was only accessible via the explicit `--wistful` flag.
 - Added **preset gating for wistful in `main()`** — follows the exact same pattern as `travelogue`: if the preset includes `wistful` and `--wistful` was not explicitly passed (still `False`), the preset's value is applied.

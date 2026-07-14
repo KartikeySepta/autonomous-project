@@ -468,6 +468,14 @@ def describe_travelogue():
     return "\n".join(lines)
 
 
+def describe_wistful():
+    """Return a string describing all available wistful phrases."""
+    lines = ["=== wistful phrases ==="]
+    for i, phrase in enumerate(WISTFUL):
+        lines.append(f"  [{i}] {phrase}")
+    return "\n".join(lines)
+
+
 def describe_presets():
     """Return a string describing all available presets."""
     lines = ["=== presets ==="]
@@ -998,6 +1006,10 @@ def main():
         help="Show all available travelogue prefixes and suffixes",
     )
     parser.add_argument(
+        "--describe-wistful", action="store_true",
+        help="Show all available wistful phrases",
+    )
+    parser.add_argument(
         "--describe-presets", action="store_true",
         help="Show all available presets with their settings",
     )
@@ -1271,6 +1283,9 @@ def main():
         return
     if args.describe_travelogue:
         print(describe_travelogue())
+        return
+    if args.describe_wistful:
+        print(describe_wistful())
         return
     if args.describe_presets:
         print(describe_presets())

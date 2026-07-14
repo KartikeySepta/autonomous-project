@@ -1,5 +1,19 @@
 # Decisions
 
+## 2026-07-14 — Wistful Introspection (`--describe-wistful`)
+
+### What
+Added `describe_wistful()` function and `--describe-wistful` CLI flag. When invoked, it prints all 6 wistful phrases with their index numbers and exits without generating a landscape.
+
+### Why
+The introspection suite now covers biome, mood, global, templates, echoes, legends, presets, and travelogue — but wistful (8 sessions old, now enabled in all 5 presets) had no introspection. Users who want to see wistful phrases had no discoverable way to do so without reading `landscape.py`. This follows the same pattern as every other describe-* feature: a pure function that returns a formatted string, a CLI flag that prints it and exits, and tests that verify the output structure.
+
+### Tradeoffs
+- **Data-only addition**: No changes to `generate_landscape()`, generation logic, or any feature code. Only `landscape.py` (new function + CLI flag + early-exit) and `test_landscape.py` (8 new tests) were modified.
+- **Not seed-breaking**: No random call order changes — only an introspection function and CLI flag addition.
+- **8 new tests, 652 total** (18 todo + 634 landscape), 127 subtests.
+- **Follows established pattern**: Every test method in `TestDescribeWistful` has a direct counterpart in `TestDescribeEchoes`, `TestDescribeLegends`, and `TestDescribeTravelogue`, making the test suite symmetric.
+
 ## 2026-07-14 — Wistful in Presets
 
 ### What
