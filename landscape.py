@@ -1264,6 +1264,14 @@ def main():
         help="Append a wistful, yearning closing phrase to the landscape",
     )
     parser.add_argument(
+        "--no-travelogue", action="store_true",
+        help="Disable travelogue journal framing (overrides preset and --travelogue)",
+    )
+    parser.add_argument(
+        "--no-wistful", action="store_true",
+        help="Disable wistful closing phrase (overrides preset and --wistful)",
+    )
+    parser.add_argument(
         "--biome-weight", type=str, default=None,
         help="Weight biomes for random selection (comma-separated biome=weight pairs, e.g. forest=5,desert=1)",
     )
@@ -1349,9 +1357,9 @@ def main():
             args.legend_count = preset["legend_count"]
         if "legend_prob" in preset and args.legend_prob == 1.0:
             args.legend_prob = preset["legend_prob"]
-        if "travelogue" in preset and args.travelogue is False:
+        if "travelogue" in preset and args.travelogue is False and not args.no_travelogue:
             args.travelogue = preset["travelogue"]
-        if "wistful" in preset and args.wistful is False:
+        if "wistful" in preset and args.wistful is False and not args.no_wistful:
             args.wistful = preset["wistful"]
         if "sound_enabled" in preset and args.sound is False:
             args.sound = preset["sound_enabled"]
@@ -1361,6 +1369,12 @@ def main():
             args.sound_prob = preset["sound_prob"]
         if "color_enabled" in preset and args.no_color is False:
             args.no_color = not preset["color_enabled"]
+
+    # --no-* overrides take effect after all preset gating
+    if args.no_travelogue:
+        args.travelogue = False
+    if args.no_wistful:
+        args.wistful = False
 
     if args.describe_biome is not None:
         print(describe_biome(args.describe_biome))

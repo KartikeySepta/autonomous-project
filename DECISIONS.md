@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-07-14 — No-Travelogue and No-Wistful Flags (`--no-travelogue`, `--no-wistful`)
+
+### What
+Added `--no-travelogue` and `--no-wistful` CLI flags that force `travelogue=False` / `wistful=False`, overriding presets (which enable both by default) and explicit `--travelogue` / `--wistful` flags. Implemented as separate `store_true` args with a post-preset override block in `main()`.
+
+### Why
+All 5 presets (nightfall, pastoral, sublime, wasteland, dreamscape) enable travelogue and wistful. Users who want a preset's mood/bias/anomaly/echo/legend configuration but do NOT want the travelogue framing or wistful closing had no way to disable them when using `--preset`. Every other `--no-*` flag (`--no-color`, `--no-element`, `--no-time-word`, `--no-adverb`, `--no-weather`, etc.) disables features that are ON by default, but travelogue/wistful are OFF by default. The need arises specifically from presets: presets flip them ON, and there was no OFF switch for that case. Adding `--no-*` variants follows the established pattern and gives users full control.
+
+### Tradeoffs
+- **`--no-*` wins over `--*`**: If both `--travelogue` and `--no-travelogue` are passed, `--no-travelogue` wins. This is a design choice: the "no" flag is a safety override. The post-preset override block explicitly sets the value after all gating, ensuring `--no-*` always takes effect.
+- **No changes to `generate_landscape()`**: The generation function already accepts `travelogue`/`wistful` booleans. Only `main()` preset gating and CLI argument definitions changed.
+- **Not seed-breaking**: No random call order changes. The new flags only affect whether `travelogue`/`wistful` are `True` or `False` when passed to `generate_landscape()`.
+- **12 new tests, 728 total** (18 todo + 710 landscape), 171 subtests.
+- **Fills "Next likely steps" from Session 117**: This was explicitly called out as the next step after weather count/prob.
+
 ## 2026-07-14 — Configurable Weather Count and Probability (`--weather-count`, `--weather-prob`)
 
 ### What

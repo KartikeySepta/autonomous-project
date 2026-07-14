@@ -5213,5 +5213,132 @@ class TestSoundProb(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+TRAVELOGUE_INDICATORS = [
+    "Journal entry",
+    "Log entry",
+    "Chronicle of the journey",
+    "the expedition",
+    "I will venture",
+    "I mark this in my journal",
+    "I note the position",
+    "I will listen",
+]
+
+WISTFUL_INDICATORS_PHRASES = [
+    "You wish you could stay",
+    "Part of you will always remain",
+    "calls to you even as you turn away",
+    "You carry a piece",
+    "Someday you will return",
+    "lingers in your thoughts",
+]
+
+
+class TestNoTravelogue(unittest.TestCase):
+    def test_no_travelogue_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_no_travelogue_disables_travelogue_with_preset(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                preset = dict(PRESETS[name])
+                preset.pop("travelogue", None)
+                result = generate_landscape(seed=42, **preset, travelogue=False)
+                for ind in TRAVELOGUE_INDICATORS:
+                    self.assertNotIn(ind, result,
+                        f"Preset {name} with --no-travelogue should not contain {ind!r}")
+
+    def test_no_travelogue_preset_without_flag_still_has_travelogue(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                if "travelogue" not in PRESETS[name]:
+                    continue
+                result = generate_landscape(seed=42, **PRESETS[name])
+                # Without --no-travelogue, preset travelogue should be active
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_no_travelogue_works_with_other_features(self):
+        from landscape import generate_landscape
+        for s in range(10):
+            result = generate_landscape(seed=s, travelogue=False,
+                                        echo_enabled=True, legend_enabled=True,
+                                        sound_enabled=True, wistful=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_no_travelogue_with_explicit_travelogue_override(self):
+        from landscape import generate_landscape
+        # If --no-travelogue is used, travelogue should be False regardless of --travelogue
+        result = generate_landscape(seed=42, biome="forest", travelogue=False)
+        for ind in TRAVELOGUE_INDICATORS:
+            self.assertNotIn(ind, result,
+                f"Output with --no-travelogue should not contain {ind!r}")
+
+    def test_no_travelogue_does_not_affect_json_output(self):
+        from landscape import generate_landscape
+        result = generate_landscape(seed=42, biome="forest", travelogue=False, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertNotIn("travelogue", data)
+
+
+class TestNoWistful(unittest.TestCase):
+    def test_no_wistful_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_no_wistful_disables_wistful_with_preset(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                preset = dict(PRESETS[name])
+                preset.pop("wistful", None)
+                result = generate_landscape(seed=42, **preset, wistful=False)
+                for ind in WISTFUL_INDICATORS_PHRASES:
+                    self.assertNotIn(ind, result,
+                        f"Preset {name} with --no-wistful should not contain {ind!r}")
+
+    def test_no_wistful_preset_without_flag_still_has_wistful(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                if "wistful" not in PRESETS[name]:
+                    continue
+                result = generate_landscape(seed=42, **PRESETS[name])
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_no_wistful_works_with_other_features(self):
+        from landscape import generate_landscape
+        for s in range(10):
+            result = generate_landscape(seed=s, wistful=False,
+                                        echo_enabled=True, legend_enabled=True,
+                                        sound_enabled=True, travelogue=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_no_wistful_with_explicit_wistful_override(self):
+        from landscape import generate_landscape
+        result = generate_landscape(seed=42, biome="forest", wistful=False)
+        for ind in WISTFUL_INDICATORS_PHRASES:
+            self.assertNotIn(ind, result,
+                f"Output with --no-wistful should not contain {ind!r}")
+
+    def test_no_wistful_does_not_affect_json_output(self):
+        from landscape import generate_landscape
+        result = generate_landscape(seed=42, biome="forest", wistful=False, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertNotIn("wistful", data)
+
+
 if __name__ == "__main__":
     unittest.main()

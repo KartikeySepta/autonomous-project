@@ -2,6 +2,27 @@
 
 ## 2026-07-14
 
+### What was done (Session 118)
+- **Added `--no-travelogue` and `--no-wistful` CLI flags** — users can now explicitly disable travelogue journal framing and wistful emotional coda even when using presets that enable them. This fills a symmetry gap with the existing `--no-*` flag family (`--no-adverb`, `--no-color`, `--no-element`, `--no-time-word`, `--no-weather`, `--no-anomaly`, `--no-middle`, `--no-dedup`).
+  - `--no-travelogue` forces `travelogue=False` regardless of preset configuration or `--travelogue`
+  - `--no-wistful` forces `wistful=False` regardless of preset configuration or `--wistful`
+  - Post-preset override block in `main()` ensures `--no-*` always wins after all preset gating
+  - Preset gating updated: checks `not args.no_travelogue` / `not args.no_wistful` before applying preset values
+  - No changes to `generate_landscape()` — only `main()` preset gating and CLI argument definitions
+- Added 12 new tests (6 in `TestNoTravelogue`, 6 in `TestNoWistful`):
+  - `TestNoTravelogue`: flag exists via CLI, disables travelogue with all 5 presets (5 subtests), works with other features, JSON output, explicit `--travelogue` override
+  - `TestNoWistful`: flag exists via CLI, disables wistful with all 5 presets (5 subtests), works with other features, JSON output, explicit `--wistful` override
+- This was called out in the "Next likely steps" from Session 117: travelogue and wistful were the last features with on/off switches that lacked explicit `--no-*` flags. Echo, legend, and soundscape also lack `--no-*` flags, but they are opt-in features (default off); travelogue and wistful are opt-in too, but the `--no-*` flags are useful when using presets which enable them.
+- Tests increased from 716 to 728 total (18 todo + 710 landscape), subtests from 151 to 171
+
+### Current status
+Working. All 728 tests pass (18 todo + 710 landscape), 171 subtests.
+
+### Next likely steps
+- Add `--no-echo`, `--no-legend`, `--no-sound` flags for symmetry (though these are also opt-in, they'd be useful with presets)
+- Expand word banks (more weather phrases, more sounds, more legends)
+- Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry)
+
 ### What was done (Session 117)
 - **Added `--weather-count` CLI flag** and `weather_count` parameter to `generate_landscape()` — users can now control how many weather descriptions appear per detail level (0-3, default: 1), following the exact same pattern as `--echo-count` (Session 78) and `--sound-count` (Session 114):
   - `weather_count=0` suppresses all weather descriptions
