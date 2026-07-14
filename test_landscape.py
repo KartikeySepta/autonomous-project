@@ -3358,6 +3358,9 @@ ECHO_INDICATORS = [
     "echoes of the past", "being watched", "deep time",
     "outside of time", "stones remember", "important happened",
     "older than any sound",
+    "bends through the", "wind carries a memory",
+    "vast turns over", "holds its breath",
+    "caught in the",
 ]
 
 # Subset of ECHO_INDICATORS excluding "remembers" which collides with
@@ -3368,6 +3371,9 @@ NO_ECHO_INDICATORS = [
     "echoes of the past", "being watched", "deep time",
     "outside of time", "stones remember", "important happened",
     "older than any sound",
+    "bends through the", "wind carries a memory",
+    "vast turns over", "holds its breath",
+    "caught in the",
 ]
 
 

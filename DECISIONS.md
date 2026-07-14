@@ -1,5 +1,28 @@
 # Decisions
 
+## 2026-07-14 — Expanded ECHOES Bank (15 phrases)
+
+### What
+Added 5 new curated atmospheric echo phrases to the ECHOES bank, expanding it from 10 to 15 phrases. The new phrases cover visual refraction, wind-borne memory, subterranean movement, anticipatory stillness, and synesthetic scent — themes absent from the existing 10.
+
+### Why
+The echo system (Sessions 78–86) gained injection support for `{display}`, `{adverb}`, `{element}`, `{color}`, `{adj}`, and `{time_word}`, but the actual phrase bank was never expanded beyond the original 10. Weathers (12, Session 120), soundscapes (12, Session 121), and legends (15, Session 98) all received expansions; echoes were the last major word bank at its original size. Echoes are now enabled in all 5 presets (since Session 88), so a larger bank reduces repetition in preset output — the same reason legends were expanded in Session 98.
+
+The 5 new phrases each cover an atmospheric niche not well represented in the existing 10:
+- **Light bending**: visual/atmospheric distortion, light as something with agency — distinct from existing light references (which are elemental/static)
+- **Wind memory**: the wind as a carrier of voices, language without a speaker — adds an audible dimension distinct from soundscapes (which are present-tense sounds) and existing echoes (which are about time and presence)
+- **Subterranean movement**: deep geological presence, the landscape as a living thing beneath the surface — echoes the "something older than stone" legend theme but from an atmospheric (not folkloric) perspective
+- **Holding breath**: anticipation, the landscape poised on the edge of change — fills a temporal-emotional gap between "waiting for you" (expectation) and "deep time" (eternality)
+- **Synesthetic scent**: olfactory memory woven into visual/atmospheric texture — a sensory dimension (smell) that the generator lacks as a dedicated system but can now evoke through echo injection
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, `_format_tmpl()`, CLI flags, or any logic. Only the ECHOES list and ECHO_INDICATORS/NO_ECHO_INDICATORS sets were updated.
+- **Multi-injection phrases**: The new phrases use combinations of `{adverb}`, `{adj}`, `{color}`, `{display}`, `{element}`, and `{time_word}` — following the established injection patterns. Each phrase has 2–4 injectable slots, consistent with the existing distribution.
+- **No seed-breaking**: Adding phrases to ECHOES doesn't change the random sequence — `rng.choice(ECHOES)` picks from a larger pool but the choice function is unchanged. Only the rendered output content changes (new phrases appear in the selection pool).
+- **5 new indicators, no new tests**: Existing echo tests (15+ tests across TestEcho, TestEchoCount, TestEchoProb, TestNoEcho) cover all behaviors generically — they test for presence/absence of any indicator, not specific phrase counts. Only the indicator lists were updated.
+- **Test count unchanged**: 746 tests (18 todo + 728 landscape), 201 subtests.
+- **Fulfills "Next likely steps" from Session 121**: This was explicitly called out as the next step after expanding weathers (120) and soundscapes (121).
+
 ## 2026-07-14 — No-Echo, No-Legend, No-Sound Flags (`--no-echo`, `--no-legend`, `--no-sound`)
 
 ### What

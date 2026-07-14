@@ -2,6 +2,19 @@
 
 ## 2026-07-14
 
+### What was done (Session 122)
+- **Expanded ECHOES word bank from 10 to 15 phrases** — 5 new atmospheric echo phrases added, covering underrepresented atmospheric themes:
+  - `"Light {adverb} bends through the {adj} air of the {display} like something {color} is calling."` — visual refraction and color, light as summoning force
+  - `"The wind carries a memory through the {display} {time_word}, a voice with no mouth."` — wind as carrier of memory, uncanny audible absence
+  - `"Deep beneath the {display}, something vast turns over {adverb} in its sleep."` — subterranean presence, deep geological movement
+  - `"The {display} holds its breath {time_word}, waiting for something that has not yet arrived."` — anticipation, the landscape poised on a threshold
+  - `"There is a {color} scent of {element} caught in the {adj} air of the {display}."` — synesthetic scent, olfactory memory woven into the atmosphere
+- Added 5 new `ECHO_INDICATORS` (`"bends through the"`, `"wind carries a memory"`, `"vast turns over"`, `"holds its breath"`, `"caught in the"`) — each is a unique invariant substring that won't collide with other word bank output.
+- Added same 5 indicators to `NO_ECHO_INDICATORS` (none contain "remembers", so all are safe for no-echo suppression tests).
+- No new tests or code changes beyond word bank expansion — all 728 landscape tests (746 total) still pass.
+- This was the first explicit "Next likely step" from Session 121: expand other word banks (echoes had not been expanded since Session 78).
+- Tests unchanged: still 746 total (18 todo + 728 landscape), 201 subtests.
+
 ### What was done (Session 121)
 - **Expanded SOUNDSCAPES word bank from 8 to 12 phrases** — 4 new soundscape patterns added to increase auditory variety:
   - `"A low drone rises and falls {adverb} somewhere deep in the {display}."` — deep mechanical drone, persistent subconscious hum
@@ -16,7 +29,7 @@
 Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
 
 ### Next likely steps
-- Expand other word banks (more legends, more echoes, more wistful phrases)
+- Expand other word banks (more legends, more wistful phrases)
 - Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry)
 
 ### What was done (Session 120)

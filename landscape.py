@@ -68,6 +68,11 @@ ECHOES = [
     "The stones remember {adverb} what the wind has forgotten.",
     "Something important happened in the {adj} {display} once.",
     "The silence here is older than any sound.",
+    "Light {adverb} bends through the {adj} air of the {display} like something {color} is calling.",
+    "The wind carries a memory through the {display} {time_word}, a voice with no mouth.",
+    "Deep beneath the {display}, something vast turns over {adverb} in its sleep.",
+    "The {display} holds its breath {time_word}, waiting for something that has not yet arrived.",
+    "There is a {color} scent of {element} caught in the {adj} air of the {display}.",
 ]
 
 LEGENDS = [
