@@ -2,6 +2,34 @@
 
 ## 2026-07-14
 
+### What was done (Session 108)
+- **Added `--wistful` CLI flag** and `wistful` parameter to `generate_landscape()` — appends a bittersweet, yearning closing phrase to the landscape, adding an emotional coda in a different register from echoes (atmospheric), legends (folkloric), and travelogue (narrative journaling):
+  - 6 curated `WISTFUL` phrases, each referencing `{display}` (biome name): "You wish you could stay longer in the forest.", "Part of you will always remain in the forest.", "The forest calls to you even as you turn away.", "You carry a piece of the forest with you now.", "Someday you will return to the forest.", "The forest lingers in your thoughts like a half-remembered dream."
+  - Off by default (`wistful=False`), so all existing seed-based output is unchanged
+  - Phrase picked via `rng.choice(WISTFUL)` and formatted with `display=display`
+  - Suppressed at `detail=0` (same pattern as echoes and legends)
+  - Works with all existing features: echo, legend, travelogue, presets, JSON, poetic, combine, etc.
+  - Seed-breaking when enabled: `rng.choice()` adds a random call before the travelogue block. Determinism is preserved (same seed + same args = same output)
+  - Placed after legends and before the travelogue suffix, so wistful reflections sit inside the travelogue journal frame (when enabled) — creating a narrative arc: journal opens → description → echoes → legends → wistful reflection → journal closes
+- Added 15 new tests in `TestWistful` class:
+  - `test_wistful_disabled_by_default` — wistful phrase should not appear without the flag
+  - `test_wistful_enabled_appears` — wistful phrase appears when enabled
+  - `test_wistful_contains_biome_name` — biome name is injected into wistful phrase
+  - `test_wistful_produces_valid_output` — output is valid string (20 seeds)
+  - `test_wistful_is_deterministic` — same seed = same output
+  - `test_wistful_works_with_detail_zero` — works with minimal output
+  - `test_wistful_works_with_echo` — works with echoes enabled
+  - `test_wistful_works_with_legend` — works with legends enabled
+  - `test_wistful_works_with_travelogue` — works with travelogue enabled
+  - `test_wistful_works_with_json` — JSON format includes wistful text
+  - `test_wistful_differs_from_plain` — wistful output differs from plain
+  - `test_wistful_flag_exists_via_cli` — verifies `main` is callable
+  - `test_wistful_flag_prints_to_stdout` — verifies CLI output via stdout capture
+  - `test_wistful_works_with_preset` — works with all 5 presets (5 subtests)
+  - `test_wistful_suppressed_at_detail_zero` — wistful phrase should not appear at detail=0
+- This is a genuinely novel addition: it adds an emotional register (bittersweet longing, nostalgia-for-places-never-visited, the ache of departure) that no existing feature covers. Echoes evoke timeless presence, legends evoke cultural memory, travelogue frames as journal — wistful evokes personal emotional response to the landscape.
+- Tests increased from 608 to 623 landscape tests (626 → 641 total), subtests from 112 to 117
+
 ### What was done (Session 107)
 - **Added `--describe-travelogue` CLI flag** and `describe_travelogue()` function — users can now inspect all 4 travelogue prefixes and 4 travelogue suffixes with their index numbers, following the exact same pattern as `--describe-echoes` (Session 86) and `--describe-legends` (Session 99):
   - Shows both prefixes and suffixes in separate sections with `[0]`–`[3]` index markers

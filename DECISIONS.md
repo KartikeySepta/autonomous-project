@@ -1,5 +1,29 @@
 # Decisions
 
+## 2026-07-14 — Wistful Emotional Coda (`--wistful`)
+
+### What
+Added a `WISTFUL` word bank — 6 curated phrases expressing bittersweet longing and nostalgia — and a `--wistful` CLI flag (default: off) that appends one wistful closing phrase to the generated landscape. Each phrase references `{display}` (the biome name), so the emotional coda feels grounded in the landscape context.
+
+### Why
+After 107 sessions of enriching vocabulary, templates, moods, echoes, legends, and travelogue framing, the landscape generator could describe *what a place looks like, feels like, sounds like, what its folklore is, and in what narrative frame* — but it never expressed the *narrator's emotional response* to the landscape. The observer describes the place but never how it makes them feel.
+
+Echoes are atmospheric (timeless presence, memory of the land itself). Legends are cultural (folk knowledge, collective memory). Travelogue is narrative (journal entry about discovery). None of these express *yearning* — the bittersweet feeling of arriving somewhere beautiful and already knowing you'll have to leave, or the ache of carrying a place with you after you depart.
+
+The wistful phrases fill this gap: "You wish you could stay longer in the forest." / "Part of you will always remain in the forest." / "The forest calls to you even as you turn away." These add a personal, emotional dimension distinct from everything else in the generator — not describing the landscape, but describing the *observer's relationship with it*.
+
+This directly serves the GOAL.md directive to "build something genuinely novel or interesting." An emotional coda — especially one tinged with yearning for a fictional place — is a genuinely unusual addition to a procedural landscape generator. It transforms the output from a description into a *memory*.
+
+### Tradeoffs
+- **6 curated phrases** — small enough to maintain quality, large enough for variety across multiple runs. Each phrase expresses a slightly different shade of wistfulness: longing to stay, permanent connection, call to return, carrying the place with you, future return, half-remembered dream.
+- **Only `{display}` injection** — matches legends and echoes. Wistful phrases are personal reflections about the *place itself*, not about its visual qualities or atmospheric texture. Adding other word categories (adj, adverb, element, color) would make them feel like descriptions rather than emotional responses.
+- **Simple on/off switch** — no count or probability parameters. Follows the same initial pattern as echoes (Session 78) and legends (Session 96): one phrase per landscape when enabled. Count and prob can be added in future sessions if the feature proves useful.
+- **Placed after legends, before travelogue suffix** — in the travelogue journal frame, the wistful reflection sits between the content and the journal's closing, creating a natural narrative arc: arrival → observation → emotional reflection → planned next steps.
+- **Suppressed at `detail=0`** — same pattern as echoes and legends. Wistfulness needs context (a described landscape) to have emotional weight.
+- **Not seed-breaking when disabled**: `wistful=False` by default, so all existing seed-based output is preserved. When enabled, one extra `rng.choice()` call is introduced after legends, shifting the random sequence for the travelogue block and beyond.
+- **No JSON metadata field** — unlike echo/legend/travelogue which emit enabled booleans in JSON. This follows the pattern of initial feature releases (echo and legend also lacked JSON metadata in their first session). Can be added in a future session.
+- **15 new tests**, 641 total (18 todo + 623 landscape), 117 subtests.
+
 ## 2026-07-14 — Travelogue Introspection (`--describe-travelogue`)
 
 ### What

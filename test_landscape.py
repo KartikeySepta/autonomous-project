@@ -8,7 +8,7 @@ from landscape import (
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS, ECHOES, LEGENDS,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
-    TIME_WORDS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES,
+    TIME_WORDS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL,
     describe_travelogue,
 )
 
@@ -22,6 +22,7 @@ ALL_ADVERBS = set(ADVERBS) | {w for bw in BIOME_WORDS.values() for w in bw.get("
 ALL_COLORS = set(COLORS) | {w for bw in BIOME_WORDS.values() for w in bw.get("colors", [])}
 ALL_TIME_WORDS = set(TIME_WORDS)
 ALL_LEGENDS = set(LEGENDS)
+ALL_WISTFUL = set(WISTFUL)
 
 LEGEND_INDICATORS = [
     "maps leave", "was not here", "Pilgrims once walked", "older than stone",
@@ -4490,6 +4491,123 @@ class TestTravelogue(unittest.TestCase):
         import json as j
         data = j.loads(result)
         self.assertNotIn("travelogue", data)
+
+
+class TestWistful(unittest.TestCase):
+    WISTFUL_INDICATORS = [
+        "wish you could stay",
+        "always remain",
+        "calls to you",
+        "carry a piece",
+        "return to the",
+        "half-remembered dream",
+    ]
+
+    def test_wistful_disabled_by_default(self):
+        result = generate_landscape(seed=42, biome="forest")
+        for ind in self.WISTFUL_INDICATORS:
+            self.assertNotIn(ind, result,
+                f"Wistful indicator {ind!r} should not appear by default")
+
+    def test_wistful_enabled_appears(self):
+        result = generate_landscape(seed=42, biome="forest", wistful=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        has_wistful = any(ind in result for ind in self.WISTFUL_INDICATORS)
+        self.assertTrue(has_wistful,
+            "Wistful phrase should appear when enabled")
+
+    def test_wistful_contains_biome_name(self):
+        result = generate_landscape(seed=42, biome="tundra", wistful=True)
+        self.assertIn("tundra", result)
+
+    def test_wistful_produces_valid_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, wistful=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+            self.assertTrue(result.endswith("."))
+
+    def test_wistful_is_deterministic(self):
+        a = generate_landscape(seed=42, biome="forest", wistful=True)
+        b = generate_landscape(seed=42, biome="forest", wistful=True)
+        self.assertEqual(a, b,
+            "Wistful should be deterministic with same seed")
+
+    def test_wistful_works_with_detail_zero(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, detail=0, wistful=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_wistful_works_with_echo(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, echo_enabled=True, wistful=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_wistful_works_with_legend(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, legend_enabled=True, wistful=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_wistful_works_with_travelogue(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, travelogue=True, wistful=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_wistful_works_with_json(self):
+        result = generate_landscape(seed=42, biome="forest", wistful=True, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_wistful_differs_from_plain(self):
+        plain = generate_landscape(seed=42, biome="forest")
+        wistful = generate_landscape(seed=42, biome="forest", wistful=True)
+        self.assertNotEqual(plain, wistful,
+            "Wistful should differ from plain output")
+
+    def test_wistful_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_wistful_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--wistful", "--seed", "42"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIsInstance(output, str)
+        self.assertGreater(len(output), 0)
+
+    def test_wistful_works_with_preset(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                result = generate_landscape(seed=42, wistful=True, **PRESETS[name])
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_wistful_suppressed_at_detail_zero(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, detail=0, wistful=True)
+            for ind in self.WISTFUL_INDICATORS:
+                self.assertNotIn(ind, result,
+                    f"Wistful indicator {ind!r} should not appear at detail=0")
 
 
 if __name__ == "__main__":
