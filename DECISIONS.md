@@ -1,5 +1,22 @@
 # Decisions
 
+## 2026-07-14 — Configurable Weather Count and Probability (`--weather-count`, `--weather-prob`)
+
+### What
+Added `--weather-count` (choices 0–3, default: 1) and `--weather-prob` (0.0–1.0, default: 1.0) CLI flags, with corresponding `weather_count` and `weather_prob` parameters to `generate_landscape()`. Users can now control how many weather descriptions appear per detail level and how often each roll succeeds. Also added `weather_count` and `weather_prob` to all 5 presets with curated values.
+
+### Why
+Echo, legend, anomaly, and soundscape all have count and probability controls — weather was the last major feature missing them. Weather previously only had an on/off switch (`--no-weather`/`weather_enabled`). Adding count and prob gives users fine-grained control over weather density and frequency, matching the established pattern.
+
+### Tradeoffs
+- **Default weather_count=1, weather_prob=1.0** preserves backward compatibility — all existing seed-based output is unchanged.
+- **Per-roll probability**: each of `weather_count` rolls per detail level independently draws `rng.random() < weather_prob`, same pattern as `echo_prob`, `legend_prob`, `anomaly_prob`, and `sound_prob`.
+- **weather_count=0** is an alternative suppression mechanism to `weather_enabled=False`. Both are valid; `weather_count=0` is more explicit when a script conditionally enables weather with variable counts.
+- **Included in JSON metadata** — `weather_count` and `weather_prob` emit alongside other metadata fields.
+- **Preset seed-breaking**: Adding `weather_count` and `weather_prob` to presets changes output for all 5 presets (nightfall gets 2 weather sentences, pastoral gets weather_prob=0.8, etc.). This is acceptable because presets evolve as features mature.
+- **Weather inside detail loop**: Unlike echo/legend/soundscape which are independent blocks, weather remains inside the detail loop. This means with detail=2 and weather_count=2, the output gets 4 weather sentences. With detail=1 and weather_count=2, it gets 2. This is intuitive — detail controls the overall sentence count, and weather_count scales within that.
+- **19 new tests, 716 total** (18 todo + 698 landscape), 151 subtests.
+
 ## 2026-07-14 — Per-Preset Soundscape Count and Probability
 
 ### What

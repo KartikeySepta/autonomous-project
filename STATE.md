@@ -2,6 +2,39 @@
 
 ## 2026-07-14
 
+### What was done (Session 117)
+- **Added `--weather-count` CLI flag** and `weather_count` parameter to `generate_landscape()` — users can now control how many weather descriptions appear per detail level (0-3, default: 1), following the exact same pattern as `--echo-count` (Session 78) and `--sound-count` (Session 114):
+  - `weather_count=0` suppresses all weather descriptions
+  - `weather_count=1` (default) produces exactly 1 weather sentence per detail level (existing behavior)
+  - `weather_count=2` and `weather_count=3` produce multiple weather descriptions per detail level
+  - Uses `used_words` dedup via `_pick()` to prevent repeating the same weather phrase within a landscape
+- **Added `--weather-prob` CLI flag** and `weather_prob` parameter to `generate_landscape()` — users can now control how often weather descriptions appear per roll (0.0 = never, 1.0 = always, default 1.0 preserves existing behavior):
+  - `weather_prob=0.0` suppresses all weather even with `weather_count > 0`
+  - Each of `weather_count` rolls independently draws `rng.random() < weather_prob`
+  - Default `weather_prob=1.0` is fully backward compatible — all existing seed-based output is unchanged
+- Added `weather_count` and `weather_prob` to JSON metadata when `weather_enabled=True`
+- Added preset gating for `weather_count` and `weather_prob` — follows the same pattern as `echo_count`/`echo_prob` and `sound_count`/`sound_prob` gating
+- **Added `weather_count` and `weather_prob` to all 5 presets** — each preset now has curated weather density and probability values:
+  - `nightfall`: `weather_count=2, weather_prob=1.0` — multiple eerie weather descriptions always present
+  - `pastoral`: `weather_count=1, weather_prob=0.8` — single gentle weather, occasionally absent for serene silence
+  - `sublime`: `weather_count=2, weather_prob=1.0` — rich atmospheric detail always present
+  - `wasteland`: `weather_count=1, weather_prob=1.0` — singular bleak weather always present
+  - `dreamscape`: `weather_count=2, weather_prob=0.9` — surreal weather usually present
+- Added 19 new tests (9 in `TestWeatherCount`, 7 in `TestWeatherProb`, 3 in `TestPresets`):
+  - `TestWeatherCount`: default is one, zero suppresses, multi-weather with count=3, valid output for all counts, determinism, JSON format and field, CLI flag, works with detail=0
+  - `TestWeatherProb`: default is one, zero suppresses, always with prob=1.0, valid output for all probs, determinism, JSON field, CLI flag
+  - `TestPresets`: `test_all_presets_include_weather_count_and_prob` (5 subtests), `test_preset_weather_count_affects_output`, `test_preset_weather_prob_affects_output`
+- This is the natural evolution of the weather system: previous sessions gave weather on/off (Session 40) and weather time-word injection (Session 96), but weather was the last major feature without count/prob control. Echo, legend, anomaly, and soundscape all had count and prob; now weather completes the set.
+- Tests increased from 697 to 716 total (18 todo + 698 landscape), subtests from 146 to 151
+
+### Current status
+Working. All 716 tests pass (18 todo + 698 landscape).
+
+### Next likely steps
+- Add `--no-travelogue` and `--no-wistful` flags for symmetry with other `--no-*` flags
+- Expand word banks (more weather phrases, more sounds, more legends)
+- Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry)
+
 ### What was done (Session 115)
 - **Added `--sound-prob` CLI flag** and `sound_prob` parameter to `generate_landscape()` — users can now control how often soundscape phrases appear per roll (0.0 = never, 1.0 = always, default 1.0 preserves existing behavior), following the exact same pattern as `--echo-prob` (Session 87) and `--legend-prob` (Session 102):
   - `sound_prob=0.0` suppresses all soundscape phrases even with `sound_enabled=True` and `sound_count > 0`
@@ -1334,9 +1367,6 @@ Working. All 414 tests pass (18 todo + 396 landscape).
 - Refactored echo block from single `rng.choice(ECHOES)` to a loop with `used_echoes` set — dedup is internal to the echo system (not shared with the `used_words` set from `_pick()`) since echoes are not part of the word-category system
 - Added 12 tests in `TestEchoCount` class: default is 1, zero suppression, multi-echo appearance, dedup across repetitions, validity at all counts, determinism, JSON text output, JSON metadata field, CLI flag existence, and pool-exhaustion fallback
 - Tests increased from 422 to 433 total (18 todo + 415 landscape)
-
-### Current status
-Working. All 433 tests pass (18 todo + 415 landscape).
 
 ## 2026-07-13
 

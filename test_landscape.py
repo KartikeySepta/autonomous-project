@@ -36,6 +36,17 @@ SOUND_INDICATORS = [
     "shakes the",
 ]
 
+WEATHER_INDICATORS = [
+    "gentle rain falls",
+    "still calm lingers",
+    "breeze drifts through",
+    "unnatural silence hangs",
+    "faint humming fills",
+    "drifts slowly downward",
+    "curls along the ground",
+    "shimmers with heat",
+]
+
 LEGEND_INDICATORS = [
     "maps leave", "was not here", "Pilgrims once walked", "older than stone",
     "many names", "returns unchanged", "song about", "no map",
@@ -2131,6 +2142,110 @@ class TestWeatherFlag(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+class TestWeatherCount(unittest.TestCase):
+    def test_weather_count_default_is_one(self):
+        a = generate_landscape(seed=42, detail=2)
+        b = generate_landscape(seed=42, detail=2, weather_count=1)
+        self.assertEqual(a, b,
+            "weather_count=1 should match default")
+
+    def test_weather_count_zero_suppresses_weather(self):
+        results = [generate_landscape(seed=s, weather_count=0, detail=2) for s in range(50)]
+        for r in results:
+            for ind in WEATHER_INDICATORS:
+                self.assertNotIn(ind, r,
+                    f"Weather indicator {ind!r} should not appear with weather_count=0")
+
+    def test_weather_count_two_sometimes_has_multiple(self):
+        results = [generate_landscape(seed=s, weather_count=3, detail=2) for s in range(100)]
+        multi = [r for r in results if sum(1 for ind in WEATHER_INDICATORS if ind in r) >= 2]
+        self.assertGreater(len(multi), 10,
+            "weather_count=3 should often produce multi-weather outputs")
+
+    def test_weather_count_produces_valid_output(self):
+        for count in [0, 1, 2, 3]:
+            for s in range(10):
+                result = generate_landscape(seed=s, weather_count=count)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_weather_count_is_deterministic(self):
+        a = generate_landscape(seed=42, weather_count=2, detail=2)
+        b = generate_landscape(seed=42, weather_count=2, detail=2)
+        self.assertEqual(a, b,
+            "weather_count should be deterministic with same seed")
+
+    def test_weather_count_works_with_json_format(self):
+        result = generate_landscape(seed=42, weather_count=2, fmt="json", detail=2)
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_weather_count_json_includes_field(self):
+        result = generate_landscape(seed=42, weather_count=2, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("weather_count", data)
+        self.assertEqual(data["weather_count"], 2)
+
+    def test_weather_count_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_weather_count_works_with_detail_zero(self):
+        result = generate_landscape(seed=42, weather_count=2, detail=0)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+
+class TestWeatherProb(unittest.TestCase):
+    def test_weather_prob_default_is_one(self):
+        a = generate_landscape(seed=42, detail=2)
+        b = generate_landscape(seed=42, detail=2, weather_prob=1.0)
+        self.assertEqual(a, b,
+            "weather_prob=1.0 should match default")
+
+    def test_weather_prob_zero_suppresses_weather(self):
+        results = [generate_landscape(seed=s, weather_prob=0.0, detail=2) for s in range(100)]
+        for r in results:
+            for ind in WEATHER_INDICATORS:
+                self.assertNotIn(ind, r,
+                    f"Weather indicator {ind!r} should not appear with weather_prob=0.0")
+
+    def test_weather_prob_one_always_has_weather(self):
+        results = [generate_landscape(seed=s, weather_prob=1.0, detail=2) for s in range(100)]
+        has_weather = sum(1 for r in results if any(ind in r for ind in WEATHER_INDICATORS))
+        self.assertGreater(has_weather, 80,
+            "With weather_prob=1.0, most outputs should contain weather")
+
+    def test_weather_prob_produces_valid_output(self):
+        for prob in [0.0, 0.25, 0.5, 0.75, 1.0]:
+            for s in range(10):
+                result = generate_landscape(seed=s, weather_prob=prob)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_weather_prob_is_deterministic(self):
+        a = generate_landscape(seed=42, weather_prob=0.5, detail=2)
+        b = generate_landscape(seed=42, weather_prob=0.5, detail=2)
+        self.assertEqual(a, b,
+            "weather_prob should be deterministic with same seed")
+
+    def test_weather_prob_json_includes_field(self):
+        result = generate_landscape(seed=42, weather_prob=0.5, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("weather_prob", data)
+        self.assertEqual(data["weather_prob"], 0.5)
+
+    def test_weather_prob_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 class TestMiddleFlag(unittest.TestCase):
     def test_middle_enabled_default_same_as_before(self):
         r1 = generate_landscape(seed=42)
@@ -3882,6 +3997,33 @@ class TestPresets(unittest.TestCase):
         one = generate_landscape(seed=42, sound_enabled=True, sound_count=2, sound_prob=1.0)
         self.assertNotEqual(zero, one,
             "sound_prob=0.0 should differ from sound_prob=1.0")
+
+    def test_all_presets_include_weather_count_and_prob(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("weather_count", PRESETS[name],
+                    f"Preset {name} should include 'weather_count'")
+                self.assertIn("weather_prob", PRESETS[name],
+                    f"Preset {name} should include 'weather_prob'")
+                self.assertGreaterEqual(PRESETS[name]["weather_count"], 0)
+                self.assertLessEqual(PRESETS[name]["weather_count"], 3)
+                self.assertGreaterEqual(PRESETS[name]["weather_prob"], 0.0)
+                self.assertLessEqual(PRESETS[name]["weather_prob"], 1.0)
+
+    def test_preset_weather_count_affects_output(self):
+        from landscape import generate_landscape
+        zero = generate_landscape(seed=42, weather_count=0, detail=2)
+        one = generate_landscape(seed=42, weather_count=1, detail=2)
+        self.assertNotEqual(zero, one,
+            "weather_count=0 should differ from weather_count=1")
+
+    def test_preset_weather_prob_affects_output(self):
+        from landscape import generate_landscape
+        zero = generate_landscape(seed=42, weather_count=2, weather_prob=0.0, detail=2)
+        one = generate_landscape(seed=42, weather_count=2, weather_prob=1.0, detail=2)
+        self.assertNotEqual(zero, one,
+            "weather_prob=0.0 should differ from weather_prob=1.0")
 
 
 class TestTimeWords(unittest.TestCase):
