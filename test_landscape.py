@@ -4365,6 +4365,19 @@ class TestTravelogue(unittest.TestCase):
         self.assertNotEqual(plain, travel,
             "Travelogue should differ from plain output")
 
+    def test_travelogue_json_includes_field(self):
+        result = generate_landscape(seed=42, biome="forest", travelogue=True, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("travelogue", data)
+        self.assertTrue(data["travelogue"])
+
+    def test_travelogue_json_field_absent_when_disabled(self):
+        result = generate_landscape(seed=42, biome="forest", fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertNotIn("travelogue", data)
+
 
 if __name__ == "__main__":
     unittest.main()

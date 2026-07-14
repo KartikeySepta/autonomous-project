@@ -2,6 +2,13 @@
 
 ## 2026-07-14
 
+### What was done (Session 105)
+- **Added `travelogue` to JSON metadata** — when `travelogue=True`, the JSON output now includes `"travelogue": true`, following the same pattern as `echo_enabled` (Session 100) and `legend_enabled` (Session 97). Previously, travelogue framing was invisible in JSON output — consumers had no way to distinguish a travelogue-framed landscape from a plain one via metadata.
+- Added 2 new tests in `TestTravelogue`:
+  - `test_travelogue_json_includes_field` — verifies JSON has `travelogue` when True
+  - `test_travelogue_json_field_absent_when_disabled` — verifies JSON omits `travelogue` when False (default)
+- Tests increased from 594 to 596 landscape tests (612 → 614 total), subtests unchanged at 102
+
 ### What was done (Session 104)
 - **Added `--travelogue` CLI flag** and `travelogue` parameter to `generate_landscape()` — frames the generated landscape description as a travel journal entry, adding a narrative prefix (e.g. "Journal entry, day 247. I have reached the forest at last.") and a narrative suffix (e.g. "I will venture deeper into the forest come morning."):
   - 4 curated `TRAVELOGUE_PREFIXES` and 4 curated `TRAVELOGUE_SUFFIXES` — each referencing `{display}` (biome name) and `{day}` (random number 1–365)

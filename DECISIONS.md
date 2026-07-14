@@ -1,5 +1,18 @@
 # Decisions
 
+## 2026-07-14 — `travelogue` in JSON Metadata
+
+### What
+Added `"travelogue": true` to JSON output when `travelogue=True`, following the same pattern as `echo_enabled` (Session 100) and `legend_enabled` (Session 97). Previously, travelogue framing was invisible in JSON metadata — consumers had no way to distinguish a travelogue-framed landscape from a plain one without parsing the text field for prefix phrases.
+
+### Why
+When travelogue was added (Session 104), the JSON metadata gap was the same one that `echo_enabled` had before Session 100 fixed it: the feature had an on/off switch but no corresponding boolean in JSON output. Every other feature with an on/off switch (echo, legend) emits an explicit `_enabled` boolean in JSON. Adding `travelogue` makes the JSON format consistent and lets consumers programmatically detect whether the narrative frame is active.
+
+### Tradeoffs
+- **Backward compatible**: Existing JSON output without `travelogue` is unaffected; the field is only added when `travelogue=True`.
+- **Not seed-breaking**: No random call order changes — only a metadata field addition.
+- **2 new tests**, 614 total (18 todo + 596 landscape), 102 subtests.
+
 ## 2026-07-14 — Travelogue Narrative Framing (`--travelogue`)
 
 ### What
