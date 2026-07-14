@@ -2,6 +2,15 @@
 
 ## 2026-07-14
 
+### What was done (Session 113)
+- **Added `sound_enabled` to all 5 presets** — `nightfall`, `pastoral`, `sublime`, `wasteland`, and `dreamscape` now each include `"sound_enabled": True`, so every preset includes an auditory soundscape phrase by default. Previously, soundscapes were only accessible via the explicit `--sound` flag.
+- Added **preset gating for soundscape in `main()`** — follows the exact same pattern as `travelogue` and `wistful`: if the preset includes `sound_enabled` and `--sound` was not explicitly passed (still `False`), the preset's value is applied.
+- Added 2 new tests in `TestPresets`:
+  - `test_all_presets_include_sound_enabled` — verifies every preset has `"sound_enabled": True` (5 subtests)
+  - `test_preset_with_soundscape_produces_soundscape_output` — verifies all 5 presets produce soundscape output (5 subtests)
+- This completes the soundscape integration into presets, following the same pattern as echoes (Session 88), legends (Session 97), travelogue (Session 106), and wistful (Session 110): add feature, then add to presets.
+- Tests increased from 676 to 678 total (18 todo + 660 landscape), subtests from 127 to 137
+
 ### What was done (Session 112)
 - **Added Soundscape system** (`--sound` CLI flag, `sound_enabled` parameter) — a new word bank of 8 curated soundscape phrases that describe what the landscape sounds like, adding an auditory dimension distinct from the existing visual, atmospheric, cultural, and emotional layers:
   - `SOUNDSCAPES` bank includes phrases like "The forest hums softly with a tone that seems to come from everywhere at once." and "You hear the tundra breathing — a slow, crystal rhythm that shakes the silence."

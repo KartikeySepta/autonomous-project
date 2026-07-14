@@ -170,6 +170,7 @@ PRESETS = {
         "legend_prob": 0.7,
         "travelogue": True,
         "wistful": True,
+        "sound_enabled": True,
     },
     "pastoral": {
         "mood": ["peaceful"],
@@ -181,6 +182,7 @@ PRESETS = {
         "legend_prob": 0.6,
         "travelogue": True,
         "wistful": True,
+        "sound_enabled": True,
     },
     "sublime": {
         "mood": ["vibrant", "peaceful"],
@@ -194,6 +196,7 @@ PRESETS = {
         "legend_prob": 0.9,
         "travelogue": True,
         "wistful": True,
+        "sound_enabled": True,
     },
     "wasteland": {
         "mood": ["desolate"],
@@ -206,6 +209,7 @@ PRESETS = {
         "legend_prob": 1.0,
         "travelogue": True,
         "wistful": True,
+        "sound_enabled": True,
     },
     "dreamscape": {
         "mood": ["eerie", "vibrant"],
@@ -220,6 +224,7 @@ PRESETS = {
         "legend_prob": 0.85,
         "travelogue": True,
         "wistful": True,
+        "sound_enabled": True,
     },
 }
 
@@ -1295,6 +1300,8 @@ def main():
             args.travelogue = preset["travelogue"]
         if "wistful" in preset and args.wistful is False:
             args.wistful = preset["wistful"]
+        if "sound_enabled" in preset and args.sound is False:
+            args.sound = preset["sound_enabled"]
         if "color_enabled" in preset and args.no_color is False:
             args.no_color = not preset["color_enabled"]
 

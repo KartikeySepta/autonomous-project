@@ -1,5 +1,29 @@
 # Decisions
 
+## 2026-07-14 — Soundscape in Presets
+
+### What
+Added `"sound_enabled": True` to all 5 preset configurations (`nightfall`, `pastoral`, `sublime`, `wasteland`, `dreamscape`). Each preset now includes an auditory soundscape phrase by default, following the same pattern as `travelogue` (Session 106) and `wistful` (Session 110).
+
+### Why
+Soundscapes (Session 112) were only accessible via the explicit `--sound` flag — presets, which are the curated on-ramp for new users, didn't use them. This meant a `--preset nightfall` landscape would get eerie mood, rare bias, high anomalies, atmospheric echoes, folkloric legends, travelogue framing, and wistful emotional coda — but no auditory dimension. Adding soundscapes to all presets makes them richer out of the box without requiring users to know about `--sound`.
+
+Each preset benefits auditorily:
+- **nightfall**: eerie mood + rare bias + soundscape → ominous whispers and inhuman breathing in the dark
+- **pastoral**: peaceful mood + soundscape → gentle sounds of a living, breathing landscape
+- **sublime**: vibrant+peaceful blend + common bias + soundscape → transcendent auditory beauty
+- **wasteland**: desolate mood + no colors + high anomalies + soundscape → the sound of ruin — glass shattering, wind shifting
+- **dreamscape**: surreal mood blend + flat bias + soundscape → oneiric, uncanny sounds — rhythms from nowhere, calls from nothing
+
+This completes the preset integration for soundscapes, following the same trajectory as travelogue (Session 104 → 106: add feature, then add to presets), legends (Session 96 → 97), wistful (Session 108 → 110), and echoes (Session 78 → 88).
+
+### Tradeoffs
+- **Seed-breaking for presets**: All 5 presets now produce different output from the previous session for the same seed, because `sound_enabled=True` was not previously in presets. This is acceptable because presets are curated entry points that evolve as features mature, and determinism is preserved (same seed + same args = same output). Users who want the old preset behavior can explicitly omit `--sound`.
+- **Backward compatibility via CLI overrides**: The gating code checks `args.sound is False` before applying the preset value. Users who explicitly pass `--sound` don't get the preset value. This is the same pattern as all other preset overrides.
+- **No changes to `generate_landscape()`**: Presets are a pure CLI convenience layer — the generation function already accepts `sound_enabled` (Session 112). Only the `PRESETS` dict and `main()` gating code changed.
+- **Consistent with echo, legend, travelogue, and wistful preset pattern**: All features with an on/off switch are now in all presets — echo (since Session 88), legend (Session 97), travelogue (Session 106), wistful (Session 110), and soundscape (this session).
+- **2 new tests, 678 total** (18 todo + 660 landscape), 137 subtests.
+
 ## 2026-07-14 — Soundscape Auditory Layer (`--sound`)
 
 ### What

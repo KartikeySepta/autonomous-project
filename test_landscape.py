@@ -3828,6 +3828,26 @@ class TestPresets(unittest.TestCase):
         self.assertNotIn("\n\n", output,
             "No landscape should be generated when --describe-presets is used")
 
+    def test_all_presets_include_sound_enabled(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("sound_enabled", PRESETS[name],
+                    f"Preset {name} should include 'sound_enabled'")
+                self.assertTrue(PRESETS[name]["sound_enabled"],
+                    f"Preset {name} should have sound_enabled=True")
+
+    def test_preset_with_soundscape_produces_soundscape_output(self):
+        from landscape import PRESETS, generate_landscape
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                result = generate_landscape(seed=42, **PRESETS[name])
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+                has_sound = any(ind in result for ind in SOUND_INDICATORS)
+                self.assertTrue(has_sound,
+                    f"Preset {name} with sound_enabled should produce soundscape output")
+
 
 class TestTimeWords(unittest.TestCase):
     def test_time_word_appears_in_output(self):
