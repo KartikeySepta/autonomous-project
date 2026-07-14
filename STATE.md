@@ -2,6 +2,23 @@
 
 ## 2026-07-14
 
+### What was done (Session 121)
+- **Expanded SOUNDSCAPES word bank from 8 to 12 phrases** — 4 new soundscape patterns added to increase auditory variety:
+  - `"A low drone rises and falls {adverb} somewhere deep in the {display}."` — deep mechanical drone, persistent subconscious hum
+  - `"The {element} of the {display} crackles {adverb} like distant radio static."` — natural electrical/static texture
+  - `"Footsteps echo {adverb} through the {display}, though you are alone."` — uncanny presence, lone observer illusion
+  - `"From the {adj} depths of the {display}, a single {color} note rings out {adverb}."` — pure musical tone, unexpected clarity
+- Added 4 new `SOUND_INDICATORS` in the test module (`"drone rises and falls"`, `"crackles like distant"`, `"Footsteps echo through"`, `"note rings out"`) — each is a unique substring that won't collide with other word bank output.
+- No new tests or code changes beyond word bank expansion — all 728 landscape tests (746 total) still pass.
+- This directly fulfills the first "Next likely step" from Session 120: expand other word banks (soundscape phrases).
+
+### Current status
+Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
+
+### Next likely steps
+- Expand other word banks (more legends, more echoes, more wistful phrases)
+- Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry)
+
 ### What was done (Session 120)
 - **Expanded WEATHERS word bank from 8 to 12 phrases** — 4 new weather patterns added to increase atmospheric variety:
   - `"snow falls in heavy flakes"` — wintry precipitation, common weight

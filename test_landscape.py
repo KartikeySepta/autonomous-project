@@ -34,6 +34,10 @@ SOUND_INDICATORS = [
     "slow, patient",
     "at the edge of hearing",
     "shakes the",
+    "drone rises and falls",
+    "crackles like distant",
+    "Footsteps echo through",
+    "note rings out",
 ]
 
 WEATHER_INDICATORS = [

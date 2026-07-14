@@ -113,6 +113,10 @@ SOUNDSCAPES = [
     "A rhythm pulses {adverb} from deep within the {display} — slow, patient, {adj}.",
     "The {display} whispers {adverb}, a sound just at the edge of hearing.",
     "You hear the {display} breathing — a slow, {adj} rhythm that shakes the {element}.",
+    "A low drone rises and falls {adverb} somewhere deep in the {display}.",
+    "The {element} of the {display} crackles {adverb} like distant radio static.",
+    "Footsteps echo {adverb} through the {display}, though you are alone.",
+    "From the {adj} depths of the {display}, a single {color} note rings out {adverb}.",
 ]
 
 TRAVELOGUE_PREFIXES = [
