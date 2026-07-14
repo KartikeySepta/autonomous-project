@@ -2,6 +2,47 @@
 
 ## 2026-07-14
 
+### What was done (Session 130)
+- **Expanded biome-specific weather and anomaly banks for all 13 biomes** — each biome now has +2 weathers and +2 anomalies (52 new entries total), the sixth and seventh expansions of biome-specific word banks after Sessions 125 (adjectives/elements), 126 (nouns), 127 (verbs), 128 (colors), and 129 (adverbs). Prior to this, all biomes had exactly 3 weathers and 3 anomalies. Now each biome has 5 weathers and 5 anomalies:
+  - **forest** (3→5 weathers): +"a light drizzle filters through the canopy like whispered secrets", "the forest floor releases the scent of damp earth after rain"
+  - **forest** (3→5 anomalies): +"The trees grow in a perfect circle around a patch of sky that never clouds.", "Every creature in the forest falls silent at the same moment each day."
+  - **desert** (3→5 weathers): +"sandstorms gather on the horizon like walls of amber", "a rare rain falls, each drop sizzling against the hot stone"
+  - **desert** (3→5 anomalies): +"Footprints behind you fill with water that has no source.", "The stars rearrange themselves into unfamiliar constellations at midnight."
+  - **ocean** (3→5 weathers): +"rain falls on the surface like a thousand drummers", "a deep fog bank rolls across the water, swallowing the horizon"
+  - **ocean** (3→5 anomalies): +"Pressure changes in ways that do not correspond to depth.", "Whales sing in frequencies that vibrate through bone, though no whales are near."
+  - **tundra** (3→5 weathers): +"ice crystals hang in the air like frozen diamonds", "a strange warmth rises from beneath the permafrost"
+  - **tundra** (3→5 anomalies): +"The snow remembers every footprint ever pressed into it.", "A mountain in the distance has not moved, yet it is closer than yesterday."
+  - **mountain range** (3→5 weathers): +"snow falls in heavy silence, muffling the world", "a warm wind descends from the peaks, carrying the scent of distant valleys"
+  - **mountain range** (3→5 anomalies): +"There is a peak that appears only in reflections.", "The mountain casts two shadows under a single sun."
+  - **swamp** (3→5 weathers): +"a phosphorescent mist rises from the water at dusk", "thunder rolls across the marsh without lightning"
+  - **swamp** (3→5 anomalies): +"Moss-covered trees whisper conversations from a century past.", "Every pair of eyes in the swamp blinks in perfect unison."
+  - **cave system** (3→5 weathers): +"a low mist hugs the cave floor, cool and thick", "an underground stream sings somewhere in the darkness"
+  - **cave system** (3→5 anomalies): +"Stalactites and stalagmites grow toward each other at visible speed.", "The darkness here has weight — it presses against your back."
+  - **plain** (3→5 weathers): +"a slow breeze carries the scent of wildflowers from miles away", "a bank of fog rolls in from the horizon at dusk"
+  - **plain** (3→5 anomalies): +"The grass grows in the shape of a language that predates humanity.", "Every footstep you take is echoed by a second set of footsteps that stop when you stop."
+  - **volcanic field** (3→5 weathers): +"sulfur fumes drift across the cracked earth in low-lying clouds", "a hot rain of ash and cinders falls without warning"
+  - **volcanic field** (3→5 anomalies): +"The ground beneath your feet pulses with a heartbeat that is not your own.", "Molten rock flows in formations that spell out coordinates to nowhere."
+  - **coral reef** (3→5 weathers): +"underwater currents carry a symphony of clicks and pops", "the tide pulls in patterns that do not follow the moon"
+  - **coral reef** (3→5 anomalies): +"The reef glows in wavelengths visible only to something that has been watching.", "Time passes differently here — hours feel like minutes, minutes like hours."
+  - **ruined city** (3→5 weathers): +"a rust-colored drizzle stains the concrete further", "dust devils spin through collapsed intersections"
+  - **ruined city** (3→5 anomalies): +"The city gives birth to new streets at night — a map that redraws itself.", "All the doors in the city are slightly ajar, as if someone just left."
+  - **fungal grove** (3→5 weathers): +"spore-laden rain falls in curtains of gold and silver", "a warm mist carries the sweet scent of fungal bloom"
+  - **fungal grove** (3→5 anomalies): +"The mycelium network reacts to your thoughts — the glow shifts as you approach.", "Fungal growths form temporary sculptures that collapse and reform in endless cycles."
+  - **sky islands** (3→5 weathers): +"rain falls upward from the cloud sea below", "a thin mist wraps each island in solitude"
+  - **sky islands** (3→5 anomalies): +"The islands cast shadows onto the clouds below — shadows that move independently.", "Gravity weakens at the center of each island, as if the land itself is trying to float free."
+- Each weather and anomaly is curated to the biome's thematic identity — desert anomalies (footprints filling with water, stars rearranging), ocean weathers (rain like drummers, fog swallowing the horizon), cave anomalies (stalactites growing visibly, darkness with weight), sky island anomalies (shadows moving independently, gravity weakening), etc.
+- No code, CLI, or test changes — data-only expansion. All 746 tests still pass (18 todo + 728 landscape), 201 subtests.
+- Weathers appear in weather templates via `_pick("weathers", ...)` which blends biome-specific weathers with the global WEATHERS pool (12 entries). Expanding biome weathers from 3→5 means 62% more biome-specific weather variety, making weather descriptions more distinctive per biome.
+- Anomalies appear in anomaly templates via `_pick("anomalies", ...)` which blends biome-specific anomalies with the global ANOMALIES pool (8 entries). Expanding biome anomalies from 3→5 means 62% more biome-specific anomaly variety, making anomalies feel more grounded in the landscape.
+- Weathers and anomalies were the last two biome word bank categories at their original size (3 each). After 5 consecutive sessions expanding individual categories (adjectives/elements, nouns, verbs, colors, adverbs), this session completed the final two in a single pass.
+
+### Current status
+Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
+
+### Next likely steps
+- Add a new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry, inhabitants/wildlife)
+- Further expand global word banks (more echoes, legends, soundscapes, wistful phrases)
+
 ### What was done (Session 129)
 - **Expanded biome-specific adverb banks for all 13 biomes** — each biome now has +2 adverbs (26 new entries total), the fifth expansion of biome-specific word banks after Sessions 125 (adjectives/elements), 126 (nouns), 127 (verbs), and 128 (colors). Prior to this, all biomes had exactly 3 adverbs. Now each biome has 5 adverbs:
   - **forest** (3→5): +"wistfully", "invitingly"

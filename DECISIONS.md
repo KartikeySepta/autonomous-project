@@ -1,5 +1,30 @@
 # Decisions
 
+## 2026-07-14 — Expanded Biome-Specific Weather and Anomaly Banks
+
+### What
+Added 2 new weathers and 2 new anomalies to each of the 13 biomes in `BIOME_WORDS` — 52 new entries total. Each new entry is curated to fit the biome's thematic identity: deserts get sandstorms and rare rain (weathers), footprints filling with water and stars rearranging (anomalies); cave systems get low mist and underground streams (weathers), stalactites growing visibly and darkness with weight (anomalies); sky islands get upward rain and thin mist (weathers), independent shadow movement and weakening gravity (anomalies), etc.
+
+### Why
+Sessions 125–129 expanded biome adjectives+elements, nouns, verbs, colors, and adverbs — weathers and anomalies were the last two biome word bank categories still at their original size (3 per biome). Weathers appear in weather templates via `_pick("weathers", ...)`, which blends biome-specific pools with the global WEATHERS pool (12 entries). With only 3 biome-specific weathers per biome, the blend was heavily skewed toward generic global weathers — biomes felt less distinct in their weather descriptions. Anomalies follow the same pattern via `_pick("anomalies", ...)`, blending with the global ANOMALIES pool (8 entries). Expanding both categories from 3→5 increases the biome-specific share from 20% to ~29% of the combined pool, making weather and anomaly descriptions more distinctive per biome.
+
+This completes the biome word bank expansion campaign that began in Session 125. Over 6 sessions, every biome word category has been expanded:
+- **adjectives+elements** (Session 125): 3→5 adjectives, 4→6 elements
+- **nouns** (Session 126): 5→7 nouns (6→8 for 3 biomes)
+- **verbs** (Session 127): 5→7 verbs
+- **colors** (Session 128): 4→6 colors
+- **adverbs** (Session 129): 3→5 adverbs
+- **weathers+anomalies** (Session 130): 3→5 weathers, 3→5 anomalies
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, `_pick()`, CLI flags, or any logic. Only the `BIOME_WORDS` dict values changed.
+- **No seed-breaking**: Adding words to biome-specific pools doesn't change the random sequence — `_pick()` draws from a larger pool but the weighted-selection function is unchanged. Only the rendered output content changes (new words appear in the selection pool).
+- **No new tests**: Existing biome vocabulary tests cover all behaviors generically — they check for the *existence* of biome-specific words in output, not precise counts or specific words.
+- **Test count unchanged**: 746 tests (18 todo + 728 landscape), 201 subtests.
+- **Not marked common or rare**: New words intentionally left at normal weight tier. Common/rare designation can be tuned per-word in future sessions if needed.
+- **Fulfills "Next likely steps" from Session 129**: Weather and anomaly expansion was explicitly called out as the remaining biome word bank categories. All biome categories are now at expanded sizes.
+- **Weather and anomaly containers are lists, not tuples**: Consistency with existing pattern — all BIOME_WORDS categories use Python lists for mutability, though the dict is never mutated at runtime.
+
 ## 2026-07-14 — Expanded Biome-Specific Adverb Banks
 
 ### What
