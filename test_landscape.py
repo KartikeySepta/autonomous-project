@@ -3883,6 +3883,10 @@ class TestPresets(unittest.TestCase):
                     "carry a piece",
                     "return to the",
                     "half-remembered dream",
+                    "never be the same after visiting",
+                    "nowhere else in the world like",
+                    "more like a memory of a place",
+                    "words will never be enough",
                 ]
                 has_wistful = any(ind in result for ind in wistful_indicators)
                 self.assertTrue(has_wistful,
@@ -4901,6 +4905,10 @@ class TestWistful(unittest.TestCase):
         "carry a piece",
         "return to the",
         "half-remembered dream",
+        "never be the same after visiting",
+        "nowhere else in the world like",
+        "more like a memory of a place",
+        "words will never be enough",
     ]
 
     def test_wistful_disabled_by_default(self):
@@ -5255,6 +5263,10 @@ WISTFUL_INDICATORS_PHRASES = [
     "You carry a piece",
     "Someday you will return",
     "lingers in your thoughts",
+    "never be the same after visiting",
+    "nowhere else in the world like",
+    "more like a memory of a place",
+    "words will never be enough",
 ]
 
 

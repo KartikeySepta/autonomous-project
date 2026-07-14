@@ -2,6 +2,24 @@
 
 ## 2026-07-14
 
+### What was done (Session 123)
+- **Expanded WISTFUL word bank from 6 to 10 phrases** — 4 new wistful phrases added, covering underrepresented wistful themes:
+  - `"You will never be the same after visiting the {display}."` — irreversible transformation, the place changes the observer
+  - `"There is nowhere else in the world like the {display}, and you have been lucky enough to see it."` — uniqueness + gratitude, rare privilege of experience
+  - `"The {display} feels more like a memory of a place you have always known than a place you have just discovered."` — uncanny familiarity, recognition of the never-before-seen
+  - `"You will try to tell others about the {display}, but the words will never be enough."` — ineffability, the limits of language to capture experience
+- Added 4 new indicators to `WISTFUL_INDICATORS` in `TestWistful` (`"never be the same after visiting"`, `"nowhere else in the world like"`, `"more like a memory of a place"`, `"words will never be enough"`) and to `WISTFUL_INDICATORS_PHRASES` in the suppression-test module.
+- Fixed the hardcoded indicator list in `test_preset_with_wistful_produces_wistful_output` — the list was a copy of the original 6 and didn't include the new 4 indicators, causing the test to fail with presets that happen to select one of the new phrases at seed=42. Updated from 6 to 10 indicators to match the expanded bank.
+- No new tests or code changes beyond word bank expansion — all 746 tests still pass.
+- Wistful was last modified in Session 108 (creation). This is its first expansion, making it consistent with the pattern of expanding other word banks (echoes: Session 122, soundscapes: Session 121, weathers: Session 120, legends: Session 98).
+
+### Current status
+Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
+
+### Next likely steps
+- Expand other word banks (more legends, more wistful phrases is now at 10 — could go further)
+- Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry)
+
 ### What was done (Session 122)
 - **Expanded ECHOES word bank from 10 to 15 phrases** — 5 new atmospheric echo phrases added, covering underrepresented atmospheric themes:
   - `"Light {adverb} bends through the {adj} air of the {display} like something {color} is calling."` — visual refraction and color, light as summoning force
@@ -24,13 +42,6 @@
 - Added 4 new `SOUND_INDICATORS` in the test module (`"drone rises and falls"`, `"crackles like distant"`, `"Footsteps echo through"`, `"note rings out"`) — each is a unique substring that won't collide with other word bank output.
 - No new tests or code changes beyond word bank expansion — all 728 landscape tests (746 total) still pass.
 - This directly fulfills the first "Next likely step" from Session 120: expand other word banks (soundscape phrases).
-
-### Current status
-Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
-
-### Next likely steps
-- Expand other word banks (more legends, more wistful phrases)
-- Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry)
 
 ### What was done (Session 120)
 - **Expanded WEATHERS word bank from 8 to 12 phrases** — 4 new weather patterns added to increase atmospheric variety:

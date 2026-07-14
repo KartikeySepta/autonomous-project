@@ -145,6 +145,10 @@ WISTFUL = [
     "You carry a piece of the {display} with you now.",
     "Someday you will return to the {display}.",
     "The {display} lingers in your thoughts like a half-remembered dream.",
+    "You will never be the same after visiting the {display}.",
+    "There is nowhere else in the world like the {display}, and you have been lucky enough to see it.",
+    "The {display} feels more like a memory of a place you have always known than a place you have just discovered.",
+    "You will try to tell others about the {display}, but the words will never be enough.",
 ]
 
 # Weight tiers for word selection — common words appear more often, rare words less so

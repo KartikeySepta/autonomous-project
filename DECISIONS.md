@@ -1,5 +1,27 @@
 # Decisions
 
+## 2026-07-14 — Expanded WISTFUL Bank (10 phrases)
+
+### What
+Added 4 new curated wistful phrases to the WISTFUL bank, expanding it from 6 to 10 phrases. The new phrases cover irreversible transformation, uniqueness+gratitude, uncanny familiarity, and ineffability — themes absent from the existing 6.
+
+### Why
+The wistful system (Session 108) was enabled in all 5 presets (since Session 110), but the phrase bank was never expanded beyond the original 6. Weathers (12), soundscapes (12), echoes (15), and legends (15) all received expansions — wistful was the last major word bank at its original size. With 5 presets using wistful, a larger bank reduces repetition. The "Next likely steps" from Session 122 explicitly called for this.
+
+The 4 new phrases each cover an emotional niche not well represented in the existing 6:
+- **Irreversible transformation**: "You will never be the same after visiting..." — the place as a catalyst for change, distinct from the existing "part of you will always remain" (which is about permanent attachment, not change)
+- **Uniqueness + gratitude**: "There is nowhere else in the world like..." — appreciation for the rarity of the experience, distinct from "wish you could stay longer" (desire) and "someday you will return" (future)
+- **Uncanny familiarity**: "...more like a memory of a place you have always known than a place you have just discovered" — recognition of the never-before-seen, a specific kind of wistfulness (anemoia) absent from the existing set
+- **Ineffability**: "...the words will never be enough" — the limits of language, the gap between experience and description, a meta-emotional reflection on the act of describing itself
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, `_format_tmpl()`, CLI flags, or any logic. Only the WISTFUL list and indicator lists in the test module were updated.
+- **No seed-breaking**: Adding phrases to WISTFUL doesn't change the random sequence — `rng.choice(WISTFUL)` picks from a larger pool but the choice function is unchanged. Only the rendered output content changes (new phrases appear in the selection pool).
+- **Test fix**: `test_preset_with_wistful_produces_wistful_output` had a hardcoded copy of the original 6 indicators, causing 2/5 presets to fail at seed=42 (nightfall and sublime selected new phrases). Updated to include all 10 indicators.
+- **No new tests**: Existing wistful tests (15+ tests across TestWistful, TestDescribeWistful, TestNoWistful) cover all behaviors generically. Only the indicator lists were updated.
+- **746 tests still pass** (18 todo + 728 landscape), 201 subtests unchanged.
+- **Fulfills "Next likely steps" from Session 122**: Wistful expansion was explicitly called out.
+
 ## 2026-07-14 — Expanded ECHOES Bank (15 phrases)
 
 ### What
