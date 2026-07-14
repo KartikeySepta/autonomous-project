@@ -3682,6 +3682,31 @@ class TestPresets(unittest.TestCase):
                 self.assertTrue(PRESETS[name]["legend_enabled"],
                     f"Preset {name} should have legend_enabled=True")
 
+    def test_all_presets_include_travelogue(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("travelogue", PRESETS[name],
+                    f"Preset {name} should include 'travelogue'")
+                self.assertTrue(PRESETS[name]["travelogue"],
+                    f"Preset {name} should have travelogue=True")
+
+    def test_preset_with_travelogue_produces_framed_output(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                result = generate_landscape(seed=42, **PRESETS[name])
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+                has_travelogue = (
+                    "Journal entry, day " in result
+                    or "Log entry" in result
+                    or "Chronicle of the journey" in result
+                    or "Day " in result and "of the expedition" in result
+                )
+                self.assertTrue(has_travelogue,
+                    f"Preset {name} with travelogue should have travelogue framing")
+
     def test_all_presets_include_legend_count_and_prob(self):
         from landscape import PRESETS
         for name in PRESETS:

@@ -2,6 +2,15 @@
 
 ## 2026-07-14
 
+### What was done (Session 106)
+- **Added `travelogue` to all 5 presets** — `nightfall`, `pastoral`, `sublime`, `wasteland`, and `dreamscape` now each include `"travelogue": True`, so every preset frames the landscape as a travel journal entry by default. Previously, travelogue was only accessible via the explicit `--travelogue` flag.
+- Added **preset gating for travelogue in `main()`** — follows the exact same pattern as `legend_enabled`: if the preset includes `travelogue` and `--travelogue` was not explicitly passed (still `False`), the preset's value is applied.
+- Added 2 new tests in `TestPresets`:
+  - `test_all_presets_include_travelogue` — verifies every preset has `"travelogue": True` (5 subtests)
+  - `test_preset_with_travelogue_produces_framed_output` — verifies all 5 presets produce travelogue-framed output (5 subtests)
+- This completes the travelogue integration into presets, following the same pattern as legends (Session 97) and echoes (Session 88): add to `PRESETS` dict, add gating in `main()`, add structural tests. Travelogue was the last feature (alongside echoes, legends) with an on/off switch that was not in any preset.
+- Tests increased from 596 to 598 landscape tests (614 → 616 total), subtests from 102 to 112
+
 ### What was done (Session 105)
 - **Added `travelogue` to JSON metadata** — when `travelogue=True`, the JSON output now includes `"travelogue": true`, following the same pattern as `echo_enabled` (Session 100) and `legend_enabled` (Session 97). Previously, travelogue framing was invisible in JSON output — consumers had no way to distinguish a travelogue-framed landscape from a plain one via metadata.
 - Added 2 new tests in `TestTravelogue`:

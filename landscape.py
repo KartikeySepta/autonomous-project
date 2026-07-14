@@ -148,6 +148,7 @@ PRESETS = {
         "legend_enabled": True,
         "legend_count": 2,
         "legend_prob": 0.7,
+        "travelogue": True,
     },
     "pastoral": {
         "mood": ["peaceful"],
@@ -157,6 +158,7 @@ PRESETS = {
         "legend_enabled": True,
         "legend_count": 1,
         "legend_prob": 0.6,
+        "travelogue": True,
     },
     "sublime": {
         "mood": ["vibrant", "peaceful"],
@@ -168,6 +170,7 @@ PRESETS = {
         "legend_enabled": True,
         "legend_count": 2,
         "legend_prob": 0.9,
+        "travelogue": True,
     },
     "wasteland": {
         "mood": ["desolate"],
@@ -178,6 +181,7 @@ PRESETS = {
         "legend_enabled": True,
         "legend_count": 2,
         "legend_prob": 1.0,
+        "travelogue": True,
     },
     "dreamscape": {
         "mood": ["eerie", "vibrant"],
@@ -190,6 +194,7 @@ PRESETS = {
         "legend_enabled": True,
         "legend_count": 2,
         "legend_prob": 0.85,
+        "travelogue": True,
     },
 }
 
@@ -1201,6 +1206,8 @@ def main():
             args.legend_count = preset["legend_count"]
         if "legend_prob" in preset and args.legend_prob == 1.0:
             args.legend_prob = preset["legend_prob"]
+        if "travelogue" in preset and args.travelogue is False:
+            args.travelogue = preset["travelogue"]
         if "color_enabled" in preset and args.no_color is False:
             args.no_color = not preset["color_enabled"]
 

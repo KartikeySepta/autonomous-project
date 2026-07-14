@@ -1,5 +1,29 @@
 # Decisions
 
+## 2026-07-14 — Travelogue in Presets
+
+### What
+Added `"travelogue": True` to all 5 preset configurations (`nightfall`, `pastoral`, `sublime`, `wasteland`, `dreamscape`). Each preset now frames the landscape as a travel journal entry by default, following the same pattern as `legend_enabled` (Session 97) and `echo_enabled` (Session 88).
+
+### Why
+Travelogue (Session 104) was only accessible via the explicit `--travelogue` flag — presets, which are the curated on-ramp for new users, didn't use it. This meant a `--preset nightfall` landscape would get eerie mood, rare bias, high anomalies, atmospheric echoes, and folkloric legends — but no narrative framing. Adding travelogue to all presets makes them richer out of the box without requiring users to know about `--travelogue`.
+
+Each preset benefits narratively:
+- **nightfall**: eerie mood + rare bias + travelogue → ominous exploration journal, documenting the discovery of a threatening landscape
+- **pastoral**: peaceful mood + travelogue → serene travel diary, recording the beauty of tranquil places
+- **sublime**: vibrant+peaceful blend + common bias + travelogue → journal of transcendent discovery, nature writing at its most elevated
+- **wasteland**: desolate mood + no colors + high anomalies + travelogue → grim expedition log, post-apocalyptic field notes
+- **dreamscape**: surreal mood blend + flat bias + travelogue → explorer's log of impossible places, oneiric cartography
+
+This completes the preset integration for travelogue, following the same trajectory as legends (Session 96 → 97: add feature, then add to presets) and echoes (Session 78 → 88: add feature, then add to presets in later session).
+
+### Tradeoffs
+- **Seed-breaking for presets**: All 5 presets now produce different output from the previous session for the same seed, because `travelogue=True` was not previously in presets. This is acceptable because presets are curated entry points that evolve as features mature, and determinism is preserved (same seed + same args = same output). Users who want the old preset behavior can explicitly omit `--travelogue`.
+- **Backward compatibility via CLI overrides**: The gating code checks `args.travelogue is False` before applying the preset value. Users who explicitly pass `--no-travelogue` (if that existed) don't get the preset value. This is the same pattern as all other preset overrides.
+- **No changes to `generate_landscape()`**: Presets are a pure CLI convenience layer — the generation function already accepts `travelogue` (Session 104). Only the `PRESETS` dict and `main()` gating code changed.
+- **Consistent with echo and legend preset pattern**: All features with an on/off switch are now in all presets — echo (since Session 88), legend (Session 97), and travelogue (this session).
+- **2 new tests, 616 total** (18 todo + 598 landscape), 112 subtests.
+
 ## 2026-07-14 — `travelogue` in JSON Metadata
 
 ### What
