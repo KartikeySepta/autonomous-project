@@ -1,6 +1,29 @@
 # Decisions
 
-## 2026-07-14 — Soundscape in Presets
+## 2026-07-14 — Configurable Soundscape Count (`--sound-count`)
+
+### What
+Added `--sound-count` CLI flag and `sound_count` parameter to `generate_landscape()` (default: 1, choices: 0-3). Users can now control how many soundscape phrases appear per landscape, following the exact same pattern as `--echo-count` (Session 79) and `--legend-count` (Session 101):
+- `sound_count=0` suppresses soundscape phrases entirely
+- `sound_count=1` (default) preserves existing behavior — one phrase per landscape
+- `sound_count=2` and `sound_count=3` produce multiple phrases with dedup (no repeated phrases)
+- Added `sound_count` to JSON metadata when `sound_enabled=True`
+- Added preset gating for `sound_count`
+
+Also fixed `SOUND_INDICATORS` — the test module's invariant substrings used generic words ("hums", "whispers", "breathing") that also appear in general landscape vocabulary, causing false positives in dedup and suppression tests. Replaced with unique long substrings from each soundscape phrase (e.g. "tone that seems to come from everywhere", "at the edge of hearing").
+
+### Why
+The soundscape system (Session 112) was initially a simple on/off switch — one phrase per landscape when enabled. Following the same trajectory as echoes (on/off → count → prob) and legends (on/off → count → prob), adding `sound_count` gives users fine-grained control over soundscape density. With 8 curated soundscape phrases, `sound_count=2` or `sound_count=3` produces richer landscapes without repetition (dedup ensures no repeats). This is the natural evolution: the Session 112 DECISIONS.md explicitly noted "Count and prob can be added in future sessions if the feature proves useful."
+
+The SOUND_INDICATORS fix closes a latent bug introduced in Session 112 — the original indicators were too short and matched general vocabulary (e.g. "hums" is also a verb in the word banks, "whispers" is an adverb). The replacement indicators use unique multi-word substrings that are statistically impossible in non-soundscape text.
+
+### Tradeoffs
+- **sound_count=0** is an alternative suppression mechanism to not using `--sound`. Both are valid; `sound_count=0` is more explicit when a script conditionally enables soundscapes with variable counts.
+- **Dedup with fallback**: Same pattern as echoes and legends — a `used_sounds` set prevents repeats within a landscape. With 8 phrases and max count=3, dedup never exhausts the pool in practice, but the fallback (full pool) is implemented for correctness.
+- **No `sound_prob`**: Unlike echoes (which have `echo_prob`) and legends (`legend_prob`), soundscapes don't have a probability parameter yet. Count came first in the echo/legend trajectory too — prob followed in later sessions. If users want variable soundscape density, `sound_count` with dedup already provides variety.
+- **Seed-breaking**: Adding `rng.choice()` calls for each soundscape count shifts the random sequence. With `sound_count=1` (default), this preserves the existing single-`rng.choice()` call from before, so existing seed-based output with `--sound` is preserved. With `sound_count > 1`, additional `rng.choice()` calls shift subsequent random calls (legends, wistful, travelogue) — same pattern as echo and legend count.
+- **9 new tests, 687 total** (18 todo + 669 landscape), 137 subtests.
+- **SOUND_INDICATORS fix is backward compatible**: The new indicators are all stricter (longer substrings), so they don't introduce false negatives for existing tests. The old indicators were too loose (false positives), so the fix only makes tests more correct.
 
 ### What
 Added `"sound_enabled": True` to all 5 preset configurations (`nightfall`, `pastoral`, `sublime`, `wasteland`, `dreamscape`). Each preset now includes an auditory soundscape phrase by default, following the same pattern as `travelogue` (Session 106) and `wistful` (Session 110).

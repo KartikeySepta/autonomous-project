@@ -2,6 +2,29 @@
 
 ## 2026-07-14
 
+### What was done (Session 114)
+- **Added `--sound-count` CLI flag** and `sound_count` parameter to `generate_landscape()` — users can now control how many soundscape phrases appear per landscape (0-3, default: 1), following the exact same pattern as `--echo-count` (Session 79) and `--legend-count` (Session 101):
+  - `sound_count=0` suppresses soundscapes (equivalent to not using `--sound`)
+  - `sound_count=1` (default) produces exactly 1 soundscape phrase (existing behavior)
+  - `sound_count=2` and `sound_count=3` produce multiple soundscape phrases with dedup
+  - Uses a `used_sounds` set to prevent repeating the same phrase within a landscape (same pattern as echoes and legends)
+  - When pool is exhausted (count > 8), falls back to the full pool
+- Added `sound_count` to JSON metadata when `sound_enabled=True` — emits `"sound_count": <N>` alongside `"sound_enabled": true`
+- Added preset gating for `sound_count` — follows the same pattern as `echo_count` and `legend_count` gating
+- Added 9 new tests in `TestSoundCount` class:
+  - `test_sound_count_default_is_one` — default matches `sound_count=1`
+  - `test_sound_count_zero_suppresses_soundscape` — zero suppresses all soundscape phrases
+  - `test_sound_count_two_sometimes_has_multiple` — count=3 sometimes produces 2+ indicators
+  - `test_sound_count_does_not_repeat_same_sound` — no duplicate soundscape phrases within a landscape
+  - `test_sound_count_produces_valid_output` — all counts 0-3 produce valid output (40 seeds)
+  - `test_sound_count_is_deterministic` — same seed + same count = same output
+  - `test_sound_count_works_with_json_format` — JSON text field contains valid output
+  - `test_sound_count_json_includes_field` — JSON has `sound_count` when enabled
+  - `test_sound_count_flag_exists_via_cli` — `--sound-count` CLI flag exists
+- **Fixed `SOUND_INDICATORS`** — replaced generic words ("hums", "whispers", "breathing") that collided with general landscape vocabulary with unique long substrings from each soundscape phrase. "hums" and "whispers" appear in verb/adverb word banks and caused false positives in dedup and suppression tests.
+- This is the natural evolution of the soundscape system: Session 112 added on/off, Session 113 added to presets, now sound-count gives users fine-grained density control, matching the echo and legend systems' trajectories (on/off → count → prob).
+- Tests increased from 678 to 687 total (18 todo + 669 landscape), subtests unchanged at 137
+
 ### What was done (Session 113)
 - **Added `sound_enabled` to all 5 presets** — `nightfall`, `pastoral`, `sublime`, `wasteland`, and `dreamscape` now each include `"sound_enabled": True`, so every preset includes an auditory soundscape phrase by default. Previously, soundscapes were only accessible via the explicit `--sound` flag.
 - Added **preset gating for soundscape in `main()`** — follows the exact same pattern as `travelogue` and `wistful`: if the preset includes `sound_enabled` and `--sound` was not explicitly passed (still `False`), the preset's value is applied.

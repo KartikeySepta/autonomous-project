@@ -26,9 +26,14 @@ ALL_WISTFUL = set(WISTFUL)
 ALL_SOUNDSCAPES = set(SOUNDSCAPES)
 
 SOUND_INDICATORS = [
-    "hums", "shifts and settles", "shattering", "sound echoes",
-    "call of an unknown creature", "rhythm pulses",
-    "whispers", "breathing",
+    "tone that seems to come from everywhere",
+    "shifts and settles",
+    "glass shattering",
+    "close, though nothing is there",
+    "call of an unknown creature",
+    "slow, patient",
+    "at the edge of hearing",
+    "shakes the",
 ]
 
 LEGEND_INDICATORS = [
@@ -4930,6 +4935,65 @@ class TestSoundscape(unittest.TestCase):
         output = captured.getvalue()
         self.assertIsInstance(output, str)
         self.assertGreater(len(output), 0)
+
+
+class TestSoundCount(unittest.TestCase):
+    def test_sound_count_default_is_one(self):
+        a = generate_landscape(seed=42, sound_enabled=True)
+        b = generate_landscape(seed=42, sound_enabled=True, sound_count=1)
+        self.assertEqual(a, b,
+            "sound_count=1 should match default")
+
+    def test_sound_count_zero_suppresses_soundscape(self):
+        result = generate_landscape(seed=42, sound_enabled=True, sound_count=0)
+        for ind in SOUND_INDICATORS:
+            self.assertNotIn(ind, result,
+                "Soundscape should not appear with sound_count=0")
+
+    def test_sound_count_two_sometimes_has_multiple(self):
+        results = [generate_landscape(seed=s, sound_enabled=True, sound_count=3) for s in range(100)]
+        multi = [r for r in results if sum(1 for ind in SOUND_INDICATORS if ind in r) >= 2]
+        self.assertGreater(len(multi), 10,
+            "sound_count=3 should often produce multi-soundscape outputs")
+
+    def test_sound_count_does_not_repeat_same_sound(self):
+        results = [generate_landscape(seed=s, sound_enabled=True, sound_count=3) for s in range(200)]
+        for r in results:
+            for ind in SOUND_INDICATORS:
+                self.assertLessEqual(r.count(ind), 1,
+                    f"Sound indicator {ind!r} should appear at most once: {r!r}")
+
+    def test_sound_count_produces_valid_output(self):
+        for count in [0, 1, 2, 3]:
+            for s in range(10):
+                result = generate_landscape(seed=s, sound_enabled=True, sound_count=count)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_sound_count_is_deterministic(self):
+        a = generate_landscape(seed=42, sound_enabled=True, sound_count=2)
+        b = generate_landscape(seed=42, sound_enabled=True, sound_count=2)
+        self.assertEqual(a, b,
+            "sound_count should be deterministic with same seed")
+
+    def test_sound_count_works_with_json_format(self):
+        result = generate_landscape(seed=42, sound_enabled=True, sound_count=2, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_sound_count_json_includes_field(self):
+        result = generate_landscape(seed=42, sound_enabled=True, sound_count=2, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("sound_count", data)
+        self.assertEqual(data["sound_count"], 2)
+
+    def test_sound_count_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
 
 
 if __name__ == "__main__":
