@@ -2,29 +2,30 @@
 
 ## 2026-07-14
 
-### What was done (Session 125)
-- **Expanded biome-specific adjective and element word banks for all 13 biomes** — each biome now has +2 adjectives and +2 elements (52 new entries total), the first expansion of biome-specific word banks since they were created (Sessions 2–22). Prior to this, biome adjective/element banks had been static since inception while global word banks received repeated expansions (legends 10→20, echoes 10→15, soundscapes 8→12, weathers 8→12, wistful 6→10).
-  - **forest**: +"wildwood", "sun-dappled" / +"pine scent", "moss damp"
-  - **desert**: +"sere", "sun-scorched" / +"dust devil", "mirage light"
-  - **ocean**: +"tide-worn", "brine-soaked" / +"wave crash", "deep current"
-  - **tundra**: +"ice-bound", "permafrost" / +"snow whisper", "ice crystal"
-  - **mountain range**: +"cloud-wreathed", "steep" / +"rockfall echo", "alpine frost"
-  - **swamp**: +"brackish", "silt-choked" / +"swamp gas", "rotting wood"
-  - **cave system**: +"deep-earth", "stalactite" / +"cavern draft", "mineral drip"
-  - **plain**: +"rolling", "sweeping" / +"distant thunder", "wildflower scent"
-  - **volcanic field**: +"magmatic", "cinder-strewn" / +"pumice dust", "lava crack"
-  - **coral reef**: +"reef-knitted", "polyp-laden" / +"tide pool", "coral spawn"
-  - **ruined city**: +"shattered", "graffitied" / +"mold scent", "broken glass"
-  - **fungal grove**: +"spore-dusted", "hyphael" / +"spore cloud", "mycelium network"
-  - **sky islands**: +"aerial", "cloud-banked" / +"upper air", "cloud mist"
+### What was done (Session 126)
+- **Expanded biome-specific noun banks for all 13 biomes** — each biome now has +2 nouns (26 new entries total), the second expansion of biome-specific word banks after Session 125's adjective/element expansion. Prior to this, biome nouns were at 5 entries for 10 biomes and 6 entries for 3 biomes (ruined city, fungal grove, sky islands). Now all biomes have 7–8 nouns:
+  - **forest** (5→7): +"understory", "clearings"
+  - **desert** (5→7): +"wadis", "buttes"
+  - **ocean** (5→7): +"gyres", "thermals"
+  - **tundra** (5→7): +"moraines", "frost heaves"
+  - **mountain range** (5→7): +"coloirs", "cirques"
+  - **swamp** (5→7): +"sloughs", "tupelos"
+  - **cave system** (5→7): +"flowstones", "pillars"
+  - **plain** (5→7): +"savannas", "swales"
+  - **volcanic field** (5→7): +"fumaroles", "tuff cones"
+  - **coral reef** (5→7): +"sea fans", "crevices"
+  - **ruined city** (6→8): +"skeletons", "rubble piles"
+  - **fungal grove** (6→8): +"mycelia", "sporocarps"
+  - **sky islands** (6→8): +"thermals", "wind shears"
+- Each noun is curated to the biome's thematic identity — geological features for mountain ranges, fungal anatomy for fungal groves, wreckage for ruined cities, etc.
 - No code, CLI, or test changes — data-only expansion. All 746 tests still pass (18 todo + 728 landscape), 201 subtests.
-- Biome-specific banks had not been expanded since Session 62 (which added colors and adverbs as new categories) — this is the first content expansion.
+- Nouns are used in multiple template slots (opening templates, middle templates), so expanding them has broad per-word impact on output variety.
 
 ### Current status
 Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
 
 ### Next likely steps
-- Expand other biome word bank categories (nouns, verbs, weathers, anomalies)
+- Expand other biome word bank categories (verbs, weathers, anomalies)
 - Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry, inhabitants/wildlife)
 
 ### What was done (Session 124)

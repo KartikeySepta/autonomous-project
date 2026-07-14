@@ -1,5 +1,21 @@
 # Decisions
 
+## 2026-07-14 — Expanded Biome-Specific Noun Banks
+
+### What
+Added 2 new nouns to each of the 13 biomes in `BIOME_WORDS` — 26 new entries total. Each new noun is curated to fit the biome's thematic identity: forests get "understory" and "clearings", ruined cities get "skeletons" and "rubble piles", sky islands get "thermals" and "wind shears", etc.
+
+### Why
+Session 125 expanded biome adjectives and elements (the most-used categories in templates). Nouns are the next most-impactful category: they appear in opening templates (e.g. "The {noun} of the {display} {verb} with {element}"), middle templates (e.g. "The {noun} {verb} with {element}"), and are a fundamental building block of landscape descriptions. With 5–6 nouns per biome, variety was limited — especially for the 3 biomes that already had 6 vs the majority at 5. Standardizing to 7–8 ensures more varied output.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, `_pick()`, CLI flags, or any logic. Only the `BIOME_WORDS` dict values changed.
+- **No seed-breaking**: Adding words to biome-specific pools doesn't change the random sequence — `_pick()` draws from a larger pool but the weighted-selection function is unchanged. Only the rendered output content changes (new words appear in the selection pool).
+- **No new tests**: 33 existing biome vocabulary tests cover all behaviors generically — they check for the *existence* of biome-specific words in output, not precise counts or specific words.
+- **Test count unchanged**: 746 tests (18 todo + 728 landscape), 201 subtests.
+- **Not marked common or rare**: New words intentionally left at normal weight tier. Common/rare designation can be tuned per-word in future sessions if needed.
+- **Fulfills "Next likely steps" from Session 125**: Noun expansion was explicitly called out.
+
 ## 2026-07-14 — Expanded Biome-Specific Word Banks (adjectives + elements)
 
 ### What
