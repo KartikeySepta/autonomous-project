@@ -3352,6 +3352,16 @@ ECHO_INDICATORS = [
     "older than any sound",
 ]
 
+# Subset of ECHO_INDICATORS excluding "remembers" which collides with
+# legend phrases ("remembers those who built it"). Used by --no-echo suppression
+# tests where legends may be present.
+NO_ECHO_INDICATORS = [
+    "has been waiting", "has changed in",
+    "echoes of the past", "being watched", "deep time",
+    "outside of time", "stones remember", "important happened",
+    "older than any sound",
+]
+
 
 class TestEcho(unittest.TestCase):
     def test_echo_disabled_default(self):
@@ -5338,6 +5348,162 @@ class TestNoWistful(unittest.TestCase):
         self.assertIn("text", data)
         self.assertIsInstance(data["text"], str)
         self.assertNotIn("wistful", data)
+
+
+class TestNoEcho(unittest.TestCase):
+    def test_no_echo_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_no_echo_disables_echo_with_preset(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                preset = dict(PRESETS[name])
+                preset.pop("echo_enabled", None)
+                result = generate_landscape(seed=42, **preset, echo_enabled=False)
+                for ind in NO_ECHO_INDICATORS:
+                    self.assertNotIn(ind, result,
+                        f"Preset {name} with --no-echo should not contain {ind!r}")
+
+    def test_no_echo_preset_without_flag_still_has_echo(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                if "echo_enabled" not in PRESETS[name]:
+                    continue
+                result = generate_landscape(seed=42, **PRESETS[name])
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_no_echo_works_with_other_features(self):
+        from landscape import generate_landscape
+        for s in range(10):
+            result = generate_landscape(seed=s, echo_enabled=False,
+                                        legend_enabled=True, sound_enabled=True,
+                                        travelogue=True, wistful=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_no_echo_with_explicit_echo_override(self):
+        from landscape import generate_landscape
+        result = generate_landscape(seed=42, biome="forest", echo_enabled=False)
+        for ind in NO_ECHO_INDICATORS:
+            self.assertNotIn(ind, result,
+                f"Output with --no-echo should not contain {ind!r}")
+
+    def test_no_echo_does_not_affect_json_output(self):
+        from landscape import generate_landscape
+        result = generate_landscape(seed=42, biome="forest", echo_enabled=False, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertNotIn("echo_enabled", data)
+
+
+class TestNoLegend(unittest.TestCase):
+    def test_no_legend_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_no_legend_disables_legend_with_preset(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                preset = dict(PRESETS[name])
+                preset.pop("legend_enabled", None)
+                result = generate_landscape(seed=42, **preset, legend_enabled=False)
+                for ind in LEGEND_INDICATORS:
+                    self.assertNotIn(ind, result,
+                        f"Preset {name} with --no-legend should not contain {ind!r}")
+
+    def test_no_legend_preset_without_flag_still_has_legend(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                if "legend_enabled" not in PRESETS[name]:
+                    continue
+                result = generate_landscape(seed=42, **PRESETS[name])
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_no_legend_works_with_other_features(self):
+        from landscape import generate_landscape
+        for s in range(10):
+            result = generate_landscape(seed=s, legend_enabled=False,
+                                        echo_enabled=True, sound_enabled=True,
+                                        travelogue=True, wistful=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_no_legend_with_explicit_legend_override(self):
+        from landscape import generate_landscape
+        result = generate_landscape(seed=42, biome="forest", legend_enabled=False)
+        for ind in LEGEND_INDICATORS:
+            self.assertNotIn(ind, result,
+                f"Output with --no-legend should not contain {ind!r}")
+
+    def test_no_legend_does_not_affect_json_output(self):
+        from landscape import generate_landscape
+        result = generate_landscape(seed=42, biome="forest", legend_enabled=False, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertNotIn("legend_enabled", data)
+
+
+class TestNoSound(unittest.TestCase):
+    def test_no_sound_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_no_sound_disables_sound_with_preset(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                preset = dict(PRESETS[name])
+                preset.pop("sound_enabled", None)
+                result = generate_landscape(seed=42, **preset, sound_enabled=False)
+                for ind in SOUND_INDICATORS:
+                    self.assertNotIn(ind, result,
+                        f"Preset {name} with --no-sound should not contain {ind!r}")
+
+    def test_no_sound_preset_without_flag_still_has_sound(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                if "sound_enabled" not in PRESETS[name]:
+                    continue
+                result = generate_landscape(seed=42, **PRESETS[name])
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_no_sound_works_with_other_features(self):
+        from landscape import generate_landscape
+        for s in range(10):
+            result = generate_landscape(seed=s, sound_enabled=False,
+                                        echo_enabled=True, legend_enabled=True,
+                                        travelogue=True, wistful=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_no_sound_with_explicit_sound_override(self):
+        from landscape import generate_landscape
+        result = generate_landscape(seed=42, biome="forest", sound_enabled=False)
+        for ind in SOUND_INDICATORS:
+            self.assertNotIn(ind, result,
+                f"Output with --no-sound should not contain {ind!r}")
+
+    def test_no_sound_does_not_affect_json_output(self):
+        from landscape import generate_landscape
+        result = generate_landscape(seed=42, biome="forest", sound_enabled=False, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertNotIn("sound_enabled", data)
 
 
 if __name__ == "__main__":

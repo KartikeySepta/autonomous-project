@@ -1228,6 +1228,10 @@ def main():
         help="Probability of an echo appearing per roll (0.0 to 1.0, default: 1.0)",
     )
     parser.add_argument(
+        "--no-echo", action="store_true",
+        help="Disable echo phrases (overrides preset and --echo)",
+    )
+    parser.add_argument(
         "--legend", action="store_true",
         help="Append a folkloric legend phrase to the landscape",
     )
@@ -1240,6 +1244,10 @@ def main():
         help="Probability of a legend appearing per roll (0.0 to 1.0, default: 1.0)",
     )
     parser.add_argument(
+        "--no-legend", action="store_true",
+        help="Disable legend phrases (overrides preset and --legend)",
+    )
+    parser.add_argument(
         "--describe-legends", action="store_true",
         help="Show all available legend phrases with their index numbers",
     )
@@ -1250,6 +1258,10 @@ def main():
     parser.add_argument(
         "--sound", action="store_true",
         help="Append a soundscape phrase describing sounds in the landscape",
+    )
+    parser.add_argument(
+        "--no-sound", action="store_true",
+        help="Disable soundscape phrases (overrides preset and --sound)",
     )
     parser.add_argument(
         "--sound-count", type=int, default=1, choices=[0, 1, 2, 3],
@@ -1345,13 +1357,13 @@ def main():
             args.weather_count = preset["weather_count"]
         if "weather_prob" in preset and args.weather_prob == 1.0:
             args.weather_prob = preset["weather_prob"]
-        if "echo_enabled" in preset and args.echo is False:
+        if "echo_enabled" in preset and args.echo is False and not args.no_echo:
             args.echo = preset["echo_enabled"]
         if "echo_count" in preset and args.echo_count == 1:
             args.echo_count = preset["echo_count"]
         if "echo_prob" in preset and args.echo_prob == 1.0:
             args.echo_prob = preset["echo_prob"]
-        if "legend_enabled" in preset and args.legend is False:
+        if "legend_enabled" in preset and args.legend is False and not args.no_legend:
             args.legend = preset["legend_enabled"]
         if "legend_count" in preset and args.legend_count == 1:
             args.legend_count = preset["legend_count"]
@@ -1361,7 +1373,7 @@ def main():
             args.travelogue = preset["travelogue"]
         if "wistful" in preset and args.wistful is False and not args.no_wistful:
             args.wistful = preset["wistful"]
-        if "sound_enabled" in preset and args.sound is False:
+        if "sound_enabled" in preset and args.sound is False and not args.no_sound:
             args.sound = preset["sound_enabled"]
         if "sound_count" in preset and args.sound_count == 1:
             args.sound_count = preset["sound_count"]
@@ -1371,6 +1383,12 @@ def main():
             args.no_color = not preset["color_enabled"]
 
     # --no-* overrides take effect after all preset gating
+    if args.no_echo:
+        args.echo = False
+    if args.no_legend:
+        args.legend = False
+    if args.no_sound:
+        args.sound = False
     if args.no_travelogue:
         args.travelogue = False
     if args.no_wistful:

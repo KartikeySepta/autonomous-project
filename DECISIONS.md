@@ -1,5 +1,21 @@
 # Decisions
 
+## 2026-07-14 — No-Echo, No-Legend, No-Sound Flags (`--no-echo`, `--no-legend`, `--no-sound`)
+
+### What
+Added `--no-echo`, `--no-legend`, and `--no-sound` CLI flags that force `echo_enabled=False` / `legend_enabled=False` / `sound_enabled=False`, overriding presets (which enable all three by default) and explicit `--echo` / `--legend` / `--sound` flags. Implemented as `store_true` args with post-preset overrides in `main()`, following the exact same pattern as `--no-travelogue` and `--no-wistful` (Session 118).
+
+### Why
+All 5 presets (nightfall, pastoral, sublime, wasteland, dreamscape) enable echo, legend, and sound. Users who want a preset's mood/bias/detail/anomaly configuration but do NOT want these atmospheric layers had no way to disable them when using `--preset`. This was explicitly called out as the next step in Session 118's "Next likely steps." Every other `--no-*` flag (`--no-color`, `--no-element`, `--no-time-word`, `--no-adverb`, `--no-weather`, etc.) disables features that are ON by default, but echo/legend/sound are OFF by default. The need arises specifically from presets: presets flip them ON, and there was no OFF switch for that case.
+
+### Tradeoffs
+- **`--no-*` wins over `--*`**: Same design as Session 118 — the "no" flag is a safety override. The post-preset override block explicitly sets the value after all gating, ensuring `--no-*` always takes effect.
+- **No changes to `generate_landscape()`**: The generation function already accepts `echo_enabled`/`legend_enabled`/`sound_enabled` booleans. Only `main()` preset gating and CLI argument definitions changed.
+- **Not seed-breaking**: No random call order changes. The new flags only affect whether these features are `True` or `False` when passed to `generate_landscape()`.
+- **Test indicator collision**: `ECHO_INDICATORS` includes `"remembers"` which also appears in the legend phrase "remembers those who built it." Added `NO_ECHO_INDICATORS` (same list minus `"remembers"`) for suppression tests where legends may be present.
+- **18 new tests, 746 total** (18 todo + 728 landscape), 201 subtests.
+- **Fulfills "Next likely steps" from Session 118**: This was explicitly called out as the next step after no-travelogue and no-wistful.
+
 ## 2026-07-14 — No-Travelogue and No-Wistful Flags (`--no-travelogue`, `--no-wistful`)
 
 ### What

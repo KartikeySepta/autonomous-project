@@ -2,6 +2,29 @@
 
 ## 2026-07-14
 
+### What was done (Session 119)
+- **Added `--no-echo`, `--no-legend`, and `--no-sound` CLI flags** — users can now explicitly disable echo phrases, legend phrases, and soundscape phrases even when using presets that enable them. This fills the remaining symmetry gap in the `--no-*` flag family called out in Session 118's "Next likely steps."
+  - `--no-echo` forces `echo_enabled=False` regardless of preset configuration or `--echo`
+  - `--no-legend` forces `legend_enabled=False` regardless of preset configuration or `--legend`
+  - `--no-sound` forces `sound_enabled=False` regardless of preset configuration or `--sound`
+  - Post-preset override block in `main()` ensures `--no-*` always wins after all preset gating
+  - Preset gating updated: checks `not args.no_echo` / `not args.no_legend` / `not args.no_sound` before applying preset values
+  - No changes to `generate_landscape()` — only `main()` preset gating and CLI argument definitions
+- Added 18 new tests (6 in `TestNoEcho`, 6 in `TestNoLegend`, 6 in `TestNoSound`):
+  - `TestNoEcho`: flag exists via CLI, disables echo with all 5 presets (5 subtests), works with other features, JSON output, explicit `--echo` override
+  - `TestNoLegend`: flag exists via CLI, disables legend with all 5 presets (5 subtests), works with other features, JSON output, explicit `--legend` override
+  - `TestNoSound`: flag exists via CLI, disables sound with all 5 presets (5 subtests), works with other features, JSON output, explicit `--sound` override
+- Added `NO_ECHO_INDICATORS` constant in the test module — a subset of `ECHO_INDICATORS` that excludes `"remembers"` (which collides with legend phrase "remembers those who built it"). Used by `TestNoEcho` suppression tests where legends may be present.
+- This fulfills the "Next likely steps" from Session 118: echo, legend, and sound were the last features with on/off switches that the presets enable.
+- Tests increased from 728 to 746 total (18 todo + 728 landscape), subtests from 171 to 201
+
+### Current status
+Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
+
+### Next likely steps
+- Expand word banks (more weather phrases, more sounds, more legends)
+- Add new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry)
+
 ### What was done (Session 118)
 - **Added `--no-travelogue` and `--no-wistful` CLI flags** — users can now explicitly disable travelogue journal framing and wistful emotional coda even when using presets that enable them. This fills a symmetry gap with the existing `--no-*` flag family (`--no-adverb`, `--no-color`, `--no-element`, `--no-time-word`, `--no-weather`, `--no-anomaly`, `--no-middle`, `--no-dedup`).
   - `--no-travelogue` forces `travelogue=False` regardless of preset configuration or `--travelogue`
