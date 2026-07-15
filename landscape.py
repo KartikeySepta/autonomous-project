@@ -125,6 +125,11 @@ TIMES_OF_DAY = [
     "The golden hour before sunset paints everything amber",
     "The first light of morning touches the land",
     "A starless night presses down in absolute blackness",
+    "Late afternoon stretches long shadows across the landscape",
+    "A storm-heavy sky presses down upon the landscape",
+    "The blue hour casts a deep indigo glow across the landscape",
+    "The witching hour settles over the landscape in absolute stillness",
+    "Morning mist clings to the landscape like a half-remembered dream",
 ]
 
 SOUNDSCAPES = [

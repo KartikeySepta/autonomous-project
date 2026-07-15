@@ -32,13 +32,32 @@
 - Tests increased from 773 to 780 total (18 todo + 762 landscape), subtests from
   207 to 222.
 
+### What was done (Session 133)
+- **Expanded TIMES_OF_DAY word bank from 10 to 15 phrases** — 5 new time-of-day
+  phrases added, covering temporal niches not represented in the original 10:
+  - `"Late afternoon stretches long shadows across the landscape"` — late afternoon
+    before golden hour, covering the long-shadow period between noon and dusk
+  - `"A storm-heavy sky presses down upon the landscape"` — stormy/overcast
+    conditions, the only non-clear-sky temporal setting
+  - `"The blue hour casts a deep indigo glow across the landscape"` — the
+    photographic/atmospheric blue hour between daylight and full darkness
+  - `"The witching hour settles over the landscape in absolute stillness"` — 3 AM
+    supernatural hour, distinct from midnight (crescent moon) and dead of night
+  - `"Morning mist clings to the landscape like a half-remembered dream"` —
+    misty/mysterious morning, a different register from dawn and early morning
+- Each phrase is curated to fit a distinct temporal niche: late afternoon, stormy,
+  blue hour, witching hour, misty morning. None overlap with existing phrases.
+- No code, CLI, or test changes — data-only expansion. All 780 tests still pass
+  (18 todo + 762 landscape), 222 subtests unchanged.
+- This directly fulfills the first "Next likely step" from Session 132: expand
+  global word banks (more time-of-day phrases).
+
 ### Current status
 Working. All 780 tests pass (18 todo + 762 landscape), 222 subtests.
 
 ### Next likely steps
 - Add seasonal variation as another temporal dimension
-- Expand global word banks (more time-of-day phrases, more echoes, more legends,
-  more soundscapes)
+- Expand global word banks (more echoes, more legends, more soundscapes)
 - Add inhabitants/wildlife as a new sensory dimension
 - Add `--time-count`, `--time-prob` for configurable time-of-day density
 

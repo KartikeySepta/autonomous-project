@@ -1,5 +1,63 @@
 # Decisions
 
+## 2026-07-15 — Expanded TIMES_OF_DAY Word Bank (15 phrases)
+
+### What
+Added 5 new curated time-of-day phrases to the TIMES_OF_DAY bank, expanding it
+from 10 to 15 phrases. The new phrases cover late afternoon, stormy/overcast
+conditions, the blue hour, the witching hour, and misty morning — temporal
+niches absent from the original 10.
+
+### Why
+The time-of-day system (Session 131) was the newest sensory dimension and had
+not yet received any word bank expansion. The original 10 phrases covered broad
+temporal categories (dawn, noon, dusk, midnight, etc.) but had gaps: no
+stormy/overcast setting, no late afternoon, no blue hour, no witching hour, and
+only one dawn variant. With time-of-day now enabled by default in all 5 presets
+(Session 132), a larger bank reduces repetition in preset output. The "Next
+likely steps" from Session 132 explicitly called for expanding global word
+banks.
+
+The 5 new phrases each cover a temporal niche not well represented in the
+existing 10:
+- **Late afternoon**: "Late afternoon stretches long shadows across the
+  landscape" — the period between noon and golden hour, characterized by long
+  shadows and the day beginning to wane. Distinct from the existing golden hour
+  (pre-sunset) and dusk (post-sunset).
+- **Stormy/overcast**: "A storm-heavy sky presses down upon the landscape" —
+  the only phrase that describes a non-clear temporal setting. Covers any time
+  of day when the sky is heavy with clouds, a common atmospheric condition.
+- **Blue hour**: "The blue hour casts a deep indigo glow across the landscape"
+  — the period of twilight when the sun is below the horizon but the sky is a
+  deep saturated blue. Distinct from twilight (which is about fading to
+  darkness) and dusk (settling of night).
+- **Witching hour**: "The witching hour settles over the landscape in absolute
+  stillness" — the supernatural 3 AM hour, distinct from the existing midnight
+  (crescent moon, silver light) and dead of night (darkness) and starless
+  night (absolute blackness). Adds a folkloric/supernatural temporal register.
+- **Misty morning**: "Morning mist clings to the landscape like a
+  half-remembered dream" — a misty/mysterious morning, distinct from the
+  existing dawn (breaking) and early morning (pale gold light) and first light
+  (touching the land). Adds a muted, dreamlike morning variant.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only the TIMES_OF_DAY list was updated.
+- **No seed-breaking**: Adding phrases to TIMES_OF_DAY doesn't change the
+  random sequence — `rng.choice(TIMES_OF_DAY)` picks from a larger pool but
+  the choice function is unchanged. Only the rendered output content changes
+  (new phrases appear in the selection pool).
+- **No new tests**: `ALL_TIMES_OF_DAY = set(TIMES_OF_DAY)` is dynamically
+  derived, and all TestTimeOfDay and TestDescribeTimes tests use dynamic
+  counts/loops. Only the data changed; test logic is unchanged.
+- **Test count unchanged**: 780 tests (18 todo + 762 landscape), 222 subtests.
+- **Not seed-breaking**: Adding new entries to a list that `rng.choice()` draws
+  from doesn't change the RNG sequence — the same seed picks the same index,
+  but the content at that index may be different, which only changes rendered
+  output, not determinism.
+- **Fulfills "Next likely steps" from Session 132**: Word bank expansion was
+  explicitly called out as the next step after time-of-day integration.
+
 ## 2026-07-15 — Time-of-Day in Presets + `--no-time` Flag
 
 ### What
