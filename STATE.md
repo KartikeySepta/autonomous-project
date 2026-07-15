@@ -2,6 +2,73 @@
 
 ## 2026-07-15
 
+### What was done (Session 148)
+- **Added mood atmosphere system (`--mood-atmosphere`)** — a new sensory dimension
+  that adds mood-specific atmospheric framing phrases to establish the emotional
+  register of the landscape, going beyond the existing word-weight biasing system.
+  - New `MOOD_ATMOSPHERE` dict with 4 curated phrases per mood (16 total):
+    - **peaceful**: gentle stillness, soft air, tranquil rhythm, world holding
+      its breath — warm, serene, accepting register
+    - **eerie**: wrongness in the air, thick watchful silence, primal fear,
+      ancient cold attention — unsettling, ominous, numinous register
+    - **vibrant**: borderless energy, colour bleeding from everything, fierce
+      joyful intensity, electric golden air — exuberant, overflowing, alive
+    - **desolate**: hope withered long ago, the land giving up, desolation as a
+      held breath, emptiness as identity — stark, abandoned, mournful register
+  - Each phrase is a standalone sentence inserted between the opening description
+    and the detail/weather/anomaly sentences, creating a natural emotional bridge
+    from "what the landscape looks like" to "how to feel about it."
+  - Off by default (`mood_atmosphere=False`), preserving all existing seed-based
+    output for users who use `--mood` without `--mood-atmosphere`.
+  - Picks one active mood randomly (if multiple moods are set via combined mood)
+    and then picks one phrase from that mood's pool via `rng.choice()`.
+  - When mood is not set, `mood_atmosphere=True` has no effect — no phrase is
+    inserted (consistent: no mood, no atmosphere).
+  - Works with all features: detail=0, prose/poetic/json, combine, echo, legend,
+    soundscape, wildlife, time-of-day, season, perspective, travelogue, wistful,
+    all biomes, all presets.
+  - Seed-breaking when enabled: one `rng.choice(MOOD_ATMOSPHERE[mood])` call
+    and possibly one `rng.choice(active_moods)` call shift subsequent random
+    picks. Determinism is preserved (same seed + same args = same output).
+- **Added `mood_atmosphere` param to `generate_landscape()`** — defaults to
+  `False`, preserving all existing behavior.
+- **Added `--mood-atmosphere` CLI flag** (boolean, default: off) — follows the
+  same pattern as `--echo`, `--sound`, `--wildlife`, `--time`, `--season`,
+  `--perspective`, etc.
+- **Added `"mood_atmosphere": True` to JSON metadata** when enabled — consistent
+  with all other boolean feature metadata patterns.
+- **Added 16 new tests** in `TestMoodAtmosphere`:
+  - Disabled by default (no atmosphere appears with `mood="eerie"` alone)
+  - Enabled appears with mood (atmosphere phrases present with `mood_atmosphere=True`)
+  - Valid output for all 4 moods, all biomes, detail=0, JSON, poetic, combine
+  - Determinism (same seed + same args = same output)
+  - Differs from mood-without-atmosphere
+  - JSON format and JSON field presence/absence
+  - Works with other features (echo, sound, wildlife, time, season, perspective)
+  - Works with combined moods (mood atmosphere picks from one of the active moods)
+  - CLI flag existence
+  - No atmosphere when mood is None even with `mood_atmosphere=True`
+- This fulfills the second "Next likely step" from Session 147: "Add a 'mood'
+  dimension that affects how the entire landscape feels (beyond word-weight
+  biasing)." After 6 consecutive sessions of word bank expansions and count/prob
+  controls (Sessions 142-147), this adds a genuinely new atmospheric dimension
+  that changes the landscape's emotional register through narrative framing
+  rather than just word frequency.
+- Tests increased from 929 to 945 landscape tests (18 todo unchanged), subtests
+  from 304 to 317.
+
+### Current status
+Working. All 963 tests pass (18 todo + 945 landscape), 317 subtests.
+
+### Next likely steps
+- Expand global word banks (more echoes, more time-of-day, more seasons)
+- Add mood atmosphere to presets with appropriate values
+- Add a narrative/poetic device dimension (simile, metaphor, personification
+  as separate controllable features)
+- Add count/prob controls for mood atmosphere (e.g. multiple atmosphere phrases)
+
+## 2026-07-15
+
 ### What was done (Session 147)
 - **Expanded PERSPECTIVES word bank from 10 to 15 phrases** — 5 new perspective
   phrases added, covering spatial vantage niches not represented in the original 10:

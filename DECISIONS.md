@@ -1,5 +1,83 @@
 # Decisions
 
+## 2026-07-15 — Mood Atmosphere System (`--mood-atmosphere`)
+
+### What
+Added a `MOOD_ATMOSPHERE` word bank (4 phrases per mood — peaceful, eerie,
+vibrant, desolate — 16 total), `--mood-atmosphere` CLI flag (default: off),
+`mood_atmosphere` parameter to `generate_landscape()`, JSON metadata, and
+16 new tests. Each phrase is a standalone sentence inserted between the opening
+description and the detail sentences, establishing the emotional register of the
+landscape through narrative atmosphere rather than word-frequency biasing.
+
+### Why
+The mood system, despite being a well-established feature, only affected landscape
+output through word-weight biasing — it made mood-aligned words (adjectives,
+elements, nouns, etc.) more likely to appear. This is a statistical effect: the
+output *feels* more eerie because it contains more eerie words, but there is no
+narrative framing of the mood, no sentence that explicitly establishes the tone.
+
+The "Next likely steps" from Session 147 explicitly called for this: "Add a 'mood'
+dimension that affects how the entire landscape feels (beyond word-weight biasing)."
+After 6 consecutive sessions of word bank expansions and count/prob refinements
+(Sessions 142-147), the project needed a genuinely new atmospheric dimension.
+
+Each mood's 4 phrases are curated to a distinct emotional register:
+
+- **peaceful**: Acceptance and stillness. Phrases like "A gentle stillness settles
+  over the scene like a blessing" and "The world holds its breath, and for a
+  moment, all is well" establish a tone of serene, benevolent calm. No existing
+  echo, wistful, or perspective phrase occupies this register.
+- **eerie**: Dread and wrongness. Phrases like "There is a wrongness in the air
+  that you cannot name" and "The silence here has a texture — thick, watchful,
+  patient" establish a tone of primal unease. Distinct from the wistful phrase
+  "you feel as though you are being watched by the element itself" (which is
+  observational) — this is visceral and immediate.
+- **vibrant**: Exuberant aliveness. Phrases like "The world feels borderless and
+  alive, humming with impossible energy" and "Every detail of the landscape pulses
+  with a fierce, joyful intensity" establish a tone of superabundant vitality.
+  No existing phrase conveys this register of joyful intensity.
+- **desolate**: Stark abandonment. Phrases like "Hope withered here long ago,
+  leaving only the bones of the world" and "This place has been empty for so
+  long that emptiness has become its only identity" establish a tone of profound
+  desolation. More starkly emotional than any existing echo or wistful phrase.
+
+### Tradeoffs
+- **Off by default** (`mood_atmosphere=False`), preserving all existing seed-based
+  output for users who use `--mood` without `--mood-atmosphere`. This follows the
+  pattern of all opt-in features (echo, sound, wildlife, time, season, perspective).
+- **Phrase inserted after the opening, before detail sentences** — the order is:
+  perspective → season → time-of-day → opening → **mood atmosphere** → detail loop
+  → weather → anomaly → echo → sound → wildlife → legend → wistful → travelogue.
+  This creates a natural emotional bridge from "what the landscape is" (opening)
+  to "how to feel about it" (atmosphere) before the elaboration begins (detail).
+- **Random mood selection for combined moods**: When multiple moods are active
+  (e.g. `--mood eerie --mood vibrant`), one mood is randomly chosen and one phrase
+  from that mood's pool is emitted. This means the atmosphere reflects a single
+  emotional register even when the word-selection bias blends moods — a tradeoff
+  that keeps the output coherent (a single emotional framing sentence) rather than
+  mixing registers mid-atmosphere.
+- **No effect when mood is None**: `mood_atmosphere=True` without a mood set
+  produces no atmosphere phrase. This is consistent: the atmosphere is fundamentally
+  tied to the mood, and there's no way to have a mood atmosphere without a mood.
+- **Seed-breaking when enabled**: One `rng.choice(MOOD_ATMOSPHERE[mood])` call
+  (and potentially one `rng.choice(active_moods)` for combined moods) shifts
+  subsequent random picks. Determinism is preserved (same seed + same args =
+  same output).
+- **Not yet in presets**: Unlike perspective (which was added to presets in the
+  same session), mood atmosphere is opt-in only for now. All 5 presets use mood,
+  so adding `mood_atmosphere: True` to presets would change all preset output.
+  This can be done in a future session once the feature is proven.
+- **No count/prob controls**: Single phrase per landscape. Count and probability
+  controls can be added in a future session if desired (following the pattern of
+  echo/sound/wildlife/perspective count/prob).
+- **16 new tests, 963 total** (18 todo + 945 landscape), 317 subtests.
+- **Test count +16 tests, +13 subtests** from the previous session (947 tests,
+  304 subtests).
+- **Fulfills "Next likely steps" from Session 147**: The second item (mood
+  dimension beyond word-weight biasing) was explicitly called out and is now
+  implemented.
+
 ## 2026-07-15 — Expanded PERSPECTIVES Word Bank (15 phrases)
 
 ### What

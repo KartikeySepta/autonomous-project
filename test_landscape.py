@@ -2716,6 +2716,152 @@ class TestPeacefulMood(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+MOOD_ATMOSPHERE_INDICATORS = {
+    "peaceful": [
+        "settles over the scene like a blessing",
+        "air is soft and kind",
+        "breathe in a slow, tranquil rhythm",
+        "for a moment, all is well",
+    ],
+    "eerie": [
+        "wrongness in the air",
+        "thick, watchful, patient",
+        "hair on your neck stand up",
+        "attention that feels ancient and cold",
+    ],
+    "vibrant": [
+        "humming with impossible energy",
+        "too full to contain itself",
+        "fierce, joyful intensity",
+        "charged with life, electric and golden",
+    ],
+    "desolate": [
+        "bones of the world",
+        "nothing grows, nothing waits",
+        "held breath that will never be released",
+        "emptiness has become its only identity",
+    ],
+}
+
+ALL_MOOD_ATMOSPHERE_PHRASES = set()
+for phrases in MOOD_ATMOSPHERE_INDICATORS.values():
+    ALL_MOOD_ATMOSPHERE_PHRASES.update(phrases)
+
+
+class TestMoodAtmosphere(unittest.TestCase):
+    def test_disabled_by_default(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, mood="eerie")
+            for ind in ALL_MOOD_ATMOSPHERE_PHRASES:
+                self.assertNotIn(ind, result,
+                    f"Mood atmosphere indicator {ind!r} should not appear by default")
+
+    def test_enabled_appears_with_mood(self):
+        results = [generate_landscape(seed=s, mood="eerie", mood_atmosphere=True) for s in range(100)]
+        self.assertTrue(
+            any(ind in r for r in results for ind in MOOD_ATMOSPHERE_INDICATORS["eerie"]),
+            "No eerie mood atmosphere phrase appeared across 100 seeds with mood_atmosphere=True",
+        )
+
+    def test_does_not_break_output(self):
+        for mood_name in ["peaceful", "eerie", "vibrant", "desolate"]:
+            for s in range(10):
+                result = generate_landscape(seed=s, mood=mood_name, mood_atmosphere=True)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_is_deterministic(self):
+        a = generate_landscape(seed=42, mood="eerie", mood_atmosphere=True)
+        b = generate_landscape(seed=42, mood="eerie", mood_atmosphere=True)
+        self.assertEqual(a, b,
+            "Mood atmosphere should be deterministic with same seed")
+
+    def test_differs_from_without_atmosphere(self):
+        without = generate_landscape(seed=42, mood="eerie", mood_atmosphere=False)
+        with_atmos = generate_landscape(seed=42, mood="eerie", mood_atmosphere=True)
+        self.assertNotEqual(without, with_atmos,
+            "Mood atmosphere enabled should differ from disabled with same seed")
+
+    def test_works_with_all_moods(self):
+        for mood_name in ["peaceful", "eerie", "vibrant", "desolate"]:
+            with self.subTest(mood=mood_name):
+                results = [generate_landscape(seed=s, mood=mood_name, mood_atmosphere=True) for s in range(50)]
+                self.assertTrue(
+                    any(ind in r for r in results for ind in MOOD_ATMOSPHERE_INDICATORS[mood_name]),
+                    f"No {mood_name} mood atmosphere phrase appeared across 50 seeds",
+                )
+
+    def test_works_with_json_format(self):
+        result = generate_landscape(seed=42, mood="eerie", mood_atmosphere=True, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_json_includes_field(self):
+        result = generate_landscape(seed=42, mood="eerie", mood_atmosphere=True, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("mood_atmosphere", data)
+        self.assertEqual(data["mood_atmosphere"], True)
+
+    def test_json_field_absent_when_disabled(self):
+        result = generate_landscape(seed=42, mood="eerie", mood_atmosphere=False, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertNotIn("mood_atmosphere", data)
+
+    def test_works_with_all_biomes(self):
+        for biome in ["forest", "desert", "tundra", "ocean", "ruined city", "sky islands"]:
+            with self.subTest(biome=biome):
+                result = generate_landscape(seed=42, biome=biome, mood="eerie", mood_atmosphere=True)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_works_with_mood_combine(self):
+        for combo in [["peaceful", "eerie"], ["vibrant", "desolate"], ["eerie", "vibrant"]]:
+            with self.subTest(mood=combo):
+                results = [generate_landscape(seed=s, mood=combo, mood_atmosphere=True) for s in range(50)]
+                all_indicators = []
+                for m in combo:
+                    all_indicators.extend(MOOD_ATMOSPHERE_INDICATORS.get(m, []))
+                self.assertTrue(
+                    any(ind in r for r in results for ind in all_indicators),
+                    f"No mood atmosphere phrase appeared for mood={combo}",
+                )
+
+    def test_works_with_detail_zero(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, mood="eerie", mood_atmosphere=True, detail=0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_works_with_other_features(self):
+        result = generate_landscape(seed=42, mood="eerie", mood_atmosphere=True,
+                                     echo_enabled=True, sound_enabled=True,
+                                     wildlife_enabled=True, time_of_day_enabled=True,
+                                     season_enabled=True, perspective_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 50)
+
+    def test_works_with_poetic_format(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, mood="eerie", mood_atmosphere=True, fmt="poetic")
+            self.assertIsInstance(result, str)
+            self.assertIn("\n", result)
+
+    def test_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_no_mood_no_atmosphere_even_if_enabled(self):
+        result = generate_landscape(seed=42, mood=None, mood_atmosphere=True)
+        for ind in ALL_MOOD_ATMOSPHERE_PHRASES:
+            self.assertNotIn(ind, result,
+                "No mood atmosphere phrase should appear when mood is not set")
+
+
 class TestColorFlag(unittest.TestCase):
     def test_color_enabled_default_same_as_before(self):
         r1 = generate_landscape(seed=42, color_enabled=True)
