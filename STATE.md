@@ -2,6 +2,48 @@
 
 ## 2026-07-15
 
+### What was done (Session 144)
+- **Expanded SOUNDSCAPES word bank from 12 to 17 phrases** — 5 new soundscape
+  phrases added, covering sonic niches not represented in the original 12:
+  - `"Water drips {adverb} from the {adj} surfaces of the {display}, each
+    drop a bright {color} note against the {element}."` — water dripping as
+    percussion, the only liquid/water sound in the bank
+  - `"A {adj} music drifts {adverb} through the {display}, as if the {color}
+    {element} itself has learned to sing."` — melodic/musical quality,
+    distinct from existing rhythmic pulses and single ringing notes
+  - `"The wind howls {adverb} through the {adj} reaches of the {display}, a
+    {color} sound that seems to shape the very {element}."` — wind howling
+    as a forceful shaping presence, distinct from existing shattering-glass
+    wind sound
+  - `"{adj} voices whisper {adverb} in the {display}, a chorus of {color}
+    sounds that never form words."` — choral voices/many murmuring presences,
+    distinct from the single whisper at the edge of hearing
+  - `"The {adj} bones of the {display} groan {adverb}, a deep {color} sound
+    that resonates through the {element}."` — structural creaking/groaning,
+    adding the sound of the landscape's own body straining
+- **Added 5 new indicators to `SOUND_INDICATORS`** in the test module:
+  `"each drop a bright"`, `"learned to sing"`, `"shape the very"`,
+  `"never form words"`, `"resonates through the"` — each is a unique invariant
+  substring for dynamic test matching.
+- No code, CLI, or test logic changes — data-only expansion plus indicator
+  additions. All existing sound tests use dynamic count checks and loop
+  over `SOUND_INDICATORS`, so no test modifications were needed.
+- Each phrase is curated to fit a distinct sonic niche: water percussion,
+  melodic singing, wind howling, choral voices, structural groaning.
+  None overlap with existing phrases.
+- This directly fulfills the first "Next likely step" from Session 143:
+  expand other global word banks (more soundscapes).
+- Tests unchanged: still 880 landscape tests pass (281 subtests), 18 todo tests.
+
+### Current status
+Working. All 880 landscape tests pass (281 subtests), 18 todo tests.
+
+### Next likely steps
+- Expand other global word banks (more echoes, more time-of-day, more seasons)
+- Add spatial geometry dimension (e.g. scale, perspective, distance)
+
+## 2026-07-15
+
 ### What was done (Session 143)
 - **Expanded WILDLIFE word bank from 10 to 15 phrases** — 5 new wildlife phrases
   added, covering wildlife niches not represented in the original 10:

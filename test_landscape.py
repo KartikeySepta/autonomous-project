@@ -94,6 +94,11 @@ SOUND_INDICATORS = [
     "crackles like distant",
     "Footsteps echo through",
     "note rings out",
+    "each drop a bright",
+    "learned to sing",
+    "shape the very",
+    "never form words",
+    "resonates through the",
 ]
 
 WEATHER_INDICATORS = [

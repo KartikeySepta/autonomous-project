@@ -167,6 +167,11 @@ SOUNDSCAPES = [
     "The {element} of the {display} crackles {adverb} like distant radio static.",
     "Footsteps echo {adverb} through the {display}, though you are alone.",
     "From the {adj} depths of the {display}, a single {color} note rings out {adverb}.",
+    "Water drips {adverb} from the {adj} surfaces of the {display}, each drop a bright {color} note against the {element}.",
+    "A {adj} music drifts {adverb} through the {display}, as if the {color} {element} itself has learned to sing.",
+    "The wind howls {adverb} through the {adj} reaches of the {display}, a {color} sound that seems to shape the very {element}.",
+    "{adj} voices whisper {adverb} in the {display}, a chorus of {color} sounds that never form words.",
+    "The {adj} bones of the {display} groan {adverb}, a deep {color} sound that resonates through the {element}.",
 ]
 
 WILDLIFE = [

@@ -1,5 +1,68 @@
 # Decisions
 
+## 2026-07-15 — Expanded SOUNDSCAPES Word Bank (17 phrases)
+
+### What
+Added 5 new curated soundscape phrases to the SOUNDSCAPES bank, expanding it
+from 12 to 17 phrases. The new phrases cover water dripping as percussion,
+melodic singing, wind howling, choral voices, and structural groaning — sonic
+niches absent from the original 12.
+
+### Why
+The SOUNDSCAPES bank was last expanded in Session 121 (8→12) and had not
+received any expansion since. Every other major word bank had been expanded
+more recently: ECHOES (Session 122, 10→15), WISTFUL (Session 123, 6→10),
+LEGENDS (Session 124, 15→20), TIMES_OF_DAY (Session 133, 10→15), SEASONS
+(Session 135, 10→15), WILDLIFE (Session 143, 10→15). Soundscapes were the
+most overdue bank, having gone 23 sessions without expansion.
+
+With soundscapes now enabled by default in all 5 presets (with count=1-2
+and prob=0.5-0.95), repetition in soundscape output is noticeable — especially
+at higher counts where 2 distinct phrases are drawn per landscape. Expanding
+from 12 to 17 reduces repetition by ~42% in the selection pool.
+
+The "Next likely steps" from Session 143 explicitly called for expanding
+global word banks, with soundscapes as the first item in the list.
+
+The 5 new phrases each cover a sonic niche not represented in the existing 12:
+- **Water percussion**: "Water drips {adverb} from the {adj} surfaces of the
+  {display}, each drop a bright {color} note against the {element}." — liquid
+  dripping as a percussive element, the only water-related sound in the bank.
+  Distinct from existing general "element crackles like static" and
+  "single note rings out".
+- **Melodic singing**: "A {adj} music drifts {adverb} through the {display},
+  as if the {color} {element} itself has learned to sing." — a musical/melodic
+  quality, distinct from existing rhythmic pulses ("slow, patient, {adj}")
+  and single ringing notes ("a single {color} note rings out").
+- **Wind howling**: "The wind howls {adverb} through the {adj} reaches of the
+  {display}, a {color} sound that seems to shape the very {element}." — wind
+  as a forceful agent that shapes the environment, distinct from existing wind
+  simile ("sounds like {color} glass shattering") which is about texture rather
+  than agency.
+- **Choral voices**: "{adj} voices whisper {adverb} in the {display}, a chorus
+  of {color} sounds that never form words." — many speaking presences as a
+  collective, distinct from the single whisper ("whispers {adverb}, a sound
+  just at the edge of hearing") and single creature call.
+- **Structural groaning**: "The {adj} bones of the {display} groan {adverb},
+  a deep {color} sound that resonates through the {element}." — the landscape
+  itself creaking and groaning, adding a bodily/architectural dimension absent
+  from the existing set (which focuses on ambient, wind, and creature sounds).
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only the SOUNDSCAPES list and SOUND_INDICATORS were updated.
+- **No seed-breaking**: Adding phrases to SOUNDSCAPES doesn't change the random
+  sequence — `rng.choice(SOUNDSCAPES)` picks from a larger pool but the choice
+  function is unchanged. Only the rendered output content changes (new phrases
+  appear in the selection pool).
+- **No new tests**: All soundscape tests use dynamic checks over
+  `SOUND_INDICATORS` and `len(SOUNDSCAPES)`. Only the indicator list was
+  extended; test logic is unchanged.
+- **Test count unchanged**: 880 landscape tests (281 subtests), 18 todo tests
+  — same as Session 143.
+- **Fulfills "Next likely steps" from Session 143**: Word bank expansion (more
+  soundscapes) was explicitly called out as the first item.
+
 ## 2026-07-15 — Expanded WILDLIFE Word Bank (15 phrases)
 
 ### What
