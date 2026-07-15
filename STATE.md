@@ -2,6 +2,76 @@
 
 ## 2026-07-15
 
+### What was done (Session 153)
+- **Added `--simile` CLI flag and `SIMILES` word bank (10 phrases)** — a new poetic
+  device dimension that adds a figurative language simile comparison to the landscape
+  description, following the pattern of `like a...` constructions.
+  - 10 curated simile phrases, each using `{display}`, `{adj}`, `{color}`,
+    `{element}`, and `{adverb}` template injections (3-5 slots per phrase):
+    - "The {display} stretches {adverb} like a {adj} tapestry of {color} {element}."
+    - "The {adj} {element} moves through the {display} like a living thing."
+    - "The {color} light of the {display} falls like {adj} dust upon the {element}."
+    - "The {adj} {display} breathes {adverb} like a great slumbering {element}."
+    - "The {color} {element} of the {display} shimmers like a {adj} veil."
+    - "The {adj} shapes of the {display} glow like embers of {color} {element}."
+    - "The {element} of the {display} wraps around everything like a {adj} shroud."
+    - "The {adj} silence of the {display} hangs like a {color} {element} in the air."
+    - "The {display} unfolds {adverb} like a {adj} dream of {color} {element}."
+    - "The {adj} edges of the {display} bleed into the surroundings like {color} {element}."
+  - Each simile compares a landscape aspect to an evocative image: a tapestry, a living
+    thing, dust, a slumbering giant, a veil, embers, a shroud, something suspended in
+    the air, a dream, or something bleeding into its surroundings.
+  - Off by default (`simile_enabled=False`), preserving all existing seed-based output.
+  - Placed after anomaly and before echo in the sentence order: opening → detail →
+    anomaly → **simile** → echo → sound → wildlife → legend → wistful.
+  - Suppressed at detail=0 (like echoes, soundscapes, wildlife, legends, wistful).
+  - Seed-breaking when enabled: one `rng.choice(SIMILES)` call shifts subsequent random
+    picks. Determinism is preserved (same seed + same args = same output).
+  - Works with all features: detail=0, prose/poetic/json, combine, echo, legend,
+    sound, wildlife, perspective, time-of-day, season, mood atmosphere, travelogue,
+    wistful, all biomes.
+- **Added `--no-simile` CLI flag** — users can now explicitly disable simile phrases
+  even when using presets that might enable them. Follows the exact same pattern as
+  `--no-echo`, `--no-legend`, `--no-sound`, etc.
+  - `--no-simile` forces `simile_enabled=False` regardless of preset config.
+  - Post-preset override block ensures `--no-simile` always wins after all gating.
+- **Added `--describe-similes` CLI flag and `describe_similes()` function** — users
+  can inspect all 10 simile phrases with index numbers, following the exact same
+  introspection pattern as `describe_echoes()`, `describe_legends()`, etc.
+- **Added `"simile_enabled"` to JSON metadata** when enabled — e.g.
+  `"simile_enabled": True`.
+- **Added preset gating for `simile_enabled`** — follows the same pattern as all other
+  preset gating, so presets can optionally enable similes in a future session.
+- Added 35 new tests (20 in `TestSimile`, 8 in `TestDescribeSimiles`, 4 in
+  `TestNoSimile`, plus `test_simile_works_with_mood_atmosphere` and
+  `test_simile_works_with_perspective`):
+  - `TestSimile` (20 tests): disabled by default, enabled appears, valid output,
+    determinism, differs from plain, detail=0, JSON format, JSON field present/absent,
+    works with echo, legend, travelogue, sound, wistful, time-of-day, season, wildlife,
+    perspective, mood atmosphere, poetic format, all biomes, CLI flag.
+  - `TestDescribeSimiles` (8 tests): returns string, header, all phrases, index
+    numbers, last index, CLI flag, stdout output, no landscape generated.
+  - `TestNoSimile` (4 tests): flag exists via CLI, disables simile with presets,
+    works with other features, JSON output, explicit `--simile` override.
+- This fulfills the second "Next likely step" from Session 152: "Add a
+  narrative/poetic device dimension (simile, metaphor, personification as separate
+  controllable features)." Similes are the first concrete implementation of this
+  poetic device dimension.
+- Tests increased from 968 to 1003 landscape tests (18 todo unchanged), subtests
+  from 337 to 355.
+
+### Current status
+Working. All 1021 tests pass (18 todo + 1003 landscape), 355 subtests.
+
+### Next likely steps
+- Expand simile word bank (more phrases, more varied constructions)
+- Add metaphor dimension (direct equative statements like "the {display} is a {adj}
+  {color} {element} of forgotten things")
+- Add personification dimension (giving human qualities to the landscape)
+- Expand global word banks (more echoes, more time-of-day, more seasons)
+
+## 2026-07-15
+
 ### What was done (Session 152)
 - **Added `--no-mood-atmosphere` CLI flag** — users can now explicitly disable mood
   atmosphere phrases even when using presets that enable them. Follows the exact same

@@ -210,6 +210,19 @@ PERSPECTIVES = [
     "Drifting {adverb} above the {display}, the {adj} expanse of {color} {element} unfolds beneath you like a living map",
 ]
 
+SIMILES = [
+    "The {display} stretches {adverb} like a {adj} tapestry of {color} {element}.",
+    "The {adj} {element} moves through the {display} like a living thing.",
+    "The {color} light of the {display} falls like {adj} dust upon the {element}.",
+    "The {adj} {display} breathes {adverb} like a great slumbering {element}.",
+    "The {color} {element} of the {display} shimmers like a {adj} veil.",
+    "The {adj} shapes of the {display} glow like embers of {color} {element}.",
+    "The {element} of the {display} wraps around everything like a {adj} shroud.",
+    "The {adj} silence of the {display} hangs like a {color} {element} in the air.",
+    "The {display} unfolds {adverb} like a {adj} dream of {color} {element}.",
+    "The {adj} edges of the {display} bleed into the surroundings like {color} {element}.",
+]
+
 TRAVELOGUE_PREFIXES = [
     "Journal entry, day {day}. I have reached the {display} at last.",
     "Log entry — {day} days out. The {display} lies before me.",
@@ -757,6 +770,14 @@ def describe_perspectives():
     return "\n".join(lines)
 
 
+def describe_similes():
+    """Return a string describing all available simile phrases."""
+    lines = ["=== simile phrases ==="]
+    for i, phrase in enumerate(SIMILES):
+        lines.append(f"  [{i}] {phrase}")
+    return "\n".join(lines)
+
+
 def describe_presets():
     """Return a string describing all available presets."""
     lines = ["=== presets ==="]
@@ -1127,7 +1148,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
     return chosen
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, weather_count=1, weather_prob=1.0, middle_enabled=True, color_enabled=True, element_enabled=True, anomaly_enabled=True, echo_enabled=False, echo_count=1, echo_prob=1.0, time_word_enabled=True, legend_enabled=False, legend_count=1, legend_prob=1.0, travelogue=False, wistful=False, sound_enabled=False, sound_count=1, sound_prob=1.0, time_of_day_enabled=False, time_count=1, time_prob=1.0, season_enabled=False, season_count=1, season_prob=1.0, wildlife_enabled=False, wildlife_count=1, wildlife_prob=1.0, perspective_enabled=False, perspective_count=1, perspective_prob=1.0, mood_atmosphere=False, mood_atmosphere_count=1, mood_atmosphere_prob=1.0):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, weather_count=1, weather_prob=1.0, middle_enabled=True, color_enabled=True, element_enabled=True, anomaly_enabled=True, echo_enabled=False, echo_count=1, echo_prob=1.0, time_word_enabled=True, legend_enabled=False, legend_count=1, legend_prob=1.0, travelogue=False, wistful=False, sound_enabled=False, sound_count=1, sound_prob=1.0, time_of_day_enabled=False, time_count=1, time_prob=1.0, season_enabled=False, season_count=1, season_prob=1.0, wildlife_enabled=False, wildlife_count=1, wildlife_prob=1.0, perspective_enabled=False, perspective_count=1, perspective_prob=1.0, mood_atmosphere=False, mood_atmosphere_count=1, mood_atmosphere_prob=1.0, simile_enabled=False):
     if seed is not None:
         rng = random.Random(seed)
     elif show_seed:
@@ -1276,6 +1297,13 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
                 anomaly_lower = anomaly_word[0].lower() + anomaly_word[1:]
                 parts.append(_format_tmpl(anomaly_tmpl, anomaly=anomaly_word, anomaly_lower=anomaly_lower, adverb=adverb, color=color, element=element, display=display, adj=adj, time_word=time_word))
 
+    if simile_enabled and detail >= 1:
+        phrase = rng.choice(SIMILES).format(
+            display=display, adverb=adverb, color=color,
+            adj=adj, element=element,
+        )
+        parts.append(phrase)
+
     if echo_enabled and detail >= 1 and echo_count > 0:
         used_echoes = set()
         for _ in range(echo_count):
@@ -1391,6 +1419,8 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
                 data["perspective_prob"] = perspective_prob
         if bias_overrides:
             data["bias_overrides"] = bias_overrides
+        if simile_enabled:
+            data["simile_enabled"] = True
         if mood_atmosphere:
             data["mood_atmosphere"] = True
             if mood_atmosphere_count != 1:
@@ -1555,6 +1585,18 @@ def main():
         help="Per-category override: mood weight for adverbs")
     parser.add_argument("--mood-weight-color", type=float, default=None,
         help="Per-category override: mood weight for colors")
+    parser.add_argument(
+        "--simile", action="store_true",
+        help="Append a poetic simile phrase comparing the landscape to an evocative image",
+    )
+    parser.add_argument(
+        "--no-simile", action="store_true",
+        help="Disable simile phrases (overrides preset and --simile)",
+    )
+    parser.add_argument(
+        "--describe-similes", action="store_true",
+        help="Show all available simile phrases with their index numbers",
+    )
     parser.add_argument(
         "--mood-atmosphere", action="store_true",
         help="Add mood-specific atmospheric framing phrases that establish the emotional register",
@@ -1889,6 +1931,8 @@ def main():
             args.season_prob = preset["season_prob"]
         if "color_enabled" in preset and args.no_color is False:
             args.no_color = not preset["color_enabled"]
+        if "simile_enabled" in preset and args.simile is False and not args.no_simile:
+            args.simile = preset["simile_enabled"]
         if "mood_atmosphere" in preset and args.mood_atmosphere is False and not args.no_mood_atmosphere:
             args.mood_atmosphere = preset["mood_atmosphere"]
         if "mood_atmosphere_count" in preset and args.mood_atmosphere_count == 1:
@@ -1915,6 +1959,8 @@ def main():
         args.season = False
     if args.no_wistful:
         args.wistful = False
+    if args.no_simile:
+        args.simile = False
     if args.no_mood_atmosphere:
         args.mood_atmosphere = False
 
@@ -1957,6 +2003,9 @@ def main():
     if args.describe_seasons:
         print(describe_seasons())
         return
+    if args.describe_similes:
+        print(describe_similes())
+        return
     if args.describe_presets:
         print(describe_presets())
         return
@@ -1964,7 +2013,7 @@ def main():
     lines = []
     for i in range(args.count):
         effective_seed = args.seed + i if args.seed is not None else None
-        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, weather_count=args.weather_count, weather_prob=args.weather_prob, middle_enabled=not args.no_middle, color_enabled=not args.no_color, element_enabled=not args.no_element, anomaly_enabled=not args.no_anomaly, echo_enabled=args.echo, echo_count=args.echo_count, echo_prob=args.echo_prob, time_word_enabled=not args.no_time_word, legend_enabled=args.legend, legend_count=args.legend_count, legend_prob=args.legend_prob, travelogue=args.travelogue, wistful=args.wistful, sound_enabled=args.sound, sound_count=args.sound_count, sound_prob=args.sound_prob, time_of_day_enabled=args.time, time_count=args.time_count, time_prob=args.time_prob, season_enabled=args.season, season_count=args.season_count, season_prob=args.season_prob, wildlife_enabled=args.wildlife, wildlife_count=args.wildlife_count, wildlife_prob=args.wildlife_prob, perspective_enabled=args.perspective, perspective_count=args.perspective_count, perspective_prob=args.perspective_prob, mood_atmosphere=args.mood_atmosphere, mood_atmosphere_count=args.mood_atmosphere_count, mood_atmosphere_prob=args.mood_atmosphere_prob))
+        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, weather_count=args.weather_count, weather_prob=args.weather_prob, middle_enabled=not args.no_middle, color_enabled=not args.no_color, element_enabled=not args.no_element, anomaly_enabled=not args.no_anomaly, echo_enabled=args.echo, echo_count=args.echo_count, echo_prob=args.echo_prob, time_word_enabled=not args.no_time_word, legend_enabled=args.legend, legend_count=args.legend_count, legend_prob=args.legend_prob, travelogue=args.travelogue, wistful=args.wistful, sound_enabled=args.sound, sound_count=args.sound_count, sound_prob=args.sound_prob, time_of_day_enabled=args.time, time_count=args.time_count, time_prob=args.time_prob, season_enabled=args.season, season_count=args.season_count, season_prob=args.season_prob, wildlife_enabled=args.wildlife, wildlife_count=args.wildlife_count, wildlife_prob=args.wildlife_prob, perspective_enabled=args.perspective, perspective_count=args.perspective_count, perspective_prob=args.perspective_prob, mood_atmosphere=args.mood_atmosphere, mood_atmosphere_count=args.mood_atmosphere_count, mood_atmosphere_prob=args.mood_atmosphere_prob, simile_enabled=args.simile))
     if args.format == "json" and len(lines) > 1:
         output = "[" + ",\n".join(lines) + "]\n"
     else:

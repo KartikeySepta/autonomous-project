@@ -1,5 +1,55 @@
 # Decisions
 
+## 2026-07-15 — Simile System (`--simile`) (Session 153)
+
+### What
+Added a `SIMILES` word bank (10 curated phrases), `--simile` CLI flag (default: off),
+`--no-simile` CLI flag, `--describe-similes` introspection, `simile_enabled` parameter
+to `generate_landscape()`, JSON metadata, preset gating, and 35 new tests. Each phrase
+is a single sentence using `like` constructions (e.g. "The {display} stretches {adverb}
+like a {adj} tapestry of {color} {element}.") inserted after anomalies and before
+echoes.
+
+### Why
+The "Next likely steps" in Sessions 151 and 152 explicitly called for adding a
+narrative/poetic device dimension — simile, metaphor, or personification as separate
+controllable features. The project had sophisticated sensory layers (visual, auditory,
+temporal, spatial, emotional, folkloric) but no dedicated figurative language system.
+The existing echo system occasionally brushes against simile (e.g. "Light bends through
+the air... like something is calling") but there was no explicit, controllable simile
+feature.
+
+Similes add a genuinely new linguistic register: they compare the landscape to something
+else, inviting the reader to imagine the scene through metaphor rather than direct
+description. This is a fundamental poetic device that exists in every literary tradition
+and was a natural gap in the generator's capabilities.
+
+### Tradeoffs
+- **10 curated phrases** — same size as the original PERSPECTIVES, TIMES_OF_DAY, and
+  SEASONS banks. Covers 10 different simile constructions: tapestry, living thing, dust,
+  slumbering giant, veil, embers, shroud, hanging presence, dream, bleeding color. The
+  bank can be expanded in future sessions.
+- **Off by default** (`simile_enabled=False`), preserving all existing seed-based output
+  for users who don't use `--simile`.
+- **Suppressed at detail=0** — like echoes, soundscapes, wildlife, legends, and wistful.
+  Similes feel like detail elements that need at least a minimal landscape to describe.
+- **Placed after anomalies, before echoes** — the order is: opening → detail → weather
+  → anomaly → **simile** → echo → sound → wildlife → legend → wistful → travelogue.
+  Similes provide a figurative bridge between the literal description (detail/anomaly)
+  and the atmospheric layers (echo/sound), creating a natural progression from "what it
+  is" to "what it's like" to "what it remembers/sounds like."
+- **Seed-breaking when enabled**: One `rng.choice(SIMILES)` call shifts subsequent
+  random picks. Determinism is preserved (same seed + same args = same output).
+- **Not in presets yet** — follows the same trajectory as every other opt-in feature
+  (echoes, legends, soundscapes, wildlife, perspective, wistful, time-of-day, season,
+  mood atmosphere). Can be added to presets in a future session.
+- **No count/prob controls** — follows the same trajectory as perspective, wildlife,
+  time-of-day, and season (which started as on/off and got count/prob later). Can be
+  added in a future session.
+- **35 new tests, 1021 total** (18 todo + 1003 landscape), 355 subtests.
+- **Fulfills "Next likely steps" from Session 152**: The second item (narrative/poetic
+  device dimension) was explicitly called out and similes are the first implementation.
+
 ## 2026-07-15 — `--no-mood-atmosphere` Flag (Session 152)
 
 ### What

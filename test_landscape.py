@@ -8,8 +8,8 @@ from landscape import (
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS, ECHOES, LEGENDS,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
-    TIME_WORDS, TIMES_OF_DAY, SEASONS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL, SOUNDSCAPES, WILDLIFE, PERSPECTIVES,
-    describe_travelogue, describe_wistful, describe_sounds, describe_times, describe_seasons, describe_wildlife, describe_perspectives,
+    TIME_WORDS, TIMES_OF_DAY, SEASONS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL, SOUNDSCAPES, WILDLIFE, PERSPECTIVES, SIMILES,
+    describe_travelogue, describe_wistful, describe_sounds, describe_times, describe_seasons, describe_wildlife, describe_perspectives, describe_similes,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -26,6 +26,7 @@ ALL_WISTFUL = set(WISTFUL)
 ALL_SOUNDSCAPES = set(SOUNDSCAPES)
 ALL_TIMES_OF_DAY = set(TIMES_OF_DAY)
 ALL_SEASONS = set(SEASONS)
+ALL_SIMILES = set(SIMILES)
 
 TIME_INDICATORS = [
     "Dawn breaks",
@@ -145,6 +146,19 @@ PERSPECTIVE_INDICATORS = [
     "grows against the horizon",
     "appears transformed",
     "like a living map",
+]
+
+SIMILE_INDICATORS = [
+    "stretches like a",
+    "moves through the",
+    "falls like",
+    "breathes like a great",
+    "shimmers like a",
+    "glow like embers",
+    "wraps around everything like",
+    "hangs like a",
+    "unfolds like a dream of",
+    "bleed into the surroundings",
 ]
 
 
@@ -7392,6 +7406,253 @@ class TestNoPerspective(unittest.TestCase):
         with_persp = generate_landscape(seed=42, perspective_enabled=True)
         self.assertNotEqual(no_persp, with_persp,
             "perspective_enabled=False should differ from perspective_enabled=True with same seed")
+
+
+class TestSimile(unittest.TestCase):
+    def test_simile_disabled_by_default(self):
+        for s in range(20):
+            result = generate_landscape(seed=s)
+            for ind in SIMILE_INDICATORS:
+                self.assertNotIn(ind, result,
+                    f"Simile indicator {ind!r} should not appear by default")
+
+    def test_simile_enabled_appears(self):
+        results = [generate_landscape(seed=s, simile_enabled=True) for s in range(50)]
+        has_simile = any(
+            any(ind in r for ind in SIMILE_INDICATORS) for r in results
+        )
+        self.assertTrue(has_simile,
+            "Simile phrase should appear when enabled")
+
+    def test_simile_produces_valid_output(self):
+        for s in range(50):
+            result = generate_landscape(seed=s, simile_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_simile_is_deterministic(self):
+        a = generate_landscape(seed=42, simile_enabled=True)
+        b = generate_landscape(seed=42, simile_enabled=True)
+        self.assertEqual(a, b,
+            "Simile should be deterministic with same seed")
+
+    def test_simile_differs_from_plain(self):
+        plain = generate_landscape(seed=42)
+        similed = generate_landscape(seed=42, simile_enabled=True)
+        self.assertNotEqual(plain, similed,
+            "Simile output should differ from plain output")
+
+    def test_simile_works_with_detail_zero(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, simile_enabled=True, detail=0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            # Similes are suppressed at detail=0 (like echoes, soundscapes)
+            for ind in SIMILE_INDICATORS:
+                self.assertNotIn(ind, result,
+                    f"Simile should not appear at detail=0 at seed {s}")
+
+    def test_simile_works_with_json_format(self):
+        result = generate_landscape(seed=42, simile_enabled=True, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_simile_json_includes_field(self):
+        result = generate_landscape(seed=42, simile_enabled=True, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("simile_enabled", data)
+        self.assertTrue(data["simile_enabled"])
+
+    def test_simile_json_field_absent_when_disabled(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertNotIn("simile_enabled", data,
+            "simile_enabled should not be in JSON when disabled")
+
+    def test_simile_works_with_echo(self):
+        result = generate_landscape(seed=42, simile_enabled=True, echo_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_simile_works_with_legend(self):
+        result = generate_landscape(seed=42, simile_enabled=True, legend_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_simile_works_with_travelogue(self):
+        result = generate_landscape(seed=42, simile_enabled=True, travelogue=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_simile_works_with_sound(self):
+        result = generate_landscape(seed=42, simile_enabled=True, sound_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_simile_works_with_wistful(self):
+        result = generate_landscape(seed=42, simile_enabled=True, wistful=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_simile_works_with_time_of_day(self):
+        result = generate_landscape(seed=42, simile_enabled=True, time_of_day_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_simile_works_with_season(self):
+        result = generate_landscape(seed=42, simile_enabled=True, season_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_simile_works_with_wildlife(self):
+        result = generate_landscape(seed=42, simile_enabled=True, wildlife_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_simile_works_with_perspective(self):
+        result = generate_landscape(seed=42, simile_enabled=True, perspective_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_simile_works_with_mood_atmosphere(self):
+        result = generate_landscape(seed=42, simile_enabled=True, mood="eerie", mood_atmosphere=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_simile_works_with_poetic_format(self):
+        result = generate_landscape(seed=42, simile_enabled=True, fmt="poetic")
+        self.assertIsInstance(result, str)
+        self.assertIn("\n", result)
+
+    def test_simile_works_with_all_biomes(self):
+        for biome in BIOMES:
+            with self.subTest(biome=biome):
+                result = generate_landscape(seed=42, biome=biome, simile_enabled=True)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_simile_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+class TestDescribeSimiles(unittest.TestCase):
+    def test_describe_similes_returns_string(self):
+        result = describe_similes()
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_describe_similes_contains_header(self):
+        result = describe_similes()
+        self.assertIn("simile phrases", result)
+
+    def test_describe_similes_contains_all_phrases(self):
+        result = describe_similes()
+        for phrase in SIMILES:
+            self.assertIn(phrase, result,
+                f"Simile phrase not found in description: {phrase!r}")
+
+    def test_describe_similes_contains_index_numbers(self):
+        result = describe_similes()
+        self.assertIn("[0]", result)
+        self.assertIn("[1]", result)
+
+    def test_describe_similes_shows_all_phrases(self):
+        result = describe_similes()
+        last_idx = len(SIMILES) - 1
+        self.assertIn(f"[{last_idx}]", result,
+            f"Last index [{last_idx}] should appear in description")
+
+    def test_describe_similes_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_similes_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-similes"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("simile phrases", output)
+        self.assertIn("[0]", output)
+
+    def test_describe_similes_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-similes", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-similes is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-similes is used")
+
+
+class TestNoSimile(unittest.TestCase):
+    def test_no_simile_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_no_simile_disables_simile_with_preset(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                result = generate_landscape(seed=42, **PRESETS[name])
+                has_simile = any(ind in result for ind in SIMILE_INDICATORS)
+                if not has_simile:
+                    continue
+                result_no = generate_landscape(
+                    seed=42,
+                    simile_enabled=False,
+                    **{k: v for k, v in PRESETS[name].items() if k not in ("simile_enabled",)}
+                )
+                no_simile = not any(ind in result_no for ind in SIMILE_INDICATORS)
+                self.assertTrue(no_simile,
+                    f"Preset {name} should have simile suppressed with simile_enabled=False")
+
+    def test_no_simile_works_with_other_features(self):
+        result = generate_landscape(seed=42, simile_enabled=False, echo_enabled=True, legend_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_no_simile_json_output(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertNotIn("simile_enabled", data,
+            "simile_enabled should not be in JSON when disabled")
+
+    def test_no_simile_with_explicit_simile_override(self):
+        no_sim = generate_landscape(seed=42, simile_enabled=False)
+        with_sim = generate_landscape(seed=42, simile_enabled=True)
+        self.assertNotEqual(no_sim, with_sim,
+            "simile_enabled=False should differ from simile_enabled=True with same seed")
 
 
 if __name__ == "__main__":
