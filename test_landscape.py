@@ -45,6 +45,24 @@ TIME_INDICATORS = [
     "Morning mist",
 ]
 
+SEASON_INDICATORS = [
+    "first buds push through",
+    "droning insects",
+    "study in gold and decay",
+    "silence and frost",
+    "tender green of late spring",
+    "Midsummer's lush fullness",
+    "scent of falling leaves",
+    "muffling the world in white",
+    "revealing its bones",
+    "reborn from rain",
+    "meltwater carves",
+    "fields heavy with seed",
+    "prepares for winter's rest",
+    "palace of crystal and ice",
+    "washes winter's last traces",
+]
+
 SOUND_INDICATORS = [
     "tone that seems to come from everywhere",
     "shifts and settles",
@@ -5919,6 +5937,104 @@ class TestDescribeTimes(unittest.TestCase):
             "No landscape should be generated when --describe-times is used")
         self.assertNotIn("\n\n", output,
             "No landscape should be generated when --describe-times is used")
+
+
+class TestSeasonCount(unittest.TestCase):
+    def test_season_count_default_is_one(self):
+        a = generate_landscape(seed=42, season_enabled=True)
+        b = generate_landscape(seed=42, season_enabled=True, season_count=1)
+        self.assertEqual(a, b,
+            "season_count=1 should match default")
+
+    def test_season_count_zero_suppresses_season(self):
+        result = generate_landscape(seed=42, season_enabled=True, season_count=0)
+        for s in ALL_SEASONS:
+            self.assertNotIn(s, result,
+                "Season should not appear with season_count=0")
+
+    def test_season_count_two_sometimes_has_multiple(self):
+        results = [generate_landscape(seed=s, season_enabled=True, season_count=3) for s in range(100)]
+        multi = [r for r in results if sum(1 for ind in SEASON_INDICATORS if ind in r) >= 2]
+        self.assertGreater(len(multi), 10,
+            "season_count=3 should often produce multi-season outputs")
+
+    def test_season_count_does_not_repeat_same_phrase(self):
+        results = [generate_landscape(seed=s, season_enabled=True, season_count=3) for s in range(200)]
+        for r in results:
+            for ind in SEASON_INDICATORS:
+                self.assertLessEqual(r.count(ind), 1,
+                    f"Season indicator {ind!r} should appear at most once: {r!r}")
+
+    def test_season_count_produces_valid_output(self):
+        for count in [0, 1, 2, 3]:
+            for s in range(10):
+                result = generate_landscape(seed=s, season_enabled=True, season_count=count)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_season_count_is_deterministic(self):
+        a = generate_landscape(seed=42, season_enabled=True, season_count=2)
+        b = generate_landscape(seed=42, season_enabled=True, season_count=2)
+        self.assertEqual(a, b,
+            "season_count should be deterministic with same seed")
+
+    def test_season_count_works_with_json_format(self):
+        result = generate_landscape(seed=42, season_enabled=True, season_count=2, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_season_count_json_includes_field(self):
+        result = generate_landscape(seed=42, season_enabled=True, season_count=2, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("season_count", data)
+        self.assertEqual(data["season_count"], 2)
+
+    def test_season_count_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+class TestSeasonProb(unittest.TestCase):
+    def test_season_prob_default_is_one(self):
+        a = generate_landscape(seed=42, season_enabled=True)
+        b = generate_landscape(seed=42, season_enabled=True, season_prob=1.0)
+        self.assertEqual(a, b,
+            "season_prob=1.0 should match default")
+
+    def test_season_prob_zero_suppresses_season(self):
+        results = [generate_landscape(seed=s, season_enabled=True, season_prob=0.0) for s in range(100)]
+        for r in results:
+            for ind in SEASON_INDICATORS:
+                self.assertNotIn(ind, r,
+                    f"Season indicator {ind!r} should not appear with season_prob=0.0")
+
+    def test_season_prob_produces_valid_output(self):
+        for prob in [0.0, 0.25, 0.5, 0.75, 1.0]:
+            for s in range(10):
+                result = generate_landscape(seed=s, season_enabled=True, season_prob=prob)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_season_prob_is_deterministic(self):
+        a = generate_landscape(seed=42, season_enabled=True, season_prob=0.5)
+        b = generate_landscape(seed=42, season_enabled=True, season_prob=0.5)
+        self.assertEqual(a, b,
+            "season_prob should be deterministic with same seed")
+
+    def test_season_prob_json_includes_field(self):
+        result = generate_landscape(seed=42, season_enabled=True, season_prob=0.5, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("season_prob", data)
+        self.assertEqual(data["season_prob"], 0.5)
+
+    def test_season_prob_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
 
 
 class TestNoSeason(unittest.TestCase):

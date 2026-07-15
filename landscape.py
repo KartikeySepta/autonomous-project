@@ -974,7 +974,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
     return chosen
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, weather_count=1, weather_prob=1.0, middle_enabled=True, color_enabled=True, element_enabled=True, anomaly_enabled=True, echo_enabled=False, echo_count=1, echo_prob=1.0, time_word_enabled=True, legend_enabled=False, legend_count=1, legend_prob=1.0, travelogue=False, wistful=False, sound_enabled=False, sound_count=1, sound_prob=1.0, time_of_day_enabled=False, time_count=1, time_prob=1.0, season_enabled=False):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, weather_count=1, weather_prob=1.0, middle_enabled=True, color_enabled=True, element_enabled=True, anomaly_enabled=True, echo_enabled=False, echo_count=1, echo_prob=1.0, time_word_enabled=True, legend_enabled=False, legend_count=1, legend_prob=1.0, travelogue=False, wistful=False, sound_enabled=False, sound_count=1, sound_prob=1.0, time_of_day_enabled=False, time_count=1, time_prob=1.0, season_enabled=False, season_count=1, season_prob=1.0):
     if seed is not None:
         rng = random.Random(seed)
     elif show_seed:
@@ -1015,9 +1015,15 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
                 used_times.add(phrase)
                 time_phrases.append(phrase)
 
-    season = None
-    if season_enabled:
-        season = rng.choice(SEASONS)
+    season_phrases = []
+    if season_enabled and season_count > 0:
+        used_seasons = set()
+        for _ in range(season_count):
+            if rng.random() < season_prob:
+                pool = [s for s in SEASONS if s not in used_seasons] or SEASONS
+                phrase = rng.choice(pool)
+                used_seasons.add(phrase)
+                season_phrases.append(phrase)
 
     adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
     if element_enabled:
@@ -1041,8 +1047,8 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
     parts = [opening]
     for i, phrase in enumerate(time_phrases):
         parts.insert(i, phrase + ".")
-    if season:
-        parts.insert(0, season + ".")
+    for i, phrase in enumerate(season_phrases):
+        parts.insert(i, phrase + ".")
 
     for _ in range(max(detail, 0)):
         if element_enabled:
@@ -1168,8 +1174,12 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
                 data["time_count"] = time_count
             if time_prob != 1.0:
                 data["time_prob"] = time_prob
-        if season:
-            data["season"] = season
+        if season_phrases:
+            data["season"] = season_phrases if len(season_phrases) > 1 else season_phrases[0]
+            if season_count != 1:
+                data["season_count"] = season_count
+            if season_prob != 1.0:
+                data["season_prob"] = season_prob
         if bias_overrides:
             data["bias_overrides"] = bias_overrides
         if mood_weight_overrides:
@@ -1463,6 +1473,14 @@ def main():
         help="Prepend a seasonal phrase establishing the time of year",
     )
     parser.add_argument(
+        "--season-count", type=int, default=1, choices=[0, 1, 2, 3],
+        help="Number of seasonal phrases per landscape (0-3, default: 1, requires --season)",
+    )
+    parser.add_argument(
+        "--season-prob", type=float, default=1.0,
+        help="Probability of a seasonal phrase appearing per roll (0.0 to 1.0, default: 1.0)",
+    )
+    parser.add_argument(
         "--no-season", action="store_true",
         help="Disable seasonal phrase (overrides preset and --season)",
     )
@@ -1582,6 +1600,10 @@ def main():
             args.time_prob = preset["time_prob"]
         if "season_enabled" in preset and args.season is False and not args.no_season:
             args.season = preset["season_enabled"]
+        if "season_count" in preset and args.season_count == 1:
+            args.season_count = preset["season_count"]
+        if "season_prob" in preset and args.season_prob == 1.0:
+            args.season_prob = preset["season_prob"]
         if "color_enabled" in preset and args.no_color is False:
             args.no_color = not preset["color_enabled"]
 
@@ -1641,7 +1663,7 @@ def main():
     lines = []
     for i in range(args.count):
         effective_seed = args.seed + i if args.seed is not None else None
-        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, weather_count=args.weather_count, weather_prob=args.weather_prob, middle_enabled=not args.no_middle, color_enabled=not args.no_color, element_enabled=not args.no_element, anomaly_enabled=not args.no_anomaly, echo_enabled=args.echo, echo_count=args.echo_count, echo_prob=args.echo_prob, time_word_enabled=not args.no_time_word, legend_enabled=args.legend, legend_count=args.legend_count, legend_prob=args.legend_prob, travelogue=args.travelogue, wistful=args.wistful, sound_enabled=args.sound, sound_count=args.sound_count, sound_prob=args.sound_prob, time_of_day_enabled=args.time, time_count=args.time_count, time_prob=args.time_prob, season_enabled=args.season))
+        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, weather_count=args.weather_count, weather_prob=args.weather_prob, middle_enabled=not args.no_middle, color_enabled=not args.no_color, element_enabled=not args.no_element, anomaly_enabled=not args.no_anomaly, echo_enabled=args.echo, echo_count=args.echo_count, echo_prob=args.echo_prob, time_word_enabled=not args.no_time_word, legend_enabled=args.legend, legend_count=args.legend_count, legend_prob=args.legend_prob, travelogue=args.travelogue, wistful=args.wistful, sound_enabled=args.sound, sound_count=args.sound_count, sound_prob=args.sound_prob, time_of_day_enabled=args.time, time_count=args.time_count, time_prob=args.time_prob, season_enabled=args.season, season_count=args.season_count, season_prob=args.season_prob))
     if args.format == "json" and len(lines) > 1:
         output = "[" + ",\n".join(lines) + "]\n"
     else:

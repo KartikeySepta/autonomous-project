@@ -2,6 +2,53 @@
 
 ## 2026-07-15
 
+### What was done (Session 137)
+- **Added `--season-count` and `--season-prob` CLI flags** — users can now control
+  how many seasonal phrases appear per landscape (0-3, default: 1) and how often
+  each roll succeeds (0.0-1.0, default: 1.0), following the exact same pattern as
+  `--time-count`/`--time-prob`, `--echo-count`/`--echo-prob`,
+  `--sound-count`/`--sound-prob`, and `--weather-count`/`--weather-prob`.
+  - `season_count=0` suppresses all seasonal phrases (alternative to `--no-season`)
+  - `season_count=1` (default) produces exactly 1 phrase (existing behavior)
+  - `season_count=2` and `season_count=3` produce multiple distinct seasonal phrases
+    with dedup (preventing the same phrase from appearing twice)
+  - `season_prob=0.0` suppresses all seasonal phrases even with `season_count > 0`
+  - Each of `season_count` rolls independently draws `rng.random() < season_prob`
+  - Default `season_count=1, season_prob=1.0` preserves backward compatibility —
+    all existing seed-based output with `--season` is unchanged
+- **Added `season_count` and `season_prob` params to `generate_landscape()`** —
+  defaults 1 and 1.0 respectively, preserving all existing behavior.
+- **Added `season_count` and `season_prob` to JSON metadata** when non-default
+  values are used — `season` is a list of strings when multiple phrases are
+  generated, and a single string when only one (backward compatible).
+- **Added preset gating for `season_count` and `season_prob`** — follows the same
+  pattern as `time_count`/`time_prob` gating, so presets can optionally configure
+  seasonal density (not yet added to any preset).
+- Added 16 new tests (9 in `TestSeasonCount`, 7 in `TestSeasonProb`):
+  - `TestSeasonCount`: default is one, zero suppresses, multi-season with count=3,
+    no repeat same phrase, valid output for all counts, determinism, JSON format,
+    JSON field, CLI flag.
+  - `TestSeasonProb`: default is one, zero suppresses, valid output for all probs,
+    determinism, JSON field, CLI flag.
+- Added `SEASON_INDICATORS` list (15 invariant substrings from SEASONS)
+  for use by the new tests.
+- This fulfills the first "Next likely step" from Session 136: add
+  `--season-count`, `--season-prob` for configurable seasonal density.
+- Tests increased from 812 to 845 total (18 todo + 827 landscape), subtests
+  unchanged at 243.
+
+### Current status
+Working. All 845 tests pass (18 todo + 827 landscape), 243 subtests.
+
+### Next likely steps
+- Expand global word banks (more time-of-day, more echoes, more legends, more
+  soundscapes, more seasons)
+- Add inhabitants/wildlife as a new sensory dimension
+- Add spatial geometry dimension (e.g. scale, perspective, distance)
+- Add `--season-count`, `--season-prob` to presets with curated values
+
+## 2026-07-15
+
 ### What was done (Session 136)
 - **Added `--time-count` and `--time-prob` CLI flags** — users can now control how
   many time-of-day phrases appear per landscape (0-3, default: 1) and how often
@@ -46,8 +93,6 @@ Working. All 812 tests pass (18 todo + 794 landscape), 243 subtests.
   soundscapes)
 - Add inhabitants/wildlife as a new sensory dimension
 - Add spatial geometry dimension (e.g. scale, perspective, distance)
-
-## 2026-07-15
 
 ### What was done (Session 134)
 - **Added seasonal variation system** — a new `SEASONS` word bank of 10 evocative

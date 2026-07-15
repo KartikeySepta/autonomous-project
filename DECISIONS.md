@@ -1,5 +1,59 @@
 # Decisions
 
+## 2026-07-15 — Configurable Seasonal Count and Probability (`--season-count`, `--season-prob`)
+
+### What
+Added `--season-count` (choices 0-3, default: 1) and `--season-prob` (0.0-1.0,
+default: 1.0) CLI flags, with corresponding `season_count` and `season_prob`
+parameters to `generate_landscape()`. Users can now control how many seasonal
+phrases appear per landscape and how often each roll succeeds.
+
+Also added `SEASON_INDICATORS` to the test module for dedup/suppression testing,
+and preset gating for both new parameters.
+
+### Why
+The seasonal system (Session 134) was a single-phrase prepended framing. Every
+other multi-phrase feature — echoes, legends, soundscapes, weather, anomalies,
+time-of-day — has count and probability controls. Seasons were the last major
+feature without them. Adding count and prob gives users fine-grained control
+over seasonal density and frequency, matching the established pattern.
+
+The "Next likely steps" from Session 136 explicitly called for this:
+"Add --season-count, --season-prob for configurable seasonal density."
+
+### Tradeoffs
+- **Default season_count=1, season_prob=1.0** preserves backward compatibility —
+  all existing seed-based output with `--season` is unchanged.
+- **Per-roll probability**: each of `season_count` rolls per landscape
+  independently draws `rng.random() < season_prob`, same pattern as
+  `echo_prob`, `legend_prob`, `anomaly_prob`, `sound_prob`, `weather_prob`,
+  and `time_prob`.
+- **Dedup via used_seasons set**: prevents the same seasonal phrase from
+  appearing twice in the same landscape. When pool is exhausted (count > 15),
+  falls back to the full pool.
+- **season_count=0** is an alternative suppression mechanism to `season_prob=0.0`
+  and `season_enabled=False`. Multiple suppression paths are consistent
+  with the rest of the feature set.
+- **JSON metadata**: `season` is stored as a list when multiple phrases are
+  generated, and as a single string when only one (backward compatibility for
+  consumers reading `data["season"]` as a string with default count=1).
+  `season_count` and `season_prob` are emitted only when non-default values are
+  used (consistent with time/echo/weather/sound/legend metadata patterns).
+- **Phrases inserted in pick order**: first-picked phrase is outermost (first
+  in output), last-picked is innermost (closest to opening). All seasons come
+  before time-of-day and the opening — consistent with existing behavior.
+- **Seed-breaking when season_prob < 1.0**: When `season_prob` causes a roll to
+  be skipped, the RNG sequence shifts by one `rng.random()` call. With
+  `season_prob=1.0` (default), no extra random calls are consumed beyond the
+  `rng.choice()` for each pick, so behavior is unchanged from the previous
+  session.
+- **Preset gating exists but no presets use it yet**: The gating code follows
+  the exact same pattern as time_count/time_prob, so presets can be updated to
+  include season_count/season_prob in a future session if desired.
+- **16 new tests, 845 total** (18 todo + 827 landscape), 243 subtests.
+- **Fulfills "Next likely steps" from Session 136**: Configurable seasonal
+  density was explicitly called out as the first item.
+
 ## 2026-07-15 — Configurable Time-of-Day Count and Probability (`--time-count`, `--time-prob`)
 
 ### What
