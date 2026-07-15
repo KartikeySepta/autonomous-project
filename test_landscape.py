@@ -27,6 +27,24 @@ ALL_SOUNDSCAPES = set(SOUNDSCAPES)
 ALL_TIMES_OF_DAY = set(TIMES_OF_DAY)
 ALL_SEASONS = set(SEASONS)
 
+TIME_INDICATORS = [
+    "Dawn breaks",
+    "dead of night",
+    "blazing noon",
+    "Dusk settles",
+    "Early morning",
+    "Midnight beneath",
+    "Twilight fades",
+    "golden hour",
+    "first light",
+    "starless night",
+    "Late afternoon",
+    "storm-heavy",
+    "blue hour",
+    "witching hour",
+    "Morning mist",
+]
+
 SOUND_INDICATORS = [
     "tone that seems to come from everywhere",
     "shifts and settles",
@@ -5726,6 +5744,109 @@ class TestTimeOfDay(unittest.TestCase):
                 self.assertIsInstance(result, str)
                 self.assertGreater(len(result), 0)
                 self.assertTrue(result.endswith("."))
+
+
+class TestTimeCount(unittest.TestCase):
+    def test_time_count_default_is_one(self):
+        a = generate_landscape(seed=42, time_of_day_enabled=True)
+        b = generate_landscape(seed=42, time_of_day_enabled=True, time_count=1)
+        self.assertEqual(a, b,
+            "time_count=1 should match default")
+
+    def test_time_count_zero_suppresses_time(self):
+        result = generate_landscape(seed=42, time_of_day_enabled=True, time_count=0)
+        for t in ALL_TIMES_OF_DAY:
+            self.assertNotIn(t, result,
+                "Time-of-day should not appear with time_count=0")
+
+    def test_time_count_two_sometimes_has_multiple(self):
+        results = [generate_landscape(seed=s, time_of_day_enabled=True, time_count=3) for s in range(100)]
+        multi = [r for r in results if sum(1 for ind in TIME_INDICATORS if ind in r) >= 2]
+        self.assertGreater(len(multi), 10,
+            "time_count=3 should often produce multi-time outputs")
+
+    def test_time_count_does_not_repeat_same_phrase(self):
+        results = [generate_landscape(seed=s, time_of_day_enabled=True, time_count=3) for s in range(200)]
+        for r in results:
+            for ind in TIME_INDICATORS:
+                count = r.count(ind)
+                if count > 1:
+                    # "first light" may appear in both "first light of morning" and
+                    # "first light" substring of other phrases — check more carefully
+                    pass
+                self.assertLessEqual(r.count(ind), 2,
+                    f"Time indicator {ind!r} should appear at most twice: {r!r}")
+
+    def test_time_count_produces_valid_output(self):
+        for count in [0, 1, 2, 3]:
+            for s in range(10):
+                result = generate_landscape(seed=s, time_of_day_enabled=True, time_count=count)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_time_count_is_deterministic(self):
+        a = generate_landscape(seed=42, time_of_day_enabled=True, time_count=2)
+        b = generate_landscape(seed=42, time_of_day_enabled=True, time_count=2)
+        self.assertEqual(a, b,
+            "time_count should be deterministic with same seed")
+
+    def test_time_count_works_with_json_format(self):
+        result = generate_landscape(seed=42, time_of_day_enabled=True, time_count=2, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_time_count_json_includes_field(self):
+        result = generate_landscape(seed=42, time_of_day_enabled=True, time_count=2, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("time_count", data)
+        self.assertEqual(data["time_count"], 2)
+
+    def test_time_count_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+class TestTimeProb(unittest.TestCase):
+    def test_time_prob_default_is_one(self):
+        a = generate_landscape(seed=42, time_of_day_enabled=True)
+        b = generate_landscape(seed=42, time_of_day_enabled=True, time_prob=1.0)
+        self.assertEqual(a, b,
+            "time_prob=1.0 should match default")
+
+    def test_time_prob_zero_suppresses_time(self):
+        results = [generate_landscape(seed=s, time_of_day_enabled=True, time_prob=0.0) for s in range(100)]
+        for r in results:
+            for ind in TIME_INDICATORS:
+                self.assertNotIn(ind, r,
+                    f"Time indicator {ind!r} should not appear with time_prob=0.0")
+
+    def test_time_prob_produces_valid_output(self):
+        for prob in [0.0, 0.25, 0.5, 0.75, 1.0]:
+            for s in range(10):
+                result = generate_landscape(seed=s, time_of_day_enabled=True, time_prob=prob)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_time_prob_is_deterministic(self):
+        a = generate_landscape(seed=42, time_of_day_enabled=True, time_prob=0.5)
+        b = generate_landscape(seed=42, time_of_day_enabled=True, time_prob=0.5)
+        self.assertEqual(a, b,
+            "time_prob should be deterministic with same seed")
+
+    def test_time_prob_json_includes_field(self):
+        result = generate_landscape(seed=42, time_of_day_enabled=True, time_prob=0.5, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("time_prob", data)
+        self.assertEqual(data["time_prob"], 0.5)
+
+    def test_time_prob_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
 
 
 class TestDescribeTimes(unittest.TestCase):

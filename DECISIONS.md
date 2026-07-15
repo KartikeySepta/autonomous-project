@@ -1,5 +1,58 @@
 # Decisions
 
+## 2026-07-15 — Configurable Time-of-Day Count and Probability (`--time-count`, `--time-prob`)
+
+### What
+Added `--time-count` (choices 0-3, default: 1) and `--time-prob` (0.0-1.0,
+default: 1.0) CLI flags, with corresponding `time_count` and `time_prob`
+parameters to `generate_landscape()`. Users can now control how many time-of-day
+phrases appear per landscape and how often each roll succeeds.
+
+Also added `TIME_INDICATORS` to the test module for dedup/suppression testing,
+and preset gating for both new parameters.
+
+### Why
+The time-of-day system (Session 131) was a single-phrase prepended framing. Every
+other multi-phrase feature — echoes, legends, soundscapes, weather, anomalies —
+has count and probability controls. Time-of-day was the last major feature
+without them. Adding count and prob gives users fine-grained control over
+temporal density and frequency, matching the established pattern.
+
+The "Next likely steps" from Sessions 134/135 explicitly called for this:
+"Add --time-count, --time-prob for configurable time-of-day density."
+
+### Tradeoffs
+- **Default time_count=1, time_prob=1.0** preserves backward compatibility —
+  all existing seed-based output with `--time` is unchanged.
+- **Per-roll probability**: each of `time_count` rolls per landscape
+  independently draws `rng.random() < time_prob`, same pattern as
+  `echo_prob`, `legend_prob`, `anomaly_prob`, `sound_prob`, and `weather_prob`.
+- **Dedup via used_times set**: prevents the same time-of-day phrase from
+  appearing twice in the same landscape. When pool is exhausted (count > 15),
+  falls back to the full pool.
+- **time_count=0** is an alternative suppression mechanism to `time_prob=0.0`
+  and `time_of_day_enabled=False`. Multiple suppression paths are consistent
+  with the rest of the feature set.
+- **JSON metadata**: `time_of_day` is stored as a list when multiple phrases are
+  generated, and as a single string when only one (backward compatibility for
+  consumers reading `data["time_of_day"]` as a string with default count=1).
+  `time_count` and `time_prob` are emitted only when non-default values are used
+  (consistent with echo/weather/sound/legend metadata patterns).
+- **Phrases inserted in pick order**: first-picked phrase is outermost (first
+  in output), last-picked is innermost (closest to opening). When season is
+  also enabled, season remains outermost — consistent with existing behavior.
+- **Seed-breaking when time_prob < 1.0**: When `time_prob` causes a roll to be
+  skipped, the RNG sequence shifts by one `rng.random()` call. With
+  `time_prob=1.0` (default), no extra random calls are consumed beyond the
+  `rng.choice()` for each pick, so behavior is unchanged from the previous
+  session.
+- **Preset gating exists but no presets use it yet**: The gating code follows
+  the exact same pattern as echo_count/echo_prob, so presets can be updated to
+  include time_count/time_prob in a future session if desired.
+- **15 new tests, 812 total** (18 todo + 794 landscape), 243 subtests.
+- **Fulfills "Next likely steps" from Sessions 134/135**: Configurable
+  time-of-day density was explicitly called out as the third item.
+
 ## 2026-07-15 — Expanded SEASONS Word Bank (15 phrases)
 
 ### What

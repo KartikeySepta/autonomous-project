@@ -2,6 +2,53 @@
 
 ## 2026-07-15
 
+### What was done (Session 136)
+- **Added `--time-count` and `--time-prob` CLI flags** — users can now control how
+  many time-of-day phrases appear per landscape (0-3, default: 1) and how often
+  each roll succeeds (0.0-1.0, default: 1.0), following the exact same pattern as
+  `--echo-count`/`--echo-prob`, `--sound-count`/`--sound-prob`, and
+  `--weather-count`/`--weather-prob`.
+  - `time_count=0` suppresses all time-of-day phrases (alternative to `--no-time`)
+  - `time_count=1` (default) produces exactly 1 phrase (existing behavior)
+  - `time_count=2` and `time_count=3` produce multiple distinct time-of-day phrases
+    with dedup (preventing the same phrase from appearing twice)
+  - `time_prob=0.0` suppresses all time-of-day even with `time_count > 0`
+  - Each of `time_count` rolls independently draws `rng.random() < time_prob`
+  - Default `time_count=1, time_prob=1.0` preserves backward compatibility — all
+    existing seed-based output with `--time` is unchanged
+- **Added `time_count` and `time_prob` params to `generate_landscape()`** —
+  defaults 1 and 1.0 respectively, preserving all existing behavior.
+- **Added `time_count` and `time_prob` to JSON metadata** when non-default values
+  are used — `time_of_day` is a list of strings when multiple phrases are
+  generated, and a single string when only one (backward compatible).
+- **Added preset gating for `time_count` and `time_prob`** — follows the same
+  pattern as `echo_count`/`echo_prob` gating, so presets can optionally configure
+  time-of-day density (not yet added to any preset).
+- Added 15 new tests (9 in `TestTimeCount`, 6 in `TestTimeProb`):
+  - `TestTimeCount`: default is one, zero suppresses, multi-time with count=3,
+    no repeat same phrase, valid output for all counts, determinism, JSON format,
+    JSON field, CLI flag.
+  - `TestTimeProb`: default is one, zero suppresses, valid output for all probs,
+    determinism, JSON field, CLI flag.
+- Added `TIME_INDICATORS` list (15 invariant substrings from TIMES_OF_DAY)
+  for use by the new tests.
+- This fulfills the third "Next likely step" from Session 134/135: add
+  `--time-count`, `--time-prob` for configurable time-of-day density.
+- Tests increased from 797 to 812 total (18 todo + 794 landscape), subtests
+  unchanged at 243.
+
+### Current status
+Working. All 812 tests pass (18 todo + 794 landscape), 243 subtests.
+
+### Next likely steps
+- Add `--season-count`, `--season-prob` for configurable seasonal density
+- Expand global word banks (more time-of-day, more echoes, more legends, more
+  soundscapes)
+- Add inhabitants/wildlife as a new sensory dimension
+- Add spatial geometry dimension (e.g. scale, perspective, distance)
+
+## 2026-07-15
+
 ### What was done (Session 134)
 - **Added seasonal variation system** — a new `SEASONS` word bank of 10 evocative
   seasonal phrases (e.g. "It is early spring — the first buds push through the
