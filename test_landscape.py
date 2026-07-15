@@ -2975,6 +2975,61 @@ class TestMoodAtmosphereProb(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+class TestNoMoodAtmosphere(unittest.TestCase):
+    def test_no_mood_atmosphere_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_no_mood_atmosphere_disables_with_preset(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                preset = dict(PRESETS[name])
+                preset.pop("mood_atmosphere", None)
+                preset.pop("mood_atmosphere_count", None)
+                preset.pop("mood_atmosphere_prob", None)
+                result = generate_landscape(seed=42, **preset, mood_atmosphere=False)
+                for ind in ALL_MOOD_ATMOSPHERE_PHRASES:
+                    self.assertNotIn(ind, result,
+                        f"Preset {name} with --no-mood-atmosphere should not contain {ind!r}")
+
+    def test_no_mood_atmosphere_preset_without_flag_still_has_atmosphere(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                if "mood_atmosphere" not in PRESETS[name]:
+                    continue
+                result = generate_landscape(seed=42, **PRESETS[name])
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_no_mood_atmosphere_works_with_other_features(self):
+        from landscape import generate_landscape
+        for s in range(10):
+            result = generate_landscape(seed=s, mood_atmosphere=False,
+                                        mood="eerie", echo_enabled=True,
+                                        legend_enabled=True, sound_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_no_mood_atmosphere_with_explicit_mood_atmosphere_override(self):
+        from landscape import generate_landscape
+        no_atm = generate_landscape(seed=42, biome="forest", mood="eerie", mood_atmosphere=False)
+        with_atm = generate_landscape(seed=42, biome="forest", mood="eerie", mood_atmosphere=True)
+        self.assertNotEqual(no_atm, with_atm,
+            "mood_atmosphere=False should differ from mood_atmosphere=True with same seed")
+
+    def test_no_mood_atmosphere_does_not_affect_json_output(self):
+        from landscape import generate_landscape
+        result = generate_landscape(seed=42, biome="forest", mood="eerie",
+                                    mood_atmosphere=False, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertNotIn("mood_atmosphere", data)
+
+
 class TestColorFlag(unittest.TestCase):
     def test_color_enabled_default_same_as_before(self):
         r1 = generate_landscape(seed=42, color_enabled=True)

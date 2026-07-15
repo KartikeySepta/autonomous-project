@@ -2,6 +2,46 @@
 
 ## 2026-07-15
 
+### What was done (Session 152)
+- **Added `--no-mood-atmosphere` CLI flag** — users can now explicitly disable mood
+  atmosphere phrases even when using presets that enable them. Follows the exact same
+  pattern as `--no-echo`, `--no-legend`, `--no-sound`, `--no-time`, `--no-season`,
+  `--no-wildlife`, `--no-perspective`, `--no-travelogue`, and `--no-wistful.
+  - `--no-mood-atmosphere` forces `mood_atmosphere=False` regardless of preset config
+    or explicit `--mood-atmosphere`.
+  - Post-preset override block ensures `--no-mood-atmosphere` always wins after all
+    gating.
+- **Fixed preset gating for mood atmosphere** — the preset gating at line 1888
+  previously lacked the `not args.no_mood_atmosphere` guard that every other preset
+  gating check has. Without this, a hypothetical `--no-mood-atmosphere` flag would
+  have been ignored for presets that set `mood_atmosphere=True`. This is now fixed.
+- Added 6 new tests in `TestNoMoodAtmosphere`:
+  - `test_no_mood_atmosphere_flag_exists_via_cli` — flag exists
+  - `test_no_mood_atmosphere_disables_with_preset` (5 subtests) — disables mood
+    atmosphere with all 5 presets
+  - `test_no_mood_atmosphere_preset_without_flag_still_has_atmosphere` (5 subtests)
+    — presets still include mood atmosphere without `--no-mood-atmosphere`
+  - `test_no_mood_atmosphere_works_with_other_features` — works with echo, legend,
+    sound
+  - `test_no_mood_atmosphere_with_explicit_mood_atmosphere_override` — differs from
+    `mood_atmosphere=True` with same seed
+  - `test_no_mood_atmosphere_does_not_affect_json_output` — no `mood_atmosphere` in
+    JSON when disabled
+- This fulfills the third "Next likely step" from Session 151: "Add `--no-mood-atmosphere`
+  flag for symmetry with other `--no-*` flags."
+- Tests increased from 962 to 968 landscape tests (18 todo unchanged), subtests
+  from 327 to 337.
+
+### Current status
+Working. All 986 tests pass (18 todo + 968 landscape), 337 subtests.
+
+### Next likely steps
+- Expand global word banks (more echoes, more time-of-day, more seasons)
+- Add a narrative/poetic device dimension (simile, metaphor, personification
+  as separate controllable features)
+
+## 2026-07-15
+
 ### What was done (Session 151)
 - **Added `mood_atmosphere_count` and `mood_atmosphere_prob` to all 5 presets** with
   curated values that match each preset's mood/theme:

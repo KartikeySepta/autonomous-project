@@ -1568,6 +1568,10 @@ def main():
         help="Probability of a mood atmosphere phrase appearing per roll (0.0 to 1.0, default: 1.0)",
     )
     parser.add_argument(
+        "--no-mood-atmosphere", action="store_true",
+        help="Disable mood atmosphere phrases (overrides preset and --mood-atmosphere)",
+    )
+    parser.add_argument(
         "--show-seed", action="store_true",
         help="Display the random seed used for reproducibility",
     )
@@ -1885,7 +1889,7 @@ def main():
             args.season_prob = preset["season_prob"]
         if "color_enabled" in preset and args.no_color is False:
             args.no_color = not preset["color_enabled"]
-        if "mood_atmosphere" in preset and args.mood_atmosphere is False:
+        if "mood_atmosphere" in preset and args.mood_atmosphere is False and not args.no_mood_atmosphere:
             args.mood_atmosphere = preset["mood_atmosphere"]
         if "mood_atmosphere_count" in preset and args.mood_atmosphere_count == 1:
             args.mood_atmosphere_count = preset["mood_atmosphere_count"]
@@ -1911,6 +1915,8 @@ def main():
         args.season = False
     if args.no_wistful:
         args.wistful = False
+    if args.no_mood_atmosphere:
+        args.mood_atmosphere = False
 
     if args.describe_biome is not None:
         print(describe_biome(args.describe_biome))

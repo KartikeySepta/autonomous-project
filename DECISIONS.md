@@ -1,5 +1,42 @@
 # Decisions
 
+## 2026-07-15 — `--no-mood-atmosphere` Flag (Session 152)
+
+### What
+Added `--no-mood-atmosphere` CLI flag that forces `mood_atmosphere=False` regardless
+of preset config or explicit `--mood-atmosphere`. Also fixed the preset gating for
+mood atmosphere to include the `not args.no_mood_atmosphere` guard that every other
+preset gating check has.
+
+### Why
+The mood atmosphere system was enabled by default in all 5 presets (Session 149),
+but there was no way to disable it when using a preset. Every other feature that is
+enabled by default in presets — echoes, legends, soundscapes, wildlife, perspective,
+time-of-day, season, travelogue, wistful — has a corresponding `--no-*` flag for
+explicit override. Mood atmosphere was the only feature missing this.
+
+The "Next likely steps" from Session 151 explicitly called for this:
+"Add `--no-mood-atmosphere` flag for symmetry with other `--no-*` flags."
+
+### Tradeoffs
+- **Consistent with all other `--no-*` flags**: Follows the exact same pattern as
+  `--no-echo`, `--no-legend`, `--no-sound`, `--no-time`, `--no-season`,
+  `--no-wildlife`, `--no-perspective`, `--no-travelogue`, and `--no-wistful.
+  - CLI flag declared with `action="store_true"`
+  - Preset gating includes `not args.no_mood_atmosphere` guard
+  - Post-preset override block unconditionally sets `args.mood_atmosphere = False`
+- **Latent bug fix**: The preset gating for mood atmosphere (added in Session 149)
+  lacked the `not args.no_mood_atmosphere` guard. This was a pre-existing omission
+  — every other preset gating check has this guard. With `--no-mood-atmosphere` now
+  defined, this would have been a real bug (the flag would be ignored for presets).
+- **No seed-breaking**: Adding `--no-mood-atmosphere` as a CLI flag doesn't change
+  any default behavior. Users who don't use the flag get identical output to
+  Session 151. Determinism is preserved (same seed + same args = same output).
+- **6 new tests, 986 total** (18 todo + 968 landscape), 337 subtests (+10 subtests
+  from 2 multi-preset tests).
+- **Fulfills "Next likely steps" from Session 151**: The `--no-mood-atmosphere` flag
+  was explicitly called out as the third item.
+
 ## 2026-07-15 — Per-Preset Mood Atmosphere Count and Probability (Session 151)
 
 ### What
