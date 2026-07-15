@@ -8,8 +8,8 @@ from landscape import (
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS, ECHOES, LEGENDS,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
-    TIME_WORDS, TIMES_OF_DAY, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL, SOUNDSCAPES,
-    describe_travelogue, describe_wistful, describe_sounds, describe_times,
+    TIME_WORDS, TIMES_OF_DAY, SEASONS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL, SOUNDSCAPES,
+    describe_travelogue, describe_wistful, describe_sounds, describe_times, describe_seasons,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -25,6 +25,7 @@ ALL_LEGENDS = set(LEGENDS)
 ALL_WISTFUL = set(WISTFUL)
 ALL_SOUNDSCAPES = set(SOUNDSCAPES)
 ALL_TIMES_OF_DAY = set(TIMES_OF_DAY)
+ALL_SEASONS = set(SEASONS)
 
 SOUND_INDICATORS = [
     "tone that seems to come from everywhere",
@@ -4068,6 +4069,15 @@ class TestPresets(unittest.TestCase):
                 self.assertTrue(PRESETS[name]["time_of_day_enabled"],
                     f"Preset {name} should have time_of_day_enabled=True")
 
+    def test_all_presets_include_season_enabled(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("season_enabled", PRESETS[name],
+                    f"Preset {name} should include 'season_enabled'")
+                self.assertTrue(PRESETS[name]["season_enabled"],
+                    f"Preset {name} should have season_enabled=True")
+
 
 class TestTimeWords(unittest.TestCase):
     def test_time_word_appears_in_output(self):
@@ -5788,6 +5798,255 @@ class TestDescribeTimes(unittest.TestCase):
             "No landscape should be generated when --describe-times is used")
         self.assertNotIn("\n\n", output,
             "No landscape should be generated when --describe-times is used")
+
+
+class TestNoSeason(unittest.TestCase):
+    def test_no_season_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_no_season_disables_season_with_preset(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                preset = dict(PRESETS[name])
+                preset.pop("season_enabled", None)
+                result = generate_landscape(seed=42, **preset, season_enabled=False)
+                for s in ALL_SEASONS:
+                    self.assertNotIn(s, result,
+                        f"Preset {name} with --no-season should not contain {s!r}")
+
+    def test_no_season_preset_without_flag_still_has_season(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                if "season_enabled" not in PRESETS[name]:
+                    continue
+                result = generate_landscape(seed=42, **PRESETS[name])
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_no_season_works_with_other_features(self):
+        from landscape import generate_landscape
+        for s in range(10):
+            result = generate_landscape(seed=s, season_enabled=False,
+                                        echo_enabled=True, legend_enabled=True,
+                                        sound_enabled=True, travelogue=True,
+                                        wistful=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_no_season_with_explicit_season_override(self):
+        from landscape import generate_landscape
+        result = generate_landscape(seed=42, biome="forest", season_enabled=False)
+        for s in ALL_SEASONS:
+            self.assertNotIn(s, result,
+                f"Output with --no-season should not contain {s!r}")
+
+    def test_no_season_does_not_affect_json_output(self):
+        from landscape import generate_landscape
+        result = generate_landscape(seed=42, biome="forest", season_enabled=False, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertNotIn("season", data)
+
+
+class TestSeason(unittest.TestCase):
+    def test_season_disabled_by_default(self):
+        result = generate_landscape(seed=42)
+        for s in ALL_SEASONS:
+            self.assertNotIn(s, result,
+                f"Season phrase {s!r} should not appear by default")
+
+    def test_season_enabled_appears(self):
+        results = [generate_landscape(seed=s, season_enabled=True) for s in range(100)]
+        self.assertTrue(
+            any(s in r for r in results for s in ALL_SEASONS),
+            "No season phrase appeared across 100 seeds with season_enabled=True",
+        )
+
+    def test_season_produces_valid_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, season_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_season_is_deterministic(self):
+        a = generate_landscape(seed=42, season_enabled=True)
+        b = generate_landscape(seed=42, season_enabled=True)
+        self.assertEqual(a, b,
+            "Season should be deterministic with same seed")
+
+    def test_season_differs_from_plain(self):
+        plain = generate_landscape(seed=42)
+        with_season = generate_landscape(seed=42, season_enabled=True)
+        self.assertNotEqual(plain, with_season,
+            "Output with season should differ from plain output")
+
+    def test_season_prepends_opening(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, season_enabled=True)
+            self.assertTrue(
+                any(result.startswith(season) for season in ALL_SEASONS),
+                f"Output should start with a season phrase: {result!r}",
+            )
+
+    def test_season_works_with_json_format(self):
+        result = generate_landscape(seed=42, season_enabled=True, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_season_works_with_detail_zero(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, season_enabled=True, detail=0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 5)
+            self.assertTrue(result.endswith("."))
+
+    def test_season_works_with_combine(self):
+        result = generate_landscape(seed=42, season_enabled=True, combine="forest,desert")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 10)
+
+    def test_season_works_with_echo(self):
+        result = generate_landscape(seed=42, season_enabled=True, echo_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_season_works_with_legend(self):
+        result = generate_landscape(seed=42, season_enabled=True, legend_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_season_works_with_travelogue(self):
+        result = generate_landscape(seed=42, season_enabled=True, travelogue=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_season_works_with_sound(self):
+        result = generate_landscape(seed=42, season_enabled=True, sound_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_season_works_with_wistful(self):
+        result = generate_landscape(seed=42, season_enabled=True, wistful=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_season_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_season_works_with_time_of_day(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, season_enabled=True, time_of_day_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_season_json_includes_field(self):
+        result = generate_landscape(seed=42, season_enabled=True, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("season", data)
+        self.assertIn(data["season"], ALL_SEASONS)
+
+    def test_season_json_field_absent_when_disabled(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertNotIn("season", data)
+
+    def test_season_works_with_poetic_format(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, season_enabled=True, fmt="poetic")
+            self.assertIsInstance(result, str)
+            self.assertIn("\n", result)
+
+    def test_season_works_with_all_biomes(self):
+        for biome in ["forest", "desert", "tundra", "ruined city", "sky islands", "fungal grove"]:
+            with self.subTest(biome=biome):
+                result = generate_landscape(seed=42, season_enabled=True, biome=biome)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+                self.assertTrue(result.endswith("."))
+
+
+class TestDescribeSeasons(unittest.TestCase):
+    def test_describe_seasons_returns_string(self):
+        result = describe_seasons()
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_describe_seasons_contains_header(self):
+        result = describe_seasons()
+        self.assertIn("season phrases", result)
+
+    def test_describe_seasons_contains_all_phrases(self):
+        result = describe_seasons()
+        for phrase in SEASONS:
+            self.assertIn(phrase, result,
+                f"Season description should contain phrase: {phrase!r}")
+
+    def test_describe_seasons_contains_index_numbers(self):
+        result = describe_seasons()
+        self.assertIn("[0]", result)
+        self.assertIn("[1]", result)
+
+    def test_describe_seasons_shows_all_phrases(self):
+        result = describe_seasons()
+        count = len(SEASONS)
+        self.assertIn("=== season phrases ===", result)
+        self.assertIn(f"[{count - 1}]", result,
+            f"Season description should contain the last index [{count - 1}]")
+
+    def test_describe_seasons_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_seasons_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-seasons"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("season phrases", output)
+        self.assertIn("[0]", output)
+        self.assertIn("[1]", output)
+
+    def test_describe_seasons_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-seasons", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-seasons is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-seasons is used")
 
 
 if __name__ == "__main__":

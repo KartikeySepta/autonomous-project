@@ -132,6 +132,19 @@ TIMES_OF_DAY = [
     "Morning mist clings to the landscape like a half-remembered dream",
 ]
 
+SEASONS = [
+    "It is early spring — the first buds push through the thawing earth",
+    "High summer holds the land in a haze of heat and droning insects",
+    "Autumn has turned the landscape into a study in gold and decay",
+    "Deep winter wraps the landscape in silence and frost",
+    "The tender green of late spring covers everything in new growth",
+    "Midsummer's lush fullness spills across the landscape in every direction",
+    "A sharp autumn chill tinges the air with the scent of falling leaves",
+    "The first snow of winter has fallen, muffling the world in white",
+    "Late autumn strips the landscape bare, revealing its bones",
+    "Spring thunder rolls across a landscape reborn from rain",
+]
+
 SOUNDSCAPES = [
     "The {display} hums {adverb} with a tone that seems to come from everywhere at once.",
     "Somewhere in the {display}, something large shifts and settles {adverb}.",
@@ -216,6 +229,7 @@ PRESETS = {
         "sound_count": 2,
         "sound_prob": 0.7,
         "time_of_day_enabled": True,
+        "season_enabled": True,
     },
     "pastoral": {
         "mood": ["peaceful"],
@@ -233,6 +247,7 @@ PRESETS = {
         "sound_count": 1,
         "sound_prob": 0.5,
         "time_of_day_enabled": True,
+        "season_enabled": True,
     },
     "sublime": {
         "mood": ["vibrant", "peaceful"],
@@ -252,6 +267,7 @@ PRESETS = {
         "sound_count": 2,
         "sound_prob": 0.95,
         "time_of_day_enabled": True,
+        "season_enabled": True,
     },
     "wasteland": {
         "mood": ["desolate"],
@@ -270,6 +286,7 @@ PRESETS = {
         "sound_count": 2,
         "sound_prob": 1.0,
         "time_of_day_enabled": True,
+        "season_enabled": True,
     },
     "dreamscape": {
         "mood": ["eerie", "vibrant"],
@@ -290,6 +307,7 @@ PRESETS = {
         "sound_count": 2,
         "sound_prob": 0.9,
         "time_of_day_enabled": True,
+        "season_enabled": True,
     },
 }
 
@@ -569,6 +587,14 @@ def describe_times():
     """Return a string describing all available time-of-day phrases."""
     lines = ["=== time-of-day phrases ==="]
     for i, phrase in enumerate(TIMES_OF_DAY):
+        lines.append(f"  [{i}] {phrase}")
+    return "\n".join(lines)
+
+
+def describe_seasons():
+    """Return a string describing all available seasonal phrases."""
+    lines = ["=== season phrases ==="]
+    for i, phrase in enumerate(SEASONS):
         lines.append(f"  [{i}] {phrase}")
     return "\n".join(lines)
 
@@ -943,7 +969,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
     return chosen
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, weather_count=1, weather_prob=1.0, middle_enabled=True, color_enabled=True, element_enabled=True, anomaly_enabled=True, echo_enabled=False, echo_count=1, echo_prob=1.0, time_word_enabled=True, legend_enabled=False, legend_count=1, legend_prob=1.0, travelogue=False, wistful=False, sound_enabled=False, sound_count=1, sound_prob=1.0, time_of_day_enabled=False):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, weather_count=1, weather_prob=1.0, middle_enabled=True, color_enabled=True, element_enabled=True, anomaly_enabled=True, echo_enabled=False, echo_count=1, echo_prob=1.0, time_word_enabled=True, legend_enabled=False, legend_count=1, legend_prob=1.0, travelogue=False, wistful=False, sound_enabled=False, sound_count=1, sound_prob=1.0, time_of_day_enabled=False, season_enabled=False):
     if seed is not None:
         rng = random.Random(seed)
     elif show_seed:
@@ -978,6 +1004,10 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
     if time_of_day_enabled:
         time_of_day = rng.choice(TIMES_OF_DAY)
 
+    season = None
+    if season_enabled:
+        season = rng.choice(SEASONS)
+
     adj = _pick("adjectives", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
     if element_enabled:
         element = _pick("elements", biomes, bias=bias, mood=mood, mood_weight=mood_weight, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, used_words=used_words, rng=rng)
@@ -1000,6 +1030,8 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
     parts = [opening]
     if time_of_day:
         parts.insert(0, time_of_day + ".")
+    if season:
+        parts.insert(0, season + ".")
 
     for _ in range(max(detail, 0)):
         if element_enabled:
@@ -1121,6 +1153,8 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
             data["sound_prob"] = sound_prob
         if time_of_day:
             data["time_of_day"] = time_of_day
+        if season:
+            data["season"] = season
         if bias_overrides:
             data["bias_overrides"] = bias_overrides
         if mood_weight_overrides:
@@ -1194,7 +1228,11 @@ def main():
     )
     parser.add_argument(
         "--describe-times", action="store_true",
-        help="Show all available time-of-day phrases",
+        help="Describe all available time-of-day phrases",
+    )
+    parser.add_argument(
+        "--describe-seasons", action="store_true",
+        help="Describe all available seasonal phrases",
     )
     parser.add_argument(
         "--describe-presets", action="store_true",
@@ -1398,6 +1436,14 @@ def main():
         help="Disable time-of-day phrase (overrides preset and --time)",
     )
     parser.add_argument(
+        "--season", action="store_true",
+        help="Prepend a seasonal phrase establishing the time of year",
+    )
+    parser.add_argument(
+        "--no-season", action="store_true",
+        help="Disable seasonal phrase (overrides preset and --season)",
+    )
+    parser.add_argument(
         "--wistful", action="store_true",
         help="Append a wistful, yearning closing phrase to the landscape",
     )
@@ -1507,6 +1553,8 @@ def main():
             args.sound_prob = preset["sound_prob"]
         if "time_of_day_enabled" in preset and args.time is False and not args.no_time:
             args.time = preset["time_of_day_enabled"]
+        if "season_enabled" in preset and args.season is False and not args.no_season:
+            args.season = preset["season_enabled"]
         if "color_enabled" in preset and args.no_color is False:
             args.no_color = not preset["color_enabled"]
 
@@ -1521,6 +1569,8 @@ def main():
         args.travelogue = False
     if args.no_time:
         args.time = False
+    if args.no_season:
+        args.season = False
     if args.no_wistful:
         args.wistful = False
 
@@ -1554,6 +1604,9 @@ def main():
     if args.describe_times:
         print(describe_times())
         return
+    if args.describe_seasons:
+        print(describe_seasons())
+        return
     if args.describe_presets:
         print(describe_presets())
         return
@@ -1561,7 +1614,7 @@ def main():
     lines = []
     for i in range(args.count):
         effective_seed = args.seed + i if args.seed is not None else None
-        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, weather_count=args.weather_count, weather_prob=args.weather_prob, middle_enabled=not args.no_middle, color_enabled=not args.no_color, element_enabled=not args.no_element, anomaly_enabled=not args.no_anomaly, echo_enabled=args.echo, echo_count=args.echo_count, echo_prob=args.echo_prob, time_word_enabled=not args.no_time_word, legend_enabled=args.legend, legend_count=args.legend_count, legend_prob=args.legend_prob, travelogue=args.travelogue, wistful=args.wistful, sound_enabled=args.sound, sound_count=args.sound_count, sound_prob=args.sound_prob, time_of_day_enabled=args.time))
+        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, weather_count=args.weather_count, weather_prob=args.weather_prob, middle_enabled=not args.no_middle, color_enabled=not args.no_color, element_enabled=not args.no_element, anomaly_enabled=not args.no_anomaly, echo_enabled=args.echo, echo_count=args.echo_count, echo_prob=args.echo_prob, time_word_enabled=not args.no_time_word, legend_enabled=args.legend, legend_count=args.legend_count, legend_prob=args.legend_prob, travelogue=args.travelogue, wistful=args.wistful, sound_enabled=args.sound, sound_count=args.sound_count, sound_prob=args.sound_prob, time_of_day_enabled=args.time, season_enabled=args.season))
     if args.format == "json" and len(lines) > 1:
         output = "[" + ",\n".join(lines) + "]\n"
     else:

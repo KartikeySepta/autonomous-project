@@ -2,6 +2,84 @@
 
 ## 2026-07-15
 
+### What was done (Session 134)
+- **Added seasonal variation system** — a new `SEASONS` word bank of 10 evocative
+  seasonal phrases (e.g. "It is early spring — the first buds push through the
+  thawing earth", "Deep winter wraps the landscape in silence and frost") that
+  establish the time of year, adding a seasonal-temporal dimension alongside
+  the existing time-of-day system.
+  - Each phrase is a standalone sentence prepended to the opening with a period,
+    following the exact same pattern as time-of-day.
+  - 10 curated phrases covering: early spring, high summer, autumn, deep winter,
+    late spring, midsummer, early autumn, first snow, late autumn, spring thunder.
+  - Off by default (`season_enabled=False`), preserving all existing seed-based
+    output.
+  - Picked via `rng.choice(SEASONS)` — one phrase prepended when enabled.
+  - Works with all features: detail=0, prose/poetic/json, combine, echo, legend,
+    soundscape, travelogue, wistful, time-of-day, presets.
+  - Not suppressed at detail=0 (like time-of-day) — season is a framing prefix
+    suitable even for minimal descriptions.
+  - When both season and time-of-day are enabled, season comes first (outermost
+    framing), then time-of-day, then the opening. E.g. "It is early spring.
+    Dawn breaks over the landscape. A vast crystal forest..."
+  - Seed-breaking when enabled: one `rng.choice()` call before the time-of-day
+    pick, shifting subsequent random picks. Determinism is preserved (same seed
+    + same args = same output).
+- **Added `--season` CLI flag** (boolean, default: off) — follows the same
+  pattern as `--time`, `--echo`, `--legend`, `--sound`.
+- **Added `--describe-seasons` CLI flag and `describe_seasons()` function** —
+  users can inspect all 10 seasonal phrases with index numbers, following the
+  exact same introspection pattern as `describe_times()`, `describe_echoes()`,
+  etc.
+- **Added `"season"` to JSON metadata when enabled** — contains the full phrase
+  string (e.g. `"season": "It is early spring — the first buds push through the
+  thawing earth"`).
+- **Added `"season_enabled": True` to all 5 presets** — every preset (`nightfall`,
+  `pastoral`, `sublime`, `wasteland`, `dreamscape`) now includes seasonal framing
+  by default. This follows the same trajectory as every other sensory feature:
+  add as opt-in, then integrate into presets in the same session.
+  - Preset gating checks `args.season is False and not args.no_season` before
+    applying the preset value — consistent with all other preset gating.
+  - Seed-breaking when presets are used: one extra `rng.choice(SEASONS)` call
+    before the time-of-day/shift shifts subsequent random picks. Determinism
+    is preserved (same seed + same args = same output).
+- **Added `--no-season` CLI flag** — users can now explicitly disable seasonal
+  phrases even when using presets that enable them. Follows the exact same
+  pattern as `--no-time`, `--no-echo`, `--no-legend`, `--no-sound`,
+  `--no-travelogue`, and `--no-wistful`.
+  - `--no-season` forces `season_enabled=False` regardless of preset config or
+    explicit `--season`.
+  - Post-preset override block ensures `--no-season` always wins after all gating.
+- Added 35 new tests (20 in `TestSeason`, 8 in `TestDescribeSeasons`, 6 in
+  `TestNoSeason`, 1 in `TestPresets`):
+  - `TestSeason` (20 tests): disabled by default, enabled appears, valid output,
+    determinism, differs from plain, prepends opening, JSON format, detail=0,
+    combine, echo, legend, travelogue, sound, wistful, CLI flag, works with
+    time-of-day, JSON field present/absent, poetic format, all biomes.
+  - `TestDescribeSeasons` (8 tests): returns string, header, all phrases, index
+    numbers, last index, CLI flag, stdout output, no landscape generated.
+  - `TestNoSeason` (6 tests): flag exists via CLI, disables season with all 5
+    presets (5 subtests), works with other features, JSON output, explicit
+    `--season` override.
+  - `TestPresets`: `test_all_presets_include_season_enabled` (5 subtests).
+- This fulfills the first "Next likely step" from Session 133: add seasonal
+  variation as another temporal dimension.
+- Tests increased from 780 to 797 total (18 todo + 779 landscape), subtests from
+  222 to 243.
+
+### Current status
+Working. All 797 tests pass (18 todo + 779 landscape), 243 subtests.
+
+### Next likely steps
+- Expand global word banks (more seasons, more time-of-day, more echoes, more
+  legends, more soundscapes)
+- Add inhabitants/wildlife as a new sensory dimension
+- Add `--time-count`, `--time-prob` for configurable time-of-day density
+- Add `--season-count`, `--season-prob` for configurable seasonal density
+- Add spatial geometry dimension (e.g. scale, perspective, distance)
+
+## 2026-07-15
+
 ### What was done (Session 132)
 - **Added time-of-day to all 5 presets** — every preset (`nightfall`, `pastoral`,
   `sublime`, `wasteland`, `dreamscape`) now includes `"time_of_day_enabled": True`,

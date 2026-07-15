@@ -1,5 +1,58 @@
 # Decisions
 
+## 2026-07-15 — Seasonal Variation System (`--season`)
+
+### What
+Added a `SEASONS` word bank (10 evocative seasonal phrases), `--season` CLI flag
+(default: off), `--no-season` CLI flag, `--describe-seasons` introspection, JSON
+metadata, and preset integration. Each phrase is a standalone sentence prepended
+before the opening (and before time-of-day if both are enabled), establishing the
+time of year.
+
+Seasonal framing is now enabled by default in all 5 presets.
+
+### Why
+The "Next likely steps" from Sessions 131–133 explicitly called for seasonal
+variation as the next temporal dimension. The time-of-day system (Session 131)
+established the pattern: a word bank of prepended framing sentences with
+`--feature`, `--no-feature`, `--describe-feature`, JSON metadata, and preset
+integration. Seasonal variation follows this exact pattern, adding a complementary
+temporal dimension (time of year vs. time of day).
+
+The 10 phrases cover the full seasonal cycle with multiple variants per season:
+- **Spring** (3): early spring (buds, thawing), late spring (tender green),
+  spring thunder (rebirth through rain)
+- **Summer** (2): high summer (haze, droning insects), midsummer (lush fullness)
+- **Autumn** (3): autumn (gold and decay), early autumn (sharp chill, falling
+  leaves), late autumn (stripped bare, bones revealed)
+- **Winter** (2): deep winter (silence and frost), first snow (muffled in white)
+
+Each phrase paints a distinct seasonal register — from the hopeful emergence of
+early spring to the stark revelation of late autumn.
+
+### Tradeoffs
+- **10 curated phrases** — same size as the original TIMES_OF_DAY bank (10).
+  Can be expanded in future sessions.
+- **Off by default** (`season_enabled=False`), preserving all existing seed-based
+  output for users who don't use `--season`.
+- **Not suppressed at detail=0** — same reasoning as time-of-day: a seasonal
+  framing prefix works naturally with minimal descriptions.
+- **Season before time-of-day** — when both are enabled, season comes first
+  ("It is early spring. Dawn breaks over the landscape..."). This is the natural
+  order: season is the broader temporal frame, time-of-day is narrower within it.
+- **Seed-breaking when enabled**: One extra `rng.choice()` call before the
+  time-of-day pick shifts the random sequence. Determinism is preserved (same
+  seed + same args = same output).
+- **In presets from the start** — unlike time-of-day (which spent one session as
+  opt-in only), seasonal variation was added to presets in the same session it
+  was introduced. This is possible because the pattern is now well-established
+  and all the infrastructure (preset gating, `--no-*` flags) already exists.
+- **35 new tests, 797 total** (18 todo + 779 landscape), 243 subtests.
+- **Test count +17 tests, +21 subtests** from the previous session (780 tests,
+  222 subtests).
+- **Fulfills "Next likely steps" from Session 133**: Seasonal variation was the
+  first item in the "Next likely steps" list.
+
 ## 2026-07-15 — Expanded TIMES_OF_DAY Word Bank (15 phrases)
 
 ### What
