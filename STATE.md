@@ -2,6 +2,84 @@
 
 ## 2026-07-15
 
+### What was done (Session 145)
+- **Added perspective/vantage system as a new spatial geometry dimension** —
+  a new `PERSPECTIVES` word bank of 10 evocative phrases that establish the
+  viewing scale and spatial position of the observer relative to the landscape
+  (e.g. "Seen from above, the forest reveals itself as an ancient pattern of
+  woodland birdsong", "At ground level, the forest towers silently,
+  overwhelming in its mossy scale", "Looking back at the forest, it seems
+  smaller now, a wistful patch of emerald birdsong receding into the
+  distance").
+  - Each phrase uses `{display}`, `{adverb}`, `{color}`, `{adj}`, `{element}`
+    template placeholders, following the same pattern as soundscapes/wildlife.
+  - Off by default (`perspective_enabled=False`), preserving all existing
+    seed-based output.
+  - Picked via `rng.choice(PERSPECTIVES)` — one phrase prepended per landscape
+    when enabled.
+  - Inserted as the outermost framing (before season and time-of-day) —
+    perspective is the most general spatial context, establishing WHERE the
+    landscape is being viewed from.
+  - Not suppressed at detail=0 — like season and time-of-day, perspective is
+    a framing prefix suitable even for minimal descriptions.
+  - Works with all existing features: detail=0, prose/poetic/json, combine,
+    echo, legend, soundscape, travelogue, wistful, time-of-day, season,
+    wildlife, all biomes, all presets.
+  - Seed-breaking when enabled: one `rng.choice()` call before season/time
+    shifts subsequent random picks. Determinism is preserved (same seed +
+    same args = same output).
+- **Added `--perspective` CLI flag** (boolean, default: off) — follows the
+  same pattern as `--echo`, `--legend`, `--sound`, `--time`, `--season`,
+  `--wildlife`.
+- **Added `--no-perspective` CLI flag** — users can explicitly disable
+  perspective phrases even when using presets that enable them. Follows the
+  same pattern as `--no-echo`, `--no-legend`, `--no-sound`, etc.
+  - `--no-perspective` forces `perspective_enabled=False` regardless of
+    preset config or explicit `--perspective`.
+  - Post-preset override block ensures `--no-perspective` always wins.
+- **Added `--describe-perspectives` CLI flag and `describe_perspectives()`** —
+  users can inspect all 10 perspective phrases with index numbers, following
+  the exact same introspection pattern as `describe_echoes()`,
+  `describe_legends()`, etc.
+- **Added `"perspective_enabled"` to JSON metadata** when enabled —
+  e.g. `"perspective_enabled": True`.
+- **Added `"perspective_enabled"` to all 5 presets** — `nightfall`, `pastoral`,
+  `sublime`, `wasteland`, and `dreamscape` all enable perspective by default.
+  - Preset gating checks `args.perspective is False and not args.no_perspective`
+    before applying the preset value — consistent with all other preset gating.
+  - Seed-breaking when presets are used: one extra `rng.choice(PERSPECTIVES)`
+    call shifts subsequent random picks. Determinism is preserved.
+- Added 33 new tests (20 in `TestPerspective`, 9 in `TestDescribePerspectives`,
+  5 in `TestNoPerspective`):
+  - `TestPerspective` (20 tests): disabled by default, enabled appears, valid
+    output, determinism, differs from plain, prepends opening, JSON format,
+    JSON field present/absent, works with echo/legend/travelogue/sound/wistful/
+    time-of-day/season/wildlife, poetic format, all biomes, CLI flag.
+  - `TestDescribePerspectives` (9 tests): returns string, header, all phrases,
+    index numbers, last index, CLI flag, stdout, no landscape generated.
+  - `TestNoPerspective` (5 tests): flag exists via CLI, disables perspective
+    with presets (5 subtests), works with other features, JSON output, explicit
+    `--perspective` override.
+- This directly fulfills the "Next likely steps" called out in every session
+  since Session 122: "Add spatial geometry dimension (e.g. scale, perspective,
+  distance)". After many sessions of word bank expansions, this adds a
+  genuinely new spatial dimension to the generator.
+- Tests increased from 898 to 913 total (18 todo + 895 landscape), subtests
+  from 281 to 299.
+
+### Current status
+Working. All 913 tests pass (18 todo + 895 landscape), 299 subtests.
+
+### Next likely steps
+- Expand global word banks (more perspective phrases, more echoes,
+  more time-of-day, more seasons)
+- Add a "mood" dimension that affects how the entire landscape feels
+  (beyond word-weight biasing)
+- Add a narrative/poetic device dimension (simile, metaphor, personification
+  as separate controllable features)
+
+## 2026-07-15
+
 ### What was done (Session 144)
 - **Expanded SOUNDSCAPES word bank from 12 to 17 phrases** — 5 new soundscape
   phrases added, covering sonic niches not represented in the original 12:

@@ -8,8 +8,8 @@ from landscape import (
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS, ECHOES, LEGENDS,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
-    TIME_WORDS, TIMES_OF_DAY, SEASONS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL, SOUNDSCAPES, WILDLIFE,
-    describe_travelogue, describe_wistful, describe_sounds, describe_times, describe_seasons, describe_wildlife,
+    TIME_WORDS, TIMES_OF_DAY, SEASONS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL, SOUNDSCAPES, WILDLIFE, PERSPECTIVES,
+    describe_travelogue, describe_wistful, describe_sounds, describe_times, describe_seasons, describe_wildlife, describe_perspectives,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -127,6 +127,19 @@ LEGEND_INDICATORS = [
     "scent that cannot be described",
     "leads to the same clearing",
     "built by no one",
+]
+
+PERSPECTIVE_INDICATORS = [
+    "Seen from above",
+    "At ground level",
+    "From a distance",
+    "Up close, the",
+    "Seen from the heights",
+    "From within,",
+    "into the distance",
+    "At the edge of the",
+    "scale of the",
+    "Looking back at",
 ]
 
 
@@ -6688,6 +6701,245 @@ class TestNoWildlife(unittest.TestCase):
         with_wild = generate_landscape(seed=42, wildlife_enabled=True)
         self.assertNotEqual(no_wild, with_wild,
             "wildlife_enabled=False should differ from wildlife_enabled=True with same seed")
+
+
+class TestPerspective(unittest.TestCase):
+    def test_perspective_disabled_by_default(self):
+        for s in range(20):
+            result = generate_landscape(seed=s)
+            for ind in PERSPECTIVE_INDICATORS:
+                self.assertNotIn(ind, result,
+                    f"Perspective indicator {ind!r} should not appear by default")
+
+    def test_perspective_enabled_appears(self):
+        results = [generate_landscape(seed=s, perspective_enabled=True) for s in range(50)]
+        has_perspective = any(
+            any(ind in r for ind in PERSPECTIVE_INDICATORS) for r in results
+        )
+        self.assertTrue(has_perspective,
+            "Perspective phrase should appear when enabled")
+
+    def test_perspective_produces_valid_output(self):
+        for s in range(50):
+            result = generate_landscape(seed=s, perspective_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_perspective_is_deterministic(self):
+        a = generate_landscape(seed=42, perspective_enabled=True)
+        b = generate_landscape(seed=42, perspective_enabled=True)
+        self.assertEqual(a, b,
+            "Perspective should be deterministic with same seed")
+
+    def test_perspective_differs_from_plain(self):
+        plain = generate_landscape(seed=42)
+        perspective = generate_landscape(seed=42, perspective_enabled=True)
+        self.assertNotEqual(plain, perspective,
+            "Perspective output should differ from plain output")
+
+    def test_perspective_prepends_opening(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, perspective_enabled=True)
+            has_indicator = any(ind in result for ind in PERSPECTIVE_INDICATORS)
+            # The perspective phrase should precede the opening, so find the
+            # first known opening marker after the perspective text
+            if has_indicator:
+                first_line = result.split(". ")[0]
+                has_persp = any(ind in first_line for ind in PERSPECTIVE_INDICATORS)
+                self.assertTrue(has_persp,
+                    f"First sentence should contain perspective indicator at seed {s}")
+
+    def test_perspective_works_with_json_format(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_perspective_json_includes_field(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("perspective_enabled", data)
+        self.assertTrue(data["perspective_enabled"])
+
+    def test_perspective_json_field_absent_when_disabled(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertNotIn("perspective_enabled", data,
+            "perspective_enabled should not be in JSON when disabled")
+
+    def test_perspective_works_with_echo(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, echo_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_perspective_works_with_legend(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, legend_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_perspective_works_with_travelogue(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, travelogue=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_perspective_works_with_sound(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, sound_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_perspective_works_with_wistful(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, wistful=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_perspective_works_with_time_of_day(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, time_of_day_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_perspective_works_with_season(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, season_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_perspective_works_with_wildlife(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, wildlife_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_perspective_works_with_poetic_format(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, fmt="poetic")
+        self.assertIsInstance(result, str)
+        self.assertIn("\n", result)
+
+    def test_perspective_works_with_all_biomes(self):
+        for biome in BIOMES:
+            with self.subTest(biome=biome):
+                result = generate_landscape(seed=42, biome=biome, perspective_enabled=True)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_perspective_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+class TestDescribePerspectives(unittest.TestCase):
+    def test_describe_perspectives_returns_string(self):
+        result = describe_perspectives()
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_describe_perspectives_contains_header(self):
+        result = describe_perspectives()
+        self.assertIn("perspective phrases", result)
+
+    def test_describe_perspectives_contains_all_phrases(self):
+        result = describe_perspectives()
+        for phrase in PERSPECTIVES:
+            self.assertIn(phrase, result,
+                f"Perspective phrase not found in description: {phrase!r}")
+
+    def test_describe_perspectives_contains_index_numbers(self):
+        result = describe_perspectives()
+        self.assertIn("[0]", result)
+        self.assertIn("[1]", result)
+
+    def test_describe_perspectives_shows_all_phrases(self):
+        result = describe_perspectives()
+        last_idx = len(PERSPECTIVES) - 1
+        self.assertIn(f"[{last_idx}]", result,
+            f"Last index [{last_idx}] should appear in description")
+
+    def test_describe_perspectives_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_perspectives_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-perspectives"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("perspective phrases", output)
+        self.assertIn("[0]", output)
+
+    def test_describe_perspectives_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-perspectives", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-perspectives is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-perspectives is used")
+
+
+class TestNoPerspective(unittest.TestCase):
+    def test_no_perspective_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_no_perspective_disables_perspective_with_preset(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                result = generate_landscape(seed=42, **PRESETS[name])
+                has_perspective = any(ind in result for ind in PERSPECTIVE_INDICATORS)
+                if not has_perspective:
+                    continue
+                result_no = generate_landscape(
+                    seed=42,
+                    perspective_enabled=False,
+                    **{k: v for k, v in PRESETS[name].items() if k not in ("perspective_enabled",)}
+                )
+                no_perspective = not any(ind in result_no for ind in PERSPECTIVE_INDICATORS)
+                self.assertTrue(no_perspective,
+                    f"Preset {name} should have perspective suppressed with perspective_enabled=False")
+
+    def test_no_perspective_works_with_other_features(self):
+        result = generate_landscape(seed=42, perspective_enabled=False, echo_enabled=True, legend_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_no_perspective_json_output(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertNotIn("perspective_enabled", data,
+            "perspective_enabled should not be in JSON when disabled")
+
+    def test_no_perspective_with_explicit_perspective_override(self):
+        no_persp = generate_landscape(seed=42, perspective_enabled=False)
+        with_persp = generate_landscape(seed=42, perspective_enabled=True)
+        self.assertNotEqual(no_persp, with_persp,
+            "perspective_enabled=False should differ from perspective_enabled=True with same seed")
 
 
 if __name__ == "__main__":

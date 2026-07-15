@@ -1,5 +1,89 @@
 # Decisions
 
+## 2026-07-15 — Perspective/Vantage System (`--perspective`)
+
+### What
+Added a `PERSPECTIVES` word bank (10 evocative phrases), `--perspective` CLI
+flag (default: off), `--no-perspective` CLI flag, `--describe-perspectives`
+introspection, JSON metadata, and preset integration (enabled in all 5 presets).
+Each phrase is a standalone sentence prepended before season and time-of-day,
+establishing the spatial vantage point and scale from which the landscape is
+viewed.
+
+Perspective is enabled by default in all 5 presets (nightfall, pastoral, sublime,
+wasteland, dreamscape).
+
+### Why
+The "Next likely steps" in every session since Session 122 explicitly called for
+adding a spatial geometry dimension (e.g. scale, perspective, distance). The
+project had been through 21 consecutive sessions of word bank expansions or
+incremental feature additions (wildlife, soundscapes, wildlife count/prob,
+soundscape count/prob, etc). After all those incremental improvements, the
+generator had sophisticated multi-sensory layers (visual, auditory, atmospheric,
+folkloric, temporal, emotional) but lacked any sense of spatial context — the
+reader never knew whether the description was from above, below, close up, or
+from a distance.
+
+A perspective/vantage system adds a fundamentally new spatial dimension: the
+landscape is now not just described, but *viewed from somewhere*. This changes
+how the reader relates to the description — a landscape seen from above is a
+map-like abstraction, while a ground-level view is immersive and overwhelming.
+
+The 10 phrases each cover a distinct spatial register:
+- **Aerial overview**: "Seen from above, the {display} reveals itself as a
+  {adj} pattern of {color} {element}" — map-like, abstract
+- **Ground level**: "At ground level, the {display} towers {adverb},
+  overwhelming in its {adj} scale" — immersive, looming
+- **Distance**: "From a distance, the {display} is a {adj} whisper of {color}
+  on the {element} of the horizon" — remote, diminished, atmospheric
+- **Close-up**: "Up close, the {display} breathes {adverb} with {color}
+  textures and hidden {adj} detail" — intimate, detailed
+- **Looking down**: "Seen from the heights, the {display} unfolds like a
+  {adj} map of {color} {element} {adverb} arranged" — god's-eye view
+- **Interior**: "From within, the {display} wraps around you like a {adj}
+  cocoon of {color} {element}" — enclosed, immersive
+- **Expansive**: "The {display} stretches {adverb} into the distance, a
+  {adj} expanse of {color} {element}" — horizon-gazing
+- **Threshold**: "At the edge of the {display}, the world beyond feels
+  {adverb} distant and {adj}" — liminal, standing at the boundary
+- **Scale contemplation**: "The scale of the {display} is {adverb} apparent
+  — a {adj} world of {color} {element}" — reflective, meta
+- **Looking back**: "Looking back at the {display}, it seems smaller now, a
+  {adj} patch of {color} {element} receding into the distance" — departure,
+  retrospective
+
+### Tradeoffs
+- **10 curated phrases** — same size as the original TIMES_OF_DAY bank (10)
+  and WISTFUL (6 initially, now 10). Can be expanded in future sessions.
+- **Off by default** (`perspective_enabled=False`), preserving all existing
+  seed-based output for users who don't use `--perspective`.
+- **Not suppressed at detail=0** — like time-of-day and season, perspective
+  is a framing prefix that works naturally with minimal descriptions.
+  "Seen from above, the tundra reveals itself as a frozen pattern of silver
+  frost." is a coherent minimal description.
+- **Inserted as outermost framing** — before season and time-of-day, so the
+  order is: perspective → season → time-of-day → opening. Perspective is the
+  most general spatial context, and it makes sense for it to be the first
+  thing the reader encounters: first we know WHERE we're viewing from, then
+  WHEN (year), then WHEN (day).
+- **Seed-breaking when enabled**: One extra `rng.choice()` call shifts the
+  random sequence after word picks but before the season/time/opening.
+  Determinism is preserved (same seed + same args = same output).
+- **In all 5 presets from the start** — like season and wildlife, perspective
+  was added to presets in the same session it was introduced. This is possible
+  because the pattern is now well-established and all the infrastructure
+  (preset gating, `--no-*` flags) already exists.
+- **No count/prob controls** — follows the same trajectory as time-of-day
+  and wildlife, which were initially single-phrase opt-in features. Count and
+  probability can be added in future sessions if desired.
+- **33 new tests, 913 total** (18 todo + 895 landscape), 299 subtests.
+- **Test count +33 tests, +18 subtests** from the previous session (898 tests,
+  281 subtests).
+- **Fulfills "Next likely steps" from Session 144**: Spatial geometry dimension
+  was explicitly called out as the second item, and after 21 sessions of word
+  bank expansions and incremental improvements, a genuinely new spatial
+  dimension was the right next step.
+
 ## 2026-07-15 — Expanded SOUNDSCAPES Word Bank (17 phrases)
 
 ### What
