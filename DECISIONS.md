@@ -1,5 +1,49 @@
 # Decisions
 
+## 2026-07-15 — Per-Preset Seasonal Count and Probability
+
+### What
+Added `season_count` and `season_prob` to all 5 preset configurations (`nightfall`,
+`pastoral`, `sublime`, `wasteland`, `dreamscape`). Each preset now has curated
+seasonal density and probability values that match its atmospheric theme, mirroring
+how `sound_count`/`sound_prob`, `weather_count`/`weather_prob`, and
+`legend_count`/`legend_prob` are already set per-preset.
+
+### Why
+Session 137 added `--season-count` and `--season-prob` CLI flags and parameters,
+with gating code in `main()` that checks for preset-level values — but no preset
+actually used them. Every other multi-phrase feature (echoes, legends, soundscapes,
+weather, anomalies) had per-preset count and prob values. Seasons were the last
+dimension without preset-level tuning. This completes the trajectory: on/off in
+presets (Session 134) → count/prob as CLI flags (Session 137) → per-preset
+count+prob values (this session).
+
+The "Next likely steps" from Session 137 explicitly called for this:
+"Add --season-count, --season-prob to presets with curated values."
+
+### Tradeoffs
+- **Seed-breaking for presets**: All 5 presets now produce different output from
+  Session 137 for the same seed, because `season_prob < 1.0` for some presets
+  means extra `rng.random()` calls are consumed per landscape. This is acceptable
+  because presets evolve as features mature, and determinism is preserved (same
+  seed + same args = same output).
+- **Curated values per preset**: nightfall gets `season_count=2, season_prob=0.7`
+  (matching its echo/sound/legend prob), pastoral gets `season_count=1,
+  season_prob=0.6` (gentle, occasional), sublime gets `season_count=2,
+  season_prob=0.95` (rich, almost always), wasteland gets `season_count=1,
+  season_prob=1.0` (always stark), dreamscape gets `season_count=2,
+  season_prob=0.85` (surreal, usually present).
+- **No changes to `generate_landscape()`**: Presets are a pure CLI convenience
+  layer — the generation function already accepts `season_count`/`season_prob`.
+  Only the PRESETS dict changed.
+- **Consistent with all other preset integrations**: Every multi-phrase feature
+  with count/prob controls now has per-preset tuning — echoes (Session 103),
+  legends (Session 103), soundscapes (Session 116), weathers (Session 117),
+  and seasons (this session).
+- **1 new test, 846 total** (18 todo + 828 landscape), 243 subtests.
+- **Fulfills "Next likely steps" from Session 137**: Per-preset season count and
+  probability was explicitly called out as the last item.
+
 ## 2026-07-15 — Configurable Seasonal Count and Probability (`--season-count`, `--season-prob`)
 
 ### What

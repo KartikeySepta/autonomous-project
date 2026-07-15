@@ -235,6 +235,8 @@ PRESETS = {
         "sound_prob": 0.7,
         "time_of_day_enabled": True,
         "season_enabled": True,
+        "season_count": 2,
+        "season_prob": 0.7,
     },
     "pastoral": {
         "mood": ["peaceful"],
@@ -253,6 +255,8 @@ PRESETS = {
         "sound_prob": 0.5,
         "time_of_day_enabled": True,
         "season_enabled": True,
+        "season_count": 1,
+        "season_prob": 0.6,
     },
     "sublime": {
         "mood": ["vibrant", "peaceful"],
@@ -273,6 +277,8 @@ PRESETS = {
         "sound_prob": 0.95,
         "time_of_day_enabled": True,
         "season_enabled": True,
+        "season_count": 2,
+        "season_prob": 0.95,
     },
     "wasteland": {
         "mood": ["desolate"],
@@ -292,6 +298,8 @@ PRESETS = {
         "sound_prob": 1.0,
         "time_of_day_enabled": True,
         "season_enabled": True,
+        "season_count": 1,
+        "season_prob": 1.0,
     },
     "dreamscape": {
         "mood": ["eerie", "vibrant"],
@@ -313,6 +321,8 @@ PRESETS = {
         "sound_prob": 0.9,
         "time_of_day_enabled": True,
         "season_enabled": True,
+        "season_count": 2,
+        "season_prob": 0.85,
     },
 }
 

@@ -4114,6 +4114,19 @@ class TestPresets(unittest.TestCase):
                 self.assertTrue(PRESETS[name]["season_enabled"],
                     f"Preset {name} should have season_enabled=True")
 
+    def test_all_presets_include_season_count_and_prob(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("season_count", PRESETS[name],
+                    f"Preset {name} should include 'season_count'")
+                self.assertIn("season_prob", PRESETS[name],
+                    f"Preset {name} should include 'season_prob'")
+                self.assertGreaterEqual(PRESETS[name]["season_count"], 0)
+                self.assertLessEqual(PRESETS[name]["season_count"], 3)
+                self.assertGreaterEqual(PRESETS[name]["season_prob"], 0.0)
+                self.assertLessEqual(PRESETS[name]["season_prob"], 1.0)
+
 
 class TestTimeWords(unittest.TestCase):
     def test_time_word_appears_in_output(self):

@@ -2,6 +2,43 @@
 
 ## 2026-07-15
 
+### What was done (Session 138)
+- **Added `season_count` and `season_prob` to all 5 presets** with curated values
+  that match each preset's mood/theme:
+  - `nightfall`: `season_count=2, season_prob=0.7` — multiple seasonal phrases,
+    not always present, matching echo/sound/legend count and prob
+  - `pastoral`: `season_count=1, season_prob=0.6` — single gentle seasonal phrase,
+    occasionally absent for serene timelessness
+  - `sublime`: `season_count=2, season_prob=0.95` — rich seasonal detail almost
+    always present
+  - `wasteland`: `season_count=1, season_prob=1.0` — always a stark seasonal
+    phrase
+  - `dreamscape`: `season_count=2, season_prob=0.85` — surreal seasonal phrases
+    usually present
+- The gating code was already in place from Session 137 — only the PRESETS dict
+  values needed updating, following the same pattern as every other per-preset
+  count/prob integration (echo, sound, weather, legend, etc.).
+- Added 1 new test in TestPresets (`test_all_presets_include_season_count_and_prob`)
+  — verifies every preset includes `season_count` and `season_prob` with valid
+  ranges, following the same pattern as `test_all_presets_include_sound_count_and_prob`.
+- This directly fulfills the last "Next likely step" from Session 137: add
+  `--season-count`, `--season-prob` to presets with curated values.
+- Tests increased from 845 to 846 total (18 todo + 828 landscape), subtests
+  unchanged at 243.
+
+### Current status
+Working. All 846 tests pass (18 todo + 828 landscape), 243 subtests.
+
+### Next likely steps
+- Expand global word banks (more time-of-day, more echoes, more legends, more
+  soundscapes, more seasons)
+- Add inhabitants/wildlife as a new sensory dimension
+- Add spatial geometry dimension (e.g. scale, perspective, distance)
+- Add `--time-count`, `--time-prob` to presets with curated values (same pattern
+  as season_count/season_prob)
+
+## 2026-07-15
+
 ### What was done (Session 137)
 - **Added `--season-count` and `--season-prob` CLI flags** — users can now control
   how many seasonal phrases appear per landscape (0-3, default: 1) and how often
