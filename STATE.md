@@ -2,6 +2,43 @@
 
 ## 2026-07-15
 
+### What was done (Session 151)
+- **Added `mood_atmosphere_count` and `mood_atmosphere_prob` to all 5 presets** with
+  curated values that match each preset's mood/theme:
+  - `nightfall`: `mood_atmosphere_count=2, mood_atmosphere_prob=0.7` — multiple
+    atmosphere phrases, not always present, matching echo/sound/legend/wildlife/
+    time/season/perspective count and prob
+  - `pastoral`: `mood_atmosphere_count=1, mood_atmosphere_prob=0.6` — single gentle
+    atmosphere phrase, occasionally absent for serene stillness
+  - `sublime`: `mood_atmosphere_count=2, mood_atmosphere_prob=0.95` — rich atmospheric
+    framing almost always present
+  - `wasteland`: `mood_atmosphere_count=1, mood_atmosphere_prob=1.0` — always a stark
+    desolate atmosphere phrase
+  - `dreamscape`: `mood_atmosphere_count=2, mood_atmosphere_prob=0.85` — surreal
+    atmosphere usually present
+- The gating code was already in place from Session 150 — only the PRESETS dict values
+  needed updating, following the same pattern as every other per-preset count/prob
+  integration (echo, sound, wildlife, perspective, time, season, etc.).
+- Added 1 new test in TestPresets
+  (`test_all_presets_include_mood_atmosphere_count_and_prob`) — verifies every preset
+  includes `mood_atmosphere_count` and `mood_atmosphere_prob` with valid ranges,
+  following the same pattern as `test_all_presets_include_perspective_count_and_prob`.
+- This fulfills the third "Next likely step" from Session 150: "Add per-preset
+  mood_atmosphere_count and mood_atmosphere_prob with curated values."
+- Tests increased from 961 to 962 landscape tests (18 todo unchanged), subtests
+  from 322 to 327.
+
+### Current status
+Working. All 980 tests pass (18 todo + 962 landscape), 327 subtests.
+
+### Next likely steps
+- Expand global word banks (more echoes, more time-of-day, more seasons)
+- Add a narrative/poetic device dimension (simile, metaphor, personification
+  as separate controllable features)
+- Add `--no-mood-atmosphere` flag for symmetry with other `--no-*` flags
+
+## 2026-07-15
+
 ### What was done (Session 150)
 - **Added `--mood-atmosphere-count` and `--mood-atmosphere-prob` CLI flags** —
   users can now control how many mood atmosphere phrases appear per landscape

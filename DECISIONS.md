@@ -1,5 +1,46 @@
 # Decisions
 
+## 2026-07-15 — Per-Preset Mood Atmosphere Count and Probability (Session 151)
+
+### What
+Added `mood_atmosphere_count` and `mood_atmosphere_prob` to all 5 preset configurations
+(`nightfall`, `pastoral`, `sublime`, `wasteland`, `dreamscape`). Each preset now has
+curated mood atmosphere density and probability values that match its atmospheric
+theme, mirroring how every other multi-phrase feature (echo, sound, wildlife,
+perspective, time, season) has per-preset count and prob values.
+
+### Why
+Session 150 added `--mood-atmosphere-count` and `--mood-atmosphere-prob` CLI flags
+and parameters, with gating code that checks for preset-level values — but no preset
+actually used them. Every other multi-phrase feature had per-preset count and prob
+values. Mood atmosphere was the last dimension without preset-level tuning. This
+completes the trajectory: on/off in presets (Session 149) → count/prob as CLI flags
+(Session 150) → per-preset count+prob values (this session).
+
+The "Next likely steps" from Session 150 explicitly called for this:
+"Add per-preset mood_atmosphere_count and mood_atmosphere_prob with curated values."
+
+### Tradeoffs
+- **Seed-breaking for presets**: All 5 presets now produce different output from
+  Session 150 for the same seed, because `mood_atmosphere_prob < 1.0` for some presets
+  means extra `rng.random()` calls are consumed per landscape. This is acceptable
+  because presets evolve as features mature, and determinism is preserved (same seed
+  + same args = same output).
+- **Curated values per preset**: nightfall gets `mood_atmosphere_count=2,
+  mood_atmosphere_prob=0.7` (matching its echo/sound/legend/wildlife/time/season/
+  perspective prob), pastoral gets `count=1, prob=0.6` (gentle, occasional), sublime
+  gets `count=2, prob=0.95` (rich, almost always), wasteland gets `count=1, prob=1.0`
+  (always stark), dreamscape gets `count=2, prob=0.85` (surreal, usually present).
+- **No changes to `generate_landscape()`**: Presets are a pure CLI convenience layer
+  — the generation function already accepts `mood_atmosphere_count`/`mood_atmosphere_prob`.
+  Only the PRESETS dict changed.
+- **Consistent with all other preset integrations**: Every multi-phrase feature with
+  count/prob controls now has per-preset tuning — echoes, legends, soundscapes,
+  weathers, times, seasons, wildlife, perspective, and mood atmosphere (this session).
+- **1 new test, 980 total** (18 todo + 962 landscape), 327 subtests.
+- **Fulfills "Next likely steps" from Session 150**: Per-preset mood atmosphere count
+  and probability was explicitly called out as the third item.
+
 ## 2026-07-15 — Configurable Mood Atmosphere Count and Probability (Session 150)
 
 ### What

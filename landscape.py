@@ -291,6 +291,8 @@ PRESETS = {
         "perspective_count": 2,
         "perspective_prob": 0.7,
         "mood_atmosphere": True,
+        "mood_atmosphere_count": 2,
+        "mood_atmosphere_prob": 0.7,
     },
     "pastoral": {
         "mood": ["peaceful"],
@@ -320,6 +322,8 @@ PRESETS = {
         "perspective_count": 1,
         "perspective_prob": 0.6,
         "mood_atmosphere": True,
+        "mood_atmosphere_count": 1,
+        "mood_atmosphere_prob": 0.6,
     },
     "sublime": {
         "mood": ["vibrant", "peaceful"],
@@ -351,6 +355,8 @@ PRESETS = {
         "perspective_count": 2,
         "perspective_prob": 0.95,
         "mood_atmosphere": True,
+        "mood_atmosphere_count": 2,
+        "mood_atmosphere_prob": 0.95,
     },
     "wasteland": {
         "mood": ["desolate"],
@@ -381,6 +387,8 @@ PRESETS = {
         "perspective_count": 1,
         "perspective_prob": 1.0,
         "mood_atmosphere": True,
+        "mood_atmosphere_count": 1,
+        "mood_atmosphere_prob": 1.0,
     },
     "dreamscape": {
         "mood": ["eerie", "vibrant"],
@@ -413,6 +421,8 @@ PRESETS = {
         "perspective_count": 2,
         "perspective_prob": 0.85,
         "mood_atmosphere": True,
+        "mood_atmosphere_count": 2,
+        "mood_atmosphere_prob": 0.85,
     },
 }
 
