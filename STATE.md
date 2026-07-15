@@ -2,6 +2,38 @@
 
 ## 2026-07-15
 
+### What was done (Session 140)
+- **Expanded global ANOMALIES word bank from 8 to 12 entries** — 4 new
+  anomaly phrases added, covering uncanny themes absent from the original 8:
+  - `"You remember this landscape from a dream you have never had."` —
+    precognitive false memory, the landscape as a half-remembered dream
+  - `"Every breath tastes of a season that does not exist."` — impossible
+    sensory input, a phantom season perceived through taste/smell
+  - `"The geometry of the landscape follows rules you cannot quite recall."` —
+    impossible geometry paired with memory distortion, the sense that the
+    landscape's logic is knowable but just out of reach
+  - `"Something is just beyond sight — a presence that never arrives."` —
+    unseen presence, ambient paranoia, anticipation without resolution
+- This was the only global word bank that had never been expanded (8 entries
+  since inception). Every other bank had received at least one expansion:
+  WEATHERS (12), ECHOES (15), LEGENDS (20), SOUNDSCAPES (12), WISTFUL (10),
+  TIMES_OF_DAY (15), SEASONS (15).
+- No code, CLI, or test changes — data-only expansion. All 829 landscape tests
+  still pass (plus 18 todo = 847 total), 253 subtests.
+- Fulfills the first "Next likely step" from Session 139: expand global word
+  banks (anomalies was the most overdue).
+
+### Current status
+Working. All 847 tests pass (18 todo + 829 landscape), 253 subtests.
+
+### Next likely steps
+- Expand other global word banks (more echoes, more soundscapes, more
+  time-of-day, more seasons)
+- Add inhabitants/wildlife as a new sensory dimension
+- Add spatial geometry dimension (e.g. scale, perspective, distance)
+
+## 2026-07-15
+
 ### What was done (Session 139)
 - **Added `time_count` and `time_prob` to all 5 presets** with curated values
   that match each preset's mood/theme:

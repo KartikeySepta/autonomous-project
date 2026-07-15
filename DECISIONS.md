@@ -1,5 +1,62 @@
 # Decisions
 
+## 2026-07-15 — Expanded Global ANOMALIES Bank (12 entries)
+
+### What
+Added 4 new curated anomaly phrases to the global ANOMALIES bank, expanding it
+from 8 to 12 entries. The new phrases cover precognitive false memory, phantom
+sensory experience, impossible geometry with memory distortion, and unseen
+presence — anomalous phenomena absent from the original 8.
+
+### Why
+The global ANOMALIES bank (8 entries) was the only global word bank that had
+never been expanded. Every other bank had received at least one expansion:
+WEATHERS (8→12, Session 120), SOUNDSCAPES (8→12, Session 121), ECHOES
+(10→15, Session 122), WISTFUL (6→10, Session 123), LEGENDS (15→20, Sessions
+98 and 124), TIMES_OF_DAY (10→15, Session 133), and SEASONS (10→15, Session
+135). The "Next likely steps" from Session 139 explicitly called for expanding
+global word banks, with anomalies being the most overdue.
+
+The 4 new phrases each cover an anomalous niche not represented in the existing
+8 or in any biome-specific anomaly:
+- **Precognitive false memory**: "You remember this landscape from a dream you
+  have never had" — the landscape as a half-remembered dream, uncanny
+  familiarity without prior experience. Distinct from existing "Colors shift"
+  (perception) and fungal grove "the mycelium network reacts to your thoughts"
+  (mind-reactive environment).
+- **Phantom sensory experience**: "Every breath tastes of a season that does
+  not exist" — impossible sensory input, a season perceived through taste/smell
+  that has no place in the natural cycle. Adds a synesthetic/impossible-sensory
+  dimension not covered by existing anomalies.
+- **Impossible geometry with memory distortion**: "The geometry of the landscape
+  follows rules you cannot quite recall" — the sense that the landscape's
+  spatial logic is knowable but just out of reach, blending impossible geometry
+  with a failure of memory. Distinct from "the horizon curves upward"
+  (permanent visible geometry) and cave "passages rearrange when you blink"
+  (active rearrangement).
+- **Unseen presence**: "Something is just beyond sight — a presence that never
+  arrives" — ambient paranoia, anticipation without resolution, the feeling of
+  being watched by something that never materializes. None of the existing
+  global or biome anomalies evoke this specific register of sustained
+  anticipation.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, `_pick()`,
+  CLI flags, or any logic. Only the ANOMALIES list was updated.
+- **No seed-breaking**: Adding words to the global ANOMALIES pool doesn't change
+  the random sequence — `_pick()` draws from a larger pool but the
+  weighted-selection function is unchanged. Only the rendered output content
+  changes (new phrases appear in the selection pool).
+- **Not marked common or rare**: New anomalies intentionally left at normal
+  weight tier (none of the existing 8 are in COMMON_WORDS or RARE_WORDS).
+- **No new tests**: ALL_ANOMALIES is dynamically derived from ANOMALIES in the
+  test module. All anomaly tests use dynamic loops and generic presence/absence
+  checks, so no test changes are needed.
+- **Test count unchanged**: 847 tests (18 todo + 829 landscape), 253 subtests.
+- **Fulfills "Next likely steps" from Session 139**: Global word bank expansion
+  was explicitly called out as the first item, and anomalies were the most
+  overdue bank (never expanded).
+
 ## 2026-07-15 — Per-Preset Time-of-Day Count and Probability
 
 ### What

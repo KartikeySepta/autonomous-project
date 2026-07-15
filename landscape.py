@@ -55,6 +55,10 @@ ANOMALIES = [
     "Your footsteps make no sound.",
     "The shadows move against the wind.",
     "Everything is slightly out of focus.",
+    "You remember this landscape from a dream you have never had.",
+    "Every breath tastes of a season that does not exist.",
+    "The geometry of the landscape follows rules you cannot quite recall.",
+    "Something is just beyond sight — a presence that never arrives.",
 ]
 
 ECHOES = [
