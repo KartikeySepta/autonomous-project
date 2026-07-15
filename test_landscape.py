@@ -74,6 +74,11 @@ WILDLIFE_INDICATORS = [
     "teems with quiet, hidden life",
     "pack of",
     "chitters",
+    "Fireflies drift",
+    "Something hunts",
+    "bird of prey circles",
+    "hidden structures",
+    "wings rises from",
 ]
 
 SOUND_INDICATORS = [

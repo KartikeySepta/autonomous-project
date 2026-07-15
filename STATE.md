@@ -2,6 +2,48 @@
 
 ## 2026-07-15
 
+### What was done (Session 143)
+- **Expanded WILDLIFE word bank from 10 to 15 phrases** — 5 new wildlife phrases
+  added, covering wildlife niches not represented in the original 10:
+  - `"Fireflies drift {adverb} through the {adj} air of the {display}, each
+    {color} spark a brief luminous trail."` — fireflies/bioluminescent insects,
+    the only insect-specific phrase in the bank
+  - `"Something hunts {adverb} at the edge of the {display} — patient, {adj},
+    tasting the {color} {element}."` — predator stalking, adding a predator-prey
+    dynamic not present in original phrases
+  - `"A {adj} bird of prey circles {adverb} overhead, a dark {color} silhouette
+    against the {element}."` — aerial predator (bird of prey), the only
+    flying-hunter phrase in the bank
+  - `"Beneath the {display}, {adj} things build {adverb}, weaving {color}
+    {element} into their hidden structures."` — nest-building/engineering
+    creatures, adding construction behavior absent from the original 10
+  - `"The {adverb} hum of {color} wings rises from the {adj} depths of the
+    {display} like a living {element}."` — insect swarm as a collective presence,
+    the only swarm/buzzing phrase in the bank
+- **Added 5 new indicators to `WILDLIFE_INDICATORS`** in the test module:
+  `"Fireflies drift"`, `"Something hunts"`, `"bird of prey circles"`,
+  `"hidden structures"`, `"wings rises from"` — each is a unique invariant
+  substring for dynamic test matching.
+- No code, CLI, or test logic changes — data-only expansion plus indicator
+  additions. All existing wildlife tests use dynamic count checks and loop
+  over `WILDLIFE_INDICATORS`, so no test modifications were needed.
+- Each phrase is curated to fit a distinct wildlife niche: bioluminescent
+  insects, predator stalking, bird of prey, nest-building creatures, insect
+  swarm. None overlap with existing phrases.
+- This directly fulfills the first "Next likely step" from Session 142: expand
+  other global word banks (more wildlife).
+- Tests unchanged: still 880 landscape tests pass (281 subtests), 18 todo tests.
+
+### Current status
+Working. All 880 landscape tests pass (281 subtests), 18 todo tests.
+
+### Next likely steps
+- Expand other global word banks (more echoes, more soundscapes, more
+  time-of-day, more seasons)
+- Add spatial geometry dimension (e.g. scale, perspective, distance)
+
+## 2026-07-15
+
 ### What was done (Session 142)
 - **Added `--wildlife-count` and `--wildlife-prob` CLI flags** — users can now
   control how many wildlife phrases appear per landscape (0-3, default: 1) and

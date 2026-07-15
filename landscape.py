@@ -180,6 +180,11 @@ WILDLIFE = [
     "The {display} teems with quiet, hidden life — {color} wings, {adj} eyes, the {adverb} rustle of unseen things.",
     "A pack of {adj} shapes moves {adverb} through the {display}, visible only as {color} shadows.",
     "Something small and {adj} chitters {adverb} from within the {color} {element} of the {display}.",
+    "Fireflies drift {adverb} through the {adj} air of the {display}, each {color} spark a brief luminous trail.",
+    "Something hunts {adverb} at the edge of the {display} — patient, {adj}, tasting the {color} {element}.",
+    "A {adj} bird of prey circles {adverb} overhead, a dark {color} silhouette against the {element}.",
+    "Beneath the {display}, {adj} things build {adverb}, weaving {color} {element} into their hidden structures.",
+    "The {adverb} hum of {color} wings rises from the {adj} depths of the {display} like a living {element}.",
 ]
 
 TRAVELOGUE_PREFIXES = [

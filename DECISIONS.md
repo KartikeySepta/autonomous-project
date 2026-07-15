@@ -1,5 +1,68 @@
 # Decisions
 
+## 2026-07-15 — Expanded WILDLIFE Word Bank (15 phrases)
+
+### What
+Added 5 new curated wildlife phrases to the WILDLIFE bank, expanding it from 10
+to 15 phrases. The new phrases cover bioluminescent insects, predator stalking,
+aerial bird of prey, nest-building creatures, and insect swarm — wildlife niches
+absent from the original 10.
+
+### Why
+The WILDLIFE bank was created in Session 141 with 10 phrases and had never been
+expanded. Session 142 added count/prob controls and per-preset integration,
+making wildlife a well-supported feature — but with only 10 phrases, repetition
+was noticeable, especially when multiple wildlife phrases appear per landscape
+(with `wildlife_count=2` or `wildlife_count=3`). With wildlife now enabled by
+default in 4 of 5 presets (all but wasteland), a larger bank reduces repetition
+in preset output.
+
+The "Next likely steps" from Session 142 explicitly called for expanding global
+word banks, with wildlife being the most recently added and therefore the most
+natural first target.
+
+The 5 new phrases each cover a wildlife niche not represented in the existing 10:
+- **Fireflies**: "Fireflies drift {adverb} through the {adj} air of the
+  {display}, each {color} spark a brief luminous trail." — bioluminescent
+  insects, the only insect-specific phrase in the bank. Distinct from existing
+  "small birds" (avian) and "something small chitters" (unidentified small
+  creature).
+- **Predator stalking**: "Something hunts {adverb} at the edge of the {display}
+  — patient, {adj}, tasting the {color} {element}." — a predator in active
+  hunting mode, distinct from the existing "something large stirs" (passive
+  presence) and "eyes watch from the shadows" (unseen observation).
+- **Bird of prey**: "A {adj} bird of prey circles {adverb} overhead, a dark
+  {color} silhouette against the {element}." — an aerial hunter, the only
+  flying predator phrase. Distinct from "small birds flit" (passive non-predator
+  birds).
+- **Nest-building**: "Beneath the {display}, {adj} things build {adverb},
+  weaving {color} {element} into their hidden structures." — creatures engaged
+  in construction/engineering, adding active building behavior absent from the
+  original 10 (which focus on presence, movement, and auditory signs).
+- **Insect swarm**: "The {adverb} hum of {color} wings rises from the {adj}
+  depths of the {display} like a living {element}." — a collective swarm/buzzing
+  presence, distinct from single-creature phrases. Adds a group-auditory
+  dimension not covered by the existing single "call of an unseen creature".
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only the WILDLIFE list and WILDLIFE_INDICATORS were updated.
+- **No seed-breaking**: Adding phrases to WILDLIFE doesn't change the random
+  sequence — `rng.choice(WILDLIFE)` picks from a larger pool but the choice
+  function is unchanged. Only the rendered output content changes (new phrases
+  appear in the selection pool).
+- **No new tests**: All wildlife tests use dynamic checks over
+  `WILDLIFE_INDICATORS` and `len(WILDLIFE)`. Only the indicator list was
+  extended; test logic is unchanged.
+- **Test count unchanged**: 880 landscape tests (281 subtests), 18 todo tests
+  — same as Session 142.
+- **Not seed-breaking**: Adding new entries to a list that `rng.choice()` draws
+  from doesn't change the RNG sequence — the same seed picks the same index,
+  but the content at that index may be different, which only changes rendered
+  output, not determinism.
+- **Fulfills "Next likely steps" from Session 142**: Word bank expansion (more
+  wildlife) was explicitly called out as the first item.
+
 ## 2026-07-15 — Configurable Wildlife Count and Probability (`--wildlife-count`, `--wildlife-prob`)
 
 ### What
