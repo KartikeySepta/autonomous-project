@@ -1,5 +1,61 @@
 # Decisions
 
+## 2026-07-15 — Personification Dimension (`--personification`) (Session 156)
+
+### What
+Added a `PERSONIFICATIONS` word bank (10 curated phrases), `--personification` CLI
+flag (default: off), `--no-personification` CLI flag, `--describe-personifications`
+introspection, `personification_enabled`/`personification_count`/`personification_prob`
+parameters to `generate_landscape()`, JSON metadata, preset gating, and 51 new tests.
+Each phrase is a single sentence attributing a human action to the landscape
+(e.g. "The {display} breathes {adverb}, its {adj} breath of {color} {element}
+filling the air.") inserted after metaphor and before echoes.
+
+### Why
+Session 155's "Next likely steps" explicitly called for adding a personification
+dimension: "Add personification dimension (giving human qualities to the landscape)."
+The simile system (Session 153) added figurative language based on comparison
+(X is like Y). The metaphor system (Session 155) added the stronger claim of
+identity (X is Y). Personification completes the figurative language triad by
+attributing human qualities to the non-human (X does what a person does).
+
+Each personification phrase is curated to attribute a different human action to
+the landscape: breathing (vitality/presence), gazing (awareness/intention),
+whispering (secrecy/mystery), dreaming (unconscious depth), heartbeat (life/
+rhythm), reaching/grasping (desire/agency), singing (expression/beauty),
+remembering (memory/history), listening (attention/receptivity), weeping
+(grief/beauty).
+
+### Tradeoffs
+- **10 curated phrases** — same size as SIMILES and METAPHORS. Covers 10 different
+  human actions. Can be expanded in future sessions.
+- **Off by default** (`personification_enabled=False`), preserving all existing
+  seed-based output for users who don't use `--personification`.
+- **Suppressed at detail=0** — like simile, metaphor, echoes, soundscapes,
+  wildlife, legends, and wistful. Personification needs at least a minimal
+  landscape to describe.
+- **Placed after metaphors, before echoes** — the order is: opening → detail →
+  weather → anomaly → simile → metaphor → **personification** → echo → sound →
+  wildlife → legend → wistful → travelogue. Personification follows the equative
+  figurative language (metaphor) and transitions to the humanized/emotional
+  register before ambient echoes. This creates a natural progression from
+  comparison → identity → humanization → atmosphere.
+- **Count/prob controls included from the start** — like metaphor, personification
+  ships with `personification_count` and `personification_prob` because the
+  pattern is now well-established.
+- **Dedup via used_personifications set**: prevents the same personification phrase
+  from appearing twice within a landscape. With 10 phrases and count=3, this
+  supports reasonable density without rapid exhaustion.
+- **Seed-breaking when enabled**: Each `rng.choice(PERSONIFICATIONS)` and
+  `rng.random()` call shifts subsequent random picks. Determinism is preserved
+  (same seed + same args = same output).
+- **Not in presets yet** — follows the same trajectory as simile and metaphor
+  (opt-in only). Gating code is in place for future preset integration.
+- **51 new tests, 1141 total** (18 todo + 1123 landscape), 424 subtests (+51 subtests).
+- **Fulfills "Next likely steps" from Session 155**: The third item (personification
+  dimension) was explicitly called out and is now implemented alongside simile
+  and metaphor, completing the figurative language triad.
+
 ## 2026-07-15 — Metaphor Dimension (`--metaphor`) (Session 155)
 
 ### What

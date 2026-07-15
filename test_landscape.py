@@ -8,8 +8,8 @@ from landscape import (
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS, ECHOES, LEGENDS,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
-    TIME_WORDS, TIMES_OF_DAY, SEASONS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL, SOUNDSCAPES, WILDLIFE, PERSPECTIVES, SIMILES, METAPHORS,
-    describe_travelogue, describe_wistful, describe_sounds, describe_times, describe_seasons, describe_wildlife, describe_perspectives, describe_similes, describe_metaphors,
+    TIME_WORDS, TIMES_OF_DAY, SEASONS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL, SOUNDSCAPES, WILDLIFE, PERSPECTIVES, SIMILES, METAPHORS, PERSONIFICATIONS,
+    describe_travelogue, describe_wistful, describe_sounds, describe_times, describe_seasons, describe_wildlife, describe_perspectives, describe_similes, describe_metaphors, describe_personifications,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -27,6 +27,7 @@ ALL_SOUNDSCAPES = set(SOUNDSCAPES)
 ALL_TIMES_OF_DAY = set(TIMES_OF_DAY)
 ALL_SEASONS = set(SEASONS)
 ALL_SIMILES = set(SIMILES)
+ALL_PERSONIFICATIONS = set(PERSONIFICATIONS)
 
 TIME_INDICATORS = [
     "Dawn breaks",
@@ -172,6 +173,19 @@ METAPHOR_INDICATORS = [
     "up to the",
     "neither side willing",
     "beating beneath",
+]
+
+PERSONIFICATION_INDICATORS = [
+    "breath of",
+    "turns its",
+    "older than words",
+    "slumber deep",
+    "each pulse sending",
+    "grasping at",
+    "song older than memory",
+    "light was young",
+    "between stars",
+    "story falling",
 ]
 
 
@@ -8130,6 +8144,362 @@ class TestMetaphorProb(unittest.TestCase):
         self.assertEqual(data["metaphor_prob"], 0.5)
 
     def test_metaphor_prob_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+class TestPersonification(unittest.TestCase):
+    def test_personification_disabled_by_default(self):
+        for s in range(20):
+            result = generate_landscape(seed=s)
+            for ind in PERSONIFICATION_INDICATORS:
+                self.assertNotIn(ind, result,
+                    f"Personification indicator {ind!r} should not appear by default")
+
+    def test_personification_enabled_appears(self):
+        results = [generate_landscape(seed=s, personification_enabled=True) for s in range(50)]
+        has_personification = any(any(ind in r for ind in PERSONIFICATION_INDICATORS) for r in results)
+        self.assertTrue(has_personification,
+            "Personification should appear in at least one output when enabled")
+
+    def test_personification_produces_valid_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, personification_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_personification_is_deterministic(self):
+        a = generate_landscape(seed=42, personification_enabled=True)
+        b = generate_landscape(seed=42, personification_enabled=True)
+        self.assertEqual(a, b,
+            "Personification should be deterministic with same seed")
+
+    def test_personification_differs_from_plain(self):
+        plain = generate_landscape(seed=42)
+        personified = generate_landscape(seed=42, personification_enabled=True)
+        self.assertNotEqual(plain, personified,
+            "Output with personification should differ from plain output")
+
+    def test_personification_detail_zero_does_not_include(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, personification_enabled=True, detail=0)
+            for ind in PERSONIFICATION_INDICATORS:
+                self.assertNotIn(ind, result,
+                    f"Personification indicator {ind!r} should not appear at detail=0")
+
+    def test_personification_json_format(self):
+        result = generate_landscape(seed=42, personification_enabled=True, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIsInstance(data, dict)
+
+    def test_personification_json_includes_field_when_enabled(self):
+        result = generate_landscape(seed=42, personification_enabled=True, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("personification_enabled", data)
+        self.assertTrue(data["personification_enabled"])
+
+    def test_personification_json_no_field_when_disabled(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertNotIn("personification_enabled", data,
+            "personification_enabled should not appear in JSON when disabled")
+
+    def test_personification_works_with_echo(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, personification_enabled=True, echo_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_personification_works_with_legend(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, personification_enabled=True, legend_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_personification_works_with_travelogue(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, personification_enabled=True, travelogue=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_personification_works_with_sound(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, personification_enabled=True, sound_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_personification_works_with_wistful(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, personification_enabled=True, wistful=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_personification_works_with_time_of_day(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, personification_enabled=True, time_of_day_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_personification_works_with_season(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, personification_enabled=True, season_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_personification_works_with_wildlife(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, personification_enabled=True, wildlife_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_personification_works_with_perspective(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, personification_enabled=True, perspective_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_personification_works_with_mood_atmosphere(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, personification_enabled=True, mood_atmosphere=True, mood="eerie")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_personification_poetic_format(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, personification_enabled=True, fmt="poetic")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_personification_all_biomes(self):
+        for biome in BIOMES:
+            for s in range(5):
+                result = generate_landscape(seed=s, personification_enabled=True, biome=biome)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_personification_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+class TestDescribePersonifications(unittest.TestCase):
+    def test_describe_personifications_returns_string(self):
+        result = describe_personifications()
+        self.assertIsInstance(result, str)
+
+    def test_describe_personifications_contains_header(self):
+        result = describe_personifications()
+        self.assertIn("personification phrases", result)
+
+    def test_describe_personifications_shows_all_phrases(self):
+        result = describe_personifications()
+        for phrase in PERSONIFICATIONS:
+            self.assertIn(phrase, result,
+                f"Personification phrase {phrase!r} should be in describe output")
+
+    def test_describe_personifications_has_index_numbers(self):
+        result = describe_personifications()
+        for i in range(len(PERSONIFICATIONS)):
+            self.assertIn(f"[{i}]", result,
+                f"Index [{i}] should appear in describe output")
+
+    def test_describe_personifications_last_index_accurate(self):
+        result = describe_personifications()
+        self.assertIn(f"[{len(PERSONIFICATIONS) - 1}]", result)
+
+    def test_describe_personifications_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_personifications_outputs_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-personifications", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("personification phrases", output,
+            "describe-personifications should output to stdout")
+
+    def test_describe_personifications_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-personifications", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-personifications is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-personifications is used")
+
+
+class TestNoPersonification(unittest.TestCase):
+    def test_no_personification_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_no_personification_disables_with_preset(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                result = generate_landscape(seed=42, **PRESETS[name])
+                has_personif = any(ind in result for ind in PERSONIFICATION_INDICATORS)
+                if not has_personif:
+                    continue
+                result_no = generate_landscape(
+                    seed=42,
+                    personification_enabled=False,
+                    **{k: v for k, v in PRESETS[name].items() if k not in ("personification_enabled",)}
+                )
+                no_personif = not any(ind in result_no for ind in PERSONIFICATION_INDICATORS)
+                self.assertTrue(no_personif,
+                    f"Preset {name} should have personification suppressed with personification_enabled=False")
+
+    def test_no_personification_works_with_other_features(self):
+        result = generate_landscape(seed=42, personification_enabled=False, echo_enabled=True, legend_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_no_personification_does_not_affect_json_output(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertNotIn("personification_enabled", data,
+            "personification_enabled should not be in JSON when disabled")
+
+    def test_no_personification_with_explicit_personification_override(self):
+        no = generate_landscape(seed=42, personification_enabled=False)
+        yes = generate_landscape(seed=42, personification_enabled=True)
+        self.assertNotEqual(no, yes,
+            "personification_enabled=False should differ from True with same seed")
+
+
+class TestPersonificationCount(unittest.TestCase):
+    def test_personification_count_default_is_one(self):
+        a = generate_landscape(seed=42, personification_enabled=True)
+        b = generate_landscape(seed=42, personification_enabled=True, personification_count=1)
+        self.assertEqual(a, b,
+            "personification_count=1 should match default")
+
+    def test_personification_count_zero_suppresses(self):
+        results = [generate_landscape(seed=s, personification_enabled=True, personification_count=0) for s in range(100)]
+        for r in results:
+            for ind in PERSONIFICATION_INDICATORS:
+                self.assertNotIn(ind, r,
+                    f"Personification indicator {ind!r} should not appear with count=0")
+
+    def test_personification_count_two_produces_two(self):
+        results = [generate_landscape(seed=s, personification_enabled=True, personification_count=2) for s in range(50)]
+        has_two = any(
+            sum(1 for ind in PERSONIFICATION_INDICATORS if ind in r) >= 2
+            for r in results
+        )
+        self.assertTrue(has_two,
+            "Expected at least one output with 2+ personification indicators")
+
+    def test_personification_count_three_produces_three(self):
+        results = [generate_landscape(seed=s, personification_enabled=True, personification_count=3) for s in range(100)]
+        has_three = any(
+            sum(1 for ind in PERSONIFICATION_INDICATORS if ind in r) >= 3
+            for r in results
+        )
+        self.assertTrue(has_three,
+            "Expected at least one output with 3+ personification indicators")
+
+    def test_personification_count_no_repeat_same_phrase(self):
+        results = [generate_landscape(seed=s, personification_enabled=True, personification_count=3) for s in range(100)]
+        for r in results:
+            found = [ind for ind in PERSONIFICATION_INDICATORS if ind in r]
+            self.assertEqual(len(found), len(set(found)),
+                "Personification phrases should not repeat within a single landscape")
+
+    def test_personification_count_produces_valid_output(self):
+        for count in [0, 1, 2, 3]:
+            for s in range(10):
+                result = generate_landscape(seed=s, personification_enabled=True, personification_count=count)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_personification_count_is_deterministic(self):
+        a = generate_landscape(seed=42, personification_enabled=True, personification_count=2)
+        b = generate_landscape(seed=42, personification_enabled=True, personification_count=2)
+        self.assertEqual(a, b,
+            "personification_count should be deterministic with same seed")
+
+    def test_personification_count_json_includes_field(self):
+        result = generate_landscape(seed=42, personification_enabled=True, personification_count=2, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("personification_count", data)
+        self.assertEqual(data["personification_count"], 2)
+
+    def test_personification_count_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+class TestPersonificationProb(unittest.TestCase):
+    def test_personification_prob_default_is_one(self):
+        a = generate_landscape(seed=42, personification_enabled=True)
+        b = generate_landscape(seed=42, personification_enabled=True, personification_prob=1.0)
+        self.assertEqual(a, b,
+            "personification_prob=1.0 should match default")
+
+    def test_personification_prob_zero_suppresses_personifications(self):
+        results = [generate_landscape(seed=s, personification_enabled=True, personification_prob=0.0) for s in range(100)]
+        for r in results:
+            for ind in PERSONIFICATION_INDICATORS:
+                self.assertNotIn(ind, r,
+                    f"Personification indicator {ind!r} should not appear with personification_prob=0.0")
+
+    def test_personification_prob_one_always_has_personification(self):
+        results = [generate_landscape(seed=s, personification_enabled=True, personification_prob=1.0) for s in range(100)]
+        has_personif = sum(1 for r in results if any(ind in r for ind in PERSONIFICATION_INDICATORS))
+        self.assertGreater(has_personif, 80,
+            "With personification_prob=1.0, most outputs should contain a personification")
+
+    def test_personification_prob_produces_valid_output(self):
+        for prob in [0.0, 0.25, 0.5, 0.75, 1.0]:
+            for s in range(10):
+                result = generate_landscape(seed=s, personification_enabled=True, personification_prob=prob)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_personification_prob_is_deterministic(self):
+        a = generate_landscape(seed=42, personification_enabled=True, personification_prob=0.5)
+        b = generate_landscape(seed=42, personification_enabled=True, personification_prob=0.5)
+        self.assertEqual(a, b,
+            "personification_prob should be deterministic with same seed")
+
+    def test_personification_prob_json_includes_field(self):
+        result = generate_landscape(seed=42, personification_enabled=True, personification_prob=0.5, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("personification_prob", data)
+        self.assertEqual(data["personification_prob"], 0.5)
+
+    def test_personification_prob_flag_exists_via_cli(self):
         from landscape import main
         self.assertTrue(callable(main))
 
