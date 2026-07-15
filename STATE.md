@@ -2,6 +2,82 @@
 
 ## 2026-07-15
 
+### What was done (Session 155)
+- **Added metaphor dimension (`--metaphor`)** — a new poetic device feature that adds
+  direct equative statements (X is Y) comparing the landscape to an evocative image,
+  following the pattern of simile but using identity rather than similarity.
+  - New `METAPHORS` word bank of 10 curated phrases, each a direct is/are statement:
+    - "The {display} is a {adj} cathedral of {color} {element}, built by no human hand."
+    - "The {adj} {element} of the {display} is a living chronicle of all that has passed."
+    - "The {color} light of the {display} is a {adj} language spoken only by the {element}."
+    - "Each breath of the {display} is a {color} prayer {adverb} offered to the {adj} {element}."
+    - "The {display} is a {adj} wound in the world, bleeding {color} {element} into the sky."
+    - "The {adj} shapes of the {display} are {color} memories of a {element} that never was."
+    - "The {display} is a {adj} threshold between the world of {color} {element} and something older."
+    - "The {adj} silence of the {display} is a {color} mirror held {adverb} up to the {element}."
+    - "The {display} is an {adj} argument between {color} {element} and the sky, neither side willing to yield."
+    - "The {adj} heart of the {display} is a {color} {element} beating {adverb} beneath the surface."
+  - Each phrase uses 3-5 template slots (`{display}`, `{adj}`, `{color}`, `{element}`, `{adverb}`)
+    and asserts identity (is/are) rather than comparison (like), creating a stronger
+    figurative language register than simile.
+  - Off by default (`metaphor_enabled=False`), preserving all existing seed-based output.
+- **Added `--metaphor` CLI flag** (boolean, default: off) — follows the same pattern
+  as `--simile`, `--echo`, `--sound`, etc.
+- **Added `--no-metaphor` CLI flag** — disables metaphor phrases overriding presets,
+  following the same pattern as `--no-simile`, `--no-echo`, etc.
+- **Added `--metaphor-count` and `--metaphor-prob` CLI flags** — users can control
+  how many metaphor phrases appear per landscape (0-3, default: 1) and how often
+  each roll succeeds (0.0-1.0, default: 1.0), following the exact same pattern as
+  `--simile-count`/`--simile-prob` and all other count/prob controls.
+- **Added `metaphor_enabled`, `metaphor_count`, `metaphor_prob` params to
+  `generate_landscape()`** — defaults False, 1, and 1.0 respectively, preserving all
+  existing behavior.
+- **Added metaphor generation** in `generate_landscape()` right after simile
+  (before echo), with dedup via `used_metaphors` set to prevent repeats. Sentence
+  order: opening → detail → weather → anomaly → simile → **metaphor** → echo →
+  sound → wildlife → legend → wistful → travelogue.
+- **Added `"metaphor_enabled"`, `"metaphor_count"`, `"metaphor_prob"` to JSON
+  metadata** when non-default — consistent with all other feature metadata patterns.
+- **Added `describe_metaphors()` function and `--describe-metaphors` CLI flag** —
+  users can inspect all 10 metaphor phrases with index numbers, following the exact
+  same introspection pattern as `describe_similes()`, `describe_echoes()`, etc.
+- **Added preset gating for `metaphor_enabled`, `metaphor_count`, `metaphor_prob`**
+  — follows the same pattern as all other preset gating, so presets can optionally
+  configure metaphor use in a future session.
+- Added 51 new tests:
+  - **TestMetaphor (22 tests)**: disabled by default, enabled appears, valid output,
+    determinism, differs from plain, detail=0, JSON format, JSON field present/absent,
+    works with echo, legend, travelogue, sound, wistful, time-of-day, season, wildlife,
+    perspective, mood atmosphere, poetic format, all biomes, CLI flag.
+  - **TestDescribeMetaphors (8 tests)**: returns string, header, all phrases, index
+    numbers, last index, CLI flag, stdout output, no landscape generated.
+  - **TestNoMetaphor (5 tests)**: flag exists via CLI, disables metaphor with presets
+    (5 subtests), works with other features, JSON output, explicit `--metaphor` override.
+  - **TestMetaphorCount (9 tests)**: default is one, zero suppresses, multi-metaphor
+    with count=2 and count=3, no repeat same phrase, valid output for all counts,
+    determinism, JSON format, JSON field, CLI flag.
+  - **TestMetaphorProb (7 tests)**: default is one, zero suppresses, valid output for
+    all probs, always has metaphor with prob=1.0, determinism, JSON field, CLI flag.
+- This fulfills the second "Next likely step" from Session 154: "Add metaphor
+  dimension (direct equative statements like 'the {display} is a {adj} {color}
+  {element} of forgotten things')." Metaphor is the second poetic device dimension
+  after simile, completing the simile→metaphor trajectory for the figurative language
+  system.
+- Tests increased from 1020 to 1072 landscape tests (18 todo unchanged), subtests
+  from 355 to 373.
+
+### Current status
+Working. All 1090 tests pass (18 todo + 1072 landscape), 373 subtests.
+
+### Next likely steps
+- Expand simile word bank (more phrases, more varied constructions)
+- Expand metaphor word bank (more phrases, more varied constructions)
+- Add personification dimension (giving human qualities to the landscape)
+- Expand global word banks (more echoes, more time-of-day, more seasons)
+- Add per-preset simile_count, simile_prob, metaphor_count, metaphor_prob with curated values
+
+## 2026-07-15
+
 ### What was done (Session 154)
 - **Added `--simile-count` and `--simile-prob` CLI flags** — users can now control
   how many simile phrases appear per landscape (0-3, default: 1) and how often

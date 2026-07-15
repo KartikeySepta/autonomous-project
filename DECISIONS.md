@@ -1,5 +1,58 @@
 # Decisions
 
+## 2026-07-15 — Metaphor Dimension (`--metaphor`) (Session 155)
+
+### What
+Added a `METAPHORS` word bank (10 curated phrases), `--metaphor` CLI flag (default: off),
+`--no-metaphor` CLI flag, `--describe-metaphors` introspection, `metaphor_enabled`/`metaphor_count`/`metaphor_prob`
+parameters to `generate_landscape()`, JSON metadata, preset gating, and 51 new tests.
+Each phrase is a single direct equative sentence (is/are) comparing the landscape to
+an evocative image (e.g. "The {display} is a {adj} cathedral of {color} {element},
+built by no human hand.") inserted after simile and before echoes.
+
+### Why
+Session 154's "Next likely steps" explicitly called for adding a metaphor dimension:
+"Add metaphor dimension (direct equative statements like 'the {display} is a {adj}
+{color} {element} of forgotten things')." The simile system (Session 153) added
+figurative language based on comparison (X is like Y). A metaphor system adds the
+stronger figurative claim of identity (X is Y), creating a natural progression from
+descriptive → comparative → equative within the figurative language dimension.
+
+Each metaphor phrase is curated to assert identity with a different evocative image:
+cathedral (awe/sacred), chronicle (memory/history), language (mystery/communication),
+prayer (reverence/hope), wound (pain/violation), memory (nostalgia/loss), threshold
+(liminality/transition), mirror (reflection/truth), argument (tension/conflict),
+heart (essence/vitality).
+
+### Tradeoffs
+- **10 curated phrases** — same size as the original SIMILES, PERSPECTIVES, and
+  TIMES_OF_DAY banks. Covers 10 different metaphor constructions. Can be expanded
+  in future sessions.
+- **Off by default** (`metaphor_enabled=False`), preserving all existing seed-based
+  output for users who don't use `--metaphor`.
+- **Suppressed at detail=0** — like simile, echoes, soundscapes, wildlife, legends,
+  and wistful. Metaphors need at least a minimal landscape to describe.
+- **Placed after similes, before echoes** — the order is: opening → detail → weather
+  → anomaly → **simile** → **metaphor** → echo → sound → wildlife → legend → wistful
+  → travelogue. Metaphors follow similes to create a natural progression from
+  comparative figurative language to equative figurative language, before transitioning
+  to ambient echoes.
+- **Count/prob controls included from the start** — unlike simile (which got count/prob
+  in the next session), metaphor ships with `metaphor_count` and `metaphor_prob` controls
+  because the pattern is now well-established and every multi-phrase feature includes
+  them. This avoids a follow-up session for the same integration.
+- **Dedup via used_metaphors set**: prevents the same metaphor phrase from appearing
+  twice within a landscape. With 10 metaphors and count=3, this supports reasonable
+  density without rapid exhaustion.
+- **Seed-breaking when enabled**: Each `rng.choice(METAPHORS)` and `rng.random()` call
+  shifts subsequent random picks. Determinism is preserved (same seed + same args =
+  same output).
+- **Not in presets yet** — follows the same trajectory as simile (opt-in only).
+  Gating code is in place for future preset integration.
+- **51 new tests, 1090 total** (18 todo + 1072 landscape), 373 subtests (+18 subtests).
+- **Fulfills "Next likely steps" from Session 154**: The second item (metaphor dimension)
+  was explicitly called out and is now implemented alongside simile.
+
 ## 2026-07-15 — Configurable Simile Count and Probability (`--simile-count`, `--simile-prob`) (Session 154)
 
 ### What
