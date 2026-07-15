@@ -1,5 +1,49 @@
 # Decisions
 
+## 2026-07-15 — Configurable Mood Atmosphere Count and Probability (Session 150)
+
+### What
+Added `--mood-atmosphere-count` (choices 0-3, default: 1) and `--mood-atmosphere-prob`
+(0.0-1.0, default: 1.0) CLI flags, with corresponding `mood_atmosphere_count` and
+`mood_atmosphere_prob` parameters to `generate_landscape()`. Users can now control
+how many mood atmosphere phrases appear per landscape and how often each roll
+succeeds, following the exact same pattern as every other multi-phrase feature
+in the project (echo, sound, wildlife, perspective, time, season, weather, legend).
+
+### Why
+The mood atmosphere system (Session 148) was a single `rng.choice(MOOD_ATMOSPHERE[mood])`
+call — one phrase per landscape, no density controls. Every other multi-phrase
+feature has count and probability controls. Mood atmosphere was the only one
+without them. This completes the pattern, giving users fine-grained control over
+atmospheric density and frequency, matching every other multi-phrase feature.
+
+The "Next likely steps" from Session 149 explicitly called for this:
+"Add count/prob controls for mood atmosphere (e.g. multiple atmosphere phrases)."
+
+### Tradeoffs
+- **Default mood_atmosphere_count=1, mood_atmosphere_prob=1.0** preserves backward
+  compatibility — all existing seed-based output with `--mood-atmosphere` is unchanged.
+- **Per-roll mood selection**: Each roll independently picks a random mood from the
+  available active moods (rather than picking one mood per landscape and using it
+  for all rolls). This means with combined moods (e.g. `--mood eerie --mood vibrant`),
+  a landscape could get phrases from both moods, creating layered atmosphere.
+- **Dedup via used_atmospheres set**: Prevents the same phrase from appearing twice
+  within a landscape. Since each mood has only 4 phrases, count=3 with a single mood
+  consumes 3 of 4 unique phrases — reasonable density without rapid exhaustion.
+- **mood_atmosphere_count=0** is an alternative suppression mechanism to
+  `mood_atmosphere_prob=0.0` and `mood_atmosphere=False`. Multiple suppression paths
+  are consistent with the rest of the feature set.
+- **JSON metadata**: `mood_atmosphere_count` and `mood_atmosphere_prob` are emitted
+  only when non-default values are used (consistent with all other count/prob metadata
+  patterns).
+- **No per-preset values yet**: Unlike echo/sound/wildlife/perspective/time/season
+  count/prob, mood atmosphere count and prob are not yet set per-preset. The gating
+  code is in place but all presets retain the defaults (1/1.0). Can be added in a
+  future session.
+- **15 new tests, 979 total** (18 todo + 961 landscape), 322 subtests.
+- **Fulfills "Next likely steps" from Session 149**: Configurable mood atmosphere
+  density was explicitly called out as the third item.
+
 ## 2026-07-15 — Mood Atmosphere in Presets (Session 149)
 
 ### What

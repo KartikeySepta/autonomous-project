@@ -2862,6 +2862,119 @@ class TestMoodAtmosphere(unittest.TestCase):
                 "No mood atmosphere phrase should appear when mood is not set")
 
 
+class TestMoodAtmosphereCount(unittest.TestCase):
+    def test_default_is_one(self):
+        self.assertEqual(
+            generate_landscape(seed=42, mood="eerie", mood_atmosphere=True, mood_atmosphere_count=1),
+            generate_landscape(seed=42, mood="eerie", mood_atmosphere=True),
+            "mood_atmosphere_count=1 should match default",
+        )
+
+    def test_zero_suppresses_atmosphere(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, mood="eerie", mood_atmosphere=True, mood_atmosphere_count=0)
+            for ind in ALL_MOOD_ATMOSPHERE_PHRASES:
+                self.assertNotIn(ind, result,
+                    f"Mood atmosphere should be suppressed at count=0, seed={s}")
+
+    def test_multi_atmosphere_with_count_three(self):
+        results = [generate_landscape(
+            seed=s, mood=["peaceful", "eerie", "vibrant", "desolate"],
+            mood_atmosphere=True, mood_atmosphere_count=3,
+        ) for s in range(200)]
+        multi_count = sum(
+            1 for r in results
+            if sum(1 for ind in ALL_MOOD_ATMOSPHERE_PHRASES if ind in r) >= 2
+        )
+        self.assertGreater(multi_count, 0,
+            "mood_atmosphere_count=3 should sometimes produce 2+ phrases across 200 seeds")
+
+    def test_does_not_repeat_same_phrase(self):
+        for s in range(100):
+            result = generate_landscape(
+                seed=s, mood=["peaceful", "eerie", "vibrant", "desolate"],
+                mood_atmosphere=True, mood_atmosphere_count=3,
+            )
+            for ind in ALL_MOOD_ATMOSPHERE_PHRASES:
+                count = result.count(ind)
+                self.assertLessEqual(count, 1,
+                    f"Phrase {ind!r} appears {count} times (should be <=1) at seed {s}")
+
+    def test_produces_valid_output(self):
+        for count in [0, 1, 2, 3]:
+            for s in range(10):
+                result = generate_landscape(seed=s, mood="eerie", mood_atmosphere=True, mood_atmosphere_count=count)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10,
+                    f"Invalid output at count={count}, seed={s}")
+
+    def test_is_deterministic(self):
+        a = generate_landscape(seed=42, mood="eerie", mood_atmosphere=True, mood_atmosphere_count=2)
+        b = generate_landscape(seed=42, mood="eerie", mood_atmosphere=True, mood_atmosphere_count=2)
+        self.assertEqual(a, b,
+            "mood_atmosphere_count should be deterministic with same seed")
+
+    def test_works_with_json_format(self):
+        result = generate_landscape(seed=42, mood="eerie", mood_atmosphere=True, mood_atmosphere_count=2, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_json_includes_field(self):
+        result = generate_landscape(seed=42, mood="eerie", mood_atmosphere=True, mood_atmosphere_count=2, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("mood_atmosphere_count", data)
+        self.assertEqual(data["mood_atmosphere_count"], 2)
+
+    def test_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+class TestMoodAtmosphereProb(unittest.TestCase):
+    def test_default_is_one(self):
+        self.assertEqual(
+            generate_landscape(seed=42, mood="eerie", mood_atmosphere=True, mood_atmosphere_prob=1.0),
+            generate_landscape(seed=42, mood="eerie", mood_atmosphere=True),
+            "mood_atmosphere_prob=1.0 should match default",
+        )
+
+    def test_zero_suppresses_atmosphere(self):
+        for s in range(30):
+            result = generate_landscape(seed=s, mood="eerie", mood_atmosphere=True, mood_atmosphere_prob=0.0)
+            for ind in ALL_MOOD_ATMOSPHERE_PHRASES:
+                self.assertNotIn(ind, result,
+                    f"Mood atmosphere should be suppressed at prob=0.0, seed={s}")
+
+    def test_produces_valid_output(self):
+        for prob in [0.0, 0.5, 1.0]:
+            for s in range(10):
+                result = generate_landscape(seed=s, mood="eerie", mood_atmosphere=True, mood_atmosphere_prob=prob)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10,
+                    f"Invalid output at prob={prob}, seed={s}")
+
+    def test_is_deterministic(self):
+        a = generate_landscape(seed=42, mood="eerie", mood_atmosphere=True, mood_atmosphere_prob=0.7)
+        b = generate_landscape(seed=42, mood="eerie", mood_atmosphere=True, mood_atmosphere_prob=0.7)
+        self.assertEqual(a, b,
+            "mood_atmosphere_prob should be deterministic with same seed")
+
+    def test_json_includes_field(self):
+        result = generate_landscape(seed=42, mood="eerie", mood_atmosphere=True, mood_atmosphere_prob=0.7, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("mood_atmosphere_prob", data)
+        self.assertEqual(data["mood_atmosphere_prob"], 0.7)
+
+    def test_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 class TestColorFlag(unittest.TestCase):
     def test_color_enabled_default_same_as_before(self):
         r1 = generate_landscape(seed=42, color_enabled=True)

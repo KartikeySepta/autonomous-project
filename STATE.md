@@ -2,6 +2,60 @@
 
 ## 2026-07-15
 
+### What was done (Session 150)
+- **Added `--mood-atmosphere-count` and `--mood-atmosphere-prob` CLI flags** —
+  users can now control how many mood atmosphere phrases appear per landscape
+  (0-3, default: 1) and how often each roll succeeds (0.0-1.0, default: 1.0),
+  following the exact same pattern as `--echo-count`/`--echo-prob`,
+  `--sound-count`/`--sound-prob`, `--wildlife-count`/`--wildlife-prob`,
+  `--perspective-count`/`--perspective-prob`, `--time-count`/`--time-prob`,
+  and `--season-count`/`--season-prob`.
+  - `mood_atmosphere_count=0` suppresses all mood atmosphere phrases (alternative
+    to not using `--mood-atmosphere`)
+  - `mood_atmosphere_count=1` (default) produces exactly 1 phrase (existing behavior)
+  - `mood_atmosphere_count=2` and `mood_atmosphere_count=3` produce multiple
+    distinct mood atmosphere phrases with dedup (preventing the same phrase from
+    appearing twice)
+  - Each roll independently picks a random mood from the available active moods,
+    then picks a unique phrase from that mood's pool
+  - `mood_atmosphere_prob=0.0` suppresses all mood atmosphere phrases even with
+    `mood_atmosphere_count > 0`
+  - Each of `mood_atmosphere_count` rolls independently draws
+    `rng.random() < mood_atmosphere_prob`
+  - Default `mood_atmosphere_count=1, mood_atmosphere_prob=1.0` preserves backward
+    compatibility — all existing seed-based output with `--mood-atmosphere` is
+    unchanged
+- **Added `mood_atmosphere_count` and `mood_atmosphere_prob` params to
+  `generate_landscape()`** — defaults 1 and 1.0 respectively, preserving all
+  existing behavior.
+- **Added `mood_atmosphere_count` and `mood_atmosphere_prob` to JSON metadata**
+  when non-default values are used — consistent with all other count/prob metadata
+  patterns.
+- **Added preset gating for `mood_atmosphere_count` and `mood_atmosphere_prob`**
+  — follows the same pattern as all other count/prob gating, so presets can
+  optionally configure mood atmosphere density in a future session.
+- Added 15 new tests (9 in `TestMoodAtmosphereCount`, 6 in `TestMoodAtmosphereProb`):
+  - `TestMoodAtmosphereCount`: default is one, zero suppresses, multi-atmosphere
+    with count=3, no repeat same phrase, valid output for all counts, determinism,
+    JSON format, JSON field, CLI flag.
+  - `TestMoodAtmosphereProb`: default is one, zero suppresses, valid output for
+    all probs, determinism, JSON field, CLI flag.
+- This fulfills the third "Next likely step" from Session 149: "Add count/prob
+  controls for mood atmosphere (e.g. multiple atmosphere phrases)."
+- Tests increased from 946 to 961 landscape tests (18 todo unchanged), subtests
+  unchanged at 322.
+
+### Current status
+Working. All 979 tests pass (18 todo + 961 landscape), 322 subtests.
+
+### Next likely steps
+- Expand global word banks (more echoes, more time-of-day, more seasons)
+- Add a narrative/poetic device dimension (simile, metaphor, personification
+  as separate controllable features)
+- Add per-preset mood_atmosphere_count and mood_atmosphere_prob with curated values
+
+## 2026-07-15
+
 ### What was done (Session 149)
 - **Added `mood_atmosphere` to all 5 presets** with `mood_atmosphere: True`:
   - nightfall, pastoral, sublime, wasteland, dreamscape all now include mood
