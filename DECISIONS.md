@@ -1,5 +1,49 @@
 # Decisions
 
+## 2026-07-15 — Per-Preset Time-of-Day Count and Probability
+
+### What
+Added `time_count` and `time_prob` to all 5 preset configurations (`nightfall`,
+`pastoral`, `sublime`, `wasteland`, `dreamscape`). Each preset now has curated
+time-of-day density and probability values that match its atmospheric theme,
+mirroring how `season_count`/`season_prob`, `sound_count`/`sound_prob`,
+`weather_count`/`weather_prob`, and `legend_count`/`legend_prob` are already set
+per-preset.
+
+### Why
+Session 136 added `--time-count` and `--time-prob` CLI flags and parameters,
+with gating code in `main()` that checks for preset-level values — but no preset
+actually used them. Every other multi-phrase feature (echoes, legends,
+soundscapes, weather, anomalies, seasons) had per-preset count and prob values.
+Time-of-day was the last dimension without preset-level tuning. This completes
+the trajectory: on/off in presets (Session 132) → count/prob as CLI flags
+(Session 136) → per-preset count+prob values (this session).
+
+The "Next likely steps" from Session 138 explicitly called for this:
+"Add --time-count, --time-prob to presets with curated values."
+
+### Tradeoffs
+- **Seed-breaking for presets**: All 5 presets now produce different output from
+  Session 138 for the same seed, because `time_prob < 1.0` for some presets
+  means extra `rng.random()` calls are consumed per landscape. This is acceptable
+  because presets evolve as features mature, and determinism is preserved (same
+  seed + same args = same output).
+- **Curated values per preset**: nightfall gets `time_count=2, time_prob=0.7`
+  (matching its echo/sound/legend/season prob), pastoral gets `time_count=1,
+  time_prob=0.6` (gentle, occasional), sublime gets `time_count=2,
+  time_prob=0.95` (rich, almost always), wasteland gets `time_count=1,
+  time_prob=1.0` (always stark), dreamscape gets `time_count=2,
+  time_prob=0.85` (surreal, usually present).
+- **No changes to `generate_landscape()`**: Presets are a pure CLI convenience
+  layer — the generation function already accepts `time_count`/`time_prob`.
+  Only the PRESETS dict changed.
+- **Consistent with all other preset integrations**: Every multi-phrase feature
+  with count/prob controls now has per-preset tuning — echoes, legends,
+  soundscapes, weathers, seasons, and time-of-day (this session).
+- **1 new test, 847 total** (18 todo + 829 landscape), 253 subtests.
+- **Fulfills "Next likely steps" from Session 138**: Per-preset time count and
+  probability was explicitly called out as the last item.
+
 ## 2026-07-15 — Per-Preset Seasonal Count and Probability
 
 ### What

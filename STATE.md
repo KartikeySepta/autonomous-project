@@ -2,6 +2,42 @@
 
 ## 2026-07-15
 
+### What was done (Session 139)
+- **Added `time_count` and `time_prob` to all 5 presets** with curated values
+  that match each preset's mood/theme:
+  - `nightfall`: `time_count=2, time_prob=0.7` — multiple time-of-day phrases,
+    not always present, matching echo/sound/legend/season count and prob
+  - `pastoral`: `time_count=1, time_prob=0.6` — single gentle temporal phrase,
+    occasionally absent for serene timelessness
+  - `sublime`: `time_count=2, time_prob=0.95` — rich temporal detail almost
+    always present
+  - `wasteland`: `time_count=1, time_prob=1.0` — always a stark temporal
+    reference
+  - `dreamscape`: `time_count=2, time_prob=0.85` — surreal temporal framing
+    usually present
+- The gating code was already in place from Session 136 — only the PRESETS
+  dict values needed updating, following the same pattern as every other
+  per-preset count/prob integration (echo, sound, weather, legend, season).
+- Added 1 new test in TestPresets (`test_all_presets_include_time_count_and_prob`)
+  — verifies every preset includes `time_count` and `time_prob` with valid
+  ranges, following the same pattern as
+  `test_all_presets_include_season_count_and_prob`.
+- This directly fulfills the last "Next likely step" from Session 138: add
+  `--time-count`, `--time-prob` to presets with curated values.
+- Tests increased from 846 to 847 total (18 todo + 829 landscape), subtests
+  from 248 to 253.
+
+### Current status
+Working. All 847 tests pass (18 todo + 829 landscape), 253 subtests.
+
+### Next likely steps
+- Expand global word banks (more time-of-day, more echoes, more legends, more
+  soundscapes, more seasons)
+- Add inhabitants/wildlife as a new sensory dimension
+- Add spatial geometry dimension (e.g. scale, perspective, distance)
+
+## 2026-07-15
+
 ### What was done (Session 138)
 - **Added `season_count` and `season_prob` to all 5 presets** with curated values
   that match each preset's mood/theme:

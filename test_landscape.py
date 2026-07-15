@@ -4127,6 +4127,19 @@ class TestPresets(unittest.TestCase):
                 self.assertGreaterEqual(PRESETS[name]["season_prob"], 0.0)
                 self.assertLessEqual(PRESETS[name]["season_prob"], 1.0)
 
+    def test_all_presets_include_time_count_and_prob(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("time_count", PRESETS[name],
+                    f"Preset {name} should include 'time_count'")
+                self.assertIn("time_prob", PRESETS[name],
+                    f"Preset {name} should include 'time_prob'")
+                self.assertGreaterEqual(PRESETS[name]["time_count"], 0)
+                self.assertLessEqual(PRESETS[name]["time_count"], 3)
+                self.assertGreaterEqual(PRESETS[name]["time_prob"], 0.0)
+                self.assertLessEqual(PRESETS[name]["time_prob"], 1.0)
+
 
 class TestTimeWords(unittest.TestCase):
     def test_time_word_appears_in_output(self):
