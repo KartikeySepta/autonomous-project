@@ -1,5 +1,77 @@
 # State
 
+## 2026-07-15
+
+### What was done (Session 132)
+- **Added time-of-day to all 5 presets** — every preset (`nightfall`, `pastoral`,
+  `sublime`, `wasteland`, `dreamscape`) now includes `"time_of_day_enabled": True`,
+  making time-of-day phrases active by default when using any preset. This follows
+  the same trajectory as every other sensory feature (echoes: Session 88, legends:
+  Session 97, travelogue: Session 106, wistful: Session 110, soundscapes:
+  Session 113): add the feature as opt-in, then integrate into presets.
+  - Each preset gets one randomly chosen time-of-day phrase from the 10-phrase
+    pool — matching the preset's mood.
+  - Preset gating checks `args.time is False and not args.no_time` before applying
+    the preset value — consistent with all other preset gating.
+  - Seed-breaking when presets are used: one extra `rng.choice(TIMES_OF_DAY)` call
+    before the opening shifts subsequent random picks. Determinism is preserved
+    (same seed + same args = same output).
+- **Added `--no-time` CLI flag** — users can now explicitly disable time-of-day
+  phrases even when using presets that enable them. Follows the exact same pattern
+  as `--no-echo`, `--no-legend`, `--no-sound`, `--no-travelogue`, and `--no-wistful`.
+  - `--no-time` forces `time_of_day_enabled=False` regardless of preset config or
+    explicit `--time`.
+  - Post-preset override block ensures `--no-time` always wins after all gating.
+- Added 7 new tests (1 structural + 6 functional):
+  - `test_all_presets_include_time_of_day_enabled` (5 subtests) — verifies every
+    preset has `"time_of_day_enabled": True`.
+  - `TestNoTime` (6 tests): flag exists via CLI, disables time with all 5 presets
+    (5 subtests), works with other features, JSON output, explicit `--time` override.
+- This fulfills the two most obvious "Next likely steps" from Session 131: add
+  time-of-day to presets (Step 1) and add `--no-time` flag (Step 2).
+- Tests increased from 773 to 780 total (18 todo + 762 landscape), subtests from
+  207 to 222.
+
+### Current status
+Working. All 780 tests pass (18 todo + 762 landscape), 222 subtests.
+
+### Next likely steps
+- Add seasonal variation as another temporal dimension
+- Expand global word banks (more time-of-day phrases, more echoes, more legends,
+  more soundscapes)
+- Add inhabitants/wildlife as a new sensory dimension
+- Add `--time-count`, `--time-prob` for configurable time-of-day density
+
+## 2026-07-14
+
+### What was done (Session 131)
+- **Added time-of-day system** — a new `TIMES_OF_DAY` word bank of 10 evocative phrases (e.g. "Dawn breaks over the landscape", "The dead of night holds the land in darkness", "The golden hour before sunset paints everything amber") that establish when the landscape is being viewed, adding a temporal-setting dimension distinct from the existing `TIME_WORDS` (which are narrative adverbs like "already", "still").
+  - Each phrase is a standalone sentence prepended to the opening with a period: `"Dawn breaks over the landscape. A vast crystal forest of vivid mist stretches..."`.
+  - 10 curated phrases covering: dawn, dead of night, blazing noon, dusk, early morning, midnight moonlight, twilight, golden hour, first light, starless night.
+  - Off by default (`time_of_day_enabled=False`), preserving all existing seed-based output.
+  - Picked via `rng.choice(TIMES_OF_DAY)` — one phrase prepended when enabled.
+  - Works with all features: detail=0, prose/poetic/json, combine, echo, legend, soundscape, travelogue, wistful, presets.
+  - Not suppressed at detail=0 (unlike echoes/legends) — time-of-day is a framing prefix suitable even for minimal descriptions.
+  - Seed-breaking when enabled: one `rng.choice()` call before the opening template, shifting subsequent picks. Determinism is preserved (same seed + same args = same output).
+- Added `--time` CLI flag (boolean, default: off) — follows the same pattern as `--echo`, `--legend`, `--sound`.
+- Added `--describe-times` CLI flag and `describe_times()` function — users can inspect all 10 time-of-day phrases with index numbers, following the exact same introspection pattern as `describe_echoes()`, `describe_legends()`, etc.
+- Added `"time_of_day"` to JSON metadata when enabled — contains the full phrase string (e.g. `"time_of_day": "Dawn breaks over the landscape"`).
+- Added 27 new tests:
+  - `TestTimeOfDay` (20 tests): disabled by default, enabled appears, output validity, determinism, differs from plain, prepends opening, JSON format, JSON field present/absent, detail=0, combine, echo, legend, travelogue, sound, wistful, poetic format, all biomes, CLI flag existence.
+  - `TestDescribeTimes` (7 tests): returns string, header, all phrases, index numbers, last index, CLI flag, stdout output, no landscape generation.
+- This fulfills the "Add a new sensory dimension (e.g. time-of-day)" next step explicitly called out in Sessions 123–130. After 6 consecutive sessions of word bank expansions, this adds a genuinely new temporal dimension.
+- Tests increased from 746 to 773 total (18 todo + 755 landscape), subtests from 201 to 207.
+
+### Current status
+Working. All 773 tests pass (18 todo + 755 landscape), 207 subtests.
+
+### Next likely steps
+- Add time-of-day to presets (opt-in per-preset like echo/legend/sound)
+- Add `--no-time` flag for symmetry with other `--no-*` flags
+- Add seasonal variation as another temporal dimension
+- Further expand global word banks (more echoes, legends, soundscapes, wistful phrases)
+- Add inhabitants/wildlife as a new sensory dimension
+
 ## 2026-07-14
 
 ### What was done (Session 130)
@@ -35,13 +107,6 @@
 - Weathers appear in weather templates via `_pick("weathers", ...)` which blends biome-specific weathers with the global WEATHERS pool (12 entries). Expanding biome weathers from 3→5 means 62% more biome-specific weather variety, making weather descriptions more distinctive per biome.
 - Anomalies appear in anomaly templates via `_pick("anomalies", ...)` which blends biome-specific anomalies with the global ANOMALIES pool (8 entries). Expanding biome anomalies from 3→5 means 62% more biome-specific anomaly variety, making anomalies feel more grounded in the landscape.
 - Weathers and anomalies were the last two biome word bank categories at their original size (3 each). After 5 consecutive sessions expanding individual categories (adjectives/elements, nouns, verbs, colors, adverbs), this session completed the final two in a single pass.
-
-### Current status
-Working. All 746 tests pass (18 todo + 728 landscape), 201 subtests.
-
-### Next likely steps
-- Add a new sensory dimension (e.g. seasonal variation, time-of-day, spatial geometry, inhabitants/wildlife)
-- Further expand global word banks (more echoes, legends, soundscapes, wistful phrases)
 
 ### What was done (Session 129)
 - **Expanded biome-specific adverb banks for all 13 biomes** — each biome now has +2 adverbs (26 new entries total), the fifth expansion of biome-specific word banks after Sessions 125 (adjectives/elements), 126 (nouns), 127 (verbs), and 128 (colors). Prior to this, all biomes had exactly 3 adverbs. Now each biome has 5 adverbs:

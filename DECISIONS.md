@@ -1,5 +1,80 @@
 # Decisions
 
+## 2026-07-15 — Time-of-Day in Presets + `--no-time` Flag
+
+### What
+Added `"time_of_day_enabled": True` to all 5 presets (nightfall, pastoral,
+sublime, wasteland, dreamscape), making time-of-day phrases active by default
+when using any preset. Also added `--no-time` CLI flag that forces
+`time_of_day_enabled=False`, overriding presets and explicit `--time`.
+
+### Why
+The time-of-day system (Session 131) was the last opt-in sensory feature that
+was not integrated into presets. Every other feature — echoes, legends,
+soundscapes, travelogue, wistful — went through the same trajectory: add as
+opt-in CLI flag, then add to all presets in a follow-up session. This completes
+that trajectory for time-of-day.
+
+The `--no-time` flag is necessary because all 5 presets now enable time-of-day
+by default. Users who want a preset's configuration but do NOT want a time-of-day
+framing need a way to disable it. This follows the exact same pattern as
+`--no-echo`, `--no-legend`, `--no-sound`, `--no-travelogue`, and `--no-wistful.
+
+### Tradeoffs
+- **Seed-breaking for presets**: All 5 presets now produce different output from
+  the previous session for the same seed, because `time_of_day_enabled=True` was
+  not previously in presets. This is acceptable because presets are curated entry
+  points that evolve as features mature, and determinism is preserved (same seed
+  + same args = same output). Users who want the old behavior can explicitly pass
+  `--no-time`.
+- **Backward compatibility via CLI overrides**: The gating code checks
+  `args.time is False` before applying the preset value. Users who explicitly
+  pass `--time` don't get the preset value. Users who pass `--no-time` always
+  disable it. This is the same pattern as all other preset overrides.
+- **No changes to `generate_landscape()`**: Presets are a pure CLI convenience
+  layer — the generation function already accepts `time_of_day_enabled`. Only
+  the PRESETS dict and main() gating code changed.
+- **Consistent with all other preset integrations**: Every feature with an on/off
+  switch is now in all 5 presets — echoes (Session 88), legends (Session 97),
+  travelogue (Session 106), wistful (Session 110), soundscapes (Session 113),
+  and time-of-day (this session).
+- **7 new tests, 780 total** (18 todo + 762 landscape), 222 subtests.
+- **Fulfills "Next likely steps" from Session 131**: Steps 1 and 2 were adding
+  time-of-day to presets and adding --no-time.
+
+## 2026-07-14 — Time-of-Day System (`--time`)
+
+### What
+Added a `TIMES_OF_DAY` word bank (10 evocative phrases) and `--time` CLI flag (default: off) that prepends a time-of-day setting sentence to the generated landscape, establishing when the scene is being viewed. Each phrase is a standalone sentence like "Dawn breaks over the landscape." or "The dead of night holds the land in darkness." — followed by a period, then the opening sentence.
+
+Also added `describe_times()` and `--describe-times` for introspection, `"time_of_day"` in JSON metadata, and 27 tests (20 functional + 7 introspection).
+
+### Why
+After 6 consecutive sessions (125–130) of word bank expansions, the project needed a genuinely new sensory dimension. The "Next likely steps" in every session since Session 123 explicitly called out "time-of-day" as a candidate. The existing `TIME_WORDS` system provides single-word narrative adverbs ("already", "still", "yet") that subtly frame the temporal quality of the description — but it doesn't establish a concrete time of day. The new time-of-day system adds an explicit temporal setting: the reader knows whether the landscape is viewed at dawn, noon, dusk, or midnight.
+
+This fills a gap in the temporal framing of the landscape generator. The existing features cover:
+- **What it looks like** (templates, colors, elements)
+- **What it feels like** (mood, weather)
+- **What it sounds like** (soundscapes)
+- **What it remembers** (echoes)
+- **What people say about it** (legends)
+- **How it makes you feel** (wistful)
+- **Narrative frame** (travelogue)
+- **Narrative time** (time words — "already", "still")
+- **When it is** (time of day — new)
+
+The 10 phrases cover a wide temporal range: dawn, dead of night, blazing noon, dusk, early morning, midnight moonlight, twilight, golden hour, first light, starless night. Each is phrased as a complete sentence ending with a period, so it joins naturally with any opening template.
+
+### Tradeoffs
+- **10 curated phrases** — small enough to maintain quality, large enough for variety. Each phrase covers a distinct time of day. The bank can be expanded in future sessions.
+- **Off by default** (`time_of_day_enabled=False`), preserving all existing seed-based output for users who don't use `--time`.
+- **Not suppressed at detail=0** — Unlike echoes, legends, soundscapes, and wistful (which all suppress at detail=0), time-of-day is a framing prefix that works naturally with minimal descriptions. "Dawn breaks over the landscape. A vast crystal forest..." is a coherent minimal description.
+- **Placed before the opening** — the time-of-day sentence is prepended with `parts.insert(0, ...)`, making it the first thing the reader sees. This establishes the temporal context before the visual description begins.
+- **Seed-breaking when enabled**: One extra `rng.choice()` call shifts the random sequence for the opening and everything after. Determinism is preserved (same seed + same args = same output).
+- **Not in presets yet** — follows the same trajectory as echoes, legends, soundscapes, travelogue, and wistful, which were all initially only accessible via explicit CLI flags before being integrated into presets. If time-of-day proves useful, it can be added to presets in a future session.
+- **No `--no-time` flag** — follows the same pattern as other opt-in features (echo, legend, sound, wistful when first introduced). The `--no-*` variants were added later. If needed, `--no-time` can be added in a future session alongside time-of-day in presets.
+- **27 new tests, 773 total** (18 todo + 755 landscape), 207 subtests.
+
 ## 2026-07-14 — Expanded Biome-Specific Weather and Anomaly Banks
 
 ### What

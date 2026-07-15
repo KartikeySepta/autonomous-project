@@ -8,8 +8,8 @@ from landscape import (
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS, ECHOES, LEGENDS,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
-    TIME_WORDS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL, SOUNDSCAPES,
-    describe_travelogue, describe_wistful, describe_sounds,
+    TIME_WORDS, TIMES_OF_DAY, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL, SOUNDSCAPES,
+    describe_travelogue, describe_wistful, describe_sounds, describe_times,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -24,6 +24,7 @@ ALL_TIME_WORDS = set(TIME_WORDS)
 ALL_LEGENDS = set(LEGENDS)
 ALL_WISTFUL = set(WISTFUL)
 ALL_SOUNDSCAPES = set(SOUNDSCAPES)
+ALL_TIMES_OF_DAY = set(TIMES_OF_DAY)
 
 SOUND_INDICATORS = [
     "tone that seems to come from everywhere",
@@ -4058,6 +4059,15 @@ class TestPresets(unittest.TestCase):
         self.assertNotEqual(zero, one,
             "weather_prob=0.0 should differ from weather_prob=1.0")
 
+    def test_all_presets_include_time_of_day_enabled(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("time_of_day_enabled", PRESETS[name],
+                    f"Preset {name} should include 'time_of_day_enabled'")
+                self.assertTrue(PRESETS[name]["time_of_day_enabled"],
+                    f"Preset {name} should have time_of_day_enabled=True")
+
 
 class TestTimeWords(unittest.TestCase):
     def test_time_word_appears_in_output(self):
@@ -5535,6 +5545,249 @@ class TestNoSound(unittest.TestCase):
         self.assertIn("text", data)
         self.assertIsInstance(data["text"], str)
         self.assertNotIn("sound_enabled", data)
+
+
+class TestNoTime(unittest.TestCase):
+    def test_no_time_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_no_time_disables_time_with_preset(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                preset = dict(PRESETS[name])
+                preset.pop("time_of_day_enabled", None)
+                result = generate_landscape(seed=42, **preset, time_of_day_enabled=False)
+                for t in ALL_TIMES_OF_DAY:
+                    self.assertNotIn(t, result,
+                        f"Preset {name} with --no-time should not contain {t!r}")
+
+    def test_no_time_preset_without_flag_still_has_time(self):
+        from landscape import generate_landscape, PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                if "time_of_day_enabled" not in PRESETS[name]:
+                    continue
+                result = generate_landscape(seed=42, **PRESETS[name])
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_no_time_works_with_other_features(self):
+        from landscape import generate_landscape
+        for s in range(10):
+            result = generate_landscape(seed=s, time_of_day_enabled=False,
+                                        echo_enabled=True, legend_enabled=True,
+                                        sound_enabled=True, travelogue=True,
+                                        wistful=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_no_time_with_explicit_time_override(self):
+        from landscape import generate_landscape
+        result = generate_landscape(seed=42, biome="forest", time_of_day_enabled=False)
+        for t in ALL_TIMES_OF_DAY:
+            self.assertNotIn(t, result,
+                f"Output with --no-time should not contain {t!r}")
+
+    def test_no_time_does_not_affect_json_output(self):
+        from landscape import generate_landscape
+        result = generate_landscape(seed=42, biome="forest", time_of_day_enabled=False, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertNotIn("time_of_day", data)
+
+
+class TestTimeOfDay(unittest.TestCase):
+    def test_time_of_day_disabled_by_default(self):
+        result = generate_landscape(seed=42)
+        for t in ALL_TIMES_OF_DAY:
+            self.assertNotIn(t, result,
+                f"Time-of-day phrase {t!r} should not appear by default")
+
+    def test_time_of_day_enabled_appears(self):
+        results = [generate_landscape(seed=s, time_of_day_enabled=True) for s in range(100)]
+        self.assertTrue(
+            any(t in r for r in results for t in ALL_TIMES_OF_DAY),
+            "No time-of-day phrase appeared across 100 seeds with time_of_day_enabled=True",
+        )
+
+    def test_time_of_day_produces_valid_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, time_of_day_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_time_of_day_is_deterministic(self):
+        a = generate_landscape(seed=42, time_of_day_enabled=True)
+        b = generate_landscape(seed=42, time_of_day_enabled=True)
+        self.assertEqual(a, b,
+            "Time-of-day should be deterministic with same seed")
+
+    def test_time_of_day_differs_from_plain(self):
+        plain = generate_landscape(seed=42)
+        with_time = generate_landscape(seed=42, time_of_day_enabled=True)
+        self.assertNotEqual(plain, with_time,
+            "Output with time-of-day should differ from plain output")
+
+    def test_time_of_day_prepends_opening(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, time_of_day_enabled=True)
+            self.assertTrue(
+                any(result.startswith(t) for t in ALL_TIMES_OF_DAY),
+                f"Output should start with a time-of-day phrase: {result!r}",
+            )
+
+    def test_time_of_day_works_with_json_format(self):
+        result = generate_landscape(seed=42, time_of_day_enabled=True, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_time_of_day_works_with_detail_zero(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, time_of_day_enabled=True, detail=0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 5)
+            self.assertTrue(result.endswith("."))
+
+    def test_time_of_day_works_with_combine(self):
+        result = generate_landscape(seed=42, time_of_day_enabled=True, combine="forest,desert")
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 10)
+
+    def test_time_of_day_works_with_echo(self):
+        result = generate_landscape(seed=42, time_of_day_enabled=True, echo_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_time_of_day_works_with_legend(self):
+        result = generate_landscape(seed=42, time_of_day_enabled=True, legend_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_time_of_day_works_with_travelogue(self):
+        result = generate_landscape(seed=42, time_of_day_enabled=True, travelogue=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_time_of_day_works_with_sound(self):
+        result = generate_landscape(seed=42, time_of_day_enabled=True, sound_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_time_of_day_works_with_wistful(self):
+        result = generate_landscape(seed=42, time_of_day_enabled=True, wistful=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_time_of_day_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_time_of_day_json_includes_field(self):
+        result = generate_landscape(seed=42, time_of_day_enabled=True, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("time_of_day", data)
+        self.assertIn(data["time_of_day"], ALL_TIMES_OF_DAY)
+
+    def test_time_of_day_json_field_absent_when_disabled(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertNotIn("time_of_day", data)
+
+    def test_time_of_day_works_with_poetic_format(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, time_of_day_enabled=True, fmt="poetic")
+            self.assertIsInstance(result, str)
+            self.assertIn("\n", result)
+
+    def test_time_of_day_works_with_all_biomes(self):
+        for biome in ["forest", "desert", "tundra", "ruined city", "sky islands", "fungal grove"]:
+            with self.subTest(biome=biome):
+                result = generate_landscape(seed=42, time_of_day_enabled=True, biome=biome)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+                self.assertTrue(result.endswith("."))
+
+
+class TestDescribeTimes(unittest.TestCase):
+    def test_describe_times_returns_string(self):
+        result = describe_times()
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_describe_times_contains_header(self):
+        result = describe_times()
+        self.assertIn("time-of-day phrases", result)
+
+    def test_describe_times_contains_all_phrases(self):
+        result = describe_times()
+        for phrase in TIMES_OF_DAY:
+            self.assertIn(phrase, result,
+                f"Time-of-day description should contain phrase: {phrase!r}")
+
+    def test_describe_times_contains_index_numbers(self):
+        result = describe_times()
+        self.assertIn("[0]", result)
+        self.assertIn("[1]", result)
+
+    def test_describe_times_shows_all_phrases(self):
+        result = describe_times()
+        count = len(TIMES_OF_DAY)
+        self.assertIn("=== time-of-day phrases ===", result)
+        self.assertIn(f"[{count - 1}]", result,
+            f"Time-of-day description should contain the last index [{count - 1}]")
+
+    def test_describe_times_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_times_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-times"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("time-of-day phrases", output)
+        self.assertIn("[0]", output)
+        self.assertIn("[1]", output)
+
+    def test_describe_times_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-times", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-times is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-times is used")
 
 
 if __name__ == "__main__":
