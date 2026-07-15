@@ -2,6 +2,61 @@
 
 ## 2026-07-15
 
+### What was done (Session 157)
+- **Added per-preset simile, metaphor, personification to all remaining presets** —
+  `sublime`, `wasteland`, and `dreamscape` now have `simile_enabled`,
+  `metaphor_enabled`, `personification_enabled` with curated count and probability
+  values, following the same pattern as `nightfall` and `pastoral` (which already
+  had them from earlier sessions).
+  - **sublime** (vibrant+peaceful, rich): simile_enabled=True, count=2, prob=0.9;
+    metaphor_enabled=True, count=2, prob=0.9; personification_enabled=True,
+    count=1, prob=0.8. Matches the preset's high-density pattern — multiple simile
+    and metaphor phrases almost always present, personification somewhat less
+    frequent to avoid over-humanizing the sublime landscape.
+  - **wasteland** (desolate, sparse): simile_enabled=True, count=1, prob=0.5;
+    metaphor_enabled=True, count=1, prob=0.4; personification_enabled=True,
+    count=1, prob=0.3. A progressive decay (0.5 → 0.4 → 0.3) reflecting the
+    increasing "richness" of each device — simile is simplest and most appropriate
+    for a wasteland, metaphor less so, personification rarest (a desolate wasteland
+    rarely speaks, dreams, or weeps).
+  - **dreamscape** (eerie+vibrant, surreal): simile_enabled=True, count=2, prob=0.85;
+    metaphor_enabled=True, count=2, prob=0.85; personification_enabled=True,
+    count=1, prob=0.75. Matches the preset's surreal density — multiple simile and
+    metaphor phrases fit dreamlike landscapes well, personification slightly less
+    frequent.
+  - All three presets now have `simile_enabled`, `simile_count`, `simile_prob`,
+    `metaphor_enabled`, `metaphor_count`, `metaphor_prob`, `personification_enabled`,
+    `personification_count`, `personification_prob` set with non-default values.
+  - The gating code in `main()` was already in place (lines 2087-2104) and checks
+    `if "simile_enabled" in preset` — only the PRESETS dict values were needed.
+- **Added 3 new tests** in `TestPresets`:
+  - `test_all_presets_include_simile_enabled_count_and_prob` — verifies every preset
+    has `simile_enabled`, `simile_count`, `simile_prob` with valid ranges (5 subtests).
+  - `test_all_presets_include_metaphor_enabled_count_and_prob` — verifies every preset
+    has `metaphor_enabled`, `metaphor_count`, `metaphor_prob` with valid ranges (5
+    subtests).
+  - `test_all_presets_include_personification_enabled_count_and_prob` — verifies every
+    preset has `personification_enabled`, `personification_count`,
+    `personification_prob` with valid ranges (5 subtests).
+  - Follows the exact same pattern as `test_all_presets_include_mood_atmosphere_count_and_prob`.
+- This fulfills the fifth "Next likely step" from Session 156: "Add per-preset
+  simile_count, simile_prob, metaphor_count, metaphor_prob, personification_count,
+  personification_prob with curated values." All 5 presets now have curated values
+  for all three poetic device dimensions (simile, metaphor, personification),
+  completing the preset integration trajectory for the figurative language system.
+- Tests increased from 1123 to 1126 landscape tests (18 todo unchanged).
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand simile word bank (more phrases, more varied constructions)
+- Expand metaphor word bank (more phrases, more varied constructions)
+- Expand personification word bank (more phrases, more varied constructions)
+- Expand global word banks (more echoes, more time-of-day, more seasons)
+
+## 2026-07-15
+
 ### What was done (Session 156)
 - **Added personification dimension (`--personification`)** — a new poetic device
   feature that gives human qualities to the landscape (e.g. breathing, gazing,

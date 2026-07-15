@@ -4591,6 +4591,51 @@ class TestPresets(unittest.TestCase):
                 self.assertGreaterEqual(PRESETS[name]["mood_atmosphere_prob"], 0.0)
                 self.assertLessEqual(PRESETS[name]["mood_atmosphere_prob"], 1.0)
 
+    def test_all_presets_include_simile_enabled_count_and_prob(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("simile_enabled", PRESETS[name],
+                    f"Preset {name} should include 'simile_enabled'")
+                self.assertIn("simile_count", PRESETS[name],
+                    f"Preset {name} should include 'simile_count'")
+                self.assertIn("simile_prob", PRESETS[name],
+                    f"Preset {name} should include 'simile_prob'")
+                self.assertGreaterEqual(PRESETS[name]["simile_count"], 0)
+                self.assertLessEqual(PRESETS[name]["simile_count"], 3)
+                self.assertGreaterEqual(PRESETS[name]["simile_prob"], 0.0)
+                self.assertLessEqual(PRESETS[name]["simile_prob"], 1.0)
+
+    def test_all_presets_include_metaphor_enabled_count_and_prob(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("metaphor_enabled", PRESETS[name],
+                    f"Preset {name} should include 'metaphor_enabled'")
+                self.assertIn("metaphor_count", PRESETS[name],
+                    f"Preset {name} should include 'metaphor_count'")
+                self.assertIn("metaphor_prob", PRESETS[name],
+                    f"Preset {name} should include 'metaphor_prob'")
+                self.assertGreaterEqual(PRESETS[name]["metaphor_count"], 0)
+                self.assertLessEqual(PRESETS[name]["metaphor_count"], 3)
+                self.assertGreaterEqual(PRESETS[name]["metaphor_prob"], 0.0)
+                self.assertLessEqual(PRESETS[name]["metaphor_prob"], 1.0)
+
+    def test_all_presets_include_personification_enabled_count_and_prob(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("personification_enabled", PRESETS[name],
+                    f"Preset {name} should include 'personification_enabled'")
+                self.assertIn("personification_count", PRESETS[name],
+                    f"Preset {name} should include 'personification_count'")
+                self.assertIn("personification_prob", PRESETS[name],
+                    f"Preset {name} should include 'personification_prob'")
+                self.assertGreaterEqual(PRESETS[name]["personification_count"], 0)
+                self.assertLessEqual(PRESETS[name]["personification_count"], 3)
+                self.assertGreaterEqual(PRESETS[name]["personification_prob"], 0.0)
+                self.assertLessEqual(PRESETS[name]["personification_prob"], 1.0)
+
 
 class TestTimeWords(unittest.TestCase):
     def test_time_word_appears_in_output(self):

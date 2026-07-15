@@ -1,5 +1,51 @@
 # Decisions
 
+## 2026-07-15 — Per-Preset Simile, Metaphor, Personification for All Presets (Session 157)
+
+### What
+Added `simile_enabled`, `simile_count`, `simile_prob`, `metaphor_enabled`,
+`metaphor_count`, `metaphor_prob`, `personification_enabled`, `personification_count`,
+`personification_prob` to the remaining 3 presets (`sublime`, `wasteland`, `dreamscape`)
+that were missing them. Only `nightfall` and `pastoral` had them from earlier sessions
+(metaphor and personification shipped with count/prob from the start; simile got
+count/prob in a follow-up session). Also added 3 new structural tests verifying every
+preset has all 9 fields with valid ranges.
+
+### Why
+Session 156's "Next likely steps" explicitly called for this: "Add per-preset
+simile_count, simile_prob, metaphor_count, metaphor_prob, personification_count,
+personification_prob with curated values." The gating code was already in place
+(added when each feature was created), but only 2 of 5 presets actually used them.
+This was an oversight — the sublime, wasteland, and dreamscape presets were left
+without figurative language device configuration despite having `simile_enabled`,
+`metaphor_enabled`, and `personification_enabled` available as gating keys since
+their respective feature sessions.
+
+### Tradeoffs
+- **Curated probability decay for wasteland**: `simile_prob=0.5`, `metaphor_prob=0.4`,
+  `personification_prob=0.3`. This progressive decrease reflects the increasing
+  "richness" of each device — simile is simplest (comparison), metaphor is stronger
+  (identity), personification is most intimate (human qualities). A desolate wasteland
+  benefits most from stark comparative language and least from animated human-like
+  description. This follows the same principle as `wildlife_enabled=False` for wasteland
+  — desolate landscapes should feel sparse.
+- **sublime and dreamscape get high simile/metaphor density** (count=2, prob~0.9):
+  Both presets are detail-rich (sublime has echo_count=3, dreamscape has detail=2) and
+  benefit from multiple figurative language phrases. Personification is limited to
+  count=1 (prob 0.8/0.75) because personification is a stronger device — one per
+  landscape provides enough humanization without overwhelming the scene.
+- **Seed-breaking for 3 presets**: All 3 presets now consume additional `rng.choice()`
+  and `rng.random()` calls for simile, metaphor, and personification selection and
+  probability checks. This changes output for these presets with the same seed.
+  Determinism is preserved (same seed + same args = same output). This is the standard
+  cost of adding features to presets.
+- **No new CLI or generation code**: Only the PRESETS dict and test file changed. The
+  gating, CLI flags, and `generate_landscape()` parameters were all already in place.
+- **3 new tests, 1144 total** (18 todo + 1126 landscape).
+- **Fulfills "Next likely steps" from Session 156**: The fifth item (per-preset
+  figurative language density) was explicitly called out and is now complete across
+  all 5 presets for simile, metaphor, and personification.
+
 ## 2026-07-15 — Personification Dimension (`--personification`) (Session 156)
 
 ### What
