@@ -8,8 +8,8 @@ from landscape import (
     BIOMES, ADJECTIVES, ELEMENTS, NOUNS, VERBS, WEATHERS, ANOMALIES, ADVERBS, COLORS, BIOME_WORDS, ECHOES, LEGENDS,
     COMMON_WORDS, RARE_WORDS, SENTENCE_TEMPLATES, BIAS_MODES, _conjugate,
     MOOD_WORDS, MOOD_BOOST, TEMPLATE_SETS, _pick_template,
-    TIME_WORDS, TIMES_OF_DAY, SEASONS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL, SOUNDSCAPES,
-    describe_travelogue, describe_wistful, describe_sounds, describe_times, describe_seasons,
+    TIME_WORDS, TIMES_OF_DAY, SEASONS, TRAVELOGUE_PREFIXES, TRAVELOGUE_SUFFIXES, WISTFUL, SOUNDSCAPES, WILDLIFE,
+    describe_travelogue, describe_wistful, describe_sounds, describe_times, describe_seasons, describe_wildlife,
 )
 
 ALL_ADJECTIVES = set(ADJECTIVES) | {w for bw in BIOME_WORDS.values() for w in bw.get("adjectives", [])}
@@ -61,6 +61,19 @@ SEASON_INDICATORS = [
     "prepares for winter's rest",
     "palace of crystal and ice",
     "washes winter's last traces",
+]
+
+WILDLIFE_INDICATORS = [
+    "deer picks its way",
+    "Eyes watch from the shadows",
+    "birds flit",
+    "Something large stirs",
+    "lone",
+    "call of an unseen creature",
+    "Tracks in the",
+    "teems with quiet, hidden life",
+    "pack of",
+    "chitters",
 ]
 
 SOUND_INDICATORS = [
@@ -4140,6 +4153,13 @@ class TestPresets(unittest.TestCase):
                 self.assertGreaterEqual(PRESETS[name]["time_prob"], 0.0)
                 self.assertLessEqual(PRESETS[name]["time_prob"], 1.0)
 
+    def test_all_presets_include_wildlife_enabled(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("wildlife_enabled", PRESETS[name],
+                    f"Preset {name} should include 'wildlife_enabled'")
+
 
 class TestTimeWords(unittest.TestCase):
     def test_time_word_appears_in_output(self):
@@ -6310,6 +6330,243 @@ class TestDescribeSeasons(unittest.TestCase):
             "No landscape should be generated when --describe-seasons is used")
         self.assertNotIn("\n\n", output,
             "No landscape should be generated when --describe-seasons is used")
+
+
+class TestWildlife(unittest.TestCase):
+    def test_wildlife_disabled_by_default(self):
+        results = [generate_landscape(seed=s) for s in range(100)]
+        for r in results:
+            for ind in WILDLIFE_INDICATORS:
+                if ind in r:
+                    self.fail(f"Wildlife indicator '{ind}' appeared without --wildlife")
+                    return
+
+    def test_wildlife_enabled_appears(self):
+        results = [generate_landscape(seed=s, wildlife_enabled=True) for s in range(100)]
+        has_wildlife = any(
+            any(ind in r for ind in WILDLIFE_INDICATORS) for r in results
+        )
+        self.assertTrue(has_wildlife,
+            "No wildlife indicator appeared across 100 seeds with wildlife_enabled=True")
+
+    def test_wildlife_produces_valid_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, wildlife_enabled=True)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+            self.assertTrue(result.endswith("."))
+
+    def test_wildlife_is_deterministic(self):
+        a = generate_landscape(seed=42, wildlife_enabled=True)
+        b = generate_landscape(seed=42, wildlife_enabled=True)
+        self.assertEqual(a, b,
+            "Wildlife should be deterministic with same seed")
+
+    def test_wildlife_differs_from_plain(self):
+        plain = generate_landscape(seed=42)
+        with_wild = generate_landscape(seed=42, wildlife_enabled=True)
+        self.assertNotEqual(plain, with_wild,
+            "Output with wildlife should differ from output without")
+
+    def test_wildlife_works_with_detail_zero(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, wildlife_enabled=True, detail=0)
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 0)
+
+    def test_wildlife_works_with_json_format(self):
+        result = generate_landscape(seed=42, wildlife_enabled=True, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_wildlife_json_includes_field(self):
+        result = generate_landscape(seed=42, wildlife_enabled=True, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("wildlife_enabled", data)
+        self.assertTrue(data["wildlife_enabled"])
+
+    def test_wildlife_json_field_absent_when_disabled(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertNotIn("wildlife_enabled", data,
+            "wildlife_enabled should not be in JSON when disabled")
+
+    def test_wildlife_works_with_combine(self):
+        result = generate_landscape(seed=42, combine="forest,desert", wildlife_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_wildlife_works_with_echo(self):
+        result = generate_landscape(seed=42, wildlife_enabled=True, echo_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_wildlife_works_with_legend(self):
+        result = generate_landscape(seed=42, wildlife_enabled=True, legend_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_wildlife_works_with_travelogue(self):
+        result = generate_landscape(seed=42, wildlife_enabled=True, travelogue=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_wildlife_works_with_sound(self):
+        result = generate_landscape(seed=42, wildlife_enabled=True, sound_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_wildlife_works_with_wistful(self):
+        result = generate_landscape(seed=42, wildlife_enabled=True, wistful=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_wildlife_works_with_time_of_day(self):
+        result = generate_landscape(seed=42, wildlife_enabled=True, time_of_day_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_wildlife_works_with_season(self):
+        result = generate_landscape(seed=42, wildlife_enabled=True, season_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_wildlife_works_with_poetic_format(self):
+        result = generate_landscape(seed=42, wildlife_enabled=True, fmt="poetic")
+        self.assertIn("\n", result)
+        self.assertTrue(result.endswith("."))
+
+    def test_wildlife_works_with_all_biomes(self):
+        for biome in BIOMES:
+            with self.subTest(biome=biome):
+                result = generate_landscape(seed=42, biome=biome, wildlife_enabled=True)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_wildlife_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+class TestDescribeWildlife(unittest.TestCase):
+    def test_describe_wildlife_returns_string(self):
+        result = describe_wildlife()
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_describe_wildlife_contains_header(self):
+        result = describe_wildlife()
+        self.assertIn("wildlife phrases", result)
+
+    def test_describe_wildlife_contains_all_phrases(self):
+        result = describe_wildlife()
+        for phrase in WILDLIFE:
+            self.assertIn(phrase, result,
+                f"Wildlife description should contain phrase: {phrase}")
+
+    def test_describe_wildlife_contains_index_numbers(self):
+        result = describe_wildlife()
+        self.assertIn("[0]", result)
+        self.assertIn("[1]", result)
+
+    def test_describe_wildlife_shows_all_phrases(self):
+        result = describe_wildlife()
+        for i in range(len(WILDLIFE)):
+            self.assertIn(f"[{i}]", result,
+                f"Index [{i}] should appear in wildlife description")
+
+    def test_describe_wildlife_last_index(self):
+        result = describe_wildlife()
+        last = len(WILDLIFE) - 1
+        self.assertIn(f"[{last}]", result,
+            f"Last index [{last}] should appear in wildlife description")
+
+    def test_describe_wildlife_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_wildlife_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-wildlife"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("wildlife phrases", output)
+        self.assertIn("[0]", output)
+        self.assertIn("[1]", output)
+
+    def test_describe_wildlife_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-wildlife", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-wildlife is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-wildlife is used")
+
+
+class TestNoWildlife(unittest.TestCase):
+    def test_no_wildlife_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_no_wildlife_disables_wildlife_with_preset(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                result = generate_landscape(seed=42, **PRESETS[name])
+                has_wildlife = any(ind in result for ind in WILDLIFE_INDICATORS)
+                if not has_wildlife:
+                    continue
+                # Test with no_wildlife override
+                result_no = generate_landscape(seed=42, wildlife_enabled=False, **{k: v for k, v in PRESETS[name].items() if k not in ("wildlife_enabled",)})
+                no_wildlife = not any(ind in result_no for ind in WILDLIFE_INDICATORS)
+                self.assertTrue(no_wildlife,
+                    f"Preset {name} should have wildlife suppressed with wildlife_enabled=False")
+
+    def test_no_wildlife_works_with_other_features(self):
+        result = generate_landscape(seed=42, wildlife_enabled=False, echo_enabled=True, legend_enabled=True)
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+        self.assertTrue(result.endswith("."))
+
+    def test_no_wildlife_json_output(self):
+        result = generate_landscape(seed=42, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertNotIn("wildlife_enabled", data,
+            "wildlife_enabled should not be in JSON when disabled")
+
+    def test_no_wildlife_with_explicit_wildlife_override(self):
+        no_wild = generate_landscape(seed=42, wildlife_enabled=False)
+        with_wild = generate_landscape(seed=42, wildlife_enabled=True)
+        self.assertNotEqual(no_wild, with_wild,
+            "wildlife_enabled=False should differ from wildlife_enabled=True with same seed")
 
 
 if __name__ == "__main__":

@@ -2,35 +2,78 @@
 
 ## 2026-07-15
 
-### What was done (Session 140)
-- **Expanded global ANOMALIES word bank from 8 to 12 entries** — 4 new
-  anomaly phrases added, covering uncanny themes absent from the original 8:
-  - `"You remember this landscape from a dream you have never had."` —
-    precognitive false memory, the landscape as a half-remembered dream
-  - `"Every breath tastes of a season that does not exist."` — impossible
-    sensory input, a phantom season perceived through taste/smell
-  - `"The geometry of the landscape follows rules you cannot quite recall."` —
-    impossible geometry paired with memory distortion, the sense that the
-    landscape's logic is knowable but just out of reach
-  - `"Something is just beyond sight — a presence that never arrives."` —
-    unseen presence, ambient paranoia, anticipation without resolution
-- This was the only global word bank that had never been expanded (8 entries
-  since inception). Every other bank had received at least one expansion:
-  WEATHERS (12), ECHOES (15), LEGENDS (20), SOUNDSCAPES (12), WISTFUL (10),
-  TIMES_OF_DAY (15), SEASONS (15).
-- No code, CLI, or test changes — data-only expansion. All 829 landscape tests
-  still pass (plus 18 todo = 847 total), 253 subtests.
-- Fulfills the first "Next likely step" from Session 139: expand global word
-  banks (anomalies was the most overdue).
+### What was done (Session 141)
+- **Added wildlife/inhabitants as a new sensory dimension** — a new `WILDLIFE`
+  word bank of 10 evocative phrases describing creatures and inhabitants in the
+  landscape (e.g. "A herd of {adj} deer picks its way {adverb} through the
+  {display}.", "Eyes watch from the shadows of the {display} — patient,
+  unblinking, {adj}.", "Tracks in the {adj} earth suggest a presence that moves
+  {adverb} just ahead through the {display}.").
+  - Each phrase uses `{display}`, `{adverb}`, `{color}`, `{adj}`, `{element}`
+    template placeholders, following the same pattern as soundscapes.
+  - Off by default (`wildlife_enabled=False`), preserving all existing seed-based
+    output for users who don't use `--wildlife`.
+  - Picked via `rng.choice(WILDLIFE)` — one phrase appended per landscape when
+    enabled.
+  - Suppressed at detail=0 (like echoes/legends/soundscapes/wistful) — wildlife
+    feels like a detail that only makes sense with at least a minimal description.
+  - Works with all features: detail=0, prose/poetic/json, combine, echo, legend,
+    soundscape, travelogue, wistful, time-of-day, season, all biomes.
+  - Seed-breaking when enabled: one `rng.choice()` call shifts subsequent random
+    picks. Determinism is preserved (same seed + same args = same output).
+- **Added `--wildlife` CLI flag** (boolean, default: off) — follows the same
+  pattern as `--echo`, `--legend`, `--sound`, `--time`, `--season`.
+- **Added `--describe-wildlife` CLI flag and `describe_wildlife()` function** —
+  users can inspect all 10 wildlife phrases with index numbers, following the
+  exact same introspection pattern as `describe_echoes()`, `describe_legends()`,
+  etc.
+- **Added `"wildlife_enabled"` to JSON metadata** when enabled — e.g.
+  `"wildlife_enabled": True`.
+- **Added `"wildlife_enabled"` to 4 of 5 presets** — `nightfall`, `pastoral`,
+  `sublime`, and `dreamscape` all enable wildlife by default. `wasteland` has
+  `wildlife_enabled: False` (thematic — desolate wasteland shouldn't teem with
+  life). This follows the established pattern: add as opt-in CLI flag, then
+  integrate into presets in the same session.
+  - Preset gating checks `args.wildlife is False and not args.no_wildlife`
+    before applying the preset value — consistent with all other preset gating.
+  - Seed-breaking when presets are used: one extra `rng.choice(WILDLIFE)` call
+    shifts subsequent random picks. Determinism is preserved (same seed + same
+    args = same output).
+- **Added `--no-wildlife` CLI flag** — users can now explicitly disable wildlife
+  phrases even when using presets that enable them. Follows the exact same
+  pattern as `--no-echo`, `--no-legend`, `--no-sound`, `--no-travelogue`,
+  `--no-wistful`, `--no-time`, `--no-season`.
+  - `--no-wildlife` forces `wildlife_enabled=False` regardless of preset config
+    or explicit `--wildlife`.
+  - Post-preset override block ensures `--no-wildlife` always wins after all
+    gating.
+- Added 35 new tests (20 in `TestWildlife`, 9 in `TestDescribeWildlife`, 5 in
+  `TestNoWildlife`, 1 in `TestPresets`):
+  - `TestWildlife` (20 tests): disabled by default, enabled appears, valid
+    output, determinism, differs from plain, detail=0, JSON format/field,
+    combine, echo, legend, travelogue, sound, wistful, time-of-day, season,
+    poetic format, all biomes, CLI flag.
+  - `TestDescribeWildlife` (9 tests): returns string, header, all phrases,
+    index numbers, last index, CLI flag, stdout, no landscape generated.
+  - `TestNoWildlife` (5 tests): flag exists via CLI, disables wildlife with
+    presets (5 subtests), works with other features, JSON output, explicit
+    `--wildlife` override.
+  - `TestPresets`: `test_all_presets_include_wildlife_enabled` (5 subtests).
+- This directly fulfills the second "Next likely step" from Session 140: add
+  inhabitants/wildlife as a new sensory dimension. After many sessions of word
+  bank expansions, this adds a genuinely new dimension to the landscape generator.
+- Tests increased from 847 to 882 total (18 todo + 864 landscape), subtests
+  from 253 to 276.
 
 ### Current status
-Working. All 847 tests pass (18 todo + 829 landscape), 253 subtests.
+Working. All 882 tests pass (18 todo + 864 landscape), 276 subtests.
 
 ### Next likely steps
 - Expand other global word banks (more echoes, more soundscapes, more
   time-of-day, more seasons)
-- Add inhabitants/wildlife as a new sensory dimension
 - Add spatial geometry dimension (e.g. scale, perspective, distance)
+- Add `--wildlife-count`, `--wildlife-prob` for configurable wildlife density
+- Add per-preset wildlife count and probability
 
 ## 2026-07-15
 

@@ -1,5 +1,68 @@
 # Decisions
 
+## 2026-07-15 — Wildlife/Inhabitants System (`--wildlife`)
+
+### What
+Added a `WILDLIFE` word bank (10 evocative phrases), `--wildlife` CLI flag
+(default: off), `--no-wildlife` CLI flag, `--describe-wildlife` introspection,
+JSON metadata, and preset integration (enabled in 4 of 5 presets). Each phrase
+is a single sentence appended between soundscapes and legends, describing
+animals, creatures, or inhabitants of the landscape.
+
+Wildlife is enabled by default in `nightfall`, `pastoral`, `sublime`, and
+`dreamscape` presets. `wasteland` has `wildlife_enabled: False` — a desolate
+wasteland should not teem with life.
+
+### Why
+The "Next likely steps" in every session since Session 122 explicitly called for
+adding inhabitants/wildlife as a new sensory dimension. The project had been
+through 18 consecutive sessions of word bank expansions or incremental feature
+additions (echo count/prob, sound count/prob, weather count/prob, anomaly
+count/prob, time-of-day, season, time count/prob, season count/prob, per-preset
+counts/probs, and multiple word bank expansions). After all those incremental
+improvements, the generator had sophisticated control over its existing
+dimensions but lacked any sense of living inhabitants. Wildlife adds a
+fundamentally new dimension: the landscape as a place that is *lived in*, not
+just observed.
+
+The 10 phrases each cover a different wildlife register, from visible presence
+(deer, birds) to unseen presence (eyes watching, something stirring, distant
+calls) to traces (tracks in the earth). This range ensures wildlife feels
+emergent rather than formulaic.
+
+### Tradeoffs
+- **10 curated phrases** — same size as the original TIMES_OF_DAY bank (10)
+  and WISTFUL (10). Can be expanded in future sessions.
+- **Off by default** (`wildlife_enabled=False`), preserving all existing
+  seed-based output for users who don't use `--wildlife`.
+- **Suppressed at detail=0** — unlike time-of-day and season (which are framing
+  prefixes suitable even for minimal descriptions), wildlife feels like a detail
+  that requires at least a basic landscape to inhabit. This matches the behavior
+  of echoes, legends, soundscapes, and wistful.
+- **Placed between soundscapes and legends** — the order is: framing (season,
+  time-of-day) → opening → middle/weather → anomalies → echoes → soundscapes
+  → **wildlife** → legends → wistful → travelogue (wraps everything). Wildlife
+  comes after abstract sensory layers (echoes, soundscapes) but before folkloric
+  (legends) and emotional (wistful) layers, creating a natural progression from
+  immediate → ambient → living → legendary → emotional.
+- **Seed-breaking when enabled**: One extra `rng.choice()` call shifts the
+  random sequence after soundscapes. Determinism is preserved (same seed + same
+  args = same output).
+- **Not in wasteland preset** — wasteland gets `wildlife_enabled=False` because
+  a desolate, barren landscape shouldn't suggest abundant life. All other
+  presets enable it. This is a thematic choice, not a technical limitation.
+- **No count/prob controls yet** — follows the same trajectory as time-of-day
+  (Session 131) and season (Session 134), which were initially single-phrase
+  opt-in features. Count and probability controls can be added in future
+  sessions if desired.
+- **35 new tests, 882 total** (18 todo + 864 landscape), 276 subtests.
+- **Test count +35 tests, +23 subtests** from the previous session (847 tests,
+  253 subtests).
+- **Fulfills "Next likely steps" from Session 140**: Inhabitants/wildlife was
+  explicitly called out as the second item, and after 18 sessions of word bank
+  expansions and incremental improvements, a genuinely new dimension was the
+  right next step.
+
 ## 2026-07-15 — Expanded Global ANOMALIES Bank (12 entries)
 
 ### What
