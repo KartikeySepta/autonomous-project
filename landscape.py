@@ -290,6 +290,7 @@ PRESETS = {
         "perspective_enabled": True,
         "perspective_count": 2,
         "perspective_prob": 0.7,
+        "mood_atmosphere": True,
     },
     "pastoral": {
         "mood": ["peaceful"],
@@ -318,6 +319,7 @@ PRESETS = {
         "perspective_enabled": True,
         "perspective_count": 1,
         "perspective_prob": 0.6,
+        "mood_atmosphere": True,
     },
     "sublime": {
         "mood": ["vibrant", "peaceful"],
@@ -348,6 +350,7 @@ PRESETS = {
         "perspective_enabled": True,
         "perspective_count": 2,
         "perspective_prob": 0.95,
+        "mood_atmosphere": True,
     },
     "wasteland": {
         "mood": ["desolate"],
@@ -377,6 +380,7 @@ PRESETS = {
         "perspective_enabled": True,
         "perspective_count": 1,
         "perspective_prob": 1.0,
+        "mood_atmosphere": True,
     },
     "dreamscape": {
         "mood": ["eerie", "vibrant"],
@@ -408,6 +412,7 @@ PRESETS = {
         "perspective_enabled": True,
         "perspective_count": 2,
         "perspective_prob": 0.85,
+        "mood_atmosphere": True,
     },
 }
 
@@ -1851,6 +1856,8 @@ def main():
             args.season_prob = preset["season_prob"]
         if "color_enabled" in preset and args.no_color is False:
             args.no_color = not preset["color_enabled"]
+        if "mood_atmosphere" in preset and args.mood_atmosphere is False:
+            args.mood_atmosphere = preset["mood_atmosphere"]
 
     # --no-* overrides take effect after all preset gating
     if args.no_echo:

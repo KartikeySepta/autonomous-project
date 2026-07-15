@@ -2,6 +2,41 @@
 
 ## 2026-07-15
 
+### What was done (Session 149)
+- **Added `mood_atmosphere` to all 5 presets** with `mood_atmosphere: True`:
+  - nightfall, pastoral, sublime, wasteland, dreamscape all now include mood
+    atmosphere framing by default, matching their mood configuration.
+  - Presets that use mood (all 5) now automatically add an emotional-register
+    atmosphere phrase between the opening and the detail sentences.
+  - wasteland (mood=desolate) and dreamscape (mood=eerie+vibrant) now get
+    their corresponding atmosphere framing.
+- **Added preset gating for `mood_atmosphere`** in `main()` — follows the same
+  pattern as color_enabled gating: only applies when the CLI flag is at its
+  default (False), so explicit `--no-mood-atmosphere` can override.
+- **Added 1 new test** (`test_all_presets_include_mood_atmosphere`) — verifies
+  every preset includes `mood_atmosphere=True`.
+- **Fixed latent test fragility** in `WILDLIFE_INDICATORS`: changed `"lone"` to
+  `"A lone"` because `"lone"` matches `"alone"` in soundscape phrases
+  (e.g. "Footsteps echo... though you are alone"), causing a false positive in
+  `test_no_wildlife_disables_wildlife_with_preset`. The new RNG state from
+  adding mood_atmosphere to presets caused a different soundscape to be selected
+  that exposed this pre-existing test issue.
+- This fulfills the first "Next likely step" from Session 148: "Add mood
+  atmosphere to presets with appropriate values."
+- Tests increased from 945 to 946 landscape tests (18 todo unchanged), subtests
+  from 317 to 322.
+
+### Current status
+Working. All 946 tests pass (18 todo + 946 landscape), 322 subtests.
+
+### Next likely steps
+- Expand global word banks (more echoes, more time-of-day, more seasons)
+- Add a narrative/poetic device dimension (simile, metaphor, personification
+  as separate controllable features)
+- Add count/prob controls for mood atmosphere (e.g. multiple atmosphere phrases)
+
+## 2026-07-15
+
 ### What was done (Session 148)
 - **Added mood atmosphere system (`--mood-atmosphere`)** — a new sensory dimension
   that adds mood-specific atmospheric framing phrases to establish the emotional

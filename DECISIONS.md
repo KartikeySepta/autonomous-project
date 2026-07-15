@@ -1,5 +1,52 @@
 # Decisions
 
+## 2026-07-15 — Mood Atmosphere in Presets (Session 149)
+
+### What
+Added `"mood_atmosphere": True` to all 5 presets (nightfall, pastoral, sublime,
+wasteland, dreamscape), with preset gating in `main()` and a structural test
+verifying every preset has the field set to True.
+
+Also fixed a latent test fragility: changed `WILDLIFE_INDICATORS` entry `"lone"`
+to `"A lone"` because `"lone"` matches `"alone"` in soundscape phrases
+(e.g. "Footsteps echo... though you are alone").
+
+### Why
+The mood atmosphere system (Session 148) was opt-in only via `--mood-atmosphere`.
+All 5 presets use mood, so adding mood atmosphere to presets makes the feature
+active by default when using presets — following the exact same trajectory as
+every other atmospheric feature (echoes, legends, soundscapes, wildlife, season,
+time-of-day, perspective): add as opt-in, then integrate into presets.
+
+The "Next likely steps" from Session 148 explicitly called for this:
+"Add mood atmosphere to presets with appropriate values."
+
+### Tradeoffs
+- **All 5 presets get True**: Every preset now includes mood atmosphere framing.
+  This is appropriate because all presets use mood (nightfall=eerie,
+  pastoral=peaceful, sublime=vibrant+peaceful, wasteland=desolate,
+  dreamscape=eerie+vibrant) and mood atmosphere enhances rather than conflicts
+  with the preset's mood.
+- **No `--no-mood-atmosphere` flag yet**: Unlike other features (echo, sound,
+  wildlife, etc.), there's no `--no-mood-atmosphere` override flag. The preset
+  gating only applies when the flag is at its default (False), so future addition
+  of `--no-mood-atmosphere` would work seamlessly. Users can pass
+  `--no-mood-atmosphere` (it will be ignored) or call `generate_landscape()`
+  directly with `mood_atmosphere=False`.
+- **Seed-breaking for all presets**: All 5 presets now produce different output
+  for the same seed because mood atmosphere adds one `rng.choice()` call per
+  landscape. Determinism is preserved (same seed + same args = same output).
+- **Test indicator fix**: Changed `"lone"` to `"A lone"` in WILDLIFE_INDICATORS
+  because the short substring matched `"alone"` in soundscape phrases. This is
+  more precise: the wildlife phrase is "A lone {adj} figure..." which starts with
+  "A lone", while "alone" occurs in soundscapes like "Footsteps echo... though
+  you are alone." No other feature generates the substring "A lone".
+- **1 new test, 946 total** (18 todo + 946 landscape), 322 subtests.
+- **Test count +1 test, +5 subtests** from the previous session (945 tests,
+  317 subtests).
+- **Fulfills "Next likely steps" from Session 148**: Preset integration was the
+  first item explicitly called out.
+
 ## 2026-07-15 — Mood Atmosphere System (`--mood-atmosphere`)
 
 ### What

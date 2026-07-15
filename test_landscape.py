@@ -68,7 +68,7 @@ WILDLIFE_INDICATORS = [
     "Eyes watch from the shadows",
     "birds flit",
     "Something large stirs",
-    "lone",
+    "A lone",
     "call of an unseen creature",
     "Tracks in the",
     "teems with quiet, hidden life",
@@ -4359,6 +4359,15 @@ class TestPresets(unittest.TestCase):
                 self.assertLessEqual(PRESETS[name]["perspective_count"], 3)
                 self.assertGreaterEqual(PRESETS[name]["perspective_prob"], 0.0)
                 self.assertLessEqual(PRESETS[name]["perspective_prob"], 1.0)
+
+    def test_all_presets_include_mood_atmosphere(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("mood_atmosphere", PRESETS[name],
+                    f"Preset {name} should include 'mood_atmosphere'")
+                self.assertTrue(PRESETS[name]["mood_atmosphere"],
+                    f"Preset {name} should have mood_atmosphere=True")
 
 
 class TestTimeWords(unittest.TestCase):
