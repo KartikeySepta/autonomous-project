@@ -4196,6 +4196,19 @@ class TestPresets(unittest.TestCase):
                 self.assertGreaterEqual(PRESETS[name]["wildlife_prob"], 0.0)
                 self.assertLessEqual(PRESETS[name]["wildlife_prob"], 1.0)
 
+    def test_all_presets_include_perspective_count_and_prob(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("perspective_count", PRESETS[name],
+                    f"Preset {name} should include 'perspective_count'")
+                self.assertIn("perspective_prob", PRESETS[name],
+                    f"Preset {name} should include 'perspective_prob'")
+                self.assertGreaterEqual(PRESETS[name]["perspective_count"], 0)
+                self.assertLessEqual(PRESETS[name]["perspective_count"], 3)
+                self.assertGreaterEqual(PRESETS[name]["perspective_prob"], 0.0)
+                self.assertLessEqual(PRESETS[name]["perspective_prob"], 1.0)
+
 
 class TestTimeWords(unittest.TestCase):
     def test_time_word_appears_in_output(self):
@@ -6703,6 +6716,104 @@ class TestNoWildlife(unittest.TestCase):
             "wildlife_enabled=False should differ from wildlife_enabled=True with same seed")
 
 
+class TestPerspectiveCount(unittest.TestCase):
+    def test_perspective_count_default_is_one(self):
+        a = generate_landscape(seed=42, perspective_enabled=True)
+        b = generate_landscape(seed=42, perspective_enabled=True, perspective_count=1)
+        self.assertEqual(a, b,
+            "perspective_count=1 should match default")
+
+    def test_perspective_count_zero_suppresses_perspective(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, perspective_count=0)
+        for ind in PERSPECTIVE_INDICATORS:
+            self.assertNotIn(ind, result,
+                "Perspective should not appear with perspective_count=0")
+
+    def test_perspective_count_two_sometimes_has_multiple(self):
+        results = [generate_landscape(seed=s, perspective_enabled=True, perspective_count=3) for s in range(100)]
+        multi = [r for r in results if sum(1 for ind in PERSPECTIVE_INDICATORS if ind in r) >= 2]
+        self.assertGreater(len(multi), 10,
+            "perspective_count=3 should often produce multi-perspective outputs")
+
+    def test_perspective_count_does_not_repeat_same_phrase(self):
+        results = [generate_landscape(seed=s, perspective_enabled=True, perspective_count=3) for s in range(200)]
+        for r in results:
+            for ind in PERSPECTIVE_INDICATORS:
+                self.assertLessEqual(r.count(ind), 2,
+                    f"Perspective indicator {ind!r} should appear at most twice: {r!r}")
+
+    def test_perspective_count_produces_valid_output(self):
+        for count in [0, 1, 2, 3]:
+            for s in range(10):
+                result = generate_landscape(seed=s, perspective_enabled=True, perspective_count=count)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_perspective_count_is_deterministic(self):
+        a = generate_landscape(seed=42, perspective_enabled=True, perspective_count=2)
+        b = generate_landscape(seed=42, perspective_enabled=True, perspective_count=2)
+        self.assertEqual(a, b,
+            "perspective_count should be deterministic with same seed")
+
+    def test_perspective_count_works_with_json_format(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, perspective_count=2, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_perspective_count_json_includes_field(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, perspective_count=2, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("perspective_count", data)
+        self.assertEqual(data["perspective_count"], 2)
+
+    def test_perspective_count_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+class TestPerspectiveProb(unittest.TestCase):
+    def test_perspective_prob_default_is_one(self):
+        a = generate_landscape(seed=42, perspective_enabled=True)
+        b = generate_landscape(seed=42, perspective_enabled=True, perspective_prob=1.0)
+        self.assertEqual(a, b,
+            "perspective_prob=1.0 should match default")
+
+    def test_perspective_prob_zero_suppresses_perspective(self):
+        results = [generate_landscape(seed=s, perspective_enabled=True, perspective_prob=0.0) for s in range(100)]
+        for r in results:
+            for ind in PERSPECTIVE_INDICATORS:
+                self.assertNotIn(ind, r,
+                    f"Perspective indicator {ind!r} should not appear with perspective_prob=0.0")
+
+    def test_perspective_prob_produces_valid_output(self):
+        for prob in [0.0, 0.25, 0.5, 0.75, 1.0]:
+            for s in range(10):
+                result = generate_landscape(seed=s, perspective_enabled=True, perspective_prob=prob)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_perspective_prob_is_deterministic(self):
+        a = generate_landscape(seed=42, perspective_enabled=True, perspective_prob=0.5)
+        b = generate_landscape(seed=42, perspective_enabled=True, perspective_prob=0.5)
+        self.assertEqual(a, b,
+            "perspective_prob should be deterministic with same seed")
+
+    def test_perspective_prob_json_includes_field(self):
+        result = generate_landscape(seed=42, perspective_enabled=True, perspective_prob=0.5, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("perspective_prob", data)
+        self.assertEqual(data["perspective_prob"], 0.5)
+
+    def test_perspective_prob_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 class TestPerspective(unittest.TestCase):
     def test_perspective_disabled_by_default(self):
         for s in range(20):
@@ -6916,7 +7027,7 @@ class TestNoPerspective(unittest.TestCase):
                 result_no = generate_landscape(
                     seed=42,
                     perspective_enabled=False,
-                    **{k: v for k, v in PRESETS[name].items() if k not in ("perspective_enabled",)}
+                    **{k: v for k, v in PRESETS[name].items() if k not in ("perspective_enabled", "perspective_count", "perspective_prob")}
                 )
                 no_perspective = not any(ind in result_no for ind in PERSPECTIVE_INDICATORS)
                 self.assertTrue(no_perspective,

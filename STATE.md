@@ -2,73 +2,60 @@
 
 ## 2026-07-15
 
-### What was done (Session 145)
-- **Added perspective/vantage system as a new spatial geometry dimension** —
-  a new `PERSPECTIVES` word bank of 10 evocative phrases that establish the
-  viewing scale and spatial position of the observer relative to the landscape
-  (e.g. "Seen from above, the forest reveals itself as an ancient pattern of
-  woodland birdsong", "At ground level, the forest towers silently,
-  overwhelming in its mossy scale", "Looking back at the forest, it seems
-  smaller now, a wistful patch of emerald birdsong receding into the
-  distance").
-  - Each phrase uses `{display}`, `{adverb}`, `{color}`, `{adj}`, `{element}`
-    template placeholders, following the same pattern as soundscapes/wildlife.
-  - Off by default (`perspective_enabled=False`), preserving all existing
-    seed-based output.
-  - Picked via `rng.choice(PERSPECTIVES)` — one phrase prepended per landscape
-    when enabled.
-  - Inserted as the outermost framing (before season and time-of-day) —
-    perspective is the most general spatial context, establishing WHERE the
-    landscape is being viewed from.
-  - Not suppressed at detail=0 — like season and time-of-day, perspective is
-    a framing prefix suitable even for minimal descriptions.
-  - Works with all existing features: detail=0, prose/poetic/json, combine,
-    echo, legend, soundscape, travelogue, wistful, time-of-day, season,
-    wildlife, all biomes, all presets.
-  - Seed-breaking when enabled: one `rng.choice()` call before season/time
-    shifts subsequent random picks. Determinism is preserved (same seed +
-    same args = same output).
-- **Added `--perspective` CLI flag** (boolean, default: off) — follows the
-  same pattern as `--echo`, `--legend`, `--sound`, `--time`, `--season`,
-  `--wildlife`.
-- **Added `--no-perspective` CLI flag** — users can explicitly disable
-  perspective phrases even when using presets that enable them. Follows the
-  same pattern as `--no-echo`, `--no-legend`, `--no-sound`, etc.
-  - `--no-perspective` forces `perspective_enabled=False` regardless of
-    preset config or explicit `--perspective`.
-  - Post-preset override block ensures `--no-perspective` always wins.
-- **Added `--describe-perspectives` CLI flag and `describe_perspectives()`** —
-  users can inspect all 10 perspective phrases with index numbers, following
-  the exact same introspection pattern as `describe_echoes()`,
-  `describe_legends()`, etc.
-- **Added `"perspective_enabled"` to JSON metadata** when enabled —
-  e.g. `"perspective_enabled": True`.
-- **Added `"perspective_enabled"` to all 5 presets** — `nightfall`, `pastoral`,
-  `sublime`, `wasteland`, and `dreamscape` all enable perspective by default.
-  - Preset gating checks `args.perspective is False and not args.no_perspective`
-    before applying the preset value — consistent with all other preset gating.
-  - Seed-breaking when presets are used: one extra `rng.choice(PERSPECTIVES)`
-    call shifts subsequent random picks. Determinism is preserved.
-- Added 33 new tests (20 in `TestPerspective`, 9 in `TestDescribePerspectives`,
-  5 in `TestNoPerspective`):
-  - `TestPerspective` (20 tests): disabled by default, enabled appears, valid
-    output, determinism, differs from plain, prepends opening, JSON format,
-    JSON field present/absent, works with echo/legend/travelogue/sound/wistful/
-    time-of-day/season/wildlife, poetic format, all biomes, CLI flag.
-  - `TestDescribePerspectives` (9 tests): returns string, header, all phrases,
-    index numbers, last index, CLI flag, stdout, no landscape generated.
-  - `TestNoPerspective` (5 tests): flag exists via CLI, disables perspective
-    with presets (5 subtests), works with other features, JSON output, explicit
-    `--perspective` override.
-- This directly fulfills the "Next likely steps" called out in every session
-  since Session 122: "Add spatial geometry dimension (e.g. scale, perspective,
-  distance)". After many sessions of word bank expansions, this adds a
-  genuinely new spatial dimension to the generator.
-- Tests increased from 898 to 913 total (18 todo + 895 landscape), subtests
-  from 281 to 299.
+### What was done (Session 146)
+- **Added `--perspective-count` and `--perspective-prob` CLI flags** — users can
+  now control how many perspective phrases appear per landscape (0-3, default: 1)
+  and how often each roll succeeds (0.0-1.0, default: 1.0), following the exact
+  same pattern as `--time-count`/`--time-prob`, `--season-count`/`--season-prob`,
+  `--echo-count`/`--echo-prob`, `--sound-count`/`--sound-prob`,
+  `--weather-count`/`--weather-prob`, `--wildlife-count`/`--wildlife-prob`, and
+  `--legend-count`/`--legend-prob`.
+  - `perspective_count=0` suppresses all perspective phrases (alternative to
+    `--no-perspective`)
+  - `perspective_count=1` (default) produces exactly 1 phrase (existing behavior)
+  - `perspective_count=2` and `perspective_count=3` produce multiple distinct
+    perspective phrases with dedup (preventing the same phrase from appearing twice)
+  - `perspective_prob=0.0` suppresses all perspective phrases even with
+    `perspective_count > 0`
+  - Each of `perspective_count` rolls independently draws `rng.random() < perspective_prob`
+  - Default `perspective_count=1, perspective_prob=1.0` preserves backward
+    compatibility — all existing seed-based output with `--perspective` is unchanged
+- **Added `perspective_count` and `perspective_prob` params to `generate_landscape()`**
+  — defaults 1 and 1.0 respectively, preserving all existing behavior.
+- **Added `perspective_count` and `perspective_prob` to JSON metadata** when non-default
+  values are used — consistent with echo/season/time/weather/wildlife metadata patterns.
+- **Added perspective_count and perspective_prob to all 5 presets** with curated values
+  that match each preset's mood/theme:
+  - `nightfall`: `perspective_count=2, perspective_prob=0.7` — multiple perspective
+    phrases, not always present, matching echo/sound/legend/season/time prob
+  - `pastoral`: `perspective_count=1, perspective_prob=0.6` — single gentle perspective
+    phrase, occasionally absent for serene solitude
+  - `sublime`: `perspective_count=2, perspective_prob=0.95` — rich perspective detail
+    almost always present
+  - `wasteland`: `perspective_count=1, perspective_prob=1.0` — always a stark perspective
+    phrase
+  - `dreamscape`: `perspective_count=2, perspective_prob=0.85` — surreal perspective
+    usually present
+- **Added preset gating for `perspective_count` and `perspective_prob`** — follows the
+  same pattern as all other count/prob gating.
+- Added 16 new tests (9 in `TestPerspectiveCount`, 6 in `TestPerspectiveProb`, 1 in
+  `TestPresets`):
+  - `TestPerspectiveCount` (9 tests): default is one, zero suppresses, multi-perspective
+    with count=3, no repeat same phrase, valid output for all counts, determinism, JSON
+    format, JSON field, CLI flag.
+  - `TestPerspectiveProb` (6 tests): default is one, zero suppresses, valid output for
+    all probs, determinism, JSON field, CLI flag.
+  - `TestPresets`: `test_all_presets_include_perspective_count_and_prob` (5 subtests)
+    — verifies every preset includes `perspective_count` and `perspective_prob` with
+    valid ranges.
+- This fulfills the "Next likely steps" from Session 145: add `--perspective-count`,
+  `--perspective-prob` for configurable perspective density, and per-preset perspective
+  count and probability.
+- Tests increased from 913 to 929 total (18 todo + 911 landscape), subtests from 299
+  to 304.
 
 ### Current status
-Working. All 913 tests pass (18 todo + 895 landscape), 299 subtests.
+Working. All 929 tests pass (18 todo + 911 landscape), 304 subtests.
 
 ### Next likely steps
 - Expand global word banks (more perspective phrases, more echoes,

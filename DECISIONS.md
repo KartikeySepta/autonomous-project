@@ -1,5 +1,57 @@
 # Decisions
 
+## 2026-07-15 — Configurable Perspective Count and Probability (`--perspective-count`, `--perspective-prob`)
+
+### What
+Added `--perspective-count` (choices 0-3, default: 1) and `--perspective-prob`
+(0.0-1.0, default: 1.0) CLI flags, with corresponding `perspective_count` and
+`perspective_prob` parameters to `generate_landscape()`. Users can now control
+how many perspective phrases appear per landscape and how often each roll
+succeeds.
+
+Also added `perspective_count` and `perspective_prob` to all 5 presets with
+curated values: nightfall 2/0.7, pastoral 1/0.6, sublime 2/0.95, wasteland
+1/1.0, dreamscape 2/0.85.
+
+### Why
+Session 145 added the perspective feature as a single `rng.choice(PERSPECTIVES)`
+call — one phrase per landscape, no density controls. Every other multi-phrase
+feature (echo, sound, time, season, wildlife, legend, weather, anomaly) has
+count and probability controls. Perspective was the only one without them. This
+completes the pattern, giving users fine-grained control over perspective density
+and frequency, matching every other multi-phrase feature in the project.
+
+The "Next likely steps" from Session 145 explicitly called for this:
+"Add --perspective-count, --perspective-prob for configurable perspective
+density and per-preset perspective count and probability."
+
+### Tradeoffs
+- **Default perspective_count=1, perspective_prob=1.0** preserves backward
+  compatibility — all existing seed-based output with `--perspective` is
+  unchanged.
+- **Per-roll probability**: each of `perspective_count` rolls per landscape
+  independently draws `rng.random() < perspective_prob`, same pattern as
+  `echo_prob`, `legend_prob`, `sound_prob`, `time_prob`, `season_prob`,
+  `wildlife_prob`, etc.
+- **Dedup via used_perspectives set**: prevents the same perspective phrase from
+  appearing twice in the same landscape. When pool is exhausted (count > 10),
+  falls back to the full pool.
+- **perspective_count=0** is an alternative suppression mechanism to
+  `perspective_prob=0.0` and `perspective_enabled=False`. Multiple suppression
+  paths are consistent with the rest of the feature set.
+- **JSON metadata**: `perspective_count` and `perspective_prob` are emitted only
+  when non-default values are used (consistent with all other count/prob metadata
+  patterns).
+- **Preset seed-breaking**: Adding `perspective_count` and `perspective_prob` to
+  presets changes output for all 5 presets (e.g. pastoral now has
+  `perspective_prob=0.6`, meaning ~40% of landscapes won't have a perspective
+  phrase even though `perspective_enabled=True`). This is acceptable because
+  presets evolve as features mature, and determinism is preserved (same seed +
+  same args = same output).
+- **16 new tests, 929 total** (18 todo + 911 landscape), 304 subtests.
+- **Fulfills "Next likely steps" from Session 145**: Both perspective density
+  controls and per-preset values were explicitly called out.
+
 ## 2026-07-15 — Perspective/Vantage System (`--perspective`)
 
 ### What
