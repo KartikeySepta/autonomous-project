@@ -2,6 +2,57 @@
 
 ## 2026-07-15
 
+### What was done (Session 154)
+- **Added `--simile-count` and `--simile-prob` CLI flags** — users can now control
+  how many simile phrases appear per landscape (0-3, default: 1) and how often
+  each roll succeeds (0.0-1.0, default: 1.0), following the exact same pattern as
+  `--echo-count`/`--echo-prob`, `--sound-count`/`--sound-prob`,
+  `--wildlife-count`/`--wildlife-prob`, etc.
+  - `simile_count=0` suppresses all simile phrases (alternative to `--no-simile`)
+  - `simile_count=1` (default) produces exactly 1 phrase (existing behavior)
+  - `simile_count=2` and `simile_count=3` produce multiple distinct simile phrases
+    with dedup (preventing the same phrase from appearing twice)
+  - Each roll independently draws `rng.random() < simile_prob`
+  - Default `simile_count=1, simile_prob=1.0` preserves backward compatibility —
+    all existing seed-based output with `--simile` is unchanged
+- **Added `simile_count` and `simile_prob` params to `generate_landscape()`**
+  — defaults 1 and 1.0 respectively, preserving all existing behavior.
+- **Added `simile_count` and `simile_prob` to JSON metadata** when non-default
+  values are used — consistent with all other count/prob metadata patterns.
+- **Added preset gating for `simile_count` and `simile_prob`** — follows the same
+  pattern as all other count/prob gating, so presets can optionally configure
+  simile density in a future session.
+- **Added `TestSimileCount` (10 tests)** — default is one, zero suppresses,
+  multi-simile with count=2 and count=3, no repeat same phrase, valid output for
+  all counts, determinism, JSON format, JSON field, CLI flag.
+- **Added `TestSimileProb` (7 tests)** — default is one, zero suppresses, valid
+  output for all probs, always has simile with prob=1.0, determinism, JSON field,
+  CLI flag.
+- **Fixed `SIMILE_INDICATORS`** — 3 indicators were broken because `{adverb}`
+  injection between the verb and "like" (e.g. "stretches {adverb} like a")
+  caused the indicator "stretches like a" to never match "stretches silently like
+  a". Replaced with invariant substrings that work with any adverb:
+  `"tapestry of"`, `"slumbering"`, `"dream of"`.
+- This fulfills the "[Add simile] count/prob controls" trajectory — simile was the
+  only multi-phrase feature without count/prob controls. Every multi-phrase feature
+  (echo, sound, wildlife, perspective, time, season, mood atmosphere, weather,
+  anomaly, legend) now has count and probability controls.
+- Tests increased from 1003 to 1020 landscape tests (18 todo unchanged), subtests
+  unchanged at 355.
+
+### Current status
+Working. All 1038 tests pass (18 todo + 1020 landscape), 355 subtests.
+
+### Next likely steps
+- Expand simile word bank (more phrases, more varied constructions)
+- Add metaphor dimension (direct equative statements like "the {display} is a {adj}
+  {color} {element} of forgotten things")
+- Add personification dimension (giving human qualities to the landscape)
+- Expand global word banks (more echoes, more time-of-day, more seasons)
+- Add per-preset simile_count and simile_prob with curated values
+
+## 2026-07-15
+
 ### What was done (Session 153)
 - **Added `--simile` CLI flag and `SIMILES` word bank (10 phrases)** — a new poetic
   device dimension that adds a figurative language simile comparison to the landscape

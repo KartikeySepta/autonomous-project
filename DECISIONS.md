@@ -1,5 +1,46 @@
 # Decisions
 
+## 2026-07-15 — Configurable Simile Count and Probability (`--simile-count`, `--simile-prob`) (Session 154)
+
+### What
+Added `--simile-count` (choices 0-3, default: 1) and `--simile-prob` (0.0-1.0,
+default: 1.0) CLI flags, with corresponding `simile_count` and `simile_prob`
+parameters to `generate_landscape()`. Users can now control how many simile
+phrases appear per landscape and how often each roll succeeds, following the
+exact same pattern as every other multi-phrase feature (echo, sound, wildlife,
+perspective, time, season, mood atmosphere, weather, anomaly, legend).
+
+### Why
+Session 153 added the simile feature as a single `rng.choice(SIMILES)` call —
+one phrase per landscape, no density controls. Every other multi-phrase feature
+has count and probability controls. Simile was the last remaining feature
+without them. This completes the pattern, giving users fine-grained control over
+simile density and frequency, matching every other multi-phrase feature.
+
+### Tradeoffs
+- **Default simile_count=1, simile_prob=1.0** preserves backward compatibility —
+  all existing seed-based output with `--simile` is unchanged.
+- **Dedup via used_similes set**: prevents the same simile phrase from appearing
+  twice within a landscape. With 10 similes and count=3, this supports reasonable
+  density without rapid exhaustion.
+- **simile_count=0** is an alternative suppression mechanism to
+  `simile_prob=0.0` and `simile_enabled=False`. Multiple suppression paths are
+  consistent with the rest of the feature set.
+- **JSON metadata**: `simile_count` and `simile_prob` are emitted only when
+  non-default values are used (consistent with all other count/prob metadata
+  patterns).
+- **SIMILE_INDICATORS fix**: Discovered that 3 of 10 simile indicators had an
+  `{adverb}` placement issue — e.g. `"stretches like a"` as an indicator for
+  `"The {display} stretches {adverb} like a..."` would never match when
+  `{adverb}` is non-empty (e.g. "stretches silently like a"). Replaced with
+  invariant substrings: `"tapestry of"`, `"slumbering"`, `"dream of"`.
+- **No per-preset values yet**: Simile count and prob are not yet set per-preset.
+  The gating code is in place but all presets retain the defaults (1/1.0). Can be
+  added in a future session.
+- **17 new tests, 1038 total** (18 todo + 1020 landscape), 355 subtests.
+- **Fulfills implicit next step**: Simile was the only multi-phrase feature
+  missing count/prob controls. This completes the pattern across all features.
+
 ## 2026-07-15 — Simile System (`--simile`) (Session 153)
 
 ### What

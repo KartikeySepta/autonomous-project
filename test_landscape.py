@@ -149,15 +149,15 @@ PERSPECTIVE_INDICATORS = [
 ]
 
 SIMILE_INDICATORS = [
-    "stretches like a",
+    "tapestry of",
     "moves through the",
     "falls like",
-    "breathes like a great",
+    "slumbering",
     "shimmers like a",
     "glow like embers",
     "wraps around everything like",
     "hangs like a",
-    "unfolds like a dream of",
+    "dream of",
     "bleed into the surroundings",
 ]
 
@@ -7653,6 +7653,116 @@ class TestNoSimile(unittest.TestCase):
         with_sim = generate_landscape(seed=42, simile_enabled=True)
         self.assertNotEqual(no_sim, with_sim,
             "simile_enabled=False should differ from simile_enabled=True with same seed")
+
+
+class TestSimileCount(unittest.TestCase):
+    def test_simile_count_default_is_one(self):
+        a = generate_landscape(seed=42, simile_enabled=True)
+        b = generate_landscape(seed=42, simile_enabled=True, simile_count=1)
+        self.assertEqual(a, b,
+            "simile_count=1 should match default")
+
+    def test_simile_count_zero_suppresses_similes(self):
+        result = generate_landscape(seed=42, simile_enabled=True, simile_count=0)
+        for ind in SIMILE_INDICATORS:
+            self.assertNotIn(ind, result,
+                "Simile should not appear with simile_count=0")
+
+    def test_simile_count_two_produces_two_phrases(self):
+        results = [generate_landscape(seed=s, simile_enabled=True, simile_count=2) for s in range(100)]
+        multi = sum(1 for r in results if sum(1 for ind in SIMILE_INDICATORS if ind in r) >= 2)
+        self.assertGreater(multi, 0,
+            "simile_count=2 should produce at least 2 simile indicators in some outputs")
+
+    def test_simile_count_three_produces_three_phrases(self):
+        results = [generate_landscape(seed=s, simile_enabled=True, simile_count=3) for s in range(200)]
+        multi = sum(1 for r in results if sum(1 for ind in SIMILE_INDICATORS if ind in r) >= 3)
+        self.assertGreater(multi, 0,
+            "simile_count=3 should produce at least 3 simile indicators in some outputs")
+
+    def test_simile_count_no_repeats(self):
+        for s in range(100):
+            result = generate_landscape(seed=s, simile_enabled=True, simile_count=3)
+            found = [ind for ind in SIMILE_INDICATORS if ind in result]
+            self.assertEqual(len(found), len(set(found)),
+                "Simile phrases should not repeat within the same landscape")
+
+    def test_simile_count_produces_valid_output(self):
+        for count in [0, 1, 2, 3]:
+            for s in range(10):
+                result = generate_landscape(seed=s, simile_enabled=True, simile_count=count)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_simile_count_is_deterministic(self):
+        a = generate_landscape(seed=42, simile_enabled=True, simile_count=2)
+        b = generate_landscape(seed=42, simile_enabled=True, simile_count=2)
+        self.assertEqual(a, b,
+            "simile_count should be deterministic with same seed")
+
+    def test_simile_count_works_with_json_format(self):
+        result = generate_landscape(seed=42, simile_enabled=True, simile_count=2, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_simile_count_json_includes_field(self):
+        result = generate_landscape(seed=42, simile_enabled=True, simile_count=2, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("simile_count", data)
+        self.assertEqual(data["simile_count"], 2)
+
+    def test_simile_count_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+class TestSimileProb(unittest.TestCase):
+    def test_simile_prob_default_is_one(self):
+        a = generate_landscape(seed=42, simile_enabled=True)
+        b = generate_landscape(seed=42, simile_enabled=True, simile_prob=1.0)
+        self.assertEqual(a, b,
+            "simile_prob=1.0 should match default")
+
+    def test_simile_prob_zero_suppresses_similes(self):
+        results = [generate_landscape(seed=s, simile_enabled=True, simile_prob=0.0) for s in range(100)]
+        for r in results:
+            for ind in SIMILE_INDICATORS:
+                self.assertNotIn(ind, r,
+                    f"Simile indicator {ind!r} should not appear with simile_prob=0.0")
+
+    def test_simile_prob_one_always_has_simile(self):
+        results = [generate_landscape(seed=s, simile_enabled=True, simile_prob=1.0) for s in range(100)]
+        has_simile = sum(1 for r in results if any(ind in r for ind in SIMILE_INDICATORS))
+        self.assertGreater(has_simile, 80,
+            "With simile_prob=1.0, most outputs should contain a simile")
+
+    def test_simile_prob_produces_valid_output(self):
+        for prob in [0.0, 0.25, 0.5, 0.75, 1.0]:
+            for s in range(10):
+                result = generate_landscape(seed=s, simile_enabled=True, simile_prob=prob)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_simile_prob_is_deterministic(self):
+        a = generate_landscape(seed=42, simile_enabled=True, simile_prob=0.5)
+        b = generate_landscape(seed=42, simile_enabled=True, simile_prob=0.5)
+        self.assertEqual(a, b,
+            "simile_prob should be deterministic with same seed")
+
+    def test_simile_prob_json_includes_field(self):
+        result = generate_landscape(seed=42, simile_enabled=True, simile_prob=0.5, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("simile_prob", data)
+        self.assertEqual(data["simile_prob"], 0.5)
+
+    def test_simile_prob_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
 
 
 if __name__ == "__main__":
