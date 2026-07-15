@@ -2,6 +2,52 @@
 
 ## 2026-07-15
 
+### What was done (Session 147)
+- **Expanded PERSPECTIVES word bank from 10 to 15 phrases** — 5 new perspective
+  phrases added, covering spatial vantage niches not represented in the original 10:
+  - `"Beneath the {display}, unseen {adj} roots of {color} {element} hold the
+    landscape together {adverb} in the dark"` — underground/below-surface
+    perspective, looking up from beneath the landscape's visible structure
+  - `"Moving {adverb} through the {display}, the {adj} {color} {element} parts
+    and closes around you like a living curtain"` — dynamic passage through the
+    landscape, the traveler in motion (no existing perspective involves motion)
+  - `"Approaching the {display}, its {adj} silhouette of {color} {element} grows
+    {adverb} against the horizon line"` — arrival/approach perspective, the
+    landscape resolving from the horizon (distinct from static "From a distance")
+  - `"Reflected in a {adj} pool of {color} {element}, the {display} appears
+    {adverb} transformed, its secrets floating on the surface"` — mirror/
+    reflection perspective, the landscape seen doubled in water or ice
+  - `"Drifting {adverb} above the {display}, the {adj} expanse of {color}
+    {element} unfolds beneath you like a living map"` — dynamic floating/drifting
+    aerial perspective (distinct from static analytical "Seen from above" and
+    god's-eye "Seen from the heights")
+- **Added 5 new indicators to `PERSPECTIVE_INDICATORS`** in the test module:
+  `"hold the landscape together"`, `"parts and closes around"`,
+  `"grows against the horizon"`, `"appears transformed"`,
+  `"like a living map"` — each is a unique invariant substring for dynamic test
+  matching.
+- No code, CLI, or test logic changes — data-only expansion plus indicator
+  additions. All existing perspective tests use dynamic count checks and loop
+  over `PERSPECTIVE_INDICATORS`, so no test modifications were needed.
+- Each phrase is curated to fit a distinct spatial perspective niche: underground,
+  in-motion passage, approach/arrival, mirror reflection, drifting aerial.
+  None overlap with the existing 10 phrases.
+- This directly fulfills the first "Next likely step" from Session 146:
+  expand global word banks (more perspective phrases).
+- Tests unchanged: still 929 landscape tests pass (304 subtests), 18 todo tests.
+
+### Current status
+Working. All 929 tests pass (18 todo + 911 landscape), 304 subtests.
+
+### Next likely steps
+- Expand other global word banks (more echoes, more time-of-day, more seasons)
+- Add a "mood" dimension that affects how the entire landscape feels
+  (beyond word-weight biasing)
+- Add a narrative/poetic device dimension (simile, metaphor, personification
+  as separate controllable features)
+
+## 2026-07-15
+
 ### What was done (Session 146)
 - **Added `--perspective-count` and `--perspective-prob` CLI flags** — users can
   now control how many perspective phrases appear per landscape (0-3, default: 1)

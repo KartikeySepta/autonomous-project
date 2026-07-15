@@ -140,6 +140,11 @@ PERSPECTIVE_INDICATORS = [
     "At the edge of the",
     "scale of the",
     "Looking back at",
+    "hold the landscape together",
+    "parts and closes around",
+    "grows against the horizon",
+    "appears transformed",
+    "like a living map",
 ]
 
 

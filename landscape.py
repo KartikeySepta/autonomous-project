@@ -203,6 +203,11 @@ PERSPECTIVES = [
     "At the edge of the {display}, the world beyond feels {adverb} distant and {adj}",
     "The scale of the {display} is {adverb} apparent — a {adj} world of {color} {element}",
     "Looking back at the {display}, it seems smaller now, a {adj} patch of {color} {element} receding into the distance",
+    "Beneath the {display}, unseen {adj} roots of {color} {element} hold the landscape together {adverb} in the dark",
+    "Moving {adverb} through the {display}, the {adj} {color} {element} parts and closes around you like a living curtain",
+    "Approaching the {display}, its {adj} silhouette of {color} {element} grows {adverb} against the horizon line",
+    "Reflected in a {adj} pool of {color} {element}, the {display} appears {adverb} transformed, its secrets floating on the surface",
+    "Drifting {adverb} above the {display}, the {adj} expanse of {color} {element} unfolds beneath you like a living map",
 ]
 
 TRAVELOGUE_PREFIXES = [

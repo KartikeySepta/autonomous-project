@@ -1,5 +1,70 @@
 # Decisions
 
+## 2026-07-15 — Expanded PERSPECTIVES Word Bank (15 phrases)
+
+### What
+Added 5 new curated perspective phrases to the PERSPECTIVES bank, expanding it
+from 10 to 15 phrases. The new phrases cover underground/below-surface viewing,
+in-motion passage through the landscape, approach/arrival from the horizon,
+mirror/reflection viewing, and drifting/floating aerial perspective — spatial
+vantage niches absent from the original 10.
+
+### Why
+The PERSPECTIVES bank was created in Session 145 with 10 phrases and had never
+been expanded. Sessions 146 added count/prob controls and per-preset integration,
+making perspective a well-supported feature — but with only 10 phrases, repetition
+was noticeable, especially when multiple perspective phrases appear per landscape
+(with `perspective_count=2` or `perspective_count=3`). With perspective now
+enabled by default in all 5 presets (with count=1-2 and prob=0.7-1.0), a larger
+bank reduces repetition in preset output.
+
+The "Next likely steps" from Session 146 explicitly called for this:
+"Expand global word banks (more perspective phrases...)" with perspective as the
+first item.
+
+The 5 new phrases each cover a spatial perspective niche not represented in the
+existing 10:
+- **Underground/below**: "Beneath the {display}, unseen {adj} roots of {color}
+  {element} hold the landscape together {adverb} in the dark" — looking up from
+  beneath the surface, revealing hidden substructure. The only phrase that
+  situates the viewer below the landscape rather than at, above, or beside it.
+- **In-motion passage**: "Moving {adverb} through the {display}, the {adj} {color}
+  {element} parts and closes around you like a living curtain" — a traveler
+  moving through the landscape, the world parting and closing around them. All
+  existing 10 perspectives are static; this is the first dynamic/motion
+  perspective.
+- **Approach/arrival**: "Approaching the {display}, its {adj} silhouette of
+  {color} {element} grows {adverb} against the horizon line" — the act of
+  arriving, the landscape resolving from the horizon. Distinct from "From a
+  distance" (static faraway view) and "stretches into the distance"
+  (horizon-gazing), this captures the dynamic approach.
+- **Mirror/reflection**: "Reflected in a {adj} pool of {color} {element}, the
+  {display} appears {adverb} transformed, its secrets floating on the surface" —
+  seeing the landscape doubled in water, ice, or glass. Adds a meta-perceptual
+  dimension (the landscape as its own reflection) absent from all existing
+  perspectives.
+- **Drifting/floating aerial**: "Drifting {adverb} above the {display}, the
+  {adj} expanse of {color} {element} unfolds beneath you like a living map" —
+  a dynamic, floating aerial perspective. Distinct from "Seen from above"
+  (static analytical map-view) and "Seen from the heights" (god's-eye unfolding),
+  this captures gentle drifting and the landscape-as-living-thing beneath you.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only the PERSPECTIVES list and PERSPECTIVE_INDICATORS were
+  updated.
+- **No seed-breaking**: Adding phrases to PERSPECTIVES doesn't change the random
+  sequence — `rng.choice(PERSPECTIVES)` picks from a larger pool but the choice
+  function is unchanged. Only the rendered output content changes (new phrases
+  appear in the selection pool).
+- **No new tests**: All perspective tests use dynamic checks over
+  `PERSPECTIVE_INDICATORS` and `len(PERSPECTIVES)`. Only the indicator list was
+  extended; test logic is unchanged.
+- **Test count unchanged**: 929 landscape tests (304 subtests), 18 todo tests
+  — same as Session 146.
+- **Fulfills "Next likely steps" from Session 146**: Word bank expansion (more
+  perspective phrases) was explicitly called out as the first item.
+
 ## 2026-07-15 — Configurable Perspective Count and Probability (`--perspective-count`, `--perspective-prob`)
 
 ### What
