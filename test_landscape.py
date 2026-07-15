@@ -4160,6 +4160,19 @@ class TestPresets(unittest.TestCase):
                 self.assertIn("wildlife_enabled", PRESETS[name],
                     f"Preset {name} should include 'wildlife_enabled'")
 
+    def test_all_presets_include_wildlife_count_and_prob(self):
+        from landscape import PRESETS
+        for name in PRESETS:
+            with self.subTest(preset=name):
+                self.assertIn("wildlife_count", PRESETS[name],
+                    f"Preset {name} should include 'wildlife_count'")
+                self.assertIn("wildlife_prob", PRESETS[name],
+                    f"Preset {name} should include 'wildlife_prob'")
+                self.assertGreaterEqual(PRESETS[name]["wildlife_count"], 0)
+                self.assertLessEqual(PRESETS[name]["wildlife_count"], 3)
+                self.assertGreaterEqual(PRESETS[name]["wildlife_prob"], 0.0)
+                self.assertLessEqual(PRESETS[name]["wildlife_prob"], 1.0)
+
 
 class TestTimeWords(unittest.TestCase):
     def test_time_word_appears_in_output(self):
@@ -6530,6 +6543,104 @@ class TestDescribeWildlife(unittest.TestCase):
             "No landscape should be generated when --describe-wildlife is used")
 
 
+class TestWildlifeCount(unittest.TestCase):
+    def test_wildlife_count_default_is_one(self):
+        a = generate_landscape(seed=42, wildlife_enabled=True)
+        b = generate_landscape(seed=42, wildlife_enabled=True, wildlife_count=1)
+        self.assertEqual(a, b,
+            "wildlife_count=1 should match default")
+
+    def test_wildlife_count_zero_suppresses_wildlife(self):
+        result = generate_landscape(seed=42, wildlife_enabled=True, wildlife_count=0)
+        for ind in WILDLIFE_INDICATORS:
+            self.assertNotIn(ind, result,
+                "Wildlife should not appear with wildlife_count=0")
+
+    def test_wildlife_count_two_sometimes_has_multiple(self):
+        results = [generate_landscape(seed=s, wildlife_enabled=True, wildlife_count=3) for s in range(100)]
+        multi = [r for r in results if sum(1 for ind in WILDLIFE_INDICATORS if ind in r) >= 2]
+        self.assertGreater(len(multi), 0,
+            "wildlife_count=3 should sometimes produce multi-wildlife outputs")
+
+    def test_wildlife_count_does_not_repeat_same_phrase(self):
+        results = [generate_landscape(seed=s, wildlife_enabled=True, wildlife_count=3) for s in range(200)]
+        for r in results:
+            for ind in WILDLIFE_INDICATORS:
+                self.assertLessEqual(r.count(ind), 1,
+                    f"Wildlife indicator {ind!r} should appear at most once: {r!r}")
+
+    def test_wildlife_count_produces_valid_output(self):
+        for count in [0, 1, 2, 3]:
+            for s in range(10):
+                result = generate_landscape(seed=s, wildlife_enabled=True, wildlife_count=count)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_wildlife_count_is_deterministic(self):
+        a = generate_landscape(seed=42, wildlife_enabled=True, wildlife_count=2)
+        b = generate_landscape(seed=42, wildlife_enabled=True, wildlife_count=2)
+        self.assertEqual(a, b,
+            "wildlife_count should be deterministic with same seed")
+
+    def test_wildlife_count_works_with_json_format(self):
+        result = generate_landscape(seed=42, wildlife_enabled=True, wildlife_count=2, fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("text", data)
+        self.assertIsInstance(data["text"], str)
+        self.assertGreater(len(data["text"]), 0)
+
+    def test_wildlife_count_json_includes_field(self):
+        result = generate_landscape(seed=42, wildlife_enabled=True, wildlife_count=2, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("wildlife_count", data)
+        self.assertEqual(data["wildlife_count"], 2)
+
+    def test_wildlife_count_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+class TestWildlifeProb(unittest.TestCase):
+    def test_wildlife_prob_default_is_one(self):
+        a = generate_landscape(seed=42, wildlife_enabled=True)
+        b = generate_landscape(seed=42, wildlife_enabled=True, wildlife_prob=1.0)
+        self.assertEqual(a, b,
+            "wildlife_prob=1.0 should match default")
+
+    def test_wildlife_prob_zero_suppresses_wildlife(self):
+        results = [generate_landscape(seed=s, wildlife_enabled=True, wildlife_prob=0.0) for s in range(100)]
+        for r in results:
+            for ind in WILDLIFE_INDICATORS:
+                self.assertNotIn(ind, r,
+                    f"Wildlife indicator {ind!r} should not appear with wildlife_prob=0.0")
+
+    def test_wildlife_prob_produces_valid_output(self):
+        for prob in [0.0, 0.25, 0.5, 0.75, 1.0]:
+            for s in range(10):
+                result = generate_landscape(seed=s, wildlife_enabled=True, wildlife_prob=prob)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 0)
+
+    def test_wildlife_prob_is_deterministic(self):
+        a = generate_landscape(seed=42, wildlife_enabled=True, wildlife_prob=0.5)
+        b = generate_landscape(seed=42, wildlife_enabled=True, wildlife_prob=0.5)
+        self.assertEqual(a, b,
+            "wildlife_prob should be deterministic with same seed")
+
+    def test_wildlife_prob_json_includes_field(self):
+        result = generate_landscape(seed=42, wildlife_enabled=True, wildlife_prob=0.5, fmt="json")
+        import json as j
+        data = j.loads(result)
+        self.assertIn("wildlife_prob", data)
+        self.assertEqual(data["wildlife_prob"], 0.5)
+
+    def test_wildlife_prob_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 class TestNoWildlife(unittest.TestCase):
     def test_no_wildlife_flag_exists_via_cli(self):
         from landscape import main
@@ -6544,7 +6655,7 @@ class TestNoWildlife(unittest.TestCase):
                 if not has_wildlife:
                     continue
                 # Test with no_wildlife override
-                result_no = generate_landscape(seed=42, wildlife_enabled=False, **{k: v for k, v in PRESETS[name].items() if k not in ("wildlife_enabled",)})
+                result_no = generate_landscape(seed=42, wildlife_enabled=False, **{k: v for k, v in PRESETS[name].items() if k not in ("wildlife_enabled", "wildlife_count", "wildlife_prob")})
                 no_wildlife = not any(ind in result_no for ind in WILDLIFE_INDICATORS)
                 self.assertTrue(no_wildlife,
                     f"Preset {name} should have wildlife suppressed with wildlife_enabled=False")

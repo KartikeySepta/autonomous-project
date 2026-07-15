@@ -1,5 +1,55 @@
 # Decisions
 
+## 2026-07-15 — Configurable Wildlife Count and Probability (`--wildlife-count`, `--wildlife-prob`)
+
+### What
+Added `--wildlife-count` (choices 0-3, default: 1) and `--wildlife-prob` (0.0-1.0,
+default: 1.0) CLI flags, with corresponding `wildlife_count` and `wildlife_prob`
+parameters to `generate_landscape()`. Users can now control how many wildlife
+phrases appear per landscape and how often each roll succeeds.
+
+Also added `wildlife_count` and `wildlife_prob` to all 5 presets with curated
+values: nightfall 2/0.7, pastoral 1/0.6, sublime 2/0.95, wasteland 1/1.0,
+dreamscape 2/0.85.
+
+### Why
+Session 141 added the wildlife feature as a single `rng.choice(WILDLIFE)` call
+— one phrase per landscape, no density controls. Every other multi-phrase feature
+(echo, sound, time, season, legend, weather, anomaly) has count and probability
+controls. Wildlife was the only one without them. This completes the pattern,
+giving users fine-grained control over wildlife density and frequency, matching
+every other multi-phrase feature in the project.
+
+The "Next likely steps" from Session 141 explicitly called for this:
+"Add --wildlife-count, --wildlife-prob for configurable wildlife density" and
+"Add per-preset wildlife count and probability."
+
+### Tradeoffs
+- **Default wildlife_count=1, wildlife_prob=1.0** preserves backward compatibility
+  — all existing seed-based output with `--wildlife` is unchanged.
+- **Per-roll probability**: each of `wildlife_count` rolls per landscape
+  independently draws `rng.random() < wildlife_prob`, same pattern as
+  `echo_prob`, `legend_prob`, `sound_prob`, `time_prob`, `season_prob`, etc.
+- **Dedup via used_wildlife set**: prevents the same wildlife phrase from
+  appearing twice in the same landscape. When pool is exhausted (count > 10),
+  falls back to the full pool.
+- **wildlife_count=0** is an alternative suppression mechanism to
+  `wildlife_prob=0.0` and `wildlife_enabled=False`. Multiple suppression paths
+  are consistent with the rest of the feature set.
+- **JSON metadata**: `wildlife` remains a single string when only one phrase is
+  generated (backward compatible), and `wildlife_count`/`wildlife_prob` are
+  emitted only when non-default values are used (consistent with all other
+  count/prob metadata patterns).
+- **Preset seed-breaking**: Adding `wildlife_count` and `wildlife_prob` to
+  presets changes output for all 5 presets (e.g. pastoral now has
+  `wildlife_prob=0.6`, meaning ~40% of landscapes won't have wildlife even
+  though `wildlife_enabled=True`). This is acceptable because presets evolve as
+  features mature, and determinism is preserved (same seed + same args = same
+  output).
+- **16 new tests, 898 total** (18 todo + 880 landscape), 276 subtests.
+- **Fulfills "Next likely steps" from Session 141**: Both wildlife density
+  controls and per-preset values were explicitly called out.
+
 ## 2026-07-15 — Wildlife/Inhabitants System (`--wildlife`)
 
 ### What

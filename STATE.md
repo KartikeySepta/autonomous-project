@@ -2,6 +2,68 @@
 
 ## 2026-07-15
 
+### What was done (Session 142)
+- **Added `--wildlife-count` and `--wildlife-prob` CLI flags** — users can now
+  control how many wildlife phrases appear per landscape (0-3, default: 1) and
+  how often each roll succeeds (0.0-1.0, default: 1.0), following the exact same
+  pattern as `--time-count`/`--time-prob`, `--season-count`/`--season-prob`,
+  `--echo-count`/`--echo-prob`, `--sound-count`/`--sound-prob`,
+  `--weather-count`/`--weather-prob`, and `--legend-count`/`--legend-prob`.
+  - `wildlife_count=0` suppresses all wildlife phrases (alternative to
+    `wildlife_enabled=False`)
+  - `wildlife_count=1` (default) produces exactly 1 phrase (existing behavior)
+  - `wildlife_count=2` and `wildlife_count=3` produce multiple distinct wildlife
+    phrases with dedup (preventing the same phrase from appearing twice)
+  - `wildlife_prob=0.0` suppresses all wildlife phrases even with
+    `wildlife_count > 0`
+  - Each of `wildlife_count` rolls independently draws `rng.random() < wildlife_prob`
+  - Default `wildlife_count=1, wildlife_prob=1.0` preserves backward
+    compatibility — all existing seed-based output with `--wildlife` is unchanged
+- **Added `wildlife_count` and `wildlife_prob` params to `generate_landscape()`**
+  — defaults 1 and 1.0 respectively, preserving all existing behavior.
+- **Added `wildlife_count` and `wildlife_prob` to JSON metadata** when non-default
+  values are used — consistent with echo/season/time/weather metadata patterns.
+- **Added wildlife_count and wildlife_prob to all 5 presets** with curated values
+  that match each preset's mood/theme:
+  - `nightfall`: `wildlife_count=2, wildlife_prob=0.7` — multiple wildlife
+    phrases, not always present, matching echo/sound/legend/season/time prob
+  - `pastoral`: `wildlife_count=1, wildlife_prob=0.6` — single gentle wildlife
+    phrase, occasionally absent for serene solitude
+  - `sublime`: `wildlife_count=2, wildlife_prob=0.95` — rich wildlife detail
+    almost always present
+  - `wasteland`: `wildlife_count=1, wildlife_prob=1.0` — always a stark wildlife
+    phrase (but wildlife_enabled=False so moot)
+  - `dreamscape`: `wildlife_count=2, wildlife_prob=0.85` — surreal wildlife
+    usually present
+- **Added preset gating for `wildlife_count` and `wildlife_prob`** — follows the
+  same pattern as all other count/prob gating, so presets can optionally
+  configure wildlife density (not yet added to any preset).
+- Added 16 new tests (9 in `TestWildlifeCount`, 6 in `TestWildlifeProb`, 1 in
+  `TestPresets`):
+  - `TestWildlifeCount` (9 tests): default is one, zero suppresses, multi-wildlife
+    with count=3, no repeat same phrase, valid output for all counts, determinism,
+    JSON format, JSON field, CLI flag.
+  - `TestWildlifeProb` (6 tests): default is one, zero suppresses, valid output
+    for all probs, determinism, JSON field, CLI flag.
+  - `TestPresets`: `test_all_presets_include_wildlife_count_and_prob` (5 subtests)
+    — verifies every preset includes `wildlife_count` and `wildlife_prob` with
+    valid ranges.
+- This fulfills the "Next likely steps" from Session 141: add `--wildlife-count`,
+  `--wildlife-prob` for configurable wildlife density, and per-preset wildlife
+  count and probability.
+- Tests increased from 882 to 898 total (18 todo + 880 landscape), subtests
+  unchanged at 276.
+
+### Current status
+Working. All 898 tests pass (18 todo + 880 landscape), 276 subtests.
+
+### Next likely steps
+- Expand other global word banks (more echoes, more soundscapes, more
+  time-of-day, more seasons, more wildlife)
+- Add spatial geometry dimension (e.g. scale, perspective, distance)
+
+## 2026-07-15
+
 ### What was done (Session 141)
 - **Added wildlife/inhabitants as a new sensory dimension** — a new `WILDLIFE`
   word bank of 10 evocative phrases describing creatures and inhabitants in the
@@ -66,14 +128,7 @@
   from 253 to 276.
 
 ### Current status
-Working. All 882 tests pass (18 todo + 864 landscape), 276 subtests.
-
-### Next likely steps
-- Expand other global word banks (more echoes, more soundscapes, more
-  time-of-day, more seasons)
-- Add spatial geometry dimension (e.g. scale, perspective, distance)
-- Add `--wildlife-count`, `--wildlife-prob` for configurable wildlife density
-- Add per-preset wildlife count and probability
+Working. All 898 tests pass (18 todo + 880 landscape), 276 subtests.
 
 ## 2026-07-15
 

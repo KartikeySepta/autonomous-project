@@ -251,6 +251,8 @@ PRESETS = {
         "sound_count": 2,
         "sound_prob": 0.7,
         "wildlife_enabled": True,
+        "wildlife_count": 2,
+        "wildlife_prob": 0.7,
         "time_of_day_enabled": True,
         "time_count": 2,
         "time_prob": 0.7,
@@ -274,6 +276,8 @@ PRESETS = {
         "sound_count": 1,
         "sound_prob": 0.5,
         "wildlife_enabled": True,
+        "wildlife_count": 1,
+        "wildlife_prob": 0.6,
         "time_of_day_enabled": True,
         "time_count": 1,
         "time_prob": 0.6,
@@ -299,6 +303,8 @@ PRESETS = {
         "sound_count": 2,
         "sound_prob": 0.95,
         "wildlife_enabled": True,
+        "wildlife_count": 2,
+        "wildlife_prob": 0.95,
         "time_of_day_enabled": True,
         "time_count": 2,
         "time_prob": 0.95,
@@ -323,6 +329,8 @@ PRESETS = {
         "sound_count": 2,
         "sound_prob": 1.0,
         "wildlife_enabled": False,
+        "wildlife_count": 1,
+        "wildlife_prob": 1.0,
         "time_of_day_enabled": True,
         "time_count": 1,
         "time_prob": 1.0,
@@ -349,6 +357,8 @@ PRESETS = {
         "sound_count": 2,
         "sound_prob": 0.9,
         "wildlife_enabled": True,
+        "wildlife_count": 2,
+        "wildlife_prob": 0.85,
         "time_of_day_enabled": True,
         "time_count": 2,
         "time_prob": 0.85,
@@ -1024,7 +1034,7 @@ def _pick(category, biomes, bias="normal", mood=None, mood_weight=MOOD_BOOST, bi
     return chosen
 
 
-def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, weather_count=1, weather_prob=1.0, middle_enabled=True, color_enabled=True, element_enabled=True, anomaly_enabled=True, echo_enabled=False, echo_count=1, echo_prob=1.0, time_word_enabled=True, legend_enabled=False, legend_count=1, legend_prob=1.0, travelogue=False, wistful=False, sound_enabled=False, sound_count=1, sound_prob=1.0, time_of_day_enabled=False, time_count=1, time_prob=1.0, season_enabled=False, season_count=1, season_prob=1.0, wildlife_enabled=False):
+def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", combine=None, detail=1, bias="normal", show_seed=False, mood=None, mood_weight=MOOD_BOOST, template_set="random", bias_overrides=None, mood_weight_overrides=None, template_overrides=None, anomaly_prob=0.3, anomaly_count=1, dedup=True, adverb_enabled=True, biome_weights=None, weather_enabled=True, weather_count=1, weather_prob=1.0, middle_enabled=True, color_enabled=True, element_enabled=True, anomaly_enabled=True, echo_enabled=False, echo_count=1, echo_prob=1.0, time_word_enabled=True, legend_enabled=False, legend_count=1, legend_prob=1.0, travelogue=False, wistful=False, sound_enabled=False, sound_count=1, sound_prob=1.0, time_of_day_enabled=False, time_count=1, time_prob=1.0, season_enabled=False, season_count=1, season_prob=1.0, wildlife_enabled=False, wildlife_count=1, wildlife_prob=1.0):
     if seed is not None:
         rng = random.Random(seed)
     elif show_seed:
@@ -1162,12 +1172,17 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
                     adj=adj, element=element,
                 ))
 
-    if wildlife_enabled and detail >= 1:
-        wildlife = rng.choice(WILDLIFE).format(
-            display=display, adverb=adverb, color=color,
-            adj=adj, element=element,
-        )
-        parts.append(wildlife)
+    if wildlife_enabled and detail >= 1 and wildlife_count > 0:
+        used_wildlife = set()
+        for _ in range(wildlife_count):
+            if rng.random() < wildlife_prob:
+                pool = [w for w in WILDLIFE if w not in used_wildlife] or WILDLIFE
+                wildlife = rng.choice(pool)
+                used_wildlife.add(wildlife)
+                parts.append(wildlife.format(
+                    display=display, adverb=adverb, color=color,
+                    adj=adj, element=element,
+                ))
 
     if legend_enabled and detail >= 1 and legend_count > 0:
         used_legends = set()
@@ -1227,6 +1242,10 @@ def generate_landscape(seed=None, biome=None, show_biome=False, fmt="prose", com
             data["sound_prob"] = sound_prob
         if wildlife_enabled:
             data["wildlife_enabled"] = True
+            if wildlife_count != 1:
+                data["wildlife_count"] = wildlife_count
+            if wildlife_prob != 1.0:
+                data["wildlife_prob"] = wildlife_prob
         if time_phrases:
             data["time_of_day"] = time_phrases if len(time_phrases) > 1 else time_phrases[0]
             if time_count != 1:
@@ -1552,6 +1571,14 @@ def main():
         help="Append a wildlife phrase describing inhabitants or creatures in the landscape",
     )
     parser.add_argument(
+        "--wildlife-count", type=int, default=1, choices=[0, 1, 2, 3],
+        help="Number of wildlife phrases per landscape (0-3, default: 1)",
+    )
+    parser.add_argument(
+        "--wildlife-prob", type=float, default=1.0,
+        help="Probability of a wildlife phrase appearing per roll (0.0 to 1.0, default: 1.0)",
+    )
+    parser.add_argument(
         "--no-wildlife", action="store_true",
         help="Disable wildlife phrases (overrides preset and --wildlife)",
     )
@@ -1665,6 +1692,10 @@ def main():
             args.sound_prob = preset["sound_prob"]
         if "wildlife_enabled" in preset and args.wildlife is False and not args.no_wildlife:
             args.wildlife = preset["wildlife_enabled"]
+        if "wildlife_count" in preset and args.wildlife_count == 1:
+            args.wildlife_count = preset["wildlife_count"]
+        if "wildlife_prob" in preset and args.wildlife_prob == 1.0:
+            args.wildlife_prob = preset["wildlife_prob"]
         if "time_of_day_enabled" in preset and args.time is False and not args.no_time:
             args.time = preset["time_of_day_enabled"]
         if "time_count" in preset and args.time_count == 1:
@@ -1741,7 +1772,7 @@ def main():
     lines = []
     for i in range(args.count):
         effective_seed = args.seed + i if args.seed is not None else None
-        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, weather_count=args.weather_count, weather_prob=args.weather_prob, middle_enabled=not args.no_middle, color_enabled=not args.no_color, element_enabled=not args.no_element, anomaly_enabled=not args.no_anomaly, echo_enabled=args.echo, echo_count=args.echo_count, echo_prob=args.echo_prob, time_word_enabled=not args.no_time_word, legend_enabled=args.legend, legend_count=args.legend_count, legend_prob=args.legend_prob, travelogue=args.travelogue, wistful=args.wistful, sound_enabled=args.sound, sound_count=args.sound_count, sound_prob=args.sound_prob, time_of_day_enabled=args.time, time_count=args.time_count, time_prob=args.time_prob, season_enabled=args.season, season_count=args.season_count, season_prob=args.season_prob, wildlife_enabled=args.wildlife))
+        lines.append(generate_landscape(seed=effective_seed, biome=args.biome, show_biome=args.show_biome, fmt=args.format, combine=args.combine, detail=args.detail, bias=args.bias, show_seed=args.show_seed, mood=args.mood, mood_weight=args.mood_weight, template_set=args.template_set, anomaly_prob=args.anomaly_prob, anomaly_count=args.anomaly_count, bias_overrides=bias_overrides, mood_weight_overrides=mood_weight_overrides, template_overrides=template_overrides, dedup=not args.no_dedup, adverb_enabled=not args.no_adverb, biome_weights=biome_weights, weather_enabled=not args.no_weather, weather_count=args.weather_count, weather_prob=args.weather_prob, middle_enabled=not args.no_middle, color_enabled=not args.no_color, element_enabled=not args.no_element, anomaly_enabled=not args.no_anomaly, echo_enabled=args.echo, echo_count=args.echo_count, echo_prob=args.echo_prob, time_word_enabled=not args.no_time_word, legend_enabled=args.legend, legend_count=args.legend_count, legend_prob=args.legend_prob, travelogue=args.travelogue, wistful=args.wistful, sound_enabled=args.sound, sound_count=args.sound_count, sound_prob=args.sound_prob, time_of_day_enabled=args.time, time_count=args.time_count, time_prob=args.time_prob, season_enabled=args.season, season_count=args.season_count, season_prob=args.season_prob, wildlife_enabled=args.wildlife, wildlife_count=args.wildlife_count, wildlife_prob=args.wildlife_prob))
     if args.format == "json" and len(lines) > 1:
         output = "[" + ",\n".join(lines) + "]\n"
     else:
