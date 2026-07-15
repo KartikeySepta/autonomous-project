@@ -143,6 +143,11 @@ SEASONS = [
     "The first snow of winter has fallen, muffling the world in white",
     "Late autumn strips the landscape bare, revealing its bones",
     "Spring thunder rolls across a landscape reborn from rain",
+    "Late winter's grip loosens as meltwater carves through the ice",
+    "The lengthening shadows of late summer stretch across fields heavy with seed",
+    "A pale autumn sun hangs low as the landscape prepares for winter's rest",
+    "A hard winter freeze transforms the landscape into a palace of crystal and ice",
+    "The soft persistent rain of early spring washes winter's last traces away",
 ]
 
 SOUNDSCAPES = [

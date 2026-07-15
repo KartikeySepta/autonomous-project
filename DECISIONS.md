@@ -1,5 +1,63 @@
 # Decisions
 
+## 2026-07-15 — Expanded SEASONS Word Bank (15 phrases)
+
+### What
+Added 5 new curated seasonal phrases to the SEASONS bank, expanding it from 10
+to 15 phrases. The new phrases cover late winter thaw, late summer abundance,
+autumn dormancy preparation, hard winter freeze, and persistent spring rain —
+seasonal niches absent from the original 10.
+
+### Why
+The seasonal system (Session 134) was the newest temporal dimension and had not
+yet received any word bank expansion. The original 10 phrases covered broad
+seasonal categories but had gaps: no late summer variant, no late winter thaw,
+no autumn dormancy transition, no hard winter freeze aesthetic, and only two
+spring variants (early and late). With seasonal framing now enabled by default in
+all 5 presets (Session 134), a larger bank reduces repetition in preset output.
+The "Next likely steps" from Session 134 explicitly called for expanding global
+word banks, with seasons as the first item.
+
+The 5 new phrases each cover a seasonal niche not well represented in the
+existing 10:
+- **Late winter thaw**: "Late winter's grip loosens as meltwater carves through
+  the ice" — the transition between winter and spring, a period of melting and
+  renewal not covered by deep winter (silence/frost), first snow (muffled/white),
+  or any spring phrase.
+- **Late summer abundance**: "The lengthening shadows of late summer stretch
+  across fields heavy with seed" — late summer as a time of ripeness and long
+  shadows, distinct from high summer (heat haze, droning insects) and midsummer
+  (lush fullness).
+- **Autumn dormancy preparation**: "A pale autumn sun hangs low as the landscape
+  prepares for winter's rest" — autumn as a time of quiet preparation and
+  acceptance, distinct from the dramatic gold/decay of peak autumn, the sharpness
+  of early autumn chill, and the stark stripped-bare revelation of late autumn.
+- **Hard winter freeze**: "A hard winter freeze transforms the landscape into a
+  palace of crystal and ice" — winter as crystalline beauty, distinct from deep
+  winter (silence and frost) and first snow (muffled world in white).
+- **Persistent spring rain**: "The soft persistent rain of early spring washes
+  winter's last traces away" — a gentle cleansing spring rain, distinct from
+  early spring (buds and thawing), late spring (tender green), and spring thunder
+  (rebirth through rain and storm).
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only the SEASONS list was updated.
+- **No seed-breaking**: Adding phrases to SEASONS doesn't change the random
+  sequence — `rng.choice(SEASONS)` picks from a larger pool but the choice
+  function is unchanged. Only the rendered output content changes (new phrases
+  appear in the selection pool).
+- **No new tests**: `ALL_SEASONS = set(SEASONS)` is dynamically derived, and all
+  TestSeason and TestDescribeSeasons tests use dynamic counts/loops. Only the
+  data changed; test logic is unchanged.
+- **Test count unchanged**: 797 tests (18 todo + 779 landscape), 243 subtests.
+- **Not seed-breaking**: Adding new entries to a list that `rng.choice()` draws
+  from doesn't change the RNG sequence — the same seed picks the same index,
+  but the content at that index may be different, which only changes rendered
+  output, not determinism.
+- **Fulfills "Next likely steps" from Session 134**: Word bank expansion (more
+  seasons) was explicitly called out as the first item.
+
 ## 2026-07-15 — Seasonal Variation System (`--season`)
 
 ### What

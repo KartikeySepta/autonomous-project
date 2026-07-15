@@ -71,12 +71,36 @@
 Working. All 797 tests pass (18 todo + 779 landscape), 243 subtests.
 
 ### Next likely steps
-- Expand global word banks (more seasons, more time-of-day, more echoes, more
-  legends, more soundscapes)
+- Expand global word banks (more time-of-day, more echoes, more legends, more
+  soundscapes)
 - Add inhabitants/wildlife as a new sensory dimension
 - Add `--time-count`, `--time-prob` for configurable time-of-day density
 - Add `--season-count`, `--season-prob` for configurable seasonal density
 - Add spatial geometry dimension (e.g. scale, perspective, distance)
+
+## 2026-07-15
+
+### What was done (Session 135)
+- **Expanded SEASONS word bank from 10 to 15 phrases** — 5 new seasonal phrases
+  added, covering seasonal niches not represented in the original 10:
+  - `"Late winter's grip loosens as meltwater carves through the ice"` — late
+    winter thaw, the transition between winter and spring
+  - `"The lengthening shadows of late summer stretch across fields heavy with
+    seed"` — late summer abundance sloping toward autumn
+  - `"A pale autumn sun hangs low as the landscape prepares for winter's rest"` —
+    autumn's quiet preparation for dormancy
+  - `"A hard winter freeze transforms the landscape into a palace of crystal and
+    ice"` — winter's stark crystalline beauty, distinct from deep winter
+    (silence/frost) and first snow (muffled in white)
+  - `"The soft persistent rain of early spring washes winter's last traces
+    away"` — cleansing spring rain, a gentler complement to spring thunder
+- Each phrase is curated to fit a distinct seasonal niche: late winter thaw, late
+  summer abundance, autumn dormancy preparation, hard winter freeze, persistent
+  spring rain. None overlap with existing phrases.
+- No code, CLI, or test changes — data-only expansion. All 797 tests still pass
+  (18 todo + 779 landscape), 243 subtests unchanged.
+- This directly fulfills the first "Next likely step" from Session 134: expand
+  global word banks (more seasons).
 
 ## 2026-07-15
 
