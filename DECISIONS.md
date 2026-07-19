@@ -1,5 +1,110 @@
 # Decisions
 
+## 2026-07-19 — Expanded Global Word Pools (Session 173)
+
+### What
+Expanded all 8 global word pools — ADJECTIVES (16→20), ELEMENTS (10→15),
+NOUNS (12→15), VERBS (10→15), ADVERBS (12→15), COLORS (12→15),
+WEATHERS (12→15), and ANOMALIES (12→15) — adding 29 new entries total.
+This is the first expansion of these foundational pools since the project
+began.
+
+### Why
+The global word pools are the bedrock of the generator — every single
+generated landscape draws from them via `_pick()`, blended with biome-
+specific words. Unlike feature word banks (SIMILES, METAPHORS, etc.)
+which were all expanded to 20 phrases across sessions 157–172, the global
+pools had remained at their original sizes since the project's inception.
+
+The "Next likely steps" from Session 172 explicitly called for this:
+"Expand the global word pools (ADJECTIVES, ELEMENTS, NOUNS, etc.)."
+
+Expanding global pools has a multiplier effect: every landscape feature
+(opening, middle, weather, anomaly, perspective, simile, metaphor, echo,
+soundscape, etc.) uses these words, so the variety increase touches all
+output uniformly — unlike feature-specific expansions which only affect
+one feature at a time.
+
+Each new word was chosen to fill a niche not represented in the existing
+pool:
+
+- **ADJECTIVES (+4)**: `phantom` (spectral intangibility), `hollow`
+  (empty resonance), `sunless` (absence of light), `star-scattered`
+  (celestial distribution). The existing 16 had no spectral/void/
+  celestial adjectives.
+
+- **ELEMENTS (+5)**: `phosphorescence` (sustained glow), `thunder`
+  (auditory force), `breath` (vital air), `resonance` (sympathetic
+  vibration), `glimmer` (faint flicker). The existing 10 had no
+  elements in these luminous/auditory/vital registers.
+
+- **NOUNS (+3)**: `monoliths` (single massive stones), `terraces`
+  (stepped levels), `basins` (concave depressions). The existing 12
+  had no nouns for grand singular forms, stepped formations, or
+  concave landscape shapes.
+
+- **VERBS (+5)**: `breathe` (organic rhythm), `sing` (auditory
+  expression), `shiver` (trembling), `bloom` (unfurling), `fold`
+  (doubling over). The existing 10 had no verbs in these organic/
+  auditory/transformative registers.
+
+- **ADVERBS (+3)**: `lazily` (slow indolence), `heavily` (weighted
+  slowness), `perpetually` (unending duration). The existing 12 had
+  no languid/dense/endless adverbs.
+
+- **COLORS (+3)**: `opal` (iridescent play-of-color), `argent`
+  (heraldic silver), `sepia` (antique brown). The existing 12 had no
+  iridescent, metallic-silver, or antique-toned colors.
+
+- **WEATHERS (+3)**: "a thin mist rises from the warming stone"
+  (thermal evaporation), "a slow wind carries the smell of distant
+  rain" (olfactory weather), "the air grows thick with the promise
+  of thunder" (barometric tension). The existing 12 had no
+  thermal-rising, scent-carrying, or pressure-building weathers.
+
+- **ANOMALIES (+3)**: "The light here has no source — it simply exists."
+  (sourceless illumination), "Every step you take rings twice, once now
+  and once long ago." (temporal echo), "Birds glide in spirals that form
+  equations no living eye has solved." (mathematical/pattern anomaly).
+  The existing 12 had no sourceless-light, temporal-mirroring, or
+  mathematical-pattern anomalies.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI
+  flags, or any logic. Only the 8 global word pool lists were updated,
+  plus WEATHER_INDICATORS in test_landscape.py.
+- **No seed-breaking**: Adding entries to global pools doesn't change
+  the random sequence within a given seed — `rng.choices(pool, weights, k=1)`
+  on a larger pool only changes which words get selected, not the RNG
+  state progression. The only behavioral change is that new words may
+  appear in generated output.
+- **New words are default-weight**: All 29 new entries are in the
+  "normal" weight tier (weight=5 in normal bias, equivalent to "neither
+  common nor rare"). This means they appear at the same rate as the
+  majority of existing pool words. None are marked COMMON (weight=10)
+  or RARE (weight=1). This is appropriate — the new words cover
+  distinctive niches and should appear at baseline frequency, not
+  boosted or suppressed.
+- **No length-based tests**: Unlike feature word banks (which have
+  count-based assertions like `len(SIMILES) >= 20`), the global pools
+  have no length-based tests. `ALL_ADJECTIVES`, `ALL_ELEMENTS`, etc.
+  are derived sets that automatically include new additions, so no
+  test modifications were needed (except WEATHER_INDICATORS).
+- **WEATHER_INDICATORS updated**: 3 new invariant substrings added for
+  the new weather phrases. This is necessary for weather suppression
+  tests (`weather_count=0`, `weather_prob=0.0`) to correctly detect
+  the new phrases.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126
+  landscape) — same as Session 172. Subtests unchanged at 393.
+- **Global pools now at 15–20 entries**: ADJECTIVES (20), ELEMENTS (15),
+  NOUNS (15), VERBS (15), ADVERBS (15), COLORS (15), WEATHERS (15),
+  ANOMALIES (15). While not all are at 20, all are now ≥15 — a
+  meaningful expansion from their original sizes.
+- **Fulfills "Next likely steps" from Session 172**: Global word pool
+  expansion was explicitly called out as the second item. This shifts
+  the expansion focus from feature-specific banks to the foundational
+  word pools that affect all output.
+
 ## 2026-07-19 — Expanded TRAVELOGUE Word Bank (9 prefixes, 9 suffixes) (Session 172)
 
 ### What

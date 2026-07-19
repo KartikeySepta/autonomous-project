@@ -2,6 +2,58 @@
 
 ## 2026-07-19
 
+### What was done (Session 173)
+- **Expanded all 8 global word pools** — ADJECTIVES (16→20), ELEMENTS (10→15),
+  NOUNS (12→15), VERBS (10→15), ADVERBS (12→15), COLORS (12→15),
+  WEATHERS (12→15), and ANOMALIES (12→15) — adding 29 new words/phrases total.
+  This is the first expansion of these foundational pools since the project began.
+- **ADJECTIVES**: Added `phantom`, `hollow`, `sunless`, `star-scattered` —
+  spectral/void/celestial adjectives not represented in the existing 16.
+- **ELEMENTS**: Added `phosphorescence`, `thunder`, `breath`, `resonance`,
+  `glimmer` — luminous/auditory/vital elements not represented in the existing 10.
+- **NOUNS**: Added `monoliths`, `terraces`, `basins` — grand/terraced/concave
+  landscape forms not represented in the existing 12.
+- **VERBS**: Added `breathe`, `sing`, `shiver`, `bloom`, `fold` —
+  organic/auditory/transformative verbs not represented in the existing 10.
+- **ADVERBS**: Added `lazily`, `heavily`, `perpetually` —
+  languid/dense/endless adverbs not represented in the existing 12.
+- **COLORS**: Added `opal`, `argent`, `sepia` —
+  iridescent/silver/antique colors not represented in the existing 12 colors.
+- **WEATHERS**: Added `"a thin mist rises from the warming stone"`,
+  `"a slow wind carries the smell of distant rain"`,
+  `"the air grows thick with the promise of thunder"` —
+  thermal-rising/scent-carrying/pressure-building weathers not represented
+  in the existing 12.
+- **ANOMALIES**: Added `"The light here has no source — it simply exists."`,
+  `"Every step you take rings twice, once now and once long ago."`,
+  `"Birds glide in spirals that form equations no living eye has solved."` —
+  sourceless-light/temporal-echo/mathematical-bird anomalies not represented
+  in the existing 12.
+- **Updated WEATHER_INDICATORS** in test_landscape.py: Added 3 new invariant
+  substrings for the new weather phrases (`"thin mist rises from"`,
+  `"smell of distant rain"`, `"promise of thunder"`) so that weather
+  suppression/probability tests correctly cover the new phrases.
+- No code, CLI, or generation logic changes — data-only expansion plus indicator
+  additions. All existing tests use dynamic checks over `ALL_ADJECTIVES`,
+  `ALL_ELEMENTS`, etc. (which auto-include global + biome words), so no test
+  modifications were needed beyond WEATHER_INDICATORS.
+- Each new word is in the default "normal" weight tier — not COMMON or RARE —
+  appropriate for balanced appearance rates under normal bias.
+- This directly fulfills the second "Next likely step" from Session 172:
+  "Expand the global word pools (ADJECTIVES, ELEMENTS, NOUNS, etc.)."
+  These pools had been at their original sizes since Session 1 (entire project
+  lifespan) and were overdue for expansion.
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand global word pools further (more adjectives, elements, nouns, verbs)
+- Expand biome-specific word pools (weathers, anomalies per biome)
+- Add a new biome or mood
+
+## 2026-07-19
+
 ### What was done (Session 172)
 - **Expanded TRAVELOGUE word bank from 4 to 9 prefix/suffix pairs** — 5 new
   prefix constructions and 5 new suffix constructions added, covering expedition

@@ -14,21 +14,25 @@ ADJECTIVES = [
     "crystal", "shadow", "ember", "frost", "silent", "ancient",
     "forgotten", "bone", "iron", "glass", "crimson", "amethyst",
     "obsidian", "ivory", "brass", "moss-covered",
+    "phantom", "hollow", "sunless", "star-scattered",
 ]
 
 ELEMENTS = [
     "mist", "light", "sound", "stillness", "fragrance", "warmth",
     "echo", "silence", "radiance", "darkness",
+    "phosphorescence", "thunder", "breath", "resonance", "glimmer",
 ]
 
 NOUNS = [
     "trees", "spires", "stones", "ruins", "pillars", "archways",
     "roots", "crystals", "geodes", "fungi", "vines", "shells",
+    "monoliths", "terraces", "basins",
 ]
 
 VERBS = [
     "whisper", "hum", "glow", "shimmer", "drift", "pulse",
     "vibrate", "sway", "glimmer", "resonate",
+    "breathe", "sing", "shiver", "bloom", "fold",
 ]
 
 WEATHERS = [
@@ -44,6 +48,9 @@ WEATHERS = [
     "a cold fog rolls in from nowhere",
     "the ground exhales a thin vapor",
     "lightning flickers on the horizon",
+    "a thin mist rises from the warming stone",
+    "a slow wind carries the smell of distant rain",
+    "the air grows thick with the promise of thunder",
 ]
 
 ANOMALIES = [
@@ -59,6 +66,9 @@ ANOMALIES = [
     "Every breath tastes of a season that does not exist.",
     "The geometry of the landscape follows rules you cannot quite recall.",
     "Something is just beyond sight — a presence that never arrives.",
+    "The light here has no source — it simply exists.",
+    "Every step you take rings twice, once now and once long ago.",
+    "Birds glide in spirals that form equations no living eye has solved.",
 ]
 
 ECHOES = [
@@ -111,12 +121,14 @@ ADVERBS = [
     "softly", "endlessly", "gently", "relentlessly",
     "patiently", "eternally", "silently", "slowly",
     "constantly", "subtly", "quietly", "ceaselessly",
+    "lazily", "heavily", "perpetually",
 ]
 
 COLORS = [
     "vivid", "murky", "burnished", "stark",
     "lurid", "mottled", "bleached", "veined",
     "iridescent", "fluorescent", "scintillating", "coruscating",
+    "opal", "argent", "sepia",
 ]
 
 TIME_WORDS = [

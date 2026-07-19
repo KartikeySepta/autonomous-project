@@ -134,6 +134,9 @@ WEATHER_INDICATORS = [
     "cold fog rolls",
     "exhales a thin",
     "flickers on the",
+    "thin mist rises from",
+    "smell of distant rain",
+    "promise of thunder",
 ]
 
 LEGEND_INDICATORS = [
