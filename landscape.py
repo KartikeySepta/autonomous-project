@@ -187,6 +187,9 @@ SOUNDSCAPES = [
     "The wind howls {adverb} through the {adj} reaches of the {display}, a {color} sound that seems to shape the very {element}.",
     "{adj} voices whisper {adverb} in the {display}, a chorus of {color} sounds that never form words.",
     "The {adj} bones of the {display} groan {adverb}, a deep {color} sound that resonates through the {element}.",
+    "A distant thunder rumbles {adverb} from beneath the {display}, a {adj} sound that vibrates through the {color} {element}.",
+    "Steam hisses {adverb} from fissures in the {adj} {element} of the {display}, a {color} breath of heat escaping.",
+    "A {adj} clicking echoes {adverb} through the {display}, a {color} sound that never quite settles into a pattern.",
 ]
 
 WILDLIFE = [

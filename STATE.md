@@ -2,7 +2,44 @@
 
 ## 2026-07-19
 
-### What was done (Session 168)
+### What was done (Session 169)
+- **Expanded SOUNDSCAPES word bank from 17 to 20 phrases** — 3 new soundscape
+  constructions added, covering sonic niches not represented in the existing 17:
+  - `"A distant thunder rumbles {adverb} from beneath the {display}, a {adj} sound
+    that vibrates through the {color} {element}."` — deep subterranean thunder, a
+    rumbling vibration from beneath the world. Distinct from "drone rises and falls"
+    (continuous mechanical hum) and "something large shifts and settles" (discrete
+    movement). This is about deep, sustained vibration. Indicator: `"thunder rumbles"`.
+  - `"Steam hisses {adverb} from fissures in the {adj} {element} of the {display}, a
+    {color} breath of heat escaping."` — geothermal hissing/steam escaping from
+    fissures. Distinct from "crackles like distant radio static" (electrical, not
+    steam) and "breathing" (organic, not geothermal). Indicator: `"Steam hisses"`.
+  - `"A {adj} clicking echoes {adverb} through the {display}, a {color} sound that
+    never quite settles into a pattern."` — irregular clicking/ticking, a broken
+    rhythm that resists pattern. Distinct from "rhythm pulses" (regular, patient
+    pulse) and "note rings out" (single discrete note). Indicator:
+    `"never quite settles into a pattern"`.
+- **Added 3 new indicators to `SOUND_INDICATORS`** in test_landscape.py:
+  `"thunder rumbles"`, `"Steam hisses"`, `"never quite settles into a pattern"` —
+  each is a unique invariant substring for dynamic test matching.
+- No code, CLI, or generation logic changes — data-only expansion plus indicator
+  additions. All existing soundscape tests use dynamic checks over `SOUND_INDICATORS`,
+  requiring no test modifications.
+- Each phrase is curated to fit a distinct sonic niche: subterranean thunder,
+  geothermal hissing, irregular clicking. None overlap with the existing 17 phrases.
+- This directly fulfills the first "Next likely step" from Session 168: "Expand other
+  word banks (soundscapes, wildlife, perspectives) with more phrases." SOUNDSCAPES
+  was the smallest major bank at 17 phrases — now at 20 alongside all other major banks.
+- Tests unchanged: still 1126 landscape tests pass (18 todo unchanged).
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand wildlife word bank (more phrases, more varied constructions)
+- Expand perspectives word bank (more phrases, more varied constructions)
+- Expand travelogue word bank (more prefix/suffix pairs, more narrative styles)
+
 - **Expanded WISTFUL word bank from 15 to 20 phrases** — 5 new wistful constructions
   added, covering emotional/reflective niches not represented in the existing 15:
   - `"The {display} holds the stories you whispered into its silence, keeping them safe

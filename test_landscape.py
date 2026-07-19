@@ -111,6 +111,9 @@ SOUND_INDICATORS = [
     "shape the very",
     "never form words",
     "resonates through the",
+    "thunder rumbles",
+    "Steam hisses",
+    "never quite settles into a pattern",
 ]
 
 WEATHER_INDICATORS = [

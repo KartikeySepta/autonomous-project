@@ -1,5 +1,60 @@
 # Decisions
 
+## 2026-07-19 — Expanded SOUNDSCAPES Word Bank (20 phrases) (Session 169)
+
+### What
+Added 3 new curated soundscape phrases to the SOUNDSCAPES bank, expanding it from 17
+to 20 phrases. The new phrases cover subterranean thunder, geothermal hissing, and
+irregular clicking — sonic niches absent from the existing 17.
+
+### Why
+The SOUNDSCAPES bank was expanded from 12 to 17 in Session 144 (25 sessions ago).
+Every other major word bank was already at 20 phrases: ECHOES (20), TIMES_OF_DAY (20),
+SEASONS (20), LEGENDS (20), SIMILES (20), METAPHORS (20), PERSONIFICATIONS (20),
+WISTFUL (20). SOUNDSCAPES was the only major bank below 20 at 17 phrases.
+
+The "Next likely steps" from Session 168 explicitly called for this: "Expand other
+word banks (soundscapes, wildlife, perspectives) with more phrases." Soundscapes
+was the first item in the list as the smallest major bank.
+
+With soundscapes now enabled by default in all 5 presets (count=2-3, prob=0.5-1.0),
+a larger bank reduces repetition in preset output, especially since sound_count=3
+is supported in sublime and nightfall presets.
+
+The 3 new phrases each cover a sonic niche not represented in the existing 17:
+- **Subterranean thunder**: "A distant thunder rumbles {adverb} from beneath the
+  {display}, a {adj} sound that vibrates through the {color} {element}." — deep
+  sustained vibration from below. Distinct from "drone rises and falls" (continuous
+  mechanical hum) and "something large shifts and settles" (discrete movement).
+  This is about deep, sustained vibration. Indicator: `"thunder rumbles"`.
+- **Geothermal hissing**: "Steam hisses {adverb} from fissures in the {adj} {element}
+  of the {display}, a {color} breath of heat escaping." — steam/geothermal hissing
+  from cracks. Distinct from "crackles like distant radio static" (electrical) and
+  "breathing" (organic). Indicator: `"Steam hisses"`.
+- **Irregular clicking**: "A {adj} clicking echoes {adverb} through the {display}, a
+  {color} sound that never quite settles into a pattern." — irregular clicking/ticking
+  that resists pattern. Distinct from "rhythm pulses" (regular, patient) and "note rings
+  out" (single discrete). Indicator: `"never quite settles into a pattern"`.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags, or any
+  logic. Only the SOUNDSCAPES list and SOUND_INDICATORS were updated.
+- **No seed-breaking**: Adding phrases to SOUNDSCAPES doesn't change the random
+  sequence — `rng.choice(SOUNDSCAPES)` picks from a larger pool but the choice
+  function is unchanged. Only the rendered output content changes (new phrases appear
+  in the selection pool).
+- **No test logic changes**: All soundscape tests use dynamic checks over
+  `SOUND_INDICATORS` and `len(SOUNDSCAPES)`. Only the indicator list was extended;
+  test logic is unchanged.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126 landscape) — same as
+  Session 168. Subtests unchanged at 393.
+- **SOUNDSCAPES now at 20 phrases**, joining the top tier alongside ECHOES (20),
+  TIMES_OF_DAY (20), SEASONS (20), LEGENDS (20), SIMILES (20), METAPHORS (20),
+  PERSONIFICATIONS (20), and WISTFUL (20). Every major word bank is now at 20 phrases.
+- **Fulfills "Next likely steps" from Session 168**: Soundscape word bank expansion
+  was explicitly called out as the first item in the list. With this session, every
+  major word bank is at 20 phrases — a milestone for the project.
+
 ## 2026-07-19 — Expanded WISTFUL Word Bank (20 phrases) (Session 168)
 
 ### What
