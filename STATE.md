@@ -2,6 +2,68 @@
 
 ## 2026-07-19
 
+### What was done (Session 164)
+- **Expanded SEASONS word bank from 15 to 20 phrases** — 5 new seasonal
+  constructions added, covering seasonal/atmospheric niches not represented in the
+  original 15:
+  - `"Summer thunderheads pile on the horizon, the air heavy with electricity and the
+    scent of rain"` — summer thunderstorm build-up, air charged with electrical
+    tension before the storm breaks. Distinct from "Spring thunder rolls across a
+    landscape reborn from rain" (spring rebirth, not summer electrical tension).
+    Indicator: `"thunderheads pile"`.
+  - `"An Indian summer warmth lingers in the golden light, leaves just beginning to
+    turn at their edges"` — Indian summer / early autumn warmth with leaves at the
+    first blush of color, a brief return of warmth before decay. Distinct from "A
+    sharp autumn chill" (cold, not warm) and "Autumn has turned the landscape into a
+    study in gold and decay" (advanced autumn, not early). Indicator: `"Indian summer
+    warmth lingers"`.
+  - `"Snow falls in a thick white silence, erasing the world one flake at a time"`
+    — active heavy snowfall as an erasing, transformative process. Distinct from
+    "The first snow of winter has fallen, muffling the world in white" (first snow,
+    muffling after the fact) and "A hard winter freeze transforms the landscape into
+    a palace of crystal and ice" (freeze state, not active snowfall). Indicator:
+    `"thick white silence"`.
+  - `"Spring wildflowers blanket the landscape in cascades of color, as if the earth
+    itself celebrates"` — spring bloom as a colorful celebratory eruption. Distinct
+    from "the first buds push through the thawing earth" (early spring, nascent buds)
+    and "The tender green of late spring covers everything in new growth" (foliage,
+    not flowers). Indicator: `"Spring wildflowers blanket"`.
+  - `"Autumn fog wraps the landscape in grey stillness, the world reduced to soft
+    suggestion"` — autumn fog as soft grey diffusion, muting the world. Distinct
+    from "Late autumn strips the landscape bare" (bareness, not diffusion) and "A
+    pale autumn sun hangs low" (direct sun, not fog). Indicator: `"Autumn fog wraps
+    the landscape"`.
+  - Each new phrase is a literal string (not a template), consistent with all existing
+    SEASONS entries, and occupies a distinct seasonal niche: summer thunderstorm,
+    Indian summer warmth, heavy snowfall, spring wildflowers, autumn fog.
+- **Added 5 new indicators to `SEASON_INDICATORS`** in test_landscape.py:
+  `"thunderheads pile"`, `"Indian summer warmth lingers"`, `"thick white silence"`,
+  `"Spring wildflowers blanket"`, `"Autumn fog wraps the landscape"` — each is a
+  unique invariant substring for dynamic test matching.
+- No code, CLI, or generation logic changes — data-only expansion plus indicator
+  additions. All existing season tests use dynamic checks over `ALL_SEASONS` (which
+  is `set(SEASONS)`) or `SEASON_INDICATORS`, requiring no test modifications. The
+  `describe_seasons` tests loop over `SEASONS` and use `len(SEASONS)`, adapting
+  automatically.
+- Each phrase is curated to fit a distinct seasonal niche: summer thunderstorm
+  electrical tension, Indian summer warmth, active heavy snowfall, spring
+  wildflower bloom, autumn fog stillness. None overlap with the existing 15 phrases.
+- This directly fulfills the first "Next likely step" from Session 163: "Expand
+  seasons word bank (more phrases, more varied constructions)." SEASONS was the
+  most overdue bank — last expanded in Session 135 (28 sessions ago) when it grew
+  from 10 to 15. Every other major bank had been expanded more recently.
+- Tests unchanged: still 1126 landscape tests pass (18 todo unchanged).
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand simile word bank further (more phrases, more varied constructions)
+- Expand metaphor word bank further (more phrases, more varied constructions)
+- Expand personification word bank further (more phrases, more varied constructions)
+
+## 2026-07-19
+
 ### What was done (Session 163)
 - **Expanded TIMES_OF_DAY word bank from 15 to 20 phrases** — 5 new time-of-day
   constructions added, covering temporal/atmospheric niches not represented in the

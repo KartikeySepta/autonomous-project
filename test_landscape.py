@@ -68,6 +68,11 @@ SEASON_INDICATORS = [
     "prepares for winter's rest",
     "palace of crystal and ice",
     "washes winter's last traces",
+    "thunderheads pile",
+    "Indian summer warmth lingers",
+    "thick white silence",
+    "Spring wildflowers blanket",
+    "Autumn fog wraps the landscape",
 ]
 
 WILDLIFE_INDICATORS = [

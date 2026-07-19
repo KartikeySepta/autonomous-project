@@ -162,6 +162,11 @@ SEASONS = [
     "A pale autumn sun hangs low as the landscape prepares for winter's rest",
     "A hard winter freeze transforms the landscape into a palace of crystal and ice",
     "The soft persistent rain of early spring washes winter's last traces away",
+    "Summer thunderheads pile on the horizon, the air heavy with electricity and the scent of rain",
+    "An Indian summer warmth lingers in the golden light, leaves just beginning to turn at their edges",
+    "Snow falls in a thick white silence, erasing the world one flake at a time",
+    "Spring wildflowers blanket the landscape in cascades of color, as if the earth itself celebrates",
+    "Autumn fog wraps the landscape in grey stillness, the world reduced to soft suggestion",
 ]
 
 SOUNDSCAPES = [

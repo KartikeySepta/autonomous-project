@@ -1,5 +1,77 @@
 # Decisions
 
+## 2026-07-19 — Expanded SEASONS Word Bank (20 phrases) (Session 164)
+
+### What
+Added 5 new curated seasonal phrases to the SEASONS bank, expanding it from 15
+to 20 phrases. The new phrases cover summer thunderstorm electrical tension,
+Indian summer warmth, active heavy snowfall, spring wildflower bloom, and
+autumn fog stillness — seasonal/atmospheric niches absent from the original 15.
+
+### Why
+The SEASONS bank was expanded from 10 to 15 in Session 135 (28 sessions ago)
+and has not been touched since. Every other major word bank has been expanded
+more recently: TIMES_OF_DAY (Session 163), WISTFUL (Session 162), ECHOES
+(Session 161), PERSONIFICATIONS (Session 160), METAPHORS (Session 159),
+SIMILES (Session 158). The "Next likely steps" from Session 163 explicitly
+called for this: "Expand seasons word bank (more phrases, more varied
+constructions)."
+
+With seasons now enabled by default in all 5 presets (count=1-2, prob=0.6-1.0),
+a larger bank reduces repetition in preset output.
+
+The 5 new phrases each cover a seasonal/atmospheric niche not represented in
+the existing 15:
+- **Summer thunderstorm**: "Summer thunderheads pile on the horizon, the air
+  heavy with electricity and the scent of rain" — electrical tension before a
+  summer storm breaks. Distinct from "Spring thunder rolls across a landscape
+  reborn from rain" (which is about rebirth and cleansing, not electrical
+  charge and anticipation). Indicator: `"thunderheads pile"`.
+- **Indian summer warmth**: "An Indian summer warmth lingers in the golden
+  light, leaves just beginning to turn at their edges" — a brief return of
+  warmth in early autumn, before decay sets in. Distinct from "A sharp autumn
+  chill" (which is about cold) and "Autumn has turned the landscape into a
+  study in gold and decay" (advanced autumn). Indicator: `"Indian summer
+  warmth lingers"`.
+- **Heavy snowfall**: "Snow falls in a thick white silence, erasing the world
+  one flake at a time" — active, ongoing heavy snowfall as an erasing process.
+  Distinct from "The first snow of winter has fallen, muffling the world in
+  white" (first snow, post-fall state) and "A hard winter freeze transforms
+  the landscape into a palace of crystal and ice" (transformation into a
+  static state, not active falling). Indicator: `"thick white silence"`.
+- **Spring wildflowers**: "Spring wildflowers blanket the landscape in cascades
+  of color, as if the earth itself celebrates" — colorful floral eruption.
+  Distinct from "the first buds push through the thawing earth" (nascent buds,
+  not yet flowers) and "The tender green of late spring covers everything in
+  new growth" (green foliage, not colorful blossoms). Indicator: `"Spring
+  wildflowers blanket"`.
+- **Autumn fog**: "Autumn fog wraps the landscape in grey stillness, the world
+  reduced to soft suggestion" — grey fog diffusing the world into suggestion.
+  Distinct from "Late autumn strips the landscape bare" (stripping, not
+  wrapping) and "A pale autumn sun hangs low" (visibility, not occlusion).
+  Indicator: `"Autumn fog wraps the landscape"`.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only the SEASONS list and SEASON_INDICATORS were updated.
+- **No seed-breaking**: Adding phrases to SEASONS doesn't change the random
+  sequence — `rng.choice(SEASONS)` picks from a larger pool but the choice
+  function is unchanged. Only the rendered output content changes (new phrases
+  appear in the selection pool).
+- **No test logic changes**: All season tests use dynamic checks over
+  `ALL_SEASONS` (module-level set derived from `SEASONS`) or
+  `SEASON_INDICATORS`. Indicator lists were updated; no test logic was
+  modified.
+- **No hardcoded lists to update**: Unlike the WISTFUL expansion (Session 162)
+  which required manually updating a hardcoded indicator list in TestPresets,
+  the season tests all delegate to shared constants.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126 landscape)
+  — same as Session 163. Subtests unchanged at 393.
+- **SEASONS now at 20 phrases**, joining the top tier alongside ECHOES (20),
+  TIMES_OF_DAY (20), and LEGENDS (20). All other banks are at 15-17 phrases.
+- **Fulfills "Next likely steps" from Session 163**: Seasons word bank
+  expansion was explicitly called out as the first item.
+
 ## 2026-07-19 — Expanded TIMES_OF_DAY Word Bank (20 phrases) (Session 163)
 
 ### What
