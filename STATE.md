@@ -2,6 +2,67 @@
 
 ## 2026-07-19
 
+### What was done (Session 171)
+- **Expanded PERSPECTIVES word bank from 15 to 20 phrases** — 5 new perspective
+  constructions added, covering spatial/vantage niches not represented in the
+  existing 15:
+  - `"Through a cleft in the {adj} {color} {element}, the {display} reveals
+    itself {adverb} in a sudden, vertiginous glimpse."` — a narrow aperture
+    (cleft/gap) revealing the landscape in a sudden vertiginous instant.
+    Distinct from "Up close" (steady texture observation) and "Seen from the
+    heights" (unfolding panorama). This is about a narrow opening that yields a
+    dizzying full view. Indicator: `"vertiginous glimpse"`.
+  - `"At the foot of the {display}, the {adj} {color} {element} rises {adverb}
+    in a vertical cascade that dwarfs the sky."` — looking up from the base at
+    a towering vertical rise. Distinct from "At ground level" (overwhelming
+    scale in general) and "Approaching" (silhouette growing on the horizon).
+    This is about immediate vertical ascent from the base. Indicator:
+    `"vertical cascade that dwarfs"`.
+  - `"Peering over the edge of the {display}, the {adj} {color} {element}
+    drops {adverb} into a depth that swallows the light."` — looking down from
+    a precipice into a light-consuming abyss. Distinct from "Seen from above"
+    (static pattern from above) and "Drifting above" (aerial floating). This
+    is about vertigo-inducing depth beneath a ledge. Indicator:
+    `"depth that swallows"`.
+  - `"From across a {adj} chasm of {color} {element}, the {display} appears
+    {adverb} suspended, a vision in the middle of the air."` — the landscape
+    seen across a separating gulf, appearing as a suspended floating vision.
+    Distinct from "From a distance" (whisper on the horizon, diminishing) and
+    "Reflected in a pool" (transformed reflection). This is about the landscape
+    as a vision suspended across a void. Indicator: `"suspended, a vision in"`.
+  - `"From the summit of the {display}, the {adj} {color} {element} radiates
+    {adverb} in all directions, a world without edges."` — a 360-degree summit
+    panorama without boundaries. Distinct from "Seen from the heights"
+    (unfolding like an arranged map) and "The {display} stretches" (into a
+    single distance). This is about radial, unbounded expansion in every
+    direction. Indicator: `"world without edges"`.
+- **Added 5 new indicators to `PERSPECTIVE_INDICATORS`** in test_landscape.py:
+  `"vertiginous glimpse"`, `"vertical cascade that dwarfs"`,
+  `"depth that swallows"`, `"suspended, a vision in"`,
+  `"world without edges"` — each is a unique invariant substring for dynamic
+  test matching.
+- No code, CLI, or generation logic changes — data-only expansion plus
+  indicator additions. All existing perspective tests use dynamic checks over
+  `PERSPECTIVE_INDICATORS` and `len(PERSPECTIVES)`, requiring no test
+  modifications.
+- Each phrase is curated to fit a distinct spatial/vantage niche: narrow cleft
+  revelation, base-to-summit vertical, precipice depth, chasm-suspended vision,
+  summit panorama. None overlap with the existing 15 phrases.
+- This directly fulfills the first "Next likely step" from Session 170: "Expand
+  perspectives word bank (more phrases, more varied constructions)."
+  PERSPECTIVES was the most overdue major bank — last expanded in Session 147
+  (23 sessions ago) when perspectives was first introduced. All major word banks
+  are now at 20 phrases — a milestone for the project.
+- Tests unchanged: still 1126 landscape tests pass (18 todo unchanged).
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand travelogue word bank (more prefix/suffix pairs, more narrative styles)
+
+## 2026-07-19
+
 ### What was done (Session 170)
 - **Expanded WILDLIFE word bank from 15 to 20 phrases** — 5 new wildlife
   constructions added, covering wildlife niches not represented in the existing 15:

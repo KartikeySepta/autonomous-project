@@ -165,6 +165,11 @@ PERSPECTIVE_INDICATORS = [
     "grows against the horizon",
     "appears transformed",
     "unfolds beneath you",
+    "vertiginous glimpse",
+    "vertical cascade that dwarfs",
+    "depth that swallows",
+    "suspended, a vision in",
+    "world without edges",
 ]
 
 SIMILE_INDICATORS = [

@@ -231,6 +231,11 @@ PERSPECTIVES = [
     "Approaching the {display}, its {adj} silhouette of {color} {element} grows {adverb} against the horizon line",
     "Reflected in a {adj} pool of {color} {element}, the {display} appears {adverb} transformed, its secrets floating on the surface",
     "Drifting {adverb} above the {display}, the {adj} expanse of {color} {element} unfolds beneath you like a living map",
+    "Through a cleft in the {adj} {color} {element}, the {display} reveals itself {adverb} in a sudden, vertiginous glimpse.",
+    "At the foot of the {display}, the {adj} {color} {element} rises {adverb} in a vertical cascade that dwarfs the sky.",
+    "Peering over the edge of the {display}, the {adj} {color} {element} drops {adverb} into a depth that swallows the light.",
+    "From across a {adj} chasm of {color} {element}, the {display} appears {adverb} suspended, a vision in the middle of the air.",
+    "From the summit of the {display}, the {adj} {color} {element} radiates {adverb} in all directions, a world without edges.",
 ]
 
 SIMILES = [

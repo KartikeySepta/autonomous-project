@@ -1,5 +1,77 @@
 # Decisions
 
+## 2026-07-19 — Expanded PERSPECTIVES Word Bank (20 phrases) (Session 171)
+
+### What
+Added 5 new curated perspective phrases to the PERSPECTIVES bank, expanding it
+from 15 to 20 phrases. The new phrases cover narrow cleft revelation,
+base-to-summit vertical, precipice depth, chasm-suspended vision, and summit
+panorama — spatial/vantage niches absent from the existing 15.
+
+### Why
+The PERSPECTIVES bank was created in Session 147 (23 sessions ago) with 15
+phrases and has not been expanded since. Every other major word bank was already
+at 20 phrases: ECHOES (20), TIMES_OF_DAY (20), SEASONS (20), LEGENDS (20),
+SIMILES (20), METAPHORS (20), PERSONIFICATIONS (20), SOUNDSCAPES (20),
+WISTFUL (20), WILDLIFE (20). PERSPECTIVES (15) was the only major bank below 20
+— now all major word banks are at 20 phrases, a milestone for the project.
+
+The "Next likely steps" from Session 170 explicitly called for this: "Expand
+perspectives word bank (more phrases, more varied constructions)."
+
+With perspectives now enabled by default in all 5 presets (count=1-2,
+prob=0.6-0.95), a larger bank reduces repetition in preset output.
+
+The 5 new phrases each cover a spatial/vantage niche not represented in the
+existing 15:
+- **Narrow cleft revelation**: "Through a cleft in the {adj} {color} {element},
+  the {display} reveals itself {adverb} in a sudden, vertiginous glimpse." —
+  a narrow aperture yielding a dizzying full view. Distinct from "Up close"
+  (steady texture observation) and "From a distance" (diminishing whisper).
+  Indicator: `"vertiginous glimpse"`.
+- **Base-to-summit vertical**: "At the foot of the {display}, the {adj} {color}
+  {element} rises {adverb} in a vertical cascade that dwarfs the sky." —
+  looking up from the base at a towering vertical rise. Distinct from "At
+  ground level" (overwhelming scale in general) and "Approaching" (silhouette
+  growing on horizon). Indicator: `"vertical cascade that dwarfs"`.
+- **Precipice depth**: "Peering over the edge of the {display}, the {adj}
+  {color} {element} drops {adverb} into a depth that swallows the light." —
+  looking down from a precipice into a light-consuming abyss. Distinct from
+  "Seen from above" (static pattern) and "Drifting above" (aerial floating).
+  Indicator: `"depth that swallows"`.
+- **Chasm-suspended vision**: "From across a {adj} chasm of {color} {element},
+  the {display} appears {adverb} suspended, a vision in the middle of the
+  air." — the landscape seen across a separating gulf as a floating vision.
+  Distinct from "From a distance" (diminishing scale) and "Reflected in a pool"
+  (transformed reflection). Indicator: `"suspended, a vision in"`.
+- **Summit panorama**: "From the summit of the {display}, the {adj} {color}
+  {element} radiates {adverb} in all directions, a world without edges." — a
+  360-degree summit panorama without boundaries. Distinct from "Seen from the
+  heights" (unfolding arranged map) and "The {display} stretches" (single
+  direction). Indicator: `"world without edges"`.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only the PERSPECTIVES list and PERSPECTIVE_INDICATORS were
+  updated.
+- **No seed-breaking**: Adding phrases to PERSPECTIVES doesn't change the
+  random sequence — `rng.choice(PERSPECTIVES)` picks from a larger pool but
+  the choice function is unchanged. Only the rendered output content changes
+  (new phrases appear in the selection pool).
+- **No test logic changes**: All perspective tests use dynamic checks over
+  `PERSPECTIVE_INDICATORS` and `len(PERSPECTIVES)`. Only the indicator list
+  was extended; test logic is unchanged.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126 landscape)
+  — same as Session 170. Subtests unchanged at 393.
+- **All major word banks now at 20 phrases**: PERSPECTIVES (20) joins the top
+  tier alongside ECHOES (20), TIMES_OF_DAY (20), SEASONS (20), LEGENDS (20),
+  SIMILES (20), METAPHORS (20), PERSONIFICATIONS (20), SOUNDSCAPES (20),
+  WISTFUL (20), and WILDLIFE (20). Only TRAVELOGUE (4 prefixes, 4 suffixes)
+  remains below 20.
+- **Fulfills "Next likely steps" from Session 170**: Perspectives word bank
+  expansion was explicitly called out as the first item. With this session,
+  every major word bank is at 20 phrases — a milestone for the project.
+
 ## 2026-07-19 — Expanded WILDLIFE Word Bank (20 phrases) (Session 170)
 
 ### What
