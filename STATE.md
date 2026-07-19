@@ -47,9 +47,59 @@
 Working. All 1144 tests pass (18 todo + 1126 landscape).
 
 ### Next likely steps
-- Expand personification word bank further (more phrases, more varied constructions)
 - Expand simile word bank further (more phrases, more varied constructions)
 - Expand wistful word bank further (more phrases, more varied constructions)
+
+## 2026-07-19
+
+### What was done (Session 167)
+- **Expanded PERSONIFICATIONS word bank from 15 to 20 phrases** — 5 new personification
+  constructions added, covering human-action niches not represented in the original 15:
+  - `"The {display} roars {adverb} with a {adj} voice of {color} {element}, shaking the
+    sky."` — the landscape as a roaring entity with a voice of raw power that trembles
+    the heavens. Distinct from "voice carries" (which is about beauty/song) and "weeps"
+    (which is about grief/sorrow). This is about elemental force and power. Indicator:
+    `"shaking the sky"`.
+  - `"The {display} waits {adverb} in {adj} patience, its {color} {element} holding a
+    breath that spans ages."` — the landscape in patient anticipation across ages.
+    Distinct from "dreams" (unconscious sleep) and "listens" (active attention). This
+    is about purposeful stillness and waiting. Indicator: `"breath that spans ages"`.
+  - `"The {adj} {element} of the {display} teaches {adverb}, each {color} facet a word
+    in an ancient lesson."` — the landscape as an active teacher revealing wisdom through
+    its features. Distinct from "remembers" (passive memory/history) and "whispers"
+    (secret knowledge). This is about active instruction. Indicator: `"ancient lesson"`.
+  - `"The {display} burns {adverb} with a {adj} {color} fire that the {element} cannot
+    quench."` — the landscape as an inextinguishable inner fire. Distinct from "heart
+    beats" (pulse/vitality) and "dances" (artistic movement). This is about consuming
+    elemental fire. Indicator: `"cannot quench"`.
+  - `"The {display} towers {adverb} in {adj} stillness, a {color} {element} standing
+    against the sky."` — the landscape asserting its vertical presence against the sky.
+    Distinct from "reaches out" (horizontal grasping) and "bows" (lowering in reverence).
+    This is about vertical majesty. Indicator: `"standing against the sky"`.
+- **Added 5 new indicators to `PERSONIFICATION_INDICATORS`** in test_landscape.py:
+  `"shaking the sky"`, `"breath that spans ages"`, `"ancient lesson"`,
+  `"cannot quench"`, `"standing against the sky"` — each is a unique invariant substring
+  for dynamic test matching.
+- No code, CLI, or generation logic changes — data-only expansion plus indicator
+  additions. All existing personification tests use dynamic checks over
+  `PERSONIFICATION_INDICATORS`, requiring no test modifications.
+- Each phrase is curated to fit a distinct human-action niche: roaring power, patient
+  waiting, active teaching, inextinguishable burning, vertical towering. None overlap
+  with the existing 15 phrases.
+- This directly fulfills the first "Next likely step" from Session 166: "Expand
+  personification word bank further (more phrases, more varied constructions)."
+  PERSONIFICATIONS was the only bank at 15 phrases — now all major word banks are at
+  20 phrases (ECHOES, TIMES_OF_DAY, SEASONS, LEGENDS, SIMILES, METAPHORS,
+  PERSONIFICATIONS).
+- Tests unchanged: still 1126 landscape tests pass (18 todo unchanged).
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand simile word bank further (more phrases, more varied constructions)
+- Expand wistful word bank further (more phrases, more varied constructions)
+- Expand travelogue word bank (more prefix/suffix pairs, more narrative styles)
 
 ## 2026-07-19
 

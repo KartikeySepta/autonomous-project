@@ -287,6 +287,11 @@ PERSONIFICATIONS = [
     "The {display} bows {adverb} to the {color} {adj} {element}, its head lowered in reverence.",
     "The {display} aches {adverb} with {color} {adj} {element}, a sorrow that has no name.",
     "The {display} shelters {adverb} the {color} {adj} {element}, holding it close in patient stillness.",
+    "The {display} roars {adverb} with a {adj} voice of {color} {element}, shaking the sky.",
+    "The {display} waits {adverb} in {adj} patience, its {color} {element} holding a breath that spans ages.",
+    "The {adj} {element} of the {display} teaches {adverb}, each {color} facet a word in an ancient lesson.",
+    "The {display} burns {adverb} with a {adj} {color} fire that the {element} cannot quench.",
+    "The {display} towers {adverb} in {adj} stillness, a {color} {element} standing against the sky.",
 ]
 
 TRAVELOGUE_PREFIXES = [

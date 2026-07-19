@@ -1,5 +1,77 @@
 # Decisions
 
+## 2026-07-19 — Expanded PERSONIFICATIONS Word Bank (20 phrases) (Session 167)
+
+### What
+Added 5 new curated personification phrases to the PERSONIFICATIONS bank,
+expanding it from 15 to 20 phrases. The new phrases cover roaring power, patient
+waiting, active teaching, inextinguishable burning, and vertical towering —
+human-action niches absent from the original 15.
+
+### Why
+The PERSONIFICATIONS bank was expanded from 10 to 15 in Session 160 (7 sessions
+ago). Every other major word bank has been expanded more recently or was already
+at 20: METAPHORS (Session 166), SIMILES (Session 165), SEASONS (Session 164),
+TIMES_OF_DAY (Session 163), WISTFUL (Session 162), ECHOES (Session 161).
+PERSONIFICATIONS was the only bank still at 15 — now all major word banks are
+at 20 phrases.
+
+The "Next likely steps" from Session 166 explicitly called for this: "Expand
+personification word bank further (more phrases, more varied constructions)."
+Personifications were the first item in the list.
+
+With personifications now enabled by default in all 5 presets (count=1,
+prob=0.3-0.8), a larger bank reduces repetition in preset output, especially
+since personification_count=3 is supported.
+
+The 5 new phrases each cover a human-action niche not represented in the
+existing 15:
+- **Roaring power**: "The {display} roars {adverb} with a {adj} voice of {color}
+  {element}, shaking the sky." — the landscape as a voice of raw elemental force
+  that shakes the heavens. Distinct from "voice carries" (beauty/song) and
+  "weeps" (sorrow/grief). This is about raw power rather than expression or
+  grief. Indicator: `"shaking the sky"`.
+- **Patient waiting**: "The {display} waits {adverb} in {adj} patience, its
+  {color} {element} holding a breath that spans ages." — the landscape in a
+  state of patient anticipation that spans ages. Distinct from "dreams"
+  (unconscious sleep) and "listens" (active attention). This is about purposeful
+  stillness and waiting across time. Indicator: `"breath that spans ages"`.
+- **Active teaching**: "The {adj} {element} of the {display} teaches {adverb},
+  each {color} facet a word in an ancient lesson." — the landscape as a teacher
+  revealing wisdom through its structures. Distinct from "remembers" (passive
+  memory/history) and "whispers" (secret knowledge). This is about active
+  transmission of wisdom. Indicator: `"ancient lesson"`.
+- **Inextinguishable burning**: "The {display} burns {adverb} with a {adj}
+  {color} fire that the {element} cannot quench." — the landscape as an
+  inextinguishable inner fire. Distinct from "heart beats" (pulse/vitality) and
+  "dances" (artistic movement). This is about consuming fire that cannot be
+  extinguished. Indicator: `"cannot quench"`.
+- **Vertical towering**: "The {display} towers {adverb} in {adj} stillness, a
+  {color} {element} standing against the sky." — the landscape asserting
+  vertical presence against the sky. Distinct from "reaches out" (horizontal
+  grasping) and "bows" (lowering in reverence). This is about vertical majesty.
+  Indicator: `"standing against the sky"`.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only the PERSONIFICATIONS list and PERSONIFICATION_INDICATORS
+  were updated.
+- **No seed-breaking**: Adding phrases to PERSONIFICATIONS doesn't change the
+  random sequence — `rng.choice(PERSONIFICATIONS)` picks from a larger pool but
+  the choice function is unchanged. Only the rendered output content changes
+  (new phrases appear in the selection pool).
+- **No test logic changes**: All personification tests use dynamic checks over
+  `PERSONIFICATION_INDICATORS` and `len(PERSONIFICATIONS)`. Only the indicator
+  list was extended; test logic is unchanged.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126 landscape)
+  — same as Session 166. Subtests unchanged at 393.
+- **All major word banks now at 20 phrases**: PERSONIFICATIONS (20) joins the
+  top tier alongside ECHOES (20), TIMES_OF_DAY (20), SEASONS (20), SIMILES (20),
+  METAPHORS (20), and LEGENDS (20). No major bank remains below 20.
+- **Fulfills "Next likely steps" from Session 166**: Personification word bank
+  expansion was explicitly called out as the first item. With this session,
+  the trajectory of bringing every major bank from 15 to 20 is complete.
+
 ## 2026-07-19 — Expanded METAPHORS Word Bank (20 phrases) (Session 166)
 
 ### What

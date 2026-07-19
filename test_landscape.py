@@ -221,6 +221,11 @@ PERSONIFICATION_INDICATORS = [
     "head lowered in reverence",
     "sorrow that has no name",
     "holding it close in",
+    "shaking the sky",
+    "breath that spans ages",
+    "ancient lesson",
+    "cannot quench",
+    "standing against the sky",
 ]
 
 
