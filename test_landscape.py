@@ -160,6 +160,11 @@ SIMILE_INDICATORS = [
     "hangs like a",
     "dream of",
     "bleed into the surroundings",
+    "like water in a dry",
+    "shifts like a living map",
+    "rises and falls like the",
+    "drawn in liquid",
+    "half-remembered and fading",
 ]
 
 METAPHOR_INDICATORS = [
@@ -173,10 +178,15 @@ METAPHOR_INDICATORS = [
     "up to the",
     "neither side willing",
     "beating beneath",
+    "armor of",
+    "sung by stones",
+    "forge where",
+    "anchor of",
+    "feast of",
 ]
 
 PERSONIFICATION_INDICATORS = [
-    "breath of",
+    "filling the air",
     "turns its",
     "older than words",
     "slumber deep",

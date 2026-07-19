@@ -1,5 +1,113 @@
 # State
 
+## 2026-07-19
+
+### What was done (Session 159)
+- **Expanded METAPHORS word bank from 10 to 15 phrases** — 5 new metaphor constructions
+  added, covering figurative identity niches not represented in the original 10:
+  - `"The {display} is a {adj} armor of {color} {element}, worn {adverb} by the earth
+    itself."` — the landscape as protective armor worn by the planet, adding a
+    protection/defense metaphor (the only metaphor comparing the landscape to
+    something worn as a shield). Indicator: `"armor of"`.
+  - `"The {adj} {element} of the {display} is a {color} song sung {adverb} by stones
+    and sky."` — the landscape's element as a musical expression sung by the earth
+    itself, adding a celebratory/expressive metaphor (distinct from the existing
+    "language" metaphor which implies communication — this is pure expression).
+    Indicator: `"sung by stones"`.
+  - `"The {display} is a {adj} forge where {color} {element} is hammered {adverb}
+    into shapes yet unknown."` — the landscape as a transformative forge, adding a
+    creation/transformation metaphor (the only metaphor with a workshop/foundry
+    register). Indicator: `"forge where"`.
+  - `"The {display} is an {adj} anchor of {color} {element}, holding {adverb} the
+    world steady against time."` — the landscape as a cosmic anchor providing
+    stability, adding a grounding/permanence metaphor (the only metaphor describing
+    the landscape as a stabilizing force that holds the earth in place against
+    temporal erosion). Indicator: `"anchor of"`.
+  - `"The {display} is a {adj} feast of {color} {element}, spread {adverb} for those
+    with eyes to see."` — the landscape as a sensory feast/banquet, adding an
+    abundance/richness metaphor (the only metaphor equating the landscape to
+    something consumed by the senses). Indicator: `"feast of"`.
+  - Each new phrase uses 4-5 template slots (`{display}`, `{adj}`, `{color}`,
+    `{element}`, `{adverb}`) and occupies a distinct figurative niche: armor,
+    song, forge, anchor, feast.
+- **Added 5 new indicators to `METAPHOR_INDICATORS`** in the test module:
+  `"armor of"`, `"sung by stones"`, `"forge where"`, `"anchor of"`, `"feast of"` —
+  each is a unique invariant substring for dynamic test matching.
+- No code, CLI, or generation logic changes — data-only expansion plus indicator
+  additions. All existing metaphor tests use dynamic count checks and loop over
+  `METAPHOR_INDICATORS`, so no test modifications were needed.
+- Each phrase is curated to fit a distinct figurative niche: protection/armor,
+  celebratory song, transformative forge, grounding anchor, sensory feast.
+  None overlap with the existing 10 phrases.
+- This directly fulfills the first "Next likely step" from Session 158: "Expand
+  metaphor word bank (more phrases, more varied constructions)."
+- Tests unchanged: still 1126 landscape tests pass (18 todo unchanged).
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand personification word bank (more phrases, more varied constructions)
+- Expand simile word bank further (more phrases, more varied constructions)
+- Expand global word banks (more echoes, more time-of-day, more seasons)
+
+## 2026-07-15
+
+### What was done (Session 158)
+- **Expanded SIMILES word bank from 10 to 15 phrases** — 5 new simile constructions
+  added, covering figurative niches not represented in the original 10:
+  - `"The {color} light pools in the {adj} hollows of the {display} like water in a
+    dry {element}-bed."` — light as liquid pooling in the landscape's contours,
+    adding a hydrographic simile (the only simile comparing light to water).
+    Indicator: `"like water in a dry"`.
+  - `"The {adj} {element} of the {display} shifts {adverb} like a living map of
+    {color} light and shadow."` — the landscape as a mutable living map, distinct
+    from the existing tapestry/weaving simile (which implies fixed woven structure).
+    Indicator: `"shifts like a living map"`.
+  - `"The {display} rises and falls {adverb} like the {adj} chest of a sleeping
+    {color} {element}."` — the landscape breathing on a cosmic scale, using rise-and-
+    fall rhythm. Distinct from the existing "breathes like a great slumbering
+    {element}" which focuses on the sound/presence of breath rather than the visual
+    rhythm of expansion and contraction. Indicator: `"rises and falls like the"`.
+  - `"The {adj} horizon of the {display} trembles {adverb} like a {color} line drawn
+    in liquid {element}."` — the horizon as a trembling drawn line, adding an
+    edge/blur simile (the only horizon-specific simile in the bank). Indicator:
+    `"drawn in liquid"`.
+  - `"The {display} feels like a {adj} memory of {color} {element}, half-remembered
+    and fading {adverb}."` — the landscape as an abstract emotional/experiential
+    memory, the only simile in the bank that equates the landscape to a feeling
+    rather than a visual object. Indicator: `"half-remembered and fading"`.
+  - Each new phrase uses 4-5 template slots (`{display}`, `{adj}`, `{color}`,
+    `{element}`, `{adverb}`) and occupies a distinct figurative niche: light-as-
+    water, living-map, cosmic-breath, trembling-horizon, fading-memory.
+- **Added 5 new indicators to `SIMILE_INDICATORS`** in the test module: `"like water
+  in a dry"`, `"shifts like a living map"`, `"rises and falls like the"`,
+  `"drawn in liquid"`, `"half-remembered and fading"` — each is a unique invariant
+  substring for dynamic test matching.
+- **Fixed fragile `PERSONIFICATION_INDICATORS` entry `"breath of"`** — changed to
+  `"filling the air"` because `"breath of"` matched the metaphor phrase "Each breath
+  of the {display} is a {color} prayer..." which RNG drift from the new similes
+  exposed. `"filling the air"` is unique to the personification phrase and immune to
+  cross-feature matching.
+- No code, CLI, or generation logic changes — data-only expansion plus indicator
+  additions and one indicator fix. All existing simile tests use dynamic count checks
+  and loop over `SIMILE_INDICATORS`, so no test modifications were needed.
+- Each phrase is curated to fit a distinct figurative niche: light-as-water,
+  living-map, cosmic-breath, trembling-horizon, fading-memory. None overlap with
+  the existing 10 phrases.
+- This directly fulfills the first "Next likely step" from Session 157: "Expand
+  simile word bank (more phrases, more varied constructions)."
+- Tests unchanged: still 1126 landscape tests pass (18 todo unchanged).
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand metaphor word bank (more phrases, more varied constructions)
+- Expand personification word bank (more phrases, more varied constructions)
+- Expand simile word bank further (more phrases, more varied constructions)
+- Expand global word banks (more echoes, more time-of-day, more seasons)
+
 ## 2026-07-15
 
 ### What was done (Session 157)

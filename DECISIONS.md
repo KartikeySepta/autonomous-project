@@ -1,5 +1,58 @@
 # Decisions
 
+## 2026-07-19 — Expanded METAPHORS Word Bank (15 phrases) (Session 159)
+
+### What
+Added 5 new curated metaphor phrases to the METAPHORS bank, expanding it from 10
+to 15 phrases. The new phrases cover armor/protection, celebratory song,
+transformative forge, grounding anchor, and sensory feast — figurative identity
+niches absent from the original 10.
+
+### Why
+The METAPHORS bank was created in Session 155 with 10 phrases and had never been
+expanded. Session 158 just expanded the SIMILES bank from 10 to 15. The "Next
+likely steps" from Session 158 explicitly called for this: "Expand metaphor word
+bank (more phrases, more varied constructions)."
+
+With metaphors now enabled by default in all 5 presets (count=2, prob=0.85-0.95
+for rich presets), a larger bank reduces repetition in preset output.
+
+The 5 new phrases each cover a metaphorical niche not represented in the existing 10:
+- **Armor/protection**: "The {display} is a {adj} armor of {color} {element},
+  worn {adverb} by the earth itself." — the landscape as worn protective gear.
+  The only defense-oriented metaphor; distinct from "cathedral" (sacred space) and
+  "threshold" (liminal passage).
+- **Celebratory song**: "The {adj} {element} of the {display} is a {color} song
+  sung {adverb} by stones and sky." — pure expressive music, distinct from
+  "language" (communication/discourse) and "prayer" (devotion/supplication).
+- **Transformative forge**: "The {display} is a {adj} forge where {color} {element}
+  is hammered {adverb} into shapes yet unknown." — the landscape as workshop of
+  creation/transformation. The only metaphor with an industrial/artisanal register;
+  distinct from "wound" (damage/pain) and "argument" (conflict/tension).
+- **Grounding anchor**: "The {display} is an {adj} anchor of {color} {element},
+  holding {adverb} the world steady against time." — the landscape as stabilizing
+  force. The only metaphor about permanence and resistance to temporal decay;
+  distinct from "heart" (essence/vitality) and "mirror" (reflection/truth).
+- **Sensory feast**: "The {display} is a {adj} feast of {color} {element}, spread
+  {adverb} for those with eyes to see." — the landscape as abundant sensory bounty.
+  The only consumption/indulgence metaphor; distinct from all existing metaphors
+  which focus on structure, communication, or emotion rather than sensory abundance.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only the METAPHORS list and METAPHOR_INDICATORS were updated.
+- **No seed-breaking**: Adding phrases to METAPHORS doesn't change the random
+  sequence — `rng.choice(METAPHORS)` picks from a larger pool but the choice
+  function is unchanged. Only the rendered output content changes (new phrases
+  appear in the selection pool).
+- **No new tests**: All metaphor tests use dynamic checks over
+  `METAPHOR_INDICATORS` and `len(METAPHORS)`. Only the indicator list was
+  extended; test logic is unchanged.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126 landscape)
+  — same as Session 158.
+- **Fulfills "Next likely steps" from Session 158**: Metaphor word bank expansion
+  was explicitly called out as the first item.
+
 ## 2026-07-15 — Per-Preset Simile, Metaphor, Personification for All Presets (Session 157)
 
 ### What

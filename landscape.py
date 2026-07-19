@@ -221,6 +221,11 @@ SIMILES = [
     "The {adj} silence of the {display} hangs like a {color} {element} in the air.",
     "The {display} unfolds {adverb} like a {adj} dream of {color} {element}.",
     "The {adj} edges of the {display} bleed into the surroundings like {color} {element}.",
+    "The {color} light pools in the {adj} hollows of the {display} like water in a dry {element}-bed.",
+    "The {adj} {element} of the {display} shifts {adverb} like a living map of {color} light and shadow.",
+    "The {display} rises and falls {adverb} like the {adj} chest of a sleeping {color} {element}.",
+    "The {adj} horizon of the {display} trembles {adverb} like a {color} line drawn in liquid {element}.",
+    "The {display} feels like a {adj} memory of {color} {element}, half-remembered and fading {adverb}.",
 ]
 
 METAPHORS = [
@@ -234,6 +239,11 @@ METAPHORS = [
     "The {adj} silence of the {display} is a {color} mirror held {adverb} up to the {element}.",
     "The {display} is an {adj} argument between {color} {element} and the sky, neither side willing to yield.",
     "The {adj} heart of the {display} is a {color} {element} beating {adverb} beneath the surface.",
+    "The {display} is a {adj} armor of {color} {element}, worn {adverb} by the earth itself.",
+    "The {adj} {element} of the {display} is a {color} song sung {adverb} by stones and sky.",
+    "The {display} is a {adj} forge where {color} {element} is hammered {adverb} into shapes yet unknown.",
+    "The {display} is an {adj} anchor of {color} {element}, holding {adverb} the world steady against time.",
+    "The {display} is a {adj} feast of {color} {element}, spread {adverb} for those with eyes to see.",
 ]
 
 PERSONIFICATIONS = [
