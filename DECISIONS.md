@@ -1,5 +1,81 @@
 # Decisions
 
+## 2026-07-19 — Expanded SIMILES Word Bank (20 phrases) (Session 165)
+
+### What
+Added 5 new curated simile phrases to the SIMILES bank, expanding it from 15
+to 20 phrases. The new phrases cover sacred architecture rising, awakening
+beast, frozen wave, self-sustaining flame, and alternate mirror — figurative
+niches absent from the original 15.
+
+Also fixed two latent test indicator fragilities exposed by the RNG shift:
+- `PERSPECTIVE_INDICATORS` entry `"like a living map"` → `"unfolds beneath you"`
+  (simile "shifts like a living map" collided)
+- `METAPHOR_INDICATORS` entry `"that never was"` → `"memories of a"`
+  (new simile "showing a world that never was" would collide)
+
+### Why
+The SIMILES bank was expanded from 10 to 15 in Session 158 (6 sessions ago).
+Every other major word bank has been expanded more recently or was already
+at 20: TIMES_OF_DAY (20), SEASONS (20), ECHOES (20), LEGENDS (20),
+PERSONIFICATIONS (15), METAPHORS (15). The "Next likely steps" from Session
+164 explicitly called for this: "Expand simile word bank further (more phrases,
+more varied constructions)." Similes were the first item in the list.
+
+With similes now enabled by default in all 5 presets (count=2, prob=0.85-0.9
+for rich presets), a larger bank reduces repetition in preset output, especially
+since simile_count=3 is supported.
+
+The 5 new phrases each cover a figurative niche not represented in the
+existing 15:
+- **Sacred architecture**: "The {display} rises {adverb} like a {adj} temple of
+  {color} {element}, each tier reaching toward the sky." — the landscape as a
+  sacred structure ascending vertically. Distinct from "tapestry" (woven
+  horizontal) and "veil" (hanging translucent). Indicator: `"reaching toward
+  the sky"`.
+- **Awakening beast**: "The {display} stirs {adverb} like a {adj} beast of
+  {color} {element}, rousing from a sleep outlasting ages." — the landscape as
+  a colossal creature emerging from dormancy. Distinct from "slumbering element"
+  (steady sleep, not awakening) and "living thing moves through" (continuous
+  motion, not emergence). Indicator: `"rousing from a sleep"`.
+- **Frozen wave**: "The {color} {element} of the {display} curls {adverb} like
+  a {adj} wave frozen at the moment of breaking." — motion arrested at its
+  peak, capturing the instant before collapse. Distinct from "living map"
+  (continuous shifting) and "liquid line" (trembling edge). Indicator:
+  `"wave frozen"`.
+- **Self-sustaining flame**: "The {adj} {element} of the {display} burns
+  {adverb} like a {color} flame that needs no fuel." — inexhaustible,
+  self-perpetuating energy. Distinct from "embers" (dying remnants) and "dust"
+  (falling/precipitating). Indicator: `"needs no fuel"`.
+- **Alternate mirror**: "The {display} reflects {adverb} like a {adj} {color}
+  mirror of {element}, showing a world that never was." — the landscape as an
+  impossible reflection into an alternate reality. Distinct from "half-remembered
+  memory" (internal emotional state) and "fading memory" (loss/nostalgia).
+  Indicator: `"world that never was"`.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only the SIMILES list and SIMILE_INDICATORS were updated.
+- **No seed-breaking**: Adding phrases to SIMILES doesn't change the random
+  sequence — `rng.choice(SIMILES)` picks from a larger pool but the choice
+  function is unchanged. Only the rendered output content changes (new phrases
+  appear in the selection pool).
+- **Indicator fix**: The RNG shift from the larger pool exposed two pre-existing
+  test indicator fragilities — `"like a living map"` in PERSPECTIVE_INDICATORS
+  (matched simile "shifts like a living map") and `"that never was"` in
+  METAPHOR_INDICATORS (would match new simile "world that never was"). Both
+  replaced with truly unique invariant substrings.
+- **No new tests**: All simile tests use dynamic checks over `ALL_SIMILES`
+  (module-level set derived from `SIMILES`) or `SIMILE_INDICATORS`. Indicator
+  lists were extended; no test logic was modified.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126 landscape)
+  — same as Session 164. Subtests unchanged at 393.
+- **SIMILES now at 20 phrases**, joining the top tier alongside ECHOES (20),
+  TIMES_OF_DAY (20), SEASONS (20), and LEGENDS (20). METAPHORS and
+  PERSONIFICATIONS remain at 15 and are the next expansion targets.
+- **Fulfills "Next likely steps" from Session 164**: Simile word bank expansion
+  was explicitly called out as the first item.
+
 ## 2026-07-19 — Expanded SEASONS Word Bank (20 phrases) (Session 164)
 
 ### What

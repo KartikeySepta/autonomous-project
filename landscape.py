@@ -241,6 +241,11 @@ SIMILES = [
     "The {display} rises and falls {adverb} like the {adj} chest of a sleeping {color} {element}.",
     "The {adj} horizon of the {display} trembles {adverb} like a {color} line drawn in liquid {element}.",
     "The {display} feels like a {adj} memory of {color} {element}, half-remembered and fading {adverb}.",
+    "The {display} rises {adverb} like a {adj} temple of {color} {element}, each tier reaching toward the sky.",
+    "The {display} stirs {adverb} like a {adj} beast of {color} {element}, rousing from a sleep outlasting ages.",
+    "The {color} {element} of the {display} curls {adverb} like a {adj} wave frozen at the moment of breaking.",
+    "The {adj} {element} of the {display} burns {adverb} like a {color} flame that needs no fuel.",
+    "The {display} reflects {adverb} like a {adj} {color} mirror of {element}, showing a world that never was.",
 ]
 
 METAPHORS = [

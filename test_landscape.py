@@ -156,7 +156,7 @@ PERSPECTIVE_INDICATORS = [
     "parts and closes around",
     "grows against the horizon",
     "appears transformed",
-    "like a living map",
+    "unfolds beneath you",
 ]
 
 SIMILE_INDICATORS = [
@@ -175,6 +175,11 @@ SIMILE_INDICATORS = [
     "rises and falls like the",
     "drawn in liquid",
     "half-remembered and fading",
+    "reaching toward the sky",
+    "rousing from a sleep",
+    "wave frozen",
+    "needs no fuel",
+    "world that never was",
 ]
 
 METAPHOR_INDICATORS = [
@@ -183,7 +188,7 @@ METAPHOR_INDICATORS = [
     "language spoken only by",
     "offered to the",
     "wound in the world",
-    "that never was",
+    "memories of a",
     "threshold between",
     "up to the",
     "neither side willing",

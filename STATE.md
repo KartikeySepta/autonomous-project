@@ -2,6 +2,77 @@
 
 ## 2026-07-19
 
+### What was done (Session 165)
+- **Expanded SIMILES word bank from 15 to 20 phrases** — 5 new simile constructions
+  added, covering figurative niches not represented in the original 15:
+  - `"The {display} rises {adverb} like a {adj} temple of {color} {element}, each
+    tier reaching toward the sky."` — sacred architecture rising, the landscape as
+    a temple reaching upward. Distinct from "stretches like a tapestry" (woven
+    sprawl, not vertical rise) and "unfolds like a dream" (gradual revelation, not
+    structural ascent). Indicator: `"reaching toward the sky"`.
+  - `"The {display} stirs {adverb} like a {adj} beast of {color} {element}, rousing
+    from a sleep outlasting ages."` — awakening beast, the landscape as a creature
+    emerging from aeons-long slumber. Distinct from "breathes like a great slumbering
+    element" (steady breath, not awakening) and "moves through the display like a
+    living thing" (continuous motion, not emerging). Indicator: `"rousing from a
+    sleep"`.
+  - `"The {color} {element} of the {display} curls {adverb} like a {adj} wave frozen
+    at the moment of breaking."` — frozen wave, motion arrested at its peak.
+    Distinct from "shifts like a living map" (continuous change) and "edge trembles
+    like a line drawn in liquid" (trembling, not frozen). Indicator: `"wave frozen"`.
+  - `"The {adj} {element} of the {display} burns {adverb} like a {color} flame that
+    needs no fuel."` — self-sustaining flame, the element as an inexhaustible fire.
+    Distinct from "glow like embers" (dying embers, not active flame) and "light
+    pools like water in a dry element-bed" (liquid, not fire). Indicator: `"needs no
+    fuel"`.
+  - `"The {display} reflects {adverb} like a {adj} {color} mirror of {element},
+    showing a world that never was."` — alternate reflection, the landscape as a
+    mirror into an impossible world. Distinct from "feels like a half-remembered
+    memory" (internal emotion, not external mirror) and "light of the display falls
+    like dust" (downward fall, not reflection). Indicator: `"world that never was"`.
+  - Each new phrase uses 3-5 template slots (`{display}`, `{adj}`, `{color}`,
+    `{element}`, `{adverb}`) and occupies a distinct figurative niche: sacred
+    architecture, awakening beast, frozen wave, self-sustaining flame, alternate
+    mirror.
+- **Added 5 new indicators to `SIMILE_INDICATORS`** in test_landscape.py:
+  `"reaching toward the sky"`, `"rousing from a sleep"`, `"wave frozen"`,
+  `"needs no fuel"`, `"world that never was"` — each is a unique invariant
+  substring for dynamic test matching.
+- **Fixed fragile `PERSPECTIVE_INDICATORS` entry `"like a living map"`** — changed
+  to `"unfolds beneath you"` because `"like a living map"` matched the simile
+  phrase "...shifts like a living map..." which the RNG drift from the new similes
+  exposed. `"unfolds beneath you"` is unique to the perspective phrase "Drifting
+  above the display, the expanse unfolds beneath you like a living map" and immune
+  to cross-feature matching.
+- **Fixed fragile `METAPHOR_INDICATORS` entry `"that never was"`** — changed to
+  `"memories of a"` because `"that never was"` would match the new simile phrase
+  "showing a world that never was". The metaphor phrase is "The shapes of the
+  display are memories of a element that never was" — `"memories of a"` is the
+  invariant substring that uniquely identifies it.
+- No code, CLI, or generation logic changes — data-only expansion plus indicator
+  additions and two indicator fixes. All existing simile tests use dynamic checks
+  over `ALL_SIMILES` (which is `set(SIMILES)`) or `SIMILE_INDICATORS`, requiring
+  no test modifications.
+- Each phrase is curated to fit a distinct figurative niche: sacred architecture,
+  awakening beast, frozen wave, self-sustaining flame, alternate mirror. None
+  overlap with the existing 15 phrases.
+- This directly fulfills the first "Next likely step" from Session 164: "Expand
+  simile word bank further (more phrases, more varied constructions)." SIMILES was
+  the most overdue figurative language bank alongside METAPHORS and PERSONIFICATIONS
+  — last expanded in Session 158 (6 sessions ago) when it grew from 10 to 15.
+  ECHOES (20), TIMES_OF_DAY (20), SEASONS (20), and LEGENDS (20) were all larger.
+- Tests unchanged: still 1126 landscape tests pass (18 todo unchanged).
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand metaphor word bank further (more phrases, more varied constructions)
+- Expand personification word bank further (more phrases, more varied constructions)
+- Expand simile word bank further (more phrases, more varied constructions)
+
+## 2026-07-19
+
 ### What was done (Session 164)
 - **Expanded SEASONS word bank from 15 to 20 phrases** — 5 new seasonal
   constructions added, covering seasonal/atmospheric niches not represented in the
