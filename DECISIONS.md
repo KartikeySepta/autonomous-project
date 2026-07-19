@@ -1,5 +1,82 @@
 # Decisions
 
+## 2026-07-19 — Expanded WISTFUL Word Bank (15 phrases) (Session 162)
+
+### What
+Added 5 new curated wistful phrases to the WISTFUL bank, expanding it from 10
+to 15 phrases. The new phrases cover gratitude/thankfulness, internalized somatic
+presence, diminished outside world, bifurcated self, and sensory afterimage —
+emotional/reflective niches absent from the original 10.
+
+### Why
+The WISTFUL bank was created in Session 123 with 10 phrases and had never been
+expanded. Every other major word bank has been expanded more recently: ECHOES
+(Session 161), PERSONIFICATIONS (Session 160), METAPHORS (Session 159), SIMILES
+(Session 158), PERSPECTIVES (Session 147). Wistful was the smallest bank in the
+project (tied with TRAVELOGUE — which is structurally different with prefix/suffix
+pairs) and the most overdue for expansion.
+
+With wistful now enabled by default in all 5 presets, a larger bank reduces
+repetition in preset output.
+
+The "Next likely steps" from Session 161 explicitly called for this: "Expand
+wistful word bank (more phrases, more varied constructions)."
+
+The 5 new phrases each cover an emotional/reflective niche not represented in
+the existing 10:
+- **Gratitude/thankfulness**: "You count yourself fortunate to have walked
+  through the {display}, if only once." — humble gratitude for the experience.
+  Distinct from "words will never be enough" (ineffability) and "lucky enough
+  to see it" (which frames it as luck, not gratitude). Indicator:
+  `"fortunate to have walked"`.
+- **Internalized somatic presence**: "The {display} has settled into your
+  bones, a quiet presence you carry wherever you go." — the landscape as
+  a bodily, internalized presence. Distinct from "carry a piece" (which is
+  about carrying a fragment) and "always remain" (which is about staying
+  behind in the landscape). Indicator: `"settled into your bones"`.
+- **Diminished outside world**: "The world outside the {display} feels
+  diminished, as though you have seen something the rest of the world has
+  not." — the landscape as a secret that makes everything else pale in
+  comparison. Distinct from "never be the same" (personal transformation)
+  and "nowhere else in the world like" (uniqueness of place). Indicator:
+  `"the rest of the world has not"`.
+- **Bifurcated self**: "You left a version of yourself behind in the
+  {display}, one that still walks its paths in silence." — a ghostly
+  doppelgänger left behind. Distinct from "always remain" (a piece stays
+  behind) and "carry a piece" (a piece goes with you); this is about a
+  complete alternate self left behind forever. Indicator:
+  `"version of yourself behind"`.
+- **Sensory afterimage**: "In quiet moments you find yourself back in the
+  {display}, as if it exists just behind your eyelids." — voluntary
+  re-access through closing one's eyes. Distinct from "half-remembered
+  dream" (which is about the dreamlike quality of the memory) and "lingers
+  in your thoughts" (cognitive lingering); this is about deliberate sensory
+  recall. Indicator: `"just behind your eyelids"`.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only the WISTFUL list, WISTFUL_INDICATORS, and
+  WISTFUL_INDICATORS_PHRASES were updated.
+- **No seed-breaking**: Adding phrases to WISTFUL doesn't change the random
+  sequence — `rng.choice(WISTFUL)` picks from a larger pool but the choice
+  function is unchanged. Only the rendered output content changes (new phrases
+  appear in the selection pool).
+- **No new tests**: All wistful tests use dynamic checks over
+  `WISTFUL_INDICATORS` and `WISTFUL_INDICATORS_PHRASES`. Only the indicator
+  lists were extended; test logic is unchanged.
+- **One hardcoded list updated**: `TestPresets.test_preset_with_wistful_produces_wistful_output`
+  used a locally-defined hardcoded indicator list rather than the class-level
+  or module-level constants. This list was updated manually — a reminder that
+  not all tests delegate to shared indicator constants.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126 landscape)
+  — same as Session 161. Subtests unchanged at 393.
+- **Wistful now at 15 phrases**, joining the middle tier alongside SIMILES,
+  METAPHORS, PERSONIFICATIONS, TIMES_OF_DAY, SEASONS, WILDLIFE, PERSPECTIVES,
+  and SOUNDSCAPES (all 15-17 phrases). ECHOES (20) and LEGENDS (20) remain the
+  largest banks.
+- **Fulfills "Next likely steps" from Session 161**: Wistful word bank
+  expansion was explicitly called out as the third item.
+
 ## 2026-07-19 — Expanded ECHOES Word Bank (20 phrases) (Session 161)
 
 ### What

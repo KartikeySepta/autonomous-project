@@ -2,6 +2,67 @@
 
 ## 2026-07-19
 
+### What was done (Session 162)
+- **Expanded WISTFUL word bank from 10 to 15 phrases** — 5 new wistful constructions added,
+  covering emotional/reflective niches not represented in the original 10:
+  - `"You count yourself fortunate to have walked through the {display}, if only once."`
+    — gratitude and honor for having witnessed the landscape, a tone of humble thankfulness.
+    Distinct from "words will never be enough" (ineffability) and "lucky enough to see it"
+    (which is about uniqueness). Indicator: `"fortunate to have walked"`.
+  - `"The {display} has settled into your bones, a quiet presence you carry wherever you
+    go."` — the landscape as an internalized, somatic presence that travels with you.
+    Distinct from "carry a piece" (which is about carrying a fragment) and "always remain"
+    (which is about staying behind). Indicator: `"settled into your bones"`.
+  - `"The world outside the {display} feels diminished, as though you have seen something
+    the rest of the world has not."` — the landscape as an experience that diminishes
+    everything else by comparison, a secret only you now carry. Distinct from "never be
+    the same" (personal transformation) and "nowhere else in the world like" (uniqueness
+    of place). Indicator: `"the rest of the world has not"`.
+  - `"You left a version of yourself behind in the {display}, one that still walks its
+    paths in silence."` — a doppelgänger/alternate-self left behind in the landscape,
+    adding a ghostly, bifurcated-self register. Distinct from "always remain" (a piece
+    stays) and "carry a piece" (a piece goes with you); this is about a whole self left
+    behind. Indicator: `"version of yourself behind"`.
+  - `"In quiet moments you find yourself back in the {display}, as if it exists just
+    behind your eyelids."` — the landscape as a persistent afterimage, accessed in quiet
+    moments by closing one's eyes. Distinct from "half-remembered dream" (which is about
+    the dreamlike quality of the memory) and "lingers in your thoughts" (cognitive
+    lingering); this is about voluntary re-access through sensory recall. Indicator:
+    `"just behind your eyelids"`.
+  - Each new phrase uses only the `{display}` template slot (like all existing wistful
+    phrases) and occupies a distinct emotional niche: gratitude, internalized presence,
+    diminished outside world, bifurcated self, sensory afterimage.
+- **Added 5 new indicators to `WISTFUL_INDICATORS`** in the TestWistful class:
+  `"fortunate to have walked"`, `"settled into your bones"`, `"the rest of the world has
+  not"`, `"version of yourself behind"`, `"just behind your eyelids"` — each is a unique
+  invariant substring for dynamic test matching.
+- **Added same 5 indicators to `WISTFUL_INDICATORS_PHRASES`** — consistent with the
+  pattern; all new indicators are safe for `--no-wistful` suppression tests.
+- **Updated hardcoded `wistful_indicators`** in `TestPresets.test_preset_with_wistful_produces_wistful_output`
+  — this test used a locally-defined list rather than the class or module-level constants,
+  so it needed a manual update to include the new indicators.
+- No code, CLI, or generation logic changes — data-only expansion plus indicator
+  additions. Most existing wistful tests use dynamic checks over `WISTFUL_INDICATORS`
+  or `WISTFUL_INDICATORS_PHRASES`, requiring no test modifications. The one exception
+  was the hardcoded list in `TestPresets`.
+- Each phrase is curated to fit a distinct wistful niche: gratitude/thankfulness,
+  internalized somatic presence, diminished outside world, bifurcated self, sensory
+  afterimage. None overlap with the existing 10 phrases.
+- This directly fulfills the "Next likely steps" from Session 161: "Expand wistful word
+  bank (more phrases, more varied constructions)." Wistful was the smallest bank at 10
+  phrases and the most overdue since its creation in Session 123 (38 sessions ago).
+- Tests unchanged: still 1126 landscape tests pass (18 todo unchanged).
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand time-of-day word bank (more phrases, more varied constructions)
+- Expand seasons word bank (more phrases, more varied constructions)
+- Expand simile word bank further (more phrases, more varied constructions)
+
+## 2026-07-19
+
 ### What was done (Session 161)
 - **Expanded ECHOES word bank from 15 to 20 phrases** — 5 new echo constructions added,
   covering atmospheric niches not represented in the original 15:

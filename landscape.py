@@ -294,6 +294,11 @@ WISTFUL = [
     "There is nowhere else in the world like the {display}, and you have been lucky enough to see it.",
     "The {display} feels more like a memory of a place you have always known than a place you have just discovered.",
     "You will try to tell others about the {display}, but the words will never be enough.",
+    "You count yourself fortunate to have walked through the {display}, if only once.",
+    "The {display} has settled into your bones, a quiet presence you carry wherever you go.",
+    "The world outside the {display} feels diminished, as though you have seen something the rest of the world has not.",
+    "You left a version of yourself behind in the {display}, one that still walks its paths in silence.",
+    "In quiet moments you find yourself back in the {display}, as if it exists just behind your eyelids.",
 ]
 
 # Weight tiers for word selection — common words appear more often, rare words less so
