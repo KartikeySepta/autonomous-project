@@ -2,6 +2,52 @@
 
 ## 2026-07-19
 
+### What was done (Session 172)
+- **Expanded TRAVELOGUE word bank from 4 to 9 prefix/suffix pairs** — 5 new
+  prefix constructions and 5 new suffix constructions added, covering expedition
+  narrative styles not represented in the existing 4:
+  - **New prefixes**: `"Captain's log, supplemental. Day {day}. The {display} has
+    appeared on the horizon."` (sci-fi log), `"Letter from the expedition, day
+    {day}. I write to you from the {display}."` (epistolary), `"Field notes, day
+    {day}. The {display} eludes easy description."` (scientific field notes),
+    `"Dispatch {day}. The {display} stretches before us, indifferent and vast."`
+    (terse dispatch), `"I have journeyed {day} days to reach the {display}, and
+    now I stand at its edge."` (personal travel narrative).
+  - **New suffixes**: `"I sit at the edge of camp and watch the {display} settle
+    into darkness."` (reflective evening), `"The map does not capture what the
+    {display} truly is."` (cartographic humility), `"I will need many more days
+    to cross the {display}, if the weather holds."` (forward planning),
+    `"The {display} offers no answers, but it asks better questions than I do."`
+    (philosophical), `"Tomorrow, the {display} will still be here, waiting."`
+    (endurance/perseverance).
+- **Updated test indicators**: Added new unique invariant substrings to
+  `TestTravelogue.TRAVELOGUE_INDICATORS`, `TestTravelogue.TRAVELOGUE_SUFFIX_INDICATORS`,
+  and the module-level `TRAVELOGUE_INDICATORS` (used by `TestNoTravelogue`).
+- **Fixed hardcoded prefix check** in `TestPresets.test_preset_with_travelogue_produces_framed_output`
+  — added the 5 new prefix substrings to the `has_travelogue` conditional.
+- **Fixed regex** in `TestTravelogue.test_travelogue_contains_day_number` — the
+  original regex `\bday (\d+)\b` only matched "day N" order. New prefixes use
+  `Dispatch {day}.` and `journeyed {day} days`, so the regex was broadened to
+  `\bday \d+|\d+ days?\b` with case-insensitive flag.
+- No code, CLI, or generation logic changes — data-only expansion plus test
+  updates. All existing travelogue tests use dynamic checks over the lists.
+- Each new prefix/suffix occupies a distinct narrative niche. None overlap with
+  the existing 4 prefixes or 4 suffixes.
+- This directly fulfills the first "Next likely step" from Session 171: "Expand
+  travelogue word bank (more prefix/suffix pairs, more narrative styles)."
+  TRAVELOGUE was the only word bank below 20 phrases — now at 9 prefixes and 9
+  suffixes.
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand word bank further with more niche constructions
+- Expand the global word pools (ADJECTIVES, ELEMENTS, NOUNS, etc.)
+- Add a new biome or mood
+
+## 2026-07-19
+
 ### What was done (Session 171)
 - **Expanded PERSPECTIVES word bank from 15 to 20 phrases** — 5 new perspective
   constructions added, covering spatial/vantage niches not represented in the

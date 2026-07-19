@@ -4358,6 +4358,11 @@ class TestPresets(unittest.TestCase):
                     or "Log entry" in result
                     or "Chronicle of the journey" in result
                     or "Day " in result and "of the expedition" in result
+                    or "Captain's log, supplemental" in result
+                    or "I write to you from" in result
+                    or "Field notes, day" in result
+                    or "Dispatch " in result and "stretches before us" in result
+                    or "I have journeyed" in result
                 )
                 self.assertTrue(has_travelogue,
                     f"Preset {name} with travelogue should have travelogue framing")
@@ -5304,6 +5309,11 @@ class TestTravelogue(unittest.TestCase):
         "Log entry",
         "Chronicle of the journey",
         "expedition.",
+        "Captain's log, supplemental",
+        "I write to you from",
+        "Field notes, day",
+        "Dispatch",
+        "I have journeyed",
     ]
 
     def test_travelogue_disabled_by_default(self):
@@ -5327,8 +5337,8 @@ class TestTravelogue(unittest.TestCase):
     def test_travelogue_contains_day_number(self):
         result = generate_landscape(seed=42, biome="forest", travelogue=True)
         import re
-        days = re.findall(r'\bday (\d+)\b', result)
-        self.assertGreater(len(days), 0,
+        has_day_number = bool(re.search(r'\bday \d+|\d+ days?\b', result, re.IGNORECASE))
+        self.assertTrue(has_day_number,
             "Travelogue should contain a day number")
 
     def test_travelogue_produces_valid_output(self):
@@ -5349,6 +5359,11 @@ class TestTravelogue(unittest.TestCase):
         "prepare camp",
         "many stories yet",
         "turn in for the evening",
+        "settle into darkness",
+        "does not capture",
+        "many more days to cross",
+        "asks better questions",
+        "still be here, waiting",
     ]
 
     def test_travelogue_ends_with_suffix(self):
@@ -5920,6 +5935,16 @@ TRAVELOGUE_INDICATORS = [
     "I mark this in my journal",
     "I note the position",
     "I will listen",
+    "Captain's log, supplemental",
+    "I write to you from",
+    "Field notes, day",
+    "Dispatch",
+    "I have journeyed",
+    "settle into darkness",
+    "does not capture",
+    "many more days to cross",
+    "asks better questions",
+    "still be here, waiting",
 ]
 
 WISTFUL_INDICATORS_PHRASES = [

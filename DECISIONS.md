@@ -1,5 +1,110 @@
 # Decisions
 
+## 2026-07-19 — Expanded TRAVELOGUE Word Bank (9 prefixes, 9 suffixes) (Session 172)
+
+### What
+Added 5 new curated prefixes and 5 new curated suffixes to the
+TRAVELOGUE bank, expanding it from 4 each to 9 each. The new prefixes
+cover sci-fi log, epistolary, scientific field notes, terse dispatch,
+and personal travel narrative — narrative styles absent from the
+existing 4. The new suffixes cover reflective evening, cartographic
+humility, forward planning, philosophical reflection, and endurance/
+perseverance — closing registers absent from the existing 4.
+
+### Why
+The TRAVELOGUE bank was created in Session 107 (65 sessions ago) with
+4 prefixes and 4 suffixes and has never been expanded. All 12 major
+word banks (ECHOES, TIMES_OF_DAY, SEASONS, LEGENDS, SIMILES, METAPHORS,
+PERSONIFICATIONS, SOUNDSCAPES, WISTFUL, WILDLIFE, PERSPECTIVES) were
+already at 20 phrases. TRAVELOGUE was the only bank below 20, and at
+4+4 it was the smallest bank by far.
+
+The "Next likely steps" from Session 171 explicitly called for this:
+"Expand travelogue word bank (more prefix/suffix pairs, more narrative
+styles)."
+
+With travelogue now enabled by default in all 5 presets, a larger bank
+reduces repetition in preset output — with only 4 prefixes and 4
+suffixes, every travelogue was one of only 16 possible framings. Now
+with 9 of each, there are 81 possible combinations.
+
+### New prefixes
+- **Sci-fi log**: `"Captain's log, supplemental. Day {day}. The {display}
+  has appeared on the horizon."` — a log entry style borrowing from
+  Star Trek's captain's log convention. Distinct from "Log entry — {day}
+  days out" (which counts days out, not days of the voyage).
+- **Epistolary**: `"Letter from the expedition, day {day}. I write to
+  you from the {display}."` — a letter/diary format addressed to a
+  recipient. Distinct from all existing prefixes which are self-directed
+  or impersonal records.
+- **Scientific field notes**: `"Field notes, day {day}. The {display}
+  eludes easy description."` — a scientist's notebook entry. Distinct
+  from "Chronicle of the journey" (which is about the journey itself)
+  and "I record what I see" (which is about the act of recording).
+- **Terse dispatch**: `"Dispatch {day}. The {display} stretches before
+  us, indifferent and vast."` — a concise, impersonal communiqué.
+  Distinct from all existing prefixes which are more verbose or
+  personal. The only prefix placing the day number without the word
+  "day".
+- **Personal travel narrative**: `"I have journeyed {day} days to reach
+  the {display}, and now I stand at its edge."` — a first-person
+  narrative emphasizing the journey's duration and the moment of
+  arrival. Distinct from all existing prefixes which focus on the
+  act of recording rather than the emotional arrival.
+
+### New suffixes
+- **Reflective evening**: `"I sit at the edge of camp and watch the
+  {display} settle into darkness."` — quiet evening observation.
+  Distinct from "prepare camp for the night" (which is about the
+  practical act of setting up camp).
+- **Cartographic humility**: `"The map does not capture what the
+  {display} truly is."` — the inadequacy of maps to represent
+  experience. Distinct from "note the position on my map" (which
+  assumes maps are useful).
+- **Forward planning**: `"I will need many more days to cross the
+  {display}, if the weather holds."` — looking ahead to the journey's
+  continuation. Distinct from "venture deeper come morning" (which
+  is about the next immediate step).
+- **Philosophical**: `"The {display} offers no answers, but it asks
+  better questions than I do."` — existential/reflective register.
+  The only suffix that treats the landscape as a source of questions
+  rather than an object to be documented.
+- **Endurance/perseverance**: `"Tomorrow, the {display} will still be
+  here, waiting."` — the landscape's persistence paralleling the
+  traveler's endurance. The only suffix expressing continuity and
+  return.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`,
+  CLI flags, or any logic. Only the TRAVELOGUE_PREFIXES and
+  TRAVELOGUE_SUFFIXES lists were updated, plus test indicators.
+- **No seed-breaking**: Adding entries doesn't change the random
+  sequence — `rng.choice(list)` picks from a larger pool but the
+  choice function is unchanged. Only the rendered output content
+  changes (new phrases appear in the selection pool).
+- **Test indicator updates**: Three sets of test indicators were
+  updated: `TestTravelogue.TRAVELOGUE_INDICATORS` (prefix checks),
+  `TestTravelogue.TRAVELOGUE_SUFFIX_INDICATORS` (suffix checks), and
+  the module-level `TRAVELOGUE_INDICATORS` (used by TestNoTravelogue).
+- **Hardcoded list update**: `test_preset_with_travelogue_produces_framed_output`
+  had a hardcoded conditional for the original 4 prefix substrings
+  (same pattern as the WISTFUL hardcoded list in Session 162).
+- **Regex fix**: `test_travelogue_contains_day_number` used `\bday
+  (\d+)\b` which matched "day N" order but not "N days" (new prefix
+  "journeyed {day} days") or bare-number (new prefix "Dispatch {day}.").
+  Broadened to `\bday \d+|\d+ days?\b` with case-insensitive flag.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126
+  landscape) — same as Session 171.
+- **TRAVELOGUE now at 9 prefixes and 9 suffixes** — up from 4+4, but
+  still the smallest bank by construction (prefix/suffix pairs rather
+  than single phrases). This is appropriate: travelogue prefixes and
+  suffixes are longer and more structurally distinct than other word
+  bank entries, and fewer are needed per landscape (always exactly
+  one prefix and one suffix).
+- **Fulfills "Next likely steps" from Session 171**: Travelogue
+  expansion was explicitly called out as the first item. Every single
+  word bank in the project has now been expanded at least once.
+
 ## 2026-07-19 — Expanded PERSPECTIVES Word Bank (20 phrases) (Session 171)
 
 ### What

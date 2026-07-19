@@ -312,6 +312,11 @@ TRAVELOGUE_PREFIXES = [
     "Log entry — {day} days out. The {display} lies before me.",
     "Chronicle of the journey, day {day}: I have come to the {display}.",
     "The {display}. Day {day} of the expedition. I record what I see.",
+    "Captain's log, supplemental. Day {day}. The {display} has appeared on the horizon.",
+    "Letter from the expedition, day {day}. I write to you from the {display}.",
+    "Field notes, day {day}. The {display} eludes easy description.",
+    "Dispatch {day}. The {display} stretches before us, indifferent and vast.",
+    "I have journeyed {day} days to reach the {display}, and now I stand at its edge.",
 ]
 
 TRAVELOGUE_SUFFIXES = [
@@ -319,6 +324,11 @@ TRAVELOGUE_SUFFIXES = [
     "I mark this in my journal and prepare camp for the night.",
     "The {display} has many stories yet to tell. I will listen.",
     "I note the position on my map and turn in for the evening.",
+    "I sit at the edge of camp and watch the {display} settle into darkness.",
+    "The map does not capture what the {display} truly is.",
+    "I will need many more days to cross the {display}, if the weather holds.",
+    "The {display} offers no answers, but it asks better questions than I do.",
+    "Tomorrow, the {display} will still be here, waiting.",
 ]
 
 WISTFUL = [
