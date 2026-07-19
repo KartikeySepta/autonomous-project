@@ -1,5 +1,69 @@
 # Decisions
 
+## 2026-07-19 — Expanded ECHOES Word Bank (20 phrases) (Session 161)
+
+### What
+Added 5 new curated echo phrases to the ECHOES bank, expanding it from 15 to 20 phrases.
+The new phrases cover forgotten ghost roads, fragmentary whispers, landscape mourning,
+geological palimpsest, and liminal boundaries — atmospheric niches absent from the original 15.
+
+### Why
+The ECHOES bank was created in Session 122 with 10 phrases and expanded to 15 in the same
+session. It has not been touched in 38 sessions — the longest-unexpanded bank in the project.
+Every other major word bank has been expanded more recently: PERSONIFICATIONS (Session 160),
+METAPHORS (Session 159), SIMILES (Session 158), PERSPECTIVES (Session 147), SOUNDSCAPES
+(Session 144), WILDLIFE (Session 143), TIMES_OF_DAY (Session 133), SEASONS (Session 135),
+WISTFUL (Session 123), LEGENDS (Session 124).
+
+With echoes now enabled by default in all 5 presets (count=2-3, prob=0.5-1.0), a larger
+bank reduces repetition in preset output, especially since echo_count=3 is supported in
+sublime and nightfall presets.
+
+The "Next likely steps" from Session 160 explicitly called for this: "Expand global word
+banks (more echoes, more time-of-day, more seasons)."
+
+The 5 new phrases each cover an atmospheric niche not represented in the existing 15:
+- **Forgotten ghost roads**: "The {adj} roads of the {display} lead nowhere {adverb},
+  their {color} {element} worn smooth by travelers who never were." — paths/routes as
+  evidence of a non-existent history. The only echo describing roads, paths, or routes;
+  distinct from "Something important happened... once" (a single event) and "holds its
+  breath" (anticipation). Indicator: `"roads of the"`.
+- **Fragmentary whispers**: "Fragments of {color} whispers drift {adverb} through the
+  {adj} air of the {display} {time_word}." — half-heard, incoherent auditory fragments.
+  Distinct from "wind carries a memory... a voice with no mouth" (a single coherent voice)
+  and "echoes of the past linger" (generalized past echoes). Indicator: `"Fragments of"`.
+- **Landscape mourning**: "The {display} mourns {adverb} {time_word}, its {adj} {color}
+  {element} heavy with a grief that knows no end." — active, ongoing grief by the
+  landscape itself. Distinct from "holds its breath" (anticipation/tension) and "older
+  than any sound" (primordial state). Indicator: `"mourns"`.
+- **Geological palimpsest**: "Beneath the surface of the {display}, layer upon layer of
+  {adj} {color} {element} tells a story written {adverb} in sediment and stone." —
+  visible strata and layering telling a buried story. Distinct from "deep time" (which
+  is about temporal pressure/weight) and "stones remember" (which is about memory).
+  Indicator: `"layer upon layer of"`.
+- **Liminal boundary**: "The {display} marks the {adj} boundary between the {color}
+  {element} and something that lies just beyond the world." — the landscape itself as
+  a threshold between reality and the beyond. Distinct from "outside of time" (temporal
+  transcendence) and "something vast turns over in its sleep" (subterranean presence).
+  Indicator: `"boundary between the"`.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags, or any
+  logic. Only the ECHOES list, ECHO_INDICATORS, and NO_ECHO_INDICATORS were updated.
+- **No seed-breaking**: Adding phrases to ECHOES doesn't change the random sequence
+  — `rng.choice(ECHOES)` picks from a larger pool but the choice function is unchanged.
+  Only the rendered output content changes (new phrases appear in the selection pool).
+- **No new tests**: All echo tests use dynamic checks over `ECHO_INDICATORS` and
+  `len(ECHOES)` (via fallback at count > len). Only the indicator list was extended;
+  test logic is unchanged.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126 landscape) — same as
+  Session 160. Subtests unchanged at 393.
+- **Echoes now the largest bank at 20 phrases**: ECHOES (20) joins LEGENDS (20) in the
+  upper tier; SOUNDSCAPES (17) leads the middle tier; all others are at 15.
+- **Fulfills "Next likely steps" from Session 160**: Global word bank expansion was
+  explicitly called out, with echoes as the most overdue bank (38 sessions since last
+  expansion).
+
 ## 2026-07-19 — Expanded PERSONIFICATIONS Word Bank (15 phrases) (Session 160)
 
 ### What

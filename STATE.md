@@ -2,54 +2,59 @@
 
 ## 2026-07-19
 
-### What was done (Session 160)
-- **Expanded PERSONIFICATIONS word bank from 10 to 15 phrases** — 5 new personification
-  constructions added, covering human-action niches not represented in the original 10:
-  - `"The {display} dances {adverb} under the {color} sky, its {adj} {element} swaying to
-    an ancient rhythm."` — the landscape as a dancer, moving gracefully under the sky.
-    The only dance/movement personification; distinct from "reaches out" (which is
-    reaching/grasping) and "beats" (which is pulse/rhythm).
-    Indicator: `"dances under the"`.
-  - `"The {adj} {element} of the {display} laughs {adverb}, a {color} cascade that echoes
-    through the land."` — the landscape's element expressing joy through laughter, adding
-    a joyful/celebratory register (the only personification using laughter). Distinct from
-    "voice... a song older than memory" (singing/expression) and "weeps" (grief).
-    Indicator: `"cascade that echoes"`.
-  - `"The {display} bows {adverb} to the {color} {adj} {element}, its head lowered in
-    reverence."` — the landscape bowing in submission/reverence, adding a humility/worship
-    register (the only personification describing deference to another force).
-    Indicator: `"head lowered in reverence"`.
-  - `"The {display} aches {adverb} with {color} {adj} {element}, a sorrow that has no
-    name."` — the landscape aching with wordless sorrow, adding a pain/grief register
-    distinct from "weeps" (which is active grieving — tears falling). "Aches" is
-    internal, silent suffering. Indicator: `"sorrow that has no name"`.
-  - `"The {display} shelters {adverb} the {color} {adj} {element}, holding it close in
-    patient stillness."` — the landscape as a protective shelterer, adding a nurture/
-    protection register (the only personification describing protective care of something
-    within the landscape). Indicator: `"holding it close in"`.
-  - Each new phrase uses 4-5 template slots (`{display}`, `{adj}`, `{color}`, `{element}`,
-    `{adverb}`) and occupies a distinct human-action niche: dancing, laughing, bowing,
-    aching, sheltering.
-- **Added 5 new indicators to `PERSONIFICATION_INDICATORS`** in the test module:
-  `"dances under the"`, `"cascade that echoes"`, `"head lowered in reverence"`,
-  `"sorrow that has no name"`, `"holding it close in"` — each is a unique invariant
-  substring for dynamic test matching.
+### What was done (Session 161)
+- **Expanded ECHOES word bank from 15 to 20 phrases** — 5 new echo constructions added,
+  covering atmospheric niches not represented in the original 15:
+  - `"The {adj} roads of the {display} lead nowhere {adverb}, their {color} {element}
+    worn smooth by travelers who never were."` — the landscape's paths as ghost
+    infrastructure leading nowhere, suggesting a non-existent history. The only echo
+    describing roads or routes; distinct from "holds its breath" (anticipation) and
+    "important happened" (past event). Indicator: `"roads of the"`.
+  - `"Fragments of {color} whispers drift {adverb} through the {adj} air of the {display}
+    {time_word}."` — half-heard auditory fragments, incoherent whispers. Distinct from
+    "wind carries a memory... a voice with no mouth" (a single coherent voice) and
+    "echoes of the past linger" (generalized lingering). Indicator: `"Fragments of"`.
+  - `"The {display} mourns {adverb} {time_word}, its {adj} {color} {element} heavy with
+    a grief that knows no end."` — the landscape actively grieving, adding a sorrow/
+    mourning register distinct from "holds its breath" (anticipation) and "older than
+    any sound" (primordial silence). Indicator: `"mourns"`.
+  - `"Beneath the surface of the {display}, layer upon layer of {adj} {color} {element}
+    tells a story written {adverb} in sediment and stone."` — geological/archaeological
+    layering as a palimpsest. Distinct from "deep time" (which is about temporal
+    pressure) and "outside of time" (timelessness); this is about visible strata.
+    Indicator: `"layer upon layer of"`.
+  - `"The {display} marks the {adj} boundary between the {color} {element} and something
+    that lies just beyond the world."` — the landscape as a liminal boundary between
+    reality and something beyond. Distinct from "outside of time" (temporal) and
+    "something vast turns over in its sleep" (subterranean). Indicator: `"boundary between the"`.
+  - Each new phrase uses 3-5 template slots (`{display}`, `{adj}`, `{color}`, `{element}`,
+    `{adverb}`, `{time_word}`) and occupies a distinct atmospheric niche: forgotten paths,
+    auditory fragments, landscape mourning, geological layering, liminal boundary.
+- **Added 5 new indicators to `ECHO_INDICATORS`** in the test module:
+  `"roads of the"`, `"Fragments of"`, `"mourns"`, `"layer upon layer of"`,
+  `"boundary between the"` — each is a unique invariant substring for dynamic test matching.
+- **Added same 5 indicators to `NO_ECHO_INDICATORS`** — consistent with the pattern;
+  none of the new indicators collide with legend phrases, so all are safe for `--no-echo`
+  suppression tests.
 - No code, CLI, or generation logic changes — data-only expansion plus indicator
-  additions. All existing personification tests use dynamic count checks and loop over
-  `PERSONIFICATION_INDICATORS`, so no test modifications were needed.
-- Each phrase is curated to fit a distinct human-action niche: dancing, laughing,
-  bowing, aching, sheltering. None overlap with the existing 10 phrases.
-- This directly fulfills the first "Next likely step" from Session 159: "Expand
-  personification word bank (more phrases, more varied constructions)."
+  additions. All existing echo tests use dynamic checks over `ECHO_INDICATORS`, so no
+  test modifications were needed.
+- Each phrase is curated to fit a distinct atmospheric niche: forgotten ghost roads,
+  fragmentary whispers, landscape mourning, geological palimpsest, liminal boundary.
+  None overlap with the existing 15 phrases.
+- This directly fulfills the "Next likely steps" from Session 160: "Expand global word
+  banks (more echoes, more time-of-day, more seasons)." Echoes were the most overdue
+  bank — last expanded in Session 122 (38 sessions ago).
 - Tests unchanged: still 1126 landscape tests pass (18 todo unchanged).
 
 ### Current status
 Working. All 1144 tests pass (18 todo + 1126 landscape).
 
 ### Next likely steps
+- Expand time-of-day word bank (more phrases, more varied constructions)
+- Expand seasons word bank (more phrases, more varied constructions)
+- Expand wistful word bank (more phrases, more varied constructions)
 - Expand simile word bank further (more phrases, more varied constructions)
-- Expand metaphor word bank further (more phrases, more varied constructions)
-- Expand global word banks (more echoes, more time-of-day, more seasons)
 
 ## 2026-07-19
 

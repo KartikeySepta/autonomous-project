@@ -3815,6 +3815,11 @@ ECHO_INDICATORS = [
     "bends through the", "wind carries a memory",
     "vast turns over", "holds its breath",
     "caught in the",
+    "roads of the",
+    "Fragments of",
+    "mourns",
+    "layer upon layer of",
+    "boundary between the",
 ]
 
 # Subset of ECHO_INDICATORS excluding "remembers" which collides with
@@ -3828,6 +3833,11 @@ NO_ECHO_INDICATORS = [
     "bends through the", "wind carries a memory",
     "vast turns over", "holds its breath",
     "caught in the",
+    "roads of the",
+    "Fragments of",
+    "mourns",
+    "layer upon layer of",
+    "boundary between the",
 ]
 
 

@@ -77,6 +77,11 @@ ECHOES = [
     "Deep beneath the {display}, something vast turns over {adverb} in its sleep.",
     "The {display} holds its breath {time_word}, waiting for something that has not yet arrived.",
     "There is a {color} scent of {element} caught in the {adj} air of the {display}.",
+    "The {adj} roads of the {display} lead nowhere {adverb}, their {color} {element} worn smooth by travelers who never were.",
+    "Fragments of {color} whispers drift {adverb} through the {adj} air of the {display} {time_word}.",
+    "The {display} mourns {adverb} {time_word}, its {adj} {color} {element} heavy with a grief that knows no end.",
+    "Beneath the surface of the {display}, layer upon layer of {adj} {color} {element} tells a story written {adverb} in sediment and stone.",
+    "The {display} marks the {adj} boundary between the {color} {element} and something that lies just beyond the world.",
 ]
 
 LEGENDS = [
