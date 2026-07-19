@@ -1,5 +1,68 @@
 # Decisions
 
+## 2026-07-19 — Expanded TIMES_OF_DAY Word Bank (20 phrases) (Session 163)
+
+### What
+Added 5 new curated time-of-day phrases to the TIMES_OF_DAY bank, expanding it
+from 15 to 20 phrases. The new phrases cover dramatic sunset, full moon night,
+oppressive noon stillness, pre-dawn liminal darkness, and overcast grey day —
+temporal/atmospheric niches absent from the original 15.
+
+### Why
+The TIMES_OF_DAY bank was expanded from 10 to 15 in Session 133 (29 sessions ago)
+and has not been touched since. Every other major word bank has been expanded more
+recently: WISTFUL (Session 162), ECHOES (Session 161), PERSONIFICATIONS (Session 160),
+METAPHORS (Session 159), SIMILES (Session 158). The "Next likely steps" from
+Session 162 explicitly called for this: "Expand time-of-day word bank (more phrases,
+more varied constructions)."
+
+With time-of-day now enabled by default in all 5 presets, a larger bank reduces
+repetition in preset output.
+
+The 5 new phrases each cover a temporal/atmospheric niche not represented in the
+existing 15:
+- **Dramatic sunset**: "Sunset bleeds across the landscape in ribbons of amber and
+  rose" — sunset as flowing color/paint. Distinct from "Dusk settles over the
+  landscape" (which is about settling, not dramatic color) and "Twilight fades to
+  darkness" (fading, not bleeding). Indicator: `"amber and rose"`.
+- **Full moon night**: "A full moon rises over the landscape, turning everything to
+  silver and shadow" — a night illuminated by full moonlight, the landscape
+  transformed into silver. Distinct from "Midnight beneath a crescent moon" (crescent,
+  not full) and "starless night" (no moon at all). Indicator: `"full moon rises"`.
+- **Noon stillness**: "The heavy stillness of noon settles over the landscape like
+  a held breath" — noon as oppressive quiet/pause. Distinct from the existing "blazing
+  noon sun beats down without mercy" which emphasizes heat and harshness rather than
+  stillness. Indicator: `"heavy stillness of noon"`.
+- **Pre-dawn darkness**: "The deepest dark before dawn wraps the landscape in a final
+  moment of absolute night" — the darkest moment just before light, a liminal threshold.
+  Distinct from "dead of night holds the land" (night established, not transitioning)
+  and "starless night presses down" (ongoing state, not transition). Indicator:
+  `"deepest dark before dawn"`.
+- **Overcast grey day**: "Low grey clouds press down upon the landscape, muting the
+  world in soft silver light" — diffuse grey light under cloud cover. Distinct from
+  "storm-heavy sky presses down" which carries threat and coming violence.
+  Indicator: `"Low grey clouds"`.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags, or any
+  logic. Only the TIMES_OF_DAY list and TIME_INDICATORS were updated.
+- **No seed-breaking**: Adding phrases to TIMES_OF_DAY doesn't change the random
+  sequence — `rng.choice(TIMES_OF_DAY)` picks from a larger pool but the choice
+  function is unchanged. Only the rendered output content changes (new phrases
+  appear in the selection pool).
+- **No test logic changes**: All time-of-day tests use dynamic checks over
+  `ALL_TIMES_OF_DAY` (module-level set derived from `TIMES_OF_DAY`) or
+  `TIME_INDICATORS`. Indicator lists were updated; no test logic was modified.
+- **No hardcoded lists to update**: Unlike the WISTFUL expansion (Session 162)
+  which required manually updating a hardcoded indicator list in TestPresets, the
+  time-of-day tests all delegate to shared constants.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126 landscape) — same
+  as Session 162. Subtests unchanged at 393.
+- **TIMES_OF_DAY now at 20 phrases**, joining the top tier alongside ECHOES (20)
+  and LEGENDS (20). All other banks are at 15-17 phrases.
+- **Fulfills "Next likely steps" from Session 162**: Time-of-day word bank expansion
+  was explicitly called out as the first item.
+
 ## 2026-07-19 — Expanded WISTFUL Word Bank (15 phrases) (Session 162)
 
 ### What

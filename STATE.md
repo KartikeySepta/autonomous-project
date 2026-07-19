@@ -2,6 +2,59 @@
 
 ## 2026-07-19
 
+### What was done (Session 163)
+- **Expanded TIMES_OF_DAY word bank from 15 to 20 phrases** — 5 new time-of-day
+  constructions added, covering temporal/atmospheric niches not represented in the
+  original 15:
+  - `"Sunset bleeds across the landscape in ribbons of amber and rose"` — dramatic
+    sunset as flowing color, adding a painterly sunset register distinct from dusk
+    (fading to darkness) and twilight (night taking hold). Indicator: `"amber and rose"`.
+  - `"A full moon rises over the landscape, turning everything to silver and shadow"`
+    — full moon night with transformative silver light, distinct from the crescent
+    moon of "Midnight beneath a crescent moon" and the blackness of "starless night".
+    Indicator: `"full moon rises"`.
+  - `"The heavy stillness of noon settles over the landscape like a held breath"`
+    — noon as oppressive stillness and breathless pause, distinct from "blazing noon
+    sun" which is harsh and punishing rather than still. Indicator: `"heavy stillness of noon"`.
+  - `"The deepest dark before dawn wraps the landscape in a final moment of absolute
+    night"` — pre-dawn as the darkest hour, a liminal moment before light returns,
+    distinct from "dead of night" (night holding the land) and "starless night"
+    (pressing down). Indicator: `"deepest dark before dawn"`.
+  - `"Low grey clouds press down upon the landscape, muting the world in soft silver
+    light"` — overcast/grey day with muted silver light, distinct from "storm-heavy
+    sky" which is about threat and coming storms rather than soft diffusion.
+    Indicator: `"Low grey clouds"`.
+  - Each new phrase is a literal string (not a template), consistent with all existing
+    TIMES_OF_DAY entries, and occupies a distinct temporal niche: dramatic sunset,
+    full moon night, noon stillness, pre-dawn darkness, overcast grey day.
+- **Added 5 new indicators to `TIME_INDICATORS`** in test_landscape.py:
+  `"amber and rose"`, `"full moon rises"`, `"heavy stillness of noon"`,
+  `"deepest dark before dawn"`, `"Low grey clouds"` — each is a unique invariant
+  substring for dynamic test matching.
+- No code, CLI, or generation logic changes — data-only expansion plus indicator
+  additions. All existing time-of-day tests use dynamic checks over `ALL_TIMES_OF_DAY`
+  (which is `set(TIMES_OF_DAY)`) or `TIME_INDICATORS`, requiring no test modifications.
+  The `describe_times` tests loop over `TIMES_OF_DAY` and use `len(TIMES_OF_DAY)`,
+  adapting automatically.
+- Each phrase is curated to fit a distinct temporal/atmospheric niche: dramatic
+  sunset, full moon night, oppressive noon stillness, pre-dawn liminal darkness,
+  overcast grey day. None overlap with the existing 15 phrases.
+- This directly fulfills the first "Next likely step" from Session 162: "Expand
+  time-of-day word bank (more phrases, more varied constructions)." TIMES_OF_DAY
+  was the most overdue bank alongside SEASONS and SIMILES — last expanded in
+  Session 133 (29 sessions ago) when it grew from 10 to 15.
+- Tests unchanged: still 1126 landscape tests pass (18 todo unchanged).
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand seasons word bank (more phrases, more varied constructions)
+- Expand simile word bank further (more phrases, more varied constructions)
+- Expand metaphor word bank further (more phrases, more varied constructions)
+
+## 2026-07-19
+
 ### What was done (Session 162)
 - **Expanded WISTFUL word bank from 10 to 15 phrases** — 5 new wistful constructions added,
   covering emotional/reflective niches not represented in the original 10:

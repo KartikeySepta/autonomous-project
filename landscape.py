@@ -139,6 +139,11 @@ TIMES_OF_DAY = [
     "The blue hour casts a deep indigo glow across the landscape",
     "The witching hour settles over the landscape in absolute stillness",
     "Morning mist clings to the landscape like a half-remembered dream",
+    "Sunset bleeds across the landscape in ribbons of amber and rose",
+    "A full moon rises over the landscape, turning everything to silver and shadow",
+    "The heavy stillness of noon settles over the landscape like a held breath",
+    "The deepest dark before dawn wraps the landscape in a final moment of absolute night",
+    "Low grey clouds press down upon the landscape, muting the world in soft silver light",
 ]
 
 SEASONS = [

@@ -45,6 +45,11 @@ TIME_INDICATORS = [
     "blue hour",
     "witching hour",
     "Morning mist",
+    "amber and rose",
+    "full moon rises",
+    "heavy stillness of noon",
+    "deepest dark before dawn",
+    "Low grey clouds",
 ]
 
 SEASON_INDICATORS = [
