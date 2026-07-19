@@ -257,6 +257,11 @@ PERSONIFICATIONS = [
     "The {display} remembers {adverb} a time when the {element} was {adj} and the {color} light was young.",
     "The {adj} {element} of the {display} listens {adverb} to the {color} silence between stars.",
     "The {display} weeps {adverb} tears of {color} {element}, each drop a {adj} story falling to the earth.",
+    "The {display} dances {adverb} under the {color} sky, its {adj} {element} swaying to an ancient rhythm.",
+    "The {adj} {element} of the {display} laughs {adverb}, a {color} cascade that echoes through the land.",
+    "The {display} bows {adverb} to the {color} {adj} {element}, its head lowered in reverence.",
+    "The {display} aches {adverb} with {color} {adj} {element}, a sorrow that has no name.",
+    "The {display} shelters {adverb} the {color} {adj} {element}, holding it close in patient stillness.",
 ]
 
 TRAVELOGUE_PREFIXES = [

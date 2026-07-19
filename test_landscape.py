@@ -196,6 +196,11 @@ PERSONIFICATION_INDICATORS = [
     "light was young",
     "between stars",
     "story falling",
+    "dances under the",
+    "cascade that echoes",
+    "head lowered in reverence",
+    "sorrow that has no name",
+    "holding it close in",
 ]
 
 

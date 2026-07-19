@@ -1,5 +1,60 @@
 # Decisions
 
+## 2026-07-19 — Expanded PERSONIFICATIONS Word Bank (15 phrases) (Session 160)
+
+### What
+Added 5 new curated personification phrases to the PERSONIFICATIONS bank, expanding it
+from 10 to 15 phrases. The new phrases cover dancing, laughing, bowing/reverence,
+aching/sorrow, and sheltering/nurture — human-action niches absent from the original 10.
+
+### Why
+The PERSONIFICATIONS bank was created in Session 156 with 10 phrases and had never been
+expanded. Sessions 158 and 159 expanded SIMILES (10→15) and METAPHORS (10→15)
+respectively. The "Next likely steps" from Session 159 explicitly called for this:
+"Expand personification word bank (more phrases, more varied constructions)."
+
+With personifications now enabled by default in all 5 presets (count=1, prob=0.3-0.8),
+a larger bank reduces repetition in preset output, especially since personification
+count=3 is supported (allowing up to 3 distinct phrases per landscape).
+
+The 5 new phrases each cover a human-action niche not represented in the existing 10:
+- **Dancing**: "The {display} dances {adverb} under the {color} sky, its {adj} {element}
+  swaying to an ancient rhythm." — the landscape as dancer. The only movement-as-art
+  personification; distinct from "reaches out" (grasping) and "beats" (pulse).
+  Indicator: `"dances under the"`.
+- **Laughing**: "The {adj} {element} of the {display} laughs {adverb}, a {color} cascade
+  that echoes through the land." — joyful expression through laughter. The only
+  explicitly joyful/amused personification; distinct from "voice... song" (singing/
+  expression) and "weeps" (grief). Indicator: `"cascade that echoes"`.
+- **Bowing/reverence**: "The {display} bows {adverb} to the {color} {adj} {element}, its
+  head lowered in reverence." — deference and humility. The only personification
+  describing submission or worship; distinct from all existing 10 which describe the
+  landscape as autonomous or sovereign. Indicator: `"head lowered in reverence"`.
+- **Aching/sorrow**: "The {display} aches {adverb} with {color} {adj} {element}, a
+  sorrow that has no name." — silent, internal pain. Distinct from "weeps" (active
+  grieving with visible tears); this is the suffering that has no outward expression.
+  Indicator: `"sorrow that has no name"`.
+- **Sheltering/nurture**: "The {display} shelters {adverb} the {color} {adj} {element},
+  holding it close in patient stillness." — protective nurture. The only personification
+  describing the landscape as a caretaker of something within it. Indicator:
+  `"holding it close in"`.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only the PERSONIFICATIONS list and PERSONIFICATION_INDICATORS were
+  updated.
+- **No seed-breaking**: Adding phrases to PERSONIFICATIONS doesn't change the random
+  sequence — `rng.choice(PERSONIFICATIONS)` picks from a larger pool but the choice
+  function is unchanged. Only the rendered output content changes (new phrases appear
+  in the selection pool).
+- **No new tests**: All personification tests use dynamic checks over
+  `PERSONIFICATION_INDICATORS` and `len(PERSONIFICATIONS)`. Only the indicator list was
+  extended; test logic is unchanged.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126 landscape)
+  — same as Session 159.
+- **Fulfills "Next likely steps" from Session 159**: Personification word bank expansion
+  was explicitly called out as the first item.
+
 ## 2026-07-19 — Expanded METAPHORS Word Bank (15 phrases) (Session 159)
 
 ### What

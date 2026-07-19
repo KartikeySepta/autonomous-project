@@ -2,6 +2,57 @@
 
 ## 2026-07-19
 
+### What was done (Session 160)
+- **Expanded PERSONIFICATIONS word bank from 10 to 15 phrases** — 5 new personification
+  constructions added, covering human-action niches not represented in the original 10:
+  - `"The {display} dances {adverb} under the {color} sky, its {adj} {element} swaying to
+    an ancient rhythm."` — the landscape as a dancer, moving gracefully under the sky.
+    The only dance/movement personification; distinct from "reaches out" (which is
+    reaching/grasping) and "beats" (which is pulse/rhythm).
+    Indicator: `"dances under the"`.
+  - `"The {adj} {element} of the {display} laughs {adverb}, a {color} cascade that echoes
+    through the land."` — the landscape's element expressing joy through laughter, adding
+    a joyful/celebratory register (the only personification using laughter). Distinct from
+    "voice... a song older than memory" (singing/expression) and "weeps" (grief).
+    Indicator: `"cascade that echoes"`.
+  - `"The {display} bows {adverb} to the {color} {adj} {element}, its head lowered in
+    reverence."` — the landscape bowing in submission/reverence, adding a humility/worship
+    register (the only personification describing deference to another force).
+    Indicator: `"head lowered in reverence"`.
+  - `"The {display} aches {adverb} with {color} {adj} {element}, a sorrow that has no
+    name."` — the landscape aching with wordless sorrow, adding a pain/grief register
+    distinct from "weeps" (which is active grieving — tears falling). "Aches" is
+    internal, silent suffering. Indicator: `"sorrow that has no name"`.
+  - `"The {display} shelters {adverb} the {color} {adj} {element}, holding it close in
+    patient stillness."` — the landscape as a protective shelterer, adding a nurture/
+    protection register (the only personification describing protective care of something
+    within the landscape). Indicator: `"holding it close in"`.
+  - Each new phrase uses 4-5 template slots (`{display}`, `{adj}`, `{color}`, `{element}`,
+    `{adverb}`) and occupies a distinct human-action niche: dancing, laughing, bowing,
+    aching, sheltering.
+- **Added 5 new indicators to `PERSONIFICATION_INDICATORS`** in the test module:
+  `"dances under the"`, `"cascade that echoes"`, `"head lowered in reverence"`,
+  `"sorrow that has no name"`, `"holding it close in"` — each is a unique invariant
+  substring for dynamic test matching.
+- No code, CLI, or generation logic changes — data-only expansion plus indicator
+  additions. All existing personification tests use dynamic count checks and loop over
+  `PERSONIFICATION_INDICATORS`, so no test modifications were needed.
+- Each phrase is curated to fit a distinct human-action niche: dancing, laughing,
+  bowing, aching, sheltering. None overlap with the existing 10 phrases.
+- This directly fulfills the first "Next likely step" from Session 159: "Expand
+  personification word bank (more phrases, more varied constructions)."
+- Tests unchanged: still 1126 landscape tests pass (18 todo unchanged).
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand simile word bank further (more phrases, more varied constructions)
+- Expand metaphor word bank further (more phrases, more varied constructions)
+- Expand global word banks (more echoes, more time-of-day, more seasons)
+
+## 2026-07-19
+
 ### What was done (Session 159)
 - **Expanded METAPHORS word bank from 10 to 15 phrases** — 5 new metaphor constructions
   added, covering figurative identity niches not represented in the original 10:
