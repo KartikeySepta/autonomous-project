@@ -264,6 +264,11 @@ METAPHORS = [
     "The {display} is a {adj} forge where {color} {element} is hammered {adverb} into shapes yet unknown.",
     "The {display} is an {adj} anchor of {color} {element}, holding {adverb} the world steady against time.",
     "The {display} is a {adj} feast of {color} {element}, spread {adverb} for those with eyes to see.",
+    "The {display} is a {adj} bridge of {color} {element}, arching {adverb} between what is remembered and what is lost.",
+    "The {display} is a {adj} tide of {color} {element}, pulled {adverb} by a forgotten gravity.",
+    "The {display} is a {adj} garden of {color} {element}, cultivated {adverb} by an unseen hand.",
+    "The {display} is a {adj} veil of {color} {element}, concealing {adverb} a world within a world.",
+    "The {display} is a {adj} tomb of {color} {element}, sealed {adverb} around the silence of ages.",
 ]
 
 PERSONIFICATIONS = [

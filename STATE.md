@@ -2,6 +2,57 @@
 
 ## 2026-07-19
 
+### What was done (Session 166)
+- **Expanded METAPHORS word bank from 15 to 20 phrases** — 5 new metaphor constructions
+  added, covering figurative identity niches not represented in the original 15:
+  - `"The {display} is a {adj} bridge of {color} {element}, arching {adverb} between what
+    is remembered and what is lost."` — the landscape as a bridge connecting past and
+    present across the gulf of forgetting. Distinct from "threshold" (which is about
+    passage/transition) and "argument" (which is about conflict/tension). Indicator:
+    `"arching between"`.
+  - `"The {display} is a {adj} tide of {color} {element}, pulled {adverb} by a forgotten
+    gravity."` — the landscape as a cyclical force drawn by an invisible pull. Distinct
+    from "heart" (which is about rhythmic pulse of life) and "anchor" (which is about
+    steadiness/resistance). Indicator: `"forgotten gravity"`.
+  - `"The {display} is a {adj} garden of {color} {element}, cultivated {adverb} by an
+    unseen hand."` — the landscape as a cultivated garden tended by invisible forces.
+    Distinct from "forge" (which is about active creation/hammering) and "feast" (which
+    is about abundance/consumption). Indicator: `"unseen hand"`.
+  - `"The {display} is a {adj} veil of {color} {element}, concealing {adverb} a world
+    within a world."` — the landscape as a veil hiding a deeper nested reality.
+    Distinct from "mirror" (which is about reflection/revelation) and "threshold" (which
+    is about passage). Indicator: `"world within a world"`.
+  - `"The {display} is a {adj} tomb of {color} {element}, sealed {adverb} around the
+    silence of ages."` — the landscape as a tomb containing ancient silence. Distinct
+    from "wound" (which is about injury/bleeding) and "armor" (which is about
+    protection). Indicator: `"silence of ages"`.
+- **Added 5 new indicators to `METAPHOR_INDICATORS`** in test_landscape.py:
+  `"arching between"`, `"forgotten gravity"`, `"unseen hand"`,
+  `"world within a world"`, `"silence of ages"` — each is a unique invariant substring
+  for dynamic test matching.
+- No code, CLI, or generation logic changes — data-only expansion plus indicator
+  additions. All existing metaphor tests use dynamic checks over `METAPHOR_INDICATORS`,
+  requiring no test modifications.
+- Each phrase is curated to fit a distinct figurative niche: timeless bridge, cyclical
+  tide, cultivated garden, concealing veil, sealed tomb. None overlap with the existing
+  15 phrases.
+- This directly fulfills the first "Next likely step" from Session 165: "Expand metaphor
+  word bank further (more phrases, more varied constructions)." METAPHORS was the most
+  overdue bank alongside PERSONIFICATIONS — last expanded in Session 159 (6 sessions
+  ago). ECHOES (20), TIMES_OF_DAY (20), SEASONS (20), LEGENDS (20), and SIMILES (20)
+  were all at 20 phrases, while METAPHORS and PERSONIFICATIONS were at 15.
+- Tests unchanged: still 1126 landscape tests pass (18 todo unchanged).
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand personification word bank further (more phrases, more varied constructions)
+- Expand simile word bank further (more phrases, more varied constructions)
+- Expand wistful word bank further (more phrases, more varied constructions)
+
+## 2026-07-19
+
 ### What was done (Session 165)
 - **Expanded SIMILES word bank from 15 to 20 phrases** — 5 new simile constructions
   added, covering figurative niches not represented in the original 15:

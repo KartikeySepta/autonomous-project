@@ -1,5 +1,67 @@
 # Decisions
 
+## 2026-07-19 — Expanded METAPHORS Word Bank (20 phrases) (Session 166)
+
+### What
+Added 5 new curated metaphor phrases to the METAPHORS bank, expanding it from 15
+to 20 phrases. The new phrases cover timeless bridge, cyclical tide, cultivated
+garden, concealing veil, and sealed tomb — figurative identity niches absent from
+the original 15.
+
+### Why
+The METAPHORS bank was expanded from 10 to 15 in Session 159 (6 sessions ago).
+Every other major word bank has been expanded more recently or was already at 20:
+ECHOES (20), TIMES_OF_DAY (20), SEASONS (20), SIMILES (20), LEGENDS (20).
+PERSONIFICATIONS (15) is now the only bank at 15 alongside METAPHORS' former count.
+The "Next likely steps" from Session 165 explicitly called for this: "Expand
+metaphor word bank further (more phrases, more varied constructions)." Metaphors
+were the first item in the list.
+
+With metaphors now enabled by default in all 5 presets (count=2, prob=0.85-0.95
+for rich presets), a larger bank reduces repetition in preset output, especially
+since metaphor_count=3 is supported.
+
+The 5 new phrases each cover a figurative niche not represented in the existing 15:
+- **Timeless bridge**: "The {display} is a {adj} bridge of {color} {element},
+  arching {adverb} between what is remembered and what is lost." — the landscape
+  as a connection across the gulf of forgetting. Distinct from "threshold"
+  (passage/transition) and "argument" (conflict/tension). Indicator:
+  `"arching between"`.
+- **Cyclical tide**: "The {display} is a {adj} tide of {color} {element}, pulled
+  {adverb} by a forgotten gravity." — the landscape as a cyclical force drawn
+  by an invisible pull. Distinct from "heart" (pulse/vitality) and "anchor"
+  (steadiness/resistance). Indicator: `"forgotten gravity"`.
+- **Cultivated garden**: "The {display} is a {adj} garden of {color} {element},
+  cultivated {adverb} by an unseen hand." — the landscape as tended by invisible
+  forces. Distinct from "forge" (active creation/hammering) and "feast"
+  (abundance/consumption). Indicator: `"unseen hand"`.
+- **Concealing veil**: "The {display} is a {adj} veil of {color} {element},
+  concealing {adverb} a world within a world." — the landscape as a hiding veil
+  over nested reality. Distinct from "mirror" (reflection/revelation) and
+  "threshold" (passage). Indicator: `"world within a world"`.
+- **Sealed tomb**: "The {display} is a {adj} tomb of {color} {element}, sealed
+  {adverb} around the silence of ages." — the landscape as a container of ancient
+  silence. Distinct from "wound" (injury/bleeding) and "armor" (protection).
+  Indicator: `"silence of ages"`.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only the METAPHORS list and METAPHOR_INDICATORS were updated.
+- **No seed-breaking**: Adding phrases to METAPHORS doesn't change the random
+  sequence — `rng.choice(METAPHORS)` picks from a larger pool but the choice
+  function is unchanged. Only the rendered output content changes (new phrases
+  appear in the selection pool).
+- **No test logic changes**: All metaphor tests use dynamic checks over
+  `METAPHOR_INDICATORS` and `len(METAPHORS)`. Only the indicator list was
+  extended; test logic is unchanged.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126 landscape)
+  — same as Session 165. Subtests unchanged at 393.
+- **METAPHORS now at 20 phrases**, joining the top tier alongside ECHOES (20),
+  TIMES_OF_DAY (20), SEASONS (20), SIMILES (20), and LEGENDS (20).
+  PERSONIFICATIONS (15) remains at 15 and is now the only bank below 20.
+- **Fulfills "Next likely steps" from Session 165**: Metaphor word bank expansion
+  was explicitly called out as the first item.
+
 ## 2026-07-19 — Expanded SIMILES Word Bank (20 phrases) (Session 165)
 
 ### What

@@ -198,6 +198,11 @@ METAPHOR_INDICATORS = [
     "forge where",
     "anchor of",
     "feast of",
+    "arching between",
+    "forgotten gravity",
+    "unseen hand",
+    "world within a world",
+    "silence of ages",
 ]
 
 PERSONIFICATION_INDICATORS = [
