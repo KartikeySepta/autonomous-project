@@ -324,6 +324,11 @@ WISTFUL = [
     "The world outside the {display} feels diminished, as though you have seen something the rest of the world has not.",
     "You left a version of yourself behind in the {display}, one that still walks its paths in silence.",
     "In quiet moments you find yourself back in the {display}, as if it exists just behind your eyelids.",
+    "The {display} holds the stories you whispered into its silence, keeping them safe long after you have gone.",
+    "Every place you visit after the {display} feels like a copy, a pale imitation of what you have seen.",
+    "The {display} feels like a story you arrived too late to hear the beginning of, and had to leave before the end.",
+    "No matter where you go, the {display} remains the fixed point against which all other places are measured.",
+    "The {display} belongs to a time that is passing, and you were fortunate to have seen it before it faded completely.",
 ]
 
 # Weight tiers for word selection — common words appear more often, rare words less so

@@ -4381,6 +4381,11 @@ class TestPresets(unittest.TestCase):
                     "the rest of the world has not",
                     "version of yourself behind",
                     "just behind your eyelids",
+                    "whispered into its silence",
+                    "pale imitation",
+                    "too late to hear",
+                    "fixed point against",
+                    "before it faded",
                 ]
                 has_wistful = any(ind in result for ind in wistful_indicators)
                 self.assertTrue(has_wistful,
@@ -5552,6 +5557,11 @@ class TestWistful(unittest.TestCase):
         "the rest of the world has not",
         "version of yourself behind",
         "just behind your eyelids",
+        "whispered into its silence",
+        "pale imitation",
+        "too late to hear",
+        "fixed point against",
+        "before it faded",
     ]
 
     def test_wistful_disabled_by_default(self):
@@ -5915,6 +5925,11 @@ WISTFUL_INDICATORS_PHRASES = [
     "the rest of the world has not",
     "version of yourself behind",
     "just behind your eyelids",
+    "whispered into its silence",
+    "pale imitation",
+    "too late to hear",
+    "fixed point against",
+    "before it faded",
 ]
 
 

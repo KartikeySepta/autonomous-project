@@ -1,5 +1,80 @@
 # Decisions
 
+## 2026-07-19 — Expanded WISTFUL Word Bank (20 phrases) (Session 168)
+
+### What
+Added 5 new curated wistful phrases to the WISTFUL bank, expanding it from 15 to 20
+phrases. The new phrases cover keeper of secrets, benchmark imitation, interrupted
+story, fixed reference point, and fading glimpse — emotional/reflective niches absent
+from the original 15.
+
+### Why
+The WISTFUL bank was expanded from 10 to 15 in Session 162 (5 sessions ago). Every
+other major word bank was already at 20 phrases: ECHOES (20), TIMES_OF_DAY (20),
+SEASONS (20), LEGENDS (20), SIMILES (20), METAPHORS (20), PERSONIFICATIONS (20).
+WISTFUL was the only bank below 20 — now all major word banks are at 20 phrases.
+
+The "Next likely steps" from Session 167 explicitly called for this: "Expand wistful
+word bank further (more phrases, more varied constructions)." Wistful was the second
+item in the list (after simile, which is already at 20).
+
+With wistful now enabled by default in all 5 presets, a larger bank reduces repetition
+in preset output, especially since wistful_count is not independently controllable
+(wistful is a boolean, not multi-phrase) — the diversity comes from random selection.
+
+The 5 new phrases each cover an emotional/reflective niche not represented in the
+existing 15:
+- **Keeper of secrets**: "The {display} holds the stories you whispered into its
+  silence, keeping them safe long after you have gone." — the landscape as a confidant
+  that holds your whispered secrets. Distinct from "carry a piece" (carrying a fragment)
+  and "settled into your bones" (the landscape carried within you). This is about the
+  landscape keeping your secrets, not you carrying the landscape. Indicator:
+  `"whispered into its silence"`.
+- **Benchmark imitation**: "Every place you visit after the {display} feels like a
+  copy, a pale imitation of what you have seen." — the landscape as the irreplaceable
+  original against which all else is judged. Distinct from "world outside feels
+  diminished" (the world feels smaller/lesser) which is about scale and significance
+  rather than authenticity and originality. Indicator: `"pale imitation"`.
+- **Interrupted story**: "The {display} feels like a story you arrived too late to
+  hear the beginning of, and had to leave before the end." — the landscape as a
+  narrative the traveler entered mid-stride and left before resolution. Distinct from
+  "version of yourself behind" (a doppelgänger left behind) and "memory of a place you
+  have always known" (familiarity, not narrative). Indicator: `"too late to hear"`.
+- **Fixed reference point**: "No matter where you go, the {display} remains the fixed
+  point against which all other places are measured." — the landscape as an unchanging
+  anchor in memory, the Cartesian origin of all future comparisons. Distinct from
+  "settled into your bones" (carried within) and "remains in your thoughts" (cognitive
+  lingering). This is about measurement and comparison, not presence. Indicator:
+  `"fixed point against"`.
+- **Fading glimpse**: "The {display} belongs to a time that is passing, and you were
+  fortunate to have seen it before it faded completely." — the landscape as a dying
+  entity glimpsed at the end of its existence. Distinct from "fortunate to have walked"
+  (gratitude for the visit) and "words will never be enough" (ineffability). This adds
+  the temporal dimension of the landscape itself being mortal. Indicator:
+  `"before it faded"`.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags, or any
+  logic. Only the WISTFUL list, WISTFUL_INDICATORS, WISTFUL_INDICATORS_PHRASES, and the
+  hardcoded list in TestPresets were updated.
+- **No seed-breaking**: Adding phrases to WISTFUL doesn't change the random sequence
+  — `rng.choice(WISTFUL)` picks from a larger pool but the choice function is unchanged.
+  Only the rendered output content changes (new phrases appear in the selection pool).
+- **No test logic changes**: All wistful tests use dynamic checks over
+  `WISTFUL_INDICATORS` and `WISTFUL_INDICATORS_PHRASES`. Only the indicator lists were
+  extended; test logic is unchanged.
+- **One hardcoded list updated**: `TestPresets.test_preset_with_wistful_produces_wistful_output`
+  uses a locally-defined hardcoded indicator list rather than the class-level or
+  module-level constants. This list was updated manually — same pattern as Session 162.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126 landscape) — same as
+  Session 167. Subtests unchanged at 393.
+- **All major word banks now at 20 phrases**: WISTFUL (20) joins the top tier alongside
+  ECHOES (20), TIMES_OF_DAY (20), SEASONS (20), LEGENDS (20), SIMILES (20), METAPHORS (20),
+  and PERSONIFICATIONS (20). No major bank remains below 20.
+- **Fulfills "Next likely steps" from Session 167**: Wistful word bank expansion was
+  explicitly called out as the second item. With this session, the trajectory of bringing
+  every major bank from 15 to 20 is complete across all 8 major word banks.
+
 ## 2026-07-19 — Expanded PERSONIFICATIONS Word Bank (20 phrases) (Session 167)
 
 ### What

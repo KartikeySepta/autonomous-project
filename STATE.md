@@ -2,6 +2,64 @@
 
 ## 2026-07-19
 
+### What was done (Session 168)
+- **Expanded WISTFUL word bank from 15 to 20 phrases** — 5 new wistful constructions
+  added, covering emotional/reflective niches not represented in the existing 15:
+  - `"The {display} holds the stories you whispered into its silence, keeping them safe
+    long after you have gone."` — the landscape as a confidant/keeper of secrets,
+    holding whispered confessions in trust. Distinct from "carry a piece" (which is
+    about carrying a fragment with you) and "settled into your bones" (internalized
+    presence). Indicator: `"whispered into its silence"`.
+  - `"Every place you visit after the {display} feels like a copy, a pale imitation of
+    what you have seen."` — the landscape as the original benchmark against which
+    everything else is judged and found wanting. Distinct from "world outside feels
+    diminished" (which is about the world being lesser, not an imitation/copy).
+    Indicator: `"pale imitation"`.
+  - `"The {display} feels like a story you arrived too late to hear the beginning of,
+    and had to leave before the end."` — the landscape as an interrupted narrative,
+    a story you arrived in the middle of and missed both start and conclusion.
+    Distinct from "version of yourself behind" (a self left behind) and "wish you could
+    stay longer" (desire to remain). Indicator: `"too late to hear"`.
+  - `"No matter where you go, the {display} remains the fixed point against which all
+    other places are measured."` — the landscape as an unchanging anchor of memory,
+    the reference point against which all future places are compared. Distinct from
+    "settled into your bones" (carried within you) and "carry a piece" (fragment
+    carried). Indicator: `"fixed point against"`.
+  - `"The {display} belongs to a time that is passing, and you were fortunate to have
+    seen it before it faded completely."` — the landscape as a bygone era glimpsed at
+    the final moment of its existence. Distinct from "fortunate to have walked" (gratitude
+    for having visited regardless of time) and "part of you will always remain" (part
+    stays behind). Indicator: `"before it faded"`.
+- **Added 5 new indicators to `WISTFUL_INDICATORS`** in test_landscape.py:
+  `"whispered into its silence"`, `"pale imitation"`, `"too late to hear"`,
+  `"fixed point against"`, `"before it faded"` — each is a unique invariant substring
+  for dynamic test matching.
+- **Added same 5 indicators to `WISTFUL_INDICATORS_PHRASES`** — consistent with the
+  pattern; all new indicators are safe for `--no-wistful` suppression tests.
+- **Updated hardcoded `wistful_indicators`** in TestPresets
+  `test_preset_with_wistful_produces_wistful_output` — this test used a locally-defined
+  list rather than the class or module-level constants, requiring a manual update.
+- No code, CLI, or generation logic changes — data-only expansion plus indicator
+  additions. All existing wistful tests use dynamic checks over `WISTFUL_INDICATORS`
+  or `WISTFUL_INDICATORS_PHRASES`, requiring no test modifications.
+- Each phrase is curated to fit a distinct wistful niche: keeper of secrets, benchmark
+  imitation, interrupted story, fixed reference point, fading glimpse. None overlap with
+  the existing 15 phrases.
+- This directly fulfills the second "Next likely step" from Session 167: "Expand wistful
+  word bank further (more phrases, more varied constructions)." WISTFUL was last expanded
+  in Session 162 (5 sessions ago) when it grew from 10 to 15. Every other major word bank
+  was already at 20 phrases.
+- Tests unchanged: still 1126 landscape tests pass (18 todo unchanged).
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand simile word bank further (more phrases, more varied constructions)
+- Expand other word banks (soundscapes, wildlife, perspectives) with more phrases
+
+## 2026-07-19
+
 ### What was done (Session 166)
 - **Expanded METAPHORS word bank from 15 to 20 phrases** — 5 new metaphor constructions
   added, covering figurative identity niches not represented in the original 15:
