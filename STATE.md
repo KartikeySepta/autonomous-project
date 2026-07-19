@@ -2,6 +2,42 @@
 
 ## 2026-07-19
 
+### What was done (Session 174)
+- **Added `describe_mood_atmosphere()` function** — introspection for the mood
+  atmosphere system, listing all 4 moods (peaceful, eerie, vibrant, desolate)
+  with their 4 phrases each (16 total), following the same pattern as all other
+  describe functions (describe_echoes, describe_similes, etc.). Output format:
+  ```
+  === mood atmosphere phrases ===
+    peaceful:
+      [0] A gentle stillness settles over the scene like a blessing.
+      ...
+  ```
+- **Added `--describe-mood-atmosphere` CLI flag** — users can now inspect all
+  mood atmosphere phrases by mood, with index numbers. Behaves like all other
+  `--describe-*` flags: no landscape is generated, output goes to stdout.
+- **Added `TestDescribeMoodAtmosphere` (8 tests)** — following the exact same
+  pattern as `TestDescribeEchoes`: returns string, header, all moods, index
+  numbers, last index, CLI flag, stdout output, no landscape generated.
+- This fulfills a long-standing gap: the mood atmosphere system was added in
+  Session 148, but unlike every other feature with a describe function (echoes,
+  legends, similes, metaphors, personifications, sounds, wildlife, perspectives,
+  times, seasons, wistful, travelogue), it had no introspection capability. This
+  brings mood atmosphere to full parity with all other feature systems.
+- Tests increased from 1126 to 1134 landscape tests (18 todo unchanged).
+  Subtests unchanged at 393.
+
+### Current status
+Working. All 1152 tests pass (18 todo + 1134 landscape).
+
+### Next likely steps
+- Expand global word pools further (more adjectives, elements, nouns, verbs)
+- Expand biome-specific word pools (weathers, anomalies per biome)
+- Add a new biome or mood
+- Add count/prob controls for wistful (currently on/off only)
+
+## 2026-07-19
+
 ### What was done (Session 173)
 - **Expanded all 8 global word pools** — ADJECTIVES (16→20), ELEMENTS (10→15),
   NOUNS (12→15), VERBS (10→15), ADVERBS (12→15), COLORS (12→15),

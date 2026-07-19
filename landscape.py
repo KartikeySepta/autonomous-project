@@ -816,6 +816,16 @@ def describe_mood(mood):
     return "\n".join(lines)
 
 
+def describe_mood_atmosphere():
+    """Return a string describing all available mood atmosphere phrases per mood."""
+    lines = ["=== mood atmosphere phrases ==="]
+    for mood, phrases in MOOD_ATMOSPHERE.items():
+        lines.append(f"  {mood}:")
+        for i, phrase in enumerate(phrases):
+            lines.append(f"    [{i}] {phrase}")
+    return "\n".join(lines)
+
+
 def describe_global():
     """Return a string describing all global word pools with weight tiers."""
     categories = {
@@ -1731,6 +1741,10 @@ def main():
         help="Describe all available seasonal phrases",
     )
     parser.add_argument(
+        "--describe-mood-atmosphere", action="store_true",
+        help="Show all available mood atmosphere phrases per mood",
+    )
+    parser.add_argument(
         "--describe-presets", action="store_true",
         help="Show all available presets with their settings",
     )
@@ -2301,6 +2315,9 @@ def main():
         return
     if args.describe_personifications:
         print(describe_personifications())
+        return
+    if args.describe_mood_atmosphere:
+        print(describe_mood_atmosphere())
         return
     if args.describe_presets:
         print(describe_presets())

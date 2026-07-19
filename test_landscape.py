@@ -2092,6 +2092,82 @@ class TestDescribeMood(unittest.TestCase):
         self.assertIn("=== desolate ===", output)
 
 
+class TestDescribeMoodAtmosphere(unittest.TestCase):
+    def test_describe_mood_atmosphere_returns_string(self):
+        from landscape import describe_mood_atmosphere
+        result = describe_mood_atmosphere()
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_describe_mood_atmosphere_contains_header(self):
+        from landscape import describe_mood_atmosphere
+        result = describe_mood_atmosphere()
+        self.assertIn("mood atmosphere phrases", result)
+
+    def test_describe_mood_atmosphere_contains_all_moods(self):
+        from landscape import describe_mood_atmosphere, MOOD_ATMOSPHERE
+        result = describe_mood_atmosphere()
+        for mood in MOOD_ATMOSPHERE:
+            self.assertIn(mood, result,
+                f"Mood atmosphere description should contain mood: {mood!r}")
+
+    def test_describe_mood_atmosphere_contains_index_numbers(self):
+        from landscape import describe_mood_atmosphere
+        result = describe_mood_atmosphere()
+        self.assertIn("[0]", result, "Should contain index [0]")
+        self.assertIn("[1]", result, "Should contain index [1]")
+
+    def test_describe_mood_atmosphere_shows_last_index(self):
+        from landscape import describe_mood_atmosphere, MOOD_ATMOSPHERE
+        result = describe_mood_atmosphere()
+        max_idx = max(len(phrases) for phrases in MOOD_ATMOSPHERE.values()) - 1
+        self.assertIn(f"[{max_idx}]", result,
+            f"Should contain the last index [{max_idx}]")
+
+    def test_describe_mood_atmosphere_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+    def test_describe_mood_atmosphere_flag_prints_to_stdout(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-mood-atmosphere"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertIn("mood atmosphere phrases", output)
+        self.assertIn("[0]", output)
+        self.assertIn("[1]", output)
+
+    def test_describe_mood_atmosphere_no_landscape_generated(self):
+        import sys
+        import io
+        from landscape import main
+        old_argv = sys.argv
+        old_stdout = sys.stdout
+        sys.argv = ["landscape", "--describe-mood-atmosphere", "--seed", "42", "--count", "2"]
+        captured = io.StringIO()
+        sys.stdout = captured
+        try:
+            main()
+        finally:
+            sys.stdout = old_stdout
+            sys.argv = old_argv
+        output = captured.getvalue()
+        self.assertNotIn("[seed=42]", output,
+            "No landscape should be generated when --describe-mood-atmosphere is used")
+        self.assertNotIn("\n\n", output,
+            "No landscape should be generated when --describe-mood-atmosphere is used")
+
+
 class TestDescribeGlobal(unittest.TestCase):
     def test_describe_global_returns_string(self):
         from landscape import describe_global

@@ -1,5 +1,36 @@
 # Decisions
 
+## 2026-07-19 — Added describe_mood_atmosphere() Introspection (Session 174)
+
+### What
+Added `describe_mood_atmosphere()` function listing all mood atmosphere phrases
+by mood, `--describe-mood-atmosphere` CLI flag, and 8 new tests. The mood
+atmosphere system (Session 148) was the only feature system without a describe
+function — every other feature (echoes, legends, similes, metaphors,
+personifications, sounds, wildlife, perspectives, times, seasons, wistful,
+travelogue) already had one.
+
+### Why
+The mood atmosphere system was added in Session 148 with a full test suite,
+count/prob controls (Session 150), preset integration (Sessions 149/151), and
+a `--no-mood-atmosphere` flag (Session 152). But it was missing the
+introspection describe function that every other feature system provides.
+
+This is primarily a developer affordance and symmetry fix: users can now
+inspect available mood atmosphere phrases per mood without reading source
+code, and the API is consistent with every other feature system.
+
+### Tradeoffs
+- **Follows existing pattern exactly**: Same output format as `describe_echoes()`
+  but organized by mood (since MOOD_ATMOSPHERE is a dict keyed by mood rather
+  than a flat list). Each mood gets its own section with indexed phrases.
+- **No seed-breaking**: Adding a describe function doesn't change any generation
+  logic or CLI defaults. Output for any existing invocation is identical.
+- **Test count +8**: 1134 landscape tests (up from 1126), subtests unchanged
+  at 393. All existing tests pass unchanged.
+- **Fulfills symmetry gap**: Every feature system now has its own describe
+  function. No gaps remain for introspection/discovery.
+
 ## 2026-07-19 — Expanded Global Word Pools (Session 173)
 
 ### What
