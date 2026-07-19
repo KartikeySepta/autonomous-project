@@ -208,6 +208,11 @@ WILDLIFE = [
     "A {adj} bird of prey circles {adverb} overhead, a dark {color} silhouette against the {element}.",
     "Beneath the {display}, {adj} things build {adverb}, weaving {color} {element} into their hidden structures.",
     "The {adverb} hum of {color} wings rises from the {adj} depths of the {display} like a living {element}.",
+    "Bats wheel {adverb} through the {adj} twilight of the {display}, {color} shapes against the fading {element}.",
+    "A {adj} snake coils {adverb} among the {color} {element} of the {display}, tasting the air with a forked tongue.",
+    "Fish leap {adverb} from the {adj} waters of the {display}, {color} flashes arcing through the {element}.",
+    "Crows roost {adverb} in the {adj} branches of the {display}, their {color} eyes tracking your every move.",
+    "{adj} moths flutter {adverb} around the {color} {element} of the {display}, drawn by a light only they can see.",
 ]
 
 PERSPECTIVES = [

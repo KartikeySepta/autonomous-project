@@ -91,6 +91,11 @@ WILDLIFE_INDICATORS = [
     "bird of prey circles",
     "hidden structures",
     "wings rises from",
+    "Bats wheel",
+    "forked tongue",
+    "Fish leap",
+    "Crows roost",
+    "moths flutter",
 ]
 
 SOUND_INDICATORS = [

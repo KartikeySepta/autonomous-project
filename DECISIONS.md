@@ -1,5 +1,80 @@
 # Decisions
 
+## 2026-07-19 — Expanded WILDLIFE Word Bank (20 phrases) (Session 170)
+
+### What
+Added 5 new curated wildlife phrases to the WILDLIFE bank, expanding it from 15 to 20
+phrases. The new phrases cover nocturnal flyers (bats), ground-level reptiles (snake),
+aquatic leaping (fish), scavenger sentinels (crows), and delicate light-seeking insects
+(moths) — wildlife niches absent from the existing 15.
+
+### Why
+The WILDLIFE bank was expanded from 10 to 15 in Session 143 (26 sessions ago). Every
+other major word bank was already at 20 phrases: ECHOES (20), TIMES_OF_DAY (20),
+SEASONS (20), LEGENDS (20), SIMILES (20), METAPHORS (20), PERSONIFICATIONS (20),
+SOUNDSCAPES (20), WISTFUL (20). Only PERSPECTIVES (15) and TRAVELOGUE (4 prefixes,
+4 suffixes) remain below 20.
+
+The "Next likely steps" from Session 169 explicitly called for this: "Expand wildlife
+word bank (more phrases, more varied constructions)." Wildlife was the first item in
+the list.
+
+With wildlife enabled by default in 4 of 5 presets (nightfall, pastoral, sublime,
+dreamscape) with count=1-2 and prob=0.6-0.95, a larger bank reduces repetition in
+preset output.
+
+The 5 new phrases each cover a wildlife niche not represented in the existing 15:
+- **Nocturnal flyers**: "Bats wheel {adverb} through the {adj} twilight of the
+  {display}, {color} shapes against the fading {element}." — bats as elusive,
+  erratic silhouettes at dusk. Distinct from "bird of prey circles" (diurnal hunter
+  in clear view) and "small birds flit between branches" (daytime, small-scale).
+  This is about silent, nocturnal, echolocation-based flight at twilight. Indicator:
+  `"Bats wheel"`.
+- **Ground-level reptile**: "A {adj} snake coils {adverb} among the {color} {element}
+  of the {display}, tasting the air with a forked tongue." — a reptile in ambush
+  stillness, sensing the world chemically. No existing wildlife phrase describes a
+  reptile or any cold-blooded creature. Distinct from "something hunts at the edge"
+  (mammalian predator actively tracking) and "something small and chitters" (noisy,
+  visible). This adds a reptile register entirely absent from the bank. Indicator:
+  `"forked tongue"`.
+- **Aquatic leaping**: "Fish leap {adverb} from the {adj} waters of the {display},
+  {color} flashes arcing through the {element}." — aquatic life breaking the surface
+  in brief arcs of motion. No existing wildlife phrase describes any water-dwelling
+  creature. Distinct from "Fireflies drift" (airborne insects) and "hum of wings
+  rises" (collective buzz). This is about individual aquatic animals in momentary
+  visibility. Indicator: `"Fish leap"`.
+- **Scavenger sentinels**: "Crows roost {adverb} in the {adj} branches of the
+  {display}, their {color} eyes tracking your every move." — carrion birds as
+  watchful observers, their collective attention on the traveler. Distinct from
+  "bird of prey circles overhead" (active solitary hunting) and "eyes watch from
+  the shadows" (unidentified watcher). This adds a recognized scavenger species
+  observing rather than hunting. Indicator: `"Crows roost"`.
+- **Delicate light-seeking insects**: "{adj} moths flutter {adverb} around the
+  {color} {element} of the {display}, drawn by a light only they can see." — moths
+  as silent, delicate creatures drawn to invisible light. Distinct from "Fireflies
+  drift" (which produce their own light) and "hum of wings rises" (collective,
+  audible swarm). This is about individual insects drawn to an unseen source.
+  Indicator: `"moths flutter"`.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags, or any
+  logic. Only the WILDLIFE list and WILDLIFE_INDICATORS were updated.
+- **No seed-breaking**: Adding phrases to WILDLIFE doesn't change the random sequence
+  — `rng.choice(WILDLIFE)` picks from a larger pool but the choice function is unchanged.
+  Only the rendered output content changes (new phrases appear in the selection pool).
+- **No test logic changes**: All wildlife tests use dynamic checks over
+  `WILDLIFE_INDICATORS` and `len(WILDLIFE)`. Only the indicator list was extended;
+  test logic is unchanged.
+- **Test count unchanged**: 1144 landscape tests (18 todo + 1126 landscape) — same as
+  Session 169. Subtests unchanged at 393.
+- **WILDLIFE now at 20 phrases**, joining the top tier alongside ECHOES (20),
+  TIMES_OF_DAY (20), SEASONS (20), LEGENDS (20), SIMILES (20), METAPHORS (20),
+  PERSONIFICATIONS (20), SOUNDSCAPES (20), and WISTFUL (20). Only PERSPECTIVES (15)
+  and TRAVELOGUE (4 prefixes, 4 suffixes) remain below 20.
+- **Fulfills "Next likely steps" from Session 169**: Wildlife word bank expansion
+  was explicitly called out as the first item. With this session, every major word
+  bank except PERSPECTIVES (15) is at 20 phrases.
+
 ## 2026-07-19 — Expanded SOUNDSCAPES Word Bank (20 phrases) (Session 169)
 
 ### What

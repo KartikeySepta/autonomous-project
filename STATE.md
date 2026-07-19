@@ -2,6 +2,62 @@
 
 ## 2026-07-19
 
+### What was done (Session 170)
+- **Expanded WILDLIFE word bank from 15 to 20 phrases** — 5 new wildlife
+  constructions added, covering wildlife niches not represented in the existing 15:
+  - `"Bats wheel {adverb} through the {adj} twilight of the {display}, {color} shapes
+    against the fading {element}."` — nocturnal flyers wheeling through twilight, bats
+    as elusive silhouettes against the fading sky. Distinct from "bird of prey circles"
+    (diurnal hunter, clear view) and "small birds flit" (daytime, small-scale). This is
+    about silent, erratic flight at dusk. Indicator: `"Bats wheel"`.
+  - `"A {adj} snake coils {adverb} among the {color} {element} of the {display},
+    tasting the air with a forked tongue."` — a reptile coiled in stillness, sensing
+    the world through its tongue. No existing wildlife phrase describes a reptile or
+    ground-level predator lying in ambush. Distinct from "something hunts at the edge"
+    (mammalian predator tracking prey) and "something small chitters" (noisy, visible).
+    Indicator: `"forked tongue"`.
+  - `"Fish leap {adverb} from the {adj} waters of the {display}, {color} flashes
+    arcing through the {element}."` — aquatic life breaking the surface, brief
+    silver/gold arcs of motion. No existing wildlife phrase describes any aquatic
+    creature. Distinct from "Fireflies drift" (airborne insects, not water) and
+    "hum of wings rises" (collective buzz, not individual leaping). Indicator:
+    `"Fish leap"`.
+  - `"Crows roost {adverb} in the {adj} branches of the {display}, their {color} eyes
+    tracking your every move."` — carrion birds as watchful sentinels, their collective
+    gaze following the traveler. Distinct from "bird of prey circles" (active hunting,
+    solitary) and "eyes watch from the shadows" (unidentified watcher, not specifically
+    avian). This is about recognized scavenger birds observing you. Indicator:
+    `"Crows roost"`.
+  - `"{adj} moths flutter {adverb} around the {color} {element} of the {display},
+    drawn by a light only they can see."` — delicate moths drawn to an invisible light,
+    silent and ethereal. Distinct from "Fireflies drift" (which glow with their own
+    light) and "hum of wings" (collective swarm sound). This is about silent,
+    individual, light-seeking insects. Indicator: `"moths flutter"`.
+- **Added 5 new indicators to `WILDLIFE_INDICATORS`** in test_landscape.py:
+  `"Bats wheel"`, `"forked tongue"`, `"Fish leap"`, `"Crows roost"`,
+  `"moths flutter"` — each is a unique invariant substring for dynamic test matching.
+- No code, CLI, or generation logic changes — data-only expansion plus indicator
+  additions. All existing wildlife tests use dynamic checks over `WILDLIFE_INDICATORS`
+  and `len(WILDLIFE)`, requiring no test modifications.
+- Each phrase is curated to fit a distinct wildlife niche: nocturnal flyers,
+  ground-level reptile, aquatic leaping, scavenger sentinels, delicate light-seeking
+  insects. None overlap with the existing 15 phrases.
+- This directly fulfills the first "Next likely step" from Session 169: "Expand
+  wildlife word bank (more phrases, more varied constructions)." WILDLIFE was the
+  most overdue bank alongside PERSPECTIVES — last expanded in Session 143 (26 sessions
+  ago) when it grew from 10 to 15. All major word banks except PERSPECTIVES (15) are
+  now at 20 phrases.
+- Tests unchanged: still 1126 landscape tests pass (18 todo unchanged).
+
+### Current status
+Working. All 1144 tests pass (18 todo + 1126 landscape).
+
+### Next likely steps
+- Expand perspectives word bank (more phrases, more varied constructions)
+- Expand travelogue word bank (more prefix/suffix pairs, more narrative styles)
+
+## 2026-07-19
+
 ### What was done (Session 169)
 - **Expanded SOUNDSCAPES word bank from 17 to 20 phrases** — 3 new soundscape
   constructions added, covering sonic niches not represented in the existing 17:
