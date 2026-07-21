@@ -2,6 +2,59 @@
 
 ## 2026-07-21
 
+### What was done (Session 198)
+- **Added "fallow" preset** — the 12th preset and the first to use the peaceful+desolate
+  mood combination. Until now, no preset combined these two moods: pastoral uses pure
+  peaceful, wasteland uses pure desolate. The new preset fills a quiet-desolation niche
+  between them, providing a landscape that is both calm and barren — a "fallow" for the
+  peace that comes after loss, when emptiness has become rest.
+- **"fallow" preset design**:
+  - **Mood**: `["peaceful", "desolate"]` — calm AND barren, the register of quiet
+    desolation; acceptance rather than grief.
+  - **Weather**: moderate (1, prob=0.7) — peaceful's warm golden light and gentle
+    breezes alongside desolate's harsh wind and pale sun without warmth; the weather
+    reflects the dual nature without dominating.
+  - **Anomalies**: subtle (1, prob=0.5) — fallow is about stillness, not surreal
+    disruption; anomalies are rare and quiet, half-noticed.
+  - **Echoes**: moderate (1, prob=0.7) — the landscape remembers what it once was,
+    but without grief; memory as quiet presence, not mourning.
+  - **Wistful**: moderate (1, prob=0.7) — quiet, accepting wistfulness; not the
+    passionate yearning of elegy or lament, but a gentle letting-go.
+  - **Mood atmosphere**: moderate (1, prob=0.7) — both peaceful's contentment-at-rest
+    and desolate's silence-as-shape-of-loss, creating a register of stillness that has
+    accepted its own emptiness.
+  - **Sound**: low (1, prob=0.4) — mostly silent; sounds that do appear are sparse
+    and subdued, not assertive.
+  - **Wildlife**: sparse (1, prob=0.2) — very little life; the land is resting, not
+    teeming. Lowest wildlife probability of any preset.
+  - **Legends**: low (1, prob=0.3) — stories about leaving, about things that used to
+    be here; folkloric tales of abandonment and quiet departure.
+  - **Simile/Metaphor/Personification**: low descending (0.5/0.4/0.3) — spare language
+    for a spare landscape; simile most natural for comparison-to-what-was, personification
+    rarest to avoid making emptiness feel too intentional.
+  - **Time of day/Season/Perspective**: low (0.5 each) — gentle, minimal framing;
+    the landscape doesn't need context, it simply is.
+  - **Travelogue**: enabled — journal framing suits the introspective, accepting
+    register of a landscape at peace with its own emptiness.
+- **Updated hardcoded preset lists**: `test_preset_produces_valid_output` and
+  `test_preset_is_deterministic` now include `"fallow"` in their iteration lists.
+- **No code logic changes**: The preset system dynamically reads `PRESETS` dict keys for
+  `--preset` choices and all dynamic tests use `for name in PRESETS`, so the preset is
+  auto-available without any other code modifications. Only the two tests with hardcoded
+  preset name lists needed manual updates.
+- **Tests**: 1187 pass (730 subtests) — same test count as Session 197, with 47 additional
+  subtests (730 vs 683) from dynamic preset iteration tests picking up the new preset.
+
+### Current status
+Working. All 1187 tests pass (18 todo + 1187 landscape).
+
+### Next likely steps
+- Add more presets for diverse generation experiences (e.g. eerie+desolate, peaceful+eerie)
+- Add a new biome or mood overlay
+- Add biome-biased presets or biome-weight customization
+
+## 2026-07-21
+
 ### What was done (Session 197)
 - **Added "elegy" preset** — the 11th preset and the first to use the vibrant+melancholy
   mood combination (explicitly called out as the next step in Sessions 195–196). Until now,

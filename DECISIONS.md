@@ -1,5 +1,88 @@
 # Decisions
 
+## 2026-07-21 — Added "fallow" Preset (Session 198)
+
+### What
+Added a 12th preset "fallow" — the first to combine peaceful and desolate moods
+(not used together before). The preset configures peaceful+desolate with moderate
+weather (1, 0.7), subtle anomalies (1, 0.5), moderate echoes (1, 0.7), moderate
+wistful (1, 0.7), moderate mood atmosphere (1, 0.7), low sound (1, 0.4), sparse
+wildlife (1, 0.2), low legends (1, 0.3), and descending poetic device probabilities
+(simile 0.5 → metaphor 0.4 → personification 0.3).
+
+### Why
+The peaceful+desolate combination was explicitly called out as the next step in
+Sessions 196–197: "Add more presets for diverse generation experiences (e.g.
+peaceful+desolate, eerie+desolate)." No existing preset combined these two moods —
+pastoral uses pure peaceful, wasteland uses pure desolate. The combination creates
+a "quiet desolation" register: calm acceptance of emptiness, the peace that comes
+after loss.
+
+I chose the name "fallow" because:
+1. It evokes a field left unseeded, resting — the register of stillness and non-productivity.
+2. It immediately sets the tonal expectation: not barren in a harsh way, but resting,
+   fallow, holding potential in quiet emptiness.
+3. It sits between "pastoral" (pure peaceful, life-abundant calm) and "wasteland"
+   (pure desolate, hopeless emptiness) — a space where emptiness has been accepted
+   and has become restful.
+4. Unlike "pastoral" (which is gentle life) and "wasteland" (which is harsh death),
+   "fallow" occupies a register of quiet acceptance — the land is not dead, it is
+   resting; not hopeless, but at peace.
+
+### Preset design rationale
+- **Weather (1, 0.7)**: Moderate — peaceful's warm golden light and gentle breezes
+  alongside desolate's harsh wind and pale sun without warmth. The weather reflects
+  the dual nature of the landscape without dominating it.
+- **Anomalies (1, 0.5)**: Subtle — fallow is about stillness and acceptance, not
+  surreal disruption. Anomalies appear rarely and quietly, half-noticed at the edge
+  of perception.
+- **Echoes (1, 0.7)**: Moderate — the landscape remembers what it once was, but
+  without grief. Echo phrases about memory, deep time, and the land holding its breath
+  fit the register of a landscape that has made peace with its own emptiness.
+- **Wistful (1, 0.7)**: Moderate — quiet, accepting wistfulness. Not the passionate
+  yearning of elegy (vibrant+melancholy, 0.9) or lament (eerie+melancholy, 0.9), but
+  a gentler, more resigned form of longing.
+- **Mood atmosphere (1, 0.7)**: Moderate — both peaceful's contentment phrases
+  (cosmic rightness, temporal lingering) and desolate's silence-as-loss phrases
+  (silence as shape of absence, forgotten growth) create a register of stillness
+  that has accepted its own emptiness.
+- **Sound (1, 0.4)**: Low — the landscape is mostly silent. Sounds that do appear
+  are sparse and subdued, never assertive. The sonic register is one of hush and
+  distance.
+- **Wildlife (1, 0.2)**: Sparse — the lowest wildlife probability of any preset.
+  A fallow landscape is resting, not teeming. Occasional creatures appear as transient
+  presences, not fixtures of the scene.
+- **Legends (1, 0.3)**: Low — stories about leaving, about things that used to be
+  here. Folkloric tales of abandonment, quiet departure, and the slow reclamation
+  of emptiness by peace.
+- **Simile/Metaphor/Personification (0.5/0.4/0.3)**: Low descending probabilities.
+  Similes (comparison) are the most natural for a landscape defined by what it used
+  to be (empty *like* a held breath). Metaphors (identity) are more assertive.
+  Personifications are rarest to avoid making the emptiness feel like a deliberate act
+  rather than a natural state.
+- **Time/Season/Perspective (0.5 each)**: Low — gentle, minimal framing. The landscape
+  doesn't need temporal or spatial context; it simply is what it is.
+- **All values are low-moderate**: Unlike recent high-intensity presets (elegy, lament,
+  oasis), fallow is deliberately subdued. Every feature probability is at or below 0.7,
+  creating a quiet, sparse generation experience.
+
+### Tradeoffs
+- **No code changes**: Only the `PRESETS` dict and two hardcoded test lists were modified.
+  The preset is auto-available via `--preset` choices (which uses `list(PRESETS.keys())`)
+  and auto-tested by all `for name in PRESETS:` dynamic tests.
+- **No seed-breaking**: Adding a new preset key doesn't change any existing preset's
+  behaviour. Only explicit `--preset fallow` invocations are affected.
+- **No new tests needed**: The dynamic `for name in PRESETS:` subtests in
+  `test_all_presets_*` will automatically generate 47 new subtests for the new preset,
+  verifying it has all required keys with valid ranges. Only
+  `test_preset_produces_valid_output` and `test_preset_is_deterministic` had hardcoded
+  lists that needed updating.
+- **Test count unchanged**: 1187 tests pass — same as Session 197. Subtests grew from
+  683 to 730 (+47) due to dynamic preset iteration.
+- **Fulfills "Next likely steps" from Session 197**: "Add more presets for diverse
+  generation experiences (e.g. peaceful+desolate, eerie+desolate)" — peaceful+desolate
+  was explicitly listed first. This is the first preset to combine these two moods.
+
 ## 2026-07-21 — Added "elegy" Preset (Session 197)
 
 ### What
