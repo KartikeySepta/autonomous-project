@@ -2,26 +2,27 @@
 
 ## 2026-07-21
 
-### What was done (Session 175)
-- **Added `--wistful-count` CLI flag** — users can now specify the number of
-  wistful phrases per landscape (0-3, default: 1), following the exact same
-  pattern as `--echo-count`, `--sound-count`, `--simile-count`, etc.
-- **Added `--wistful-prob` CLI flag** — users can now specify the probability
-  of a wistful phrase appearing per roll (0.0 to 1.0, default: 1.0), following
-  the exact same pattern as `--echo-prob`, `--sound-prob`, `--simile-prob`, etc.
-- **Added preset integration for wistful_count and wistful_prob** — presets can
-  now specify `"wistful_count"` and `"wistful_prob"` keys (matching the pattern
-  of all other feature count/prob pairs). The preset integration gates on the
-  default values (1 and 1.0), so existing presets unchanged.
-- **Wired `args.wistful_count` and `args.wistful_prob`** into the
-  `generate_landscape()` call — the function already accepted these parameters
-  (`wistful_count=1, wistful_prob=1.0` defaults) but they were not exposed via
-  CLI or passed from `main()`.
-- The wistful feature was the last feature system with count/prob controls
-  available in the API but not exposed via CLI. Every other feature (echo,
-  legend, sound, wildlife, perspective, time, season, simile, metaphor,
-  personification, mood_atmosphere) already had both count and prob CLI flags.
-- No code generation or generation logic changes — only CLI and preset plumbing.
+### What was done (Session 176)
+- **Added `wistful_count` and `wistful_prob` to all 5 presets** with varied,
+  meaningful values that enhance each preset's character:
+  - **nightfall**: `wistful_count=2, wistful_prob=0.8` — twice the yearning in
+    a reflective, eerie setting, but not guaranteed each time
+  - **pastoral**: `wistful_count=1, wistful_prob=0.7` — occasional gentle
+    wistfulness, matching the peaceful tone
+  - **sublime**: `wistful_count=2, wistful_prob=0.9` — near-certain double
+    wistfulness befitting the rich, vibrant setting
+  - **wasteland**: `wistful_count=1, wistful_prob=1.0` — always exactly one
+    wistful phrase; desolation always carries a pang
+  - **dreamscape**: `wistful_count=2, wistful_prob=0.85` — dreamlike double
+    wistfulness with a slight chance of suppression
+- Prior to this session, all 5 presets had `"wistful": True` but none specified
+  `wistful_count` or `wistful_prob`, so they all used the defaults (1 and 1.0).
+  Now each preset has distinctive wistful density, matching the varied count/prob
+  values every other feature (echo, legend, sound, wildlife, time, season,
+  perspective, simile, metaphor, personification, mood_atmosphere) already had
+  in their presets.
+- This directly fulfills the final "Next likely step" from Session 175:
+  "Add wistful_count/wistful_prob to presets with varied values."
 - Tests unchanged: still 1134 landscape tests pass (18 todo unchanged).
 
 ### Current status
@@ -31,7 +32,6 @@ Working. All 1152 tests pass (18 todo + 1134 landscape).
 - Expand global word pools further (more adjectives, elements, nouns, verbs)
 - Expand biome-specific word pools (weathers, anomalies per biome)
 - Add a new biome or mood
-- Add wistful_count/wistful_prob to presets with varied values
 
 ## 2026-07-19
 

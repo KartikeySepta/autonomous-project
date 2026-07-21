@@ -1,5 +1,31 @@
 # Decisions
 
+## 2026-07-21 — Added wistful_count/wistful_prob to All 5 Presets (Session 176)
+
+### What
+Added `wistful_count` and `wistful_prob` keys to all 5 presets (nightfall,
+pastoral, sublime, wasteland, dreamscape) with varied, meaningful values.
+
+### Why
+This was the last "Next likely step" from Session 175. Every other feature
+(echo, legend, sound, wildlife, time, season, perspective, simile, metaphor,
+personification, mood_atmosphere) already had count/prob values tailored to
+each preset's character. Wistful was the only feature still using the global
+defaults (count=1, prob=1.0) in all presets — it was effectively a boolean
+on/off in presets despite having full CLI count/prob controls.
+
+### Tradeoffs
+- **Not seed-breaking**: Adding preset keys doesn't change the RNG sequence or
+  any generation logic. Existing output with seed+preset without these keys is
+  preserved because the preset integration gates on the default values (1 and
+  1.0). Only presets with non-default values produce different output.
+- **No test changes needed**: All wistful tests use dynamic checks over
+  `WISTFUL_INDICATORS` and `WISTFUL_INDICATORS_PHRASES`. The preset values
+  don't change the data or test logic. Test count unchanged (1152).
+- **Fulfills "Next likely steps" from Session 175**: The final item in the
+  next-steps list is now complete. Every feature system now has both CLI flags
+  AND preset count/prob values.
+
 ## 2026-07-21 — Added --wistful-count and --wistful-prob CLI Flags (Session 175)
 
 ### What
