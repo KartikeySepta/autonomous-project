@@ -730,17 +730,19 @@ MOOD_WORDS = {
         ],
     },
     "vibrant": {
-        "adjectives": ["crystal", "crimson", "amethyst", "golden", "luminous", "vibrant", "bioluminescent", "reef-born"],
-        "elements": ["light", "radiance", "warmth", "fragrance", "birdsong", "leaf rustle"],
-        "nouns": ["crystals", "geodes", "glades", "canopies", "polyps", "groves"],
-        "verbs": ["glow", "shimmer", "pulse", "glimmer", "resonate", "wave"],
-        "colors": ["vivid", "burnished", "iridescent", "fluorescent", "scintillating"],
-        "adverbs": ["gently", "softly", "endlessly", "quietly"],
+        "adjectives": ["crystal", "crimson", "amethyst", "golden", "luminous", "vibrant", "bioluminescent", "reef-born", "radiant", "dazzling", "resplendent", "effulgent"],
+        "elements": ["light", "radiance", "warmth", "fragrance", "birdsong", "leaf rustle", "sunburst", "perfume", "coral glow"],
+        "nouns": ["crystals", "geodes", "glades", "canopies", "polyps", "groves", "blossoms", "waterfalls", "meadows"],
+        "verbs": ["glow", "shimmer", "pulse", "glimmer", "resonate", "wave", "dance", "sparkle", "blaze"],
+        "colors": ["vivid", "burnished", "iridescent", "fluorescent", "scintillating", "golden", "saffron", "magenta"],
+        "adverbs": ["gently", "softly", "endlessly", "quietly", "brightly", "brilliantly", "vividly"],
         "weathers": [
             "a warm breeze drifts through",
             "sunlight filters through the canopy in golden beams",
             "the water is clear and impossibly blue",
             "sunlight dances on the water in shifting patterns",
+            "a cascade of butterflies rises from the undergrowth in a riot of color",
+            "the air shimmers with pollen and sunlight, golden and alive",
         ],
         "anomalies": [
             "The water glows with an inner light.",
@@ -748,6 +750,7 @@ MOOD_WORDS = {
             "Fish leave trails of light as they swim.",
             "Every shell contains a tiny, perfect melody.",
             "Fungal spores hang in the air like tiny lanterns.",
+            "The colors here have sound — a high, clear singing that shifts with every shade.",
         ],
     },
     "desolate": {

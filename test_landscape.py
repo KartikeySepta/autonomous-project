@@ -3040,6 +3040,57 @@ class TestEerieMood(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+class TestVibrantMood(unittest.TestCase):
+    def test_vibrant_mood_does_not_break_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, mood="vibrant")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_vibrant_mood_word_weight_boosted(self):
+        from landscape import _word_weight, MOOD_BOOST
+        w_no_mood = _word_weight("luminous", bias="flat", mood=None, category="adjectives")
+        w_mood = _word_weight("luminous", bias="flat", mood="vibrant", category="adjectives")
+        self.assertEqual(w_mood, w_no_mood * MOOD_BOOST,
+            "luminous should be boosted in vibrant mood")
+
+    def test_vibrant_mood_word_weight_not_boosted_for_unmatched(self):
+        from landscape import _word_weight
+        w_no_mood = _word_weight("shadow", bias="flat", mood=None, category="adjectives")
+        w_mood = _word_weight("shadow", bias="flat", mood="vibrant", category="adjectives")
+        self.assertEqual(w_mood, w_no_mood,
+            "shadow should not be boosted in vibrant mood")
+
+    def test_vibrant_mood_combine_with_other_moods(self):
+        for combo in [["vibrant", "peaceful"], ["vibrant", "eerie"], ["vibrant", "desolate"], ["vibrant", "melancholy"]]:
+            for s in range(10):
+                result = generate_landscape(seed=s, mood=combo)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_vibrant_mood_deterministic(self):
+        a = generate_landscape(seed=42, mood="vibrant")
+        b = generate_landscape(seed=42, mood="vibrant")
+        self.assertEqual(a, b)
+
+    def test_vibrant_mood_uses_vibrant_words(self):
+        vibrant_adj = set(MOOD_WORDS["vibrant"].get("adjectives", []))
+        results = [generate_landscape(seed=s, mood="vibrant") for s in range(200)]
+        found = any(any(w in r for w in vibrant_adj) for r in results)
+        self.assertTrue(found, "vibrant-specific adjectives never appeared in output")
+
+    def test_vibrant_mood_json_includes_mood(self):
+        result = generate_landscape(seed=42, mood="vibrant", fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("mood", data)
+        self.assertIn("vibrant", data["mood"])
+
+    def test_vibrant_mood_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 MOOD_ATMOSPHERE_INDICATORS = {
     "peaceful": [
         "settles over the scene like a blessing",

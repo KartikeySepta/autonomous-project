@@ -5949,3 +5949,122 @@ Added `{element}` to `SENTENCE_TEMPLATES["anomaly"][2]`: changed `"A strange {co
 - **When `adverb_enabled=False`**, `_format_tmpl` collapses `"catches your eye  through"` → `"catches your eye through"` — reads naturally without the adverb.
 - **`{element}` now used in all 4 template slots**: opening (all 4 templates), middle (all 7), weather (all 5), anomaly (1 of 5 — this change). Template 0 remains bare `{anomaly}` by design.
 - **4 new tests**, 404 total (18 todo + 386 landscape).
+
+## 2026-07-21 — Expanded Vibrant Mood Word Pools (Session 190)
+
+### What
+Expanded all 8 lexical categories of MOOD_WORDS["vibrant"] with 19 new words/phrases:
++4 adjectives (radiant, dazzling, resplendent, effulgent), +3 elements (sunburst,
+perfume, coral glow), +3 nouns (blossoms, waterfalls, meadows), +3 verbs (dance,
+sparkle, blaze), +3 colors (golden, saffron, magenta), +3 adverbs (brightly,
+brilliantly, vividly), +2 weathers (butterfly cascade, pollen shimmer), +1 anomaly
+(colors have sound). Vibrant now has 12/9/9/9/8/7/6/6 — matching the expanded
+pool sizes of melancholy, peaceful, and eerie.
+
+### Why
+The vibrant mood is one of the 4 original moods (alongside peaceful, eerie, and
+desolate) but its word pools remained at their original small sizes: adjectives (8),
+elements (6), nouns (6), verbs (6), colors (5), adverbs (4), weathers (4),
+anomalies (5). The melancholy (Session 187), peaceful (Session 188), and eerie
+(Session 189) moods were recently expanded to 12/9/9/9/8/7-8/6/6-7. Bringing
+vibrant to matching sizes ensures variety parity across moods.
+
+The "Next likely steps" from Session 189 explicitly called for this: "Expand the
+remaining mood word pools (vibrant, desolate) for consistency." Vibrant is the
+most natural next choice — it's the third-oldest mood and appears in the sublime
+(vibrant+peaceful) and dreamscape (eerie+vibrant) presets.
+
+### New word rationale
+
+**Adjectives (+4)**: 8 → 12
+- `radiant` — emitting bright light, glowing. No existing vibrant adjective covers
+  direct radiation/emanation of light (distinct from `luminous` which is about
+  internal glow).
+- `dazzling` — intensely bright to the point of overwhelming. No existing vibrant
+  adjective covers overwhelming brightness or visual intensity.
+- `resplendent` — dazzling in appearance, majestic beauty. Adds a grandeur/
+  majestic register not present in any existing vibrant adjective.
+- `effulgent` — shining forth brilliantly. A poetic, intense form of radiance,
+  distinct from `radiant` (which is more direct) — effulgent suggests pouring
+  forth brightness.
+
+**Elements (+3)**: 6 → 9
+- `sunburst` — explosion of sunlight, sudden intense solar emergence. Distinct
+  from `light` (general) and `radiance` (continuous glow) — this is about sudden,
+  explosive brightness.
+- `perfume` — intense sweet fragrance. Distinct from `fragrance` (general pleasant
+  smell) — perfume implies more intense, floral, or manufactured sweetness.
+- `coral glow` — warm underwater light emitted by living coral. Distinct from
+  `warmth` (temperature) and `light` (general) — specific to warm bioluminescent
+  aquatic light.
+
+**Nouns (+3)**: 6 → 9
+- `blossoms` — flowers in bloom, floral displays. No existing vibrant noun covers
+  flowers or floral elements (existing: crystals, geodes, glades, canopies, polyps,
+  groves — all structural/vegetative, none floral).
+- `waterfalls` — cascading water, falling water. No existing vibrant noun covers
+  water in motion or falling water.
+- `meadows` — open fields of grass and wildflowers. Distinct from `glades` (forest
+  clearings) — meadows are open, sunlit, flower-rich spaces.
+
+**Verbs (+3)**: 6 → 9
+- `dance` — lively, joyful movement. Adds a kinetic/celebratory register distinct
+  from `wave` (back-and-forth motion, less intentional).
+- `sparkle` — glitter with reflected light. Distinct from `glow` (steady light) and
+  `glimmer` (faint/unsteady) — sparkle is about multiple tiny points of reflected
+  light.
+- `blaze` — burn brightly and intensely. Adds intense, consuming brightness
+  distinct from `glow` (soft sustained) and `shimmer` (trembling light).
+
+**Colors (+3)**: 5 → 8
+- `golden` — warm yellow-gold. No existing vibrant color covers yellow or gold
+  tones (existing: vivid, burnished, iridescent, fluorescent, scintillating).
+- `saffron` — bright orange-yellow. A warm, intense, food-derived tone distinct
+  from `golden` (which is more metallic/warm).
+- `magenta` — bright purple-red. A vivid, synthetic-register warm purple distinct
+  from all existing vibrant colors.
+
+**Adverbs (+3)**: 4 → 7
+- `brightly` — with brightness. No existing vibrant adverb covers luminosity
+  (existing: gently, softly, endlessly, quietly — all about manner, not light).
+- `brilliantly` — with intense brightness. Adds intensity of light and quality.
+- `vividly` — intensely, with striking clarity. Adds intensity of quality.
+
+**Weathers (+2)**: 4 → 6
+- `"a cascade of butterflies rises from the undergrowth in a riot of color"` —
+  a living explosion of butterflies as meteorological-scale event. Distinct from
+  `"sunlight dances on the water"` (light-based) and `"a warm breeze drifts
+  through"` (air-based). This is animal-movement as weather, filling the only
+  living-creature gap in vibrant weathers. Indicator: `"riot of color"`.
+- `"the air shimmers with pollen and sunlight, golden and alive"` — golden
+  particulate shimmer of pollen suspended in sunlight. Distinct from `"sunlight
+  filters through the canopy"` (beam-based, not particulate). This is about
+  biogenic particles in the air catching light. Indicator: `"pollen and sunlight"`.
+
+**Anomalies (+1)**: 5 → 6
+- `"The colors here have sound — a high, clear singing that shifts with every
+  shade."` — synesthetic color-to-sound translation. No existing vibrant anomaly
+  involves cross-sensory perception or sound. Distinct from `"Every shell contains
+  a tiny, perfect melody"` (a contained melody within objects, not color singing).
+
+### Tradeoffs
+- **Data-only change + new tests**: No modifications to `generate_landscape()`, CLI
+  flags, or any logic. Only MOOD_WORDS["vibrant"] was updated, plus a new
+  TestVibrantMood test class was added.
+- **No seed-breaking**: Adding entries to MOOD_WORDS doesn't change the random
+  sequence within a given seed — `_word_weight` only uses mood word membership to
+  multiply base weight. Larger mood pools only affect which words get the mood boost,
+  not RNG state progression.
+- **No existing test changes needed**: All vibrant tests use dynamic checks over
+  MOOD_WORDS keys, `ALL_ADJECTIVES` (derived sets), or iterable mood lists. No
+  hardcoded lists needed updating.
+- **Test count +8**: 1179 total (18 todo + 1161 landscape). 8 new test methods in
+  TestVibrantMood.
+- **Expansion matches other moods**: vibrant now has 12/9/9/9/8/7/6/6 — matching
+  melancholy (12/9/9/9/8/7/6/6), peaceful (12/9/9/9/8/8/6/6), and eerie
+  (12/9/9/9/8/7/6/7). The only difference: vibrant has 7 adverbs (like melancholy and
+  eerie) vs peaceful's 8; vibrant has 6 anomalies (like melancholy and peaceful) vs
+  eerie's 7.
+- **Fulfills "Next likely steps" from Session 189**: Vibrant mood word pool expansion
+  was explicitly called out as the first item. Desolate remains the only mood not yet
+  expanded to the new target sizes.

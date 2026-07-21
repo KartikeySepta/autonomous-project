@@ -55,6 +55,62 @@ Working. All 1171 tests pass (18 todo + 1153 landscape).
 
 ## 2026-07-21
 
+### What was done (Session 190)
+- **Expanded vibrant mood word pools** — added 19 new words/phrases across all 8
+  lexical categories (adjectives, elements, nouns, verbs, colors, adverbs, weathers,
+  anomalies) to bring vibrant's pool sizes in line with melancholy, peaceful, and eerie
+  (expanded in Sessions 187, 188, and 189).
+- **Vibrant adjectives**: 8 → 12, added `radiant`, `dazzling`, `resplendent`, `effulgent` —
+  glowing radiance, overwhelming brightness, majestic beauty, and brilliant shining.
+- **Vibrant elements**: 6 → 9, added `sunburst`, `perfume`, `coral glow` —
+  explosive sunlight, intense sweet fragrance, and warm underwater light.
+- **Vibrant nouns**: 6 → 9, added `blossoms`, `waterfalls`, `meadows` —
+  floral bloom, cascading water, and open wildflower fields.
+- **Vibrant verbs**: 6 → 9, added `dance`, `sparkle`, `blaze` —
+  lively joyful movement, glittering reflected light, and intense burning brightness.
+- **Vibrant colors**: 5 → 8, added `golden`, `saffron`, `magenta` —
+  warm yellow-gold, bright orange-yellow, and vivid purple-red.
+- **Vibrant adverbs**: 4 → 7, added `brightly`, `brilliantly`, `vividly` —
+  luminosity, intense brightness, and intensity of manner.
+- **Vibrant weathers**: 4 → 6, added:
+  - `"a cascade of butterflies rises from the undergrowth in a riot of color"` —
+    living color explosion as butterflies swarm upward; fills the animal-movement
+    weather niche absent from existing vibrant weathers (warmth, light, water).
+  - `"the air shimmers with pollen and sunlight, golden and alive"` —
+    particulate shimmer where pollen and light fill the air; fills the golden
+    particulate-light niche.
+- **Vibrant anomalies**: 5 → 6, added:
+  - `"The colors here have sound — a high, clear singing that shifts with every
+    shade."` — synesthetic color-to-sound translation; adds an auditory/sensory
+    cross-wiring register not present in the existing 5 anomalies (glow, pulse,
+    light trails, melodies, lantern spores).
+- **Added TestVibrantMood class** (8 tests) following the TestPeacefulMood/
+  TestMelancholyMood/TestEerieMood pattern: does not break output (20 seeds),
+  word weight boosted for vibrant-matched words (luminous), word weight not boosted
+  for unmatched words (shadow), combines with other moods (peaceful, eerie, desolate,
+  melancholy), deterministic with same seed, vibrant-specific adjectives appear across
+  200 seeds, JSON output includes mood field, CLI flag exists.
+- **No code, CLI, or generation logic changes** — data-only expansion of the
+  MOOD_WORDS["vibrant"] dictionary plus new test class. All existing tests use dynamic
+  checks over MOOD_WORDS keys and sets, so no existing test modifications were needed.
+- This directly fulfills the first "Next likely step" from Session 189: "Expand the
+  remaining mood word pools (vibrant, desolate) for consistency." The vibrant mood
+  now has 12 adjectives, 9 elements, 9 nouns, 9 verbs, 8 colors, 7 adverbs,
+  6 weathers, and 6 anomalies — matching the expanded pool sizes of melancholy,
+  peaceful, and eerie.
+- **Tests**: 1179 pass (448 subtests) — 1161 landscape + 18 todo. Landscape tests
+  grew from 1153 to 1161 (+8 for the new TestVibrantMood class).
+
+### Current status
+Working. All 1179 tests pass (18 todo + 1161 landscape).
+
+### Next likely steps
+- Expand the remaining mood word pools (desolate) for consistency
+- Add more presets for diverse generation experiences
+- Add a new biome or mood overlay
+
+## 2026-07-21
+
 ### What was done (Session 188)
 - **Expanded peaceful mood word pools** — added 19 new words/phrases across all 8
   lexical categories (adjectives, elements, nouns, verbs, colors, adverbs, weathers,
