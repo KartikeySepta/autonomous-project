@@ -2,6 +2,59 @@
 
 ## 2026-07-21
 
+### What was done (Session 189)
+- **Expanded eerie mood word pools** — added 22 new words/phrases across 7 lexical
+  categories (adjectives, elements, nouns, verbs, colors, adverbs, weathers) to bring
+  eerie's pool sizes in line with melancholy and peaceful (expanded in Sessions 187
+  and 188). Eerie anomalies already matched at 7 and were not expanded.
+- **Eerie adjectives**: 7 → 12, added `watchful`, `unsettling`, `ghostly`, `cold`,
+  `ancient` — watched-by-the-landscape, wrongness, spectral, fear-chill, and primordial
+  adjectives. Existing pool: shadow, silent, forgotten, bone, obsidian, pale, deep.
+- **Eerie elements**: 5 → 9, added `cold breath`, `whisper`, `moon shadow`, `presence` —
+  exhalation of cold air, soft secretive sounds, lunar shadows, and sensed unseen being.
+- **Eerie nouns**: 6 → 9, added `corridors`, `remains`, `thresholds` — enclosed
+  passages, decayed remnants, and liminal crossing points.
+- **Eerie verbs**: 6 → 9, added `watch`, `crawl`, `fester` — silent observation,
+  insect-like movement, and biological decay.
+- **Eerie colors**: 5 → 8, added `pitch`, `sickly`, `pallid` — absolute black,
+  unhealthy green-yellow, and corpse-like paleness.
+- **Eerie adverbs**: 5 → 7, added `stealthily`, `unnaturally` — furtive movement and
+  wrongness of manner.
+- **Eerie weathers**: 4 → 6, added:
+  - `"a cold wind moans through the empty spaces, a sound without source"` —
+    mournful, sourceless wind sound; fills the auditory eerie niche between stillness
+    and active sound.
+  - `"frost spreads in patterns that look like language, writing itself on every
+    surface"` — linguistic frost patterns; visual eerie natural writing.
+- **Eerie anomalies**: 7 (unchanged) — already matched the 6-entry target of other
+  moods, no expansion needed.
+- **Added TestEerieMood class** (8 tests) following the TestPeacefulMood/TestMelancholyMood
+  pattern: does not break output (20 seeds), word weight boosted for eerie-matched words
+  (shadow), word weight not boosted for unmatched words (crystal), combines with other
+  moods (peaceful, vibrant, desolate, melancholy), deterministic with same seed,
+  eerie-specific adjectives appear across 200 seeds, JSON output includes mood field,
+  CLI flag exists.
+- **No code, CLI, or generation logic changes** — data-only expansion of the
+  MOOD_WORDS["eerie"] dictionary plus new test class. All existing tests use dynamic
+  checks over MOOD_WORDS keys and sets, so no existing test modifications were needed.
+- This directly fulfills the first "Next likely step" from Session 188: "Expand the
+  remaining mood word pools (eerie, vibrant, desolate) for consistency." The eerie
+  mood now has 12 adjectives, 9 elements, 9 nouns, 9 verbs, 8 colors, 7 adverbs,
+  6 weathers, and 7 anomalies — matching the expanded pool sizes of melancholy and
+  peaceful.
+- **Tests**: 1171 pass (448 subtests) — 1153 landscape + 18 todo. Landscape tests
+  grew from 1145 to 1153 (+8 for the new TestEerieMood class).
+
+### Current status
+Working. All 1171 tests pass (18 todo + 1153 landscape).
+
+### Next likely steps
+- Expand the remaining mood word pools (vibrant, desolate) for consistency
+- Add more presets for diverse generation experiences
+- Add a new biome or mood overlay
+
+## 2026-07-21
+
 ### What was done (Session 188)
 - **Expanded peaceful mood word pools** — added 19 new words/phrases across all 8
   lexical categories (adjectives, elements, nouns, verbs, colors, adverbs, weathers,

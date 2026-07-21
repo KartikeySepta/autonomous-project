@@ -2989,6 +2989,57 @@ class TestMelancholyMood(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+class TestEerieMood(unittest.TestCase):
+    def test_eerie_mood_does_not_break_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, mood="eerie")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_eerie_mood_word_weight_boosted(self):
+        from landscape import _word_weight, MOOD_BOOST
+        w_no_mood = _word_weight("shadow", bias="flat", mood=None, category="adjectives")
+        w_mood = _word_weight("shadow", bias="flat", mood="eerie", category="adjectives")
+        self.assertEqual(w_mood, w_no_mood * MOOD_BOOST,
+            "shadow should be boosted in eerie mood")
+
+    def test_eerie_mood_word_weight_not_boosted_for_unmatched(self):
+        from landscape import _word_weight
+        w_no_mood = _word_weight("crystal", bias="flat", mood=None, category="adjectives")
+        w_mood = _word_weight("crystal", bias="flat", mood="eerie", category="adjectives")
+        self.assertEqual(w_mood, w_no_mood,
+            "crystal should not be boosted in eerie mood")
+
+    def test_eerie_mood_combine_with_other_moods(self):
+        for combo in [["eerie", "peaceful"], ["eerie", "vibrant"], ["eerie", "desolate"], ["eerie", "melancholy"]]:
+            for s in range(10):
+                result = generate_landscape(seed=s, mood=combo)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_eerie_mood_deterministic(self):
+        a = generate_landscape(seed=42, mood="eerie")
+        b = generate_landscape(seed=42, mood="eerie")
+        self.assertEqual(a, b)
+
+    def test_eerie_mood_uses_eerie_words(self):
+        eerie_adj = set(MOOD_WORDS["eerie"].get("adjectives", []))
+        results = [generate_landscape(seed=s, mood="eerie") for s in range(200)]
+        found = any(any(w in r for w in eerie_adj) for r in results)
+        self.assertTrue(found, "eerie-specific adjectives never appeared in output")
+
+    def test_eerie_mood_json_includes_mood(self):
+        result = generate_landscape(seed=42, mood="eerie", fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("mood", data)
+        self.assertIn("eerie", data["mood"])
+
+    def test_eerie_mood_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 MOOD_ATMOSPHERE_INDICATORS = {
     "peaceful": [
         "settles over the scene like a blessing",

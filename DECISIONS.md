@@ -1,5 +1,113 @@
 # Decisions
 
+## 2026-07-21 — Expanded Eerie Mood Word Pools (Session 189)
+
+### What
+Expanded all 8 lexical categories of MOOD_WORDS["eerie"] with 22 new words/phrases:
++5 adjectives (watchful, unsettling, ghostly, cold, ancient), +4 elements (cold breath,
+whisper, moon shadow, presence), +3 nouns (corridors, remains, thresholds), +3 verbs
+(watch, crawl, fester), +3 colors (pitch, sickly, pallid), +2 adverbs (stealthily,
+unnaturally), +2 weathers (cold wind moan, frost language). Anomalies remained at 7
+(already matching the expanded target).
+
+### Why
+The eerie mood is the second-oldest mood (after peaceful) but its word pools remained
+at their original small sizes: adjectives (7), elements (5), nouns (6), verbs (6),
+colors (5), adverbs (5), weathers (4), anomalies (7). The melancholy (Session 187)
+and peaceful (Session 188) moods were recently expanded to 12/9/9/9/8/8/6/6. Bringing
+eerie to matching sizes ensures variety parity across moods.
+
+The "Next likely steps" from Session 188 explicitly called for this: "Expand the
+remaining mood word pools (eerie, vibrant, desolate) for consistency." Eerie is the
+most natural next choice — it's the second-oldest mood and appears in the nightfall
+preset.
+
+### New word rationale
+
+**Adjectives (+5)**: 7 → 12
+- `watchful` — the sense of being observed by the landscape. No existing eerie
+  adjective covers active awareness/observation.
+- `unsettling` — causing discomfort or unease. Fills the active wrongness niche
+  distinct from `shadow` (dark) and `silent` (quiet).
+- `ghostly` — spectral, phantasmal, supernatural. No eerie adjective specifically
+  covers apparitions or the supernatural.
+- `cold` — low temperature, fear-induced chill. No existing eerie adjective directly
+  covers temperature (distinct from `bone` which is skeletal, not thermal).
+- `ancient` — extremely old, primordial. Complements `forgotten` (neglected/abandoned)
+  with a sense of timeless, primordial existence.
+
+**Elements (+4)**: 5 → 9
+- `cold breath` — the landscape exhaling cold air. Distinct from `cave wind` (moving
+  air in caves) — this is about temperature and breath-like quality, not just airflow.
+- `whisper` — soft secretive sounds. Distinct from `echo` (repeated sound) — more about
+  quiet voices and hidden communication.
+- `moon shadow` — shadows cast by moonlight. Distinct from `darkness` (absence of
+  light) — more about shapes and forms in low, eerie light.
+- `presence` — an unseen being. Distinct from `stillness` (absence of movement) — about
+  a sensed but invisible entity.
+
+**Nouns (+3)**: 6 → 9
+- `corridors` — enclosed passages, liminal spaces. Distinct from `archways` (openings)
+  and `fissures` (cracks) — man-made or natural passages that confine.
+- `remains` — decayed remnants, bones, debris. Distinct from `ruins` (buildings) —
+  organic/biological remnants rather than architectural decay.
+- `thresholds` — boundaries between spaces, liminal edges. Fills the crossing-point
+  niche no existing eerie noun covers.
+
+**Verbs (+3)**: 6 → 9
+- `watch` — observe silently, the landscape watching. No existing eerie verb covers
+  observation or surveillance.
+- `crawl` — slow insect-like movement. Distinct from `creak` (sound) and `echo`
+  (repetition) — physical movement, not auditory.
+- `fester` — decay and corruption. Adds a biological decay register distinct from
+  all existing verbs.
+
+**Colors (+3)**: 5 → 8
+- `pitch` — absolute black, complete darkness. Distinct from `murky` (cloudy/dark) —
+  more intense and absolute.
+- `sickly` — unhealthy green-yellow, jaundiced. No existing eerie color covers
+  sickly/unhealthy tones.
+- `pallid` — pale in a corpse-like way. Distinct from `bleached` (sun-faded) —
+  specific to deathly pallor rather than sun-bleaching.
+
+**Adverbs (+2)**: 5 → 7
+- `stealthily` — in a cautious, sneaking manner. No existing eerie adverb covers
+  furtive movement.
+- `unnaturally` — in a way that defies nature. Fills the wrongness-of-manner niche
+  distinct from existing adverbs about pace (slowly) and duration (eternally).
+
+**Weathers (+2)**: 4 → 6
+- `"a cold wind moans through the empty spaces, a sound without source"` —
+  mournful, sourceless wind. Distinct from `"an unnatural silence hangs"` (absence
+  of sound) and `"mist curls along the ground"` (fog). Niche: active eerie wind
+  with no visible origin.
+- `"frost spreads in patterns that look like language, writing itself on every
+  surface"` — linguistic frost patterns. Distinct from `"a still calm lingers"`
+  (stillness) and `"the darkness presses in"` (darkness). Niche: visual eerie
+  natural writing.
+
+### Tradeoffs
+- **Data-only change + new tests**: No modifications to `generate_landscape()`, CLI
+  flags, or any logic. Only MOOD_WORDS["eerie"] was updated, plus a new TestEerieMood
+  test class was added.
+- **No seed-breaking**: Adding entries to MOOD_WORDS doesn't change the random
+  sequence within a given seed — `_word_weight` only uses mood word membership to
+  multiply base weight. Larger mood pools only affect which words get the mood boost,
+  not RNG state progression.
+- **No existing test changes needed**: All eerie tests use dynamic checks over
+  MOOD_WORDS keys, `ALL_ADJECTIVES` (derived sets), or iterable mood lists. No
+  hardcoded lists needed updating.
+- **Test count +8**: 1171 total (18 todo + 1153 landscape). 8 new test methods in
+  TestEerieMood.
+- **Expansion matches melancholy/peaceful**: eerie now has 12/9/9/9/8/7/6/7 — closely
+  matching melancholy (12/9/9/9/8/7/6/6) and peaceful (12/9/9/9/8/8/6/6). The only
+  difference: eerie has 7 adverbs (like melancholy) vs peaceful's 8; eerie has 7
+  anomalies (originally had 7) vs melancholy/peaceful's 6.
+- **Anomalies not expanded**: Eerie already had 7 anomalies, above the 6-entry target.
+  No expansion was needed.
+- **Fulfills "Next likely steps" from Session 188**: Eerie mood word pool expansion
+  was explicitly called out as the first item.
+
 ## 2026-07-21 — Expanded Peaceful Mood Word Pools (Session 188)
 
 ### What
