@@ -2,6 +2,50 @@
 
 ## 2026-07-21
 
+### What was done (Session 187)
+- **Expanded melancholy mood word pools** — added 19 new words/phrases across all 8
+  lexical categories (adjectives, elements, nouns, verbs, colors, adverbs, weathers,
+  anomalies) to improve variety in melancholy-generated landscapes.
+- **Melancholy adjectives**: 9 → 12, added `lonesome`, `overcast`, `muffled` — solitary,
+  grey-sky, and subdued-qualitiy adjectives that deepen the melancholy register.
+- **Melancholy elements**: 6 → 9, added `fog breath`, `candle glow`, `moss scent` —
+  misty exhalation, weak warm light, and damp earthiness.
+- **Melancholy nouns**: 6 → 9, added `shadows`, `windows`, `silhouettes` —
+  indistinct forms and reflective surfaces that reinforce the soft-focus tone.
+- **Melancholy verbs**: 7 → 9, added `yearn`, `mourn` — deep longing and
+  quiet grief, the two most natural melancholy actions.
+- **Melancholy colors**: 6 → 8, added `dove`, `lavender` — soft grey-blue and
+  pale purple, both muted and tender tones.
+- **Melancholy adverbs**: 5 → 7, added `tenderly`, `sadly` — gentle care and
+  sorrowful manner.
+- **Melancholy weathers**: 4 → 6, added:
+  - `"a somber fog settles in the hollows, grey and patient"` — still, grey fog
+    that waits in low places.
+  - `"an amber twilight fades slowly into a bruised and heavy sky"` — fading
+    evening light giving way to a weighty, bruised sky.
+- **Melancholy anomalies**: 4 → 6, added:
+  - `"A half-remembered melody drifts through the air, familiar yet impossible
+    to place."` — ephemeral music that feels like a memory.
+  - `"The sky reflects a landscape that is not this one — a place you almost
+    recognize."` — impossible sky-reflection of an almost-familiar other place.
+- **No code, CLI, or generation logic changes** — data-only expansion of the
+  MOOD_WORDS["melancholy"] dictionary. All existing tests use dynamic checks over
+  MOOD_WORDS keys and sets, so no test modifications were needed.
+- This directly fulfills the first "Next likely step" from Session 186: "Expand
+  the new melancholy word pools further." The melancholy mood now has 12 adjectives,
+  9 elements, 9 nouns, 9 verbs, 8 colors, 7 adverbs, 6 weathers, and 6 anomalies.
+- **Tests**: 1145 pass (448 subtests) — same count as Session 186.
+
+### Current status
+Working. All 1145 tests pass (18 todo + 1145 landscape).
+
+### Next likely steps
+- Expand the remaining mood word pools (peaceful, eerie, vibrant, desolate) for consistency
+- Add more presets for diverse generation experiences
+- Add a new biome or mood overlay
+
+## 2026-07-21
+
 ### What was done (Session 186)
 - **Added "gloaming" preset** — the 6th preset and the first to use the melancholy mood
   (added in Session 181). Until now, melancholy had no dedicated preset despite being

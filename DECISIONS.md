@@ -1,5 +1,112 @@
 # Decisions
 
+## 2026-07-21 — Expanded Melancholy Mood Word Pools (Session 187)
+
+### What
+Expanded all 8 lexical categories of MOOD_WORDS["melancholy"] with 19 new
+words/phrases: +3 adjectives (lonesome, overcast, muffled), +3 elements
+(fog breath, candle glow, moss scent), +3 nouns (shadows, windows,
+silhouettes), +2 verbs (yearn, mourn), +2 colors (dove, lavender),
++2 adverbs (tenderly, sadly), +2 weathers (somber fog, amber twilight),
++2 anomalies (half-remembered melody, sky-reflection of another place).
+
+### Why
+The melancholy mood (added in Session 181) has had 5 sessions without any
+word pool expansion. Its pools started small: adjectives (9), elements (6),
+nouns (6), verbs (7), colors (6), adverbs (5), weathers (4), anomalies (4).
+Compared to the global pools (all at 20 entries), melancholy's word pools
+are quite small — limiting variety in generated output.
+
+The "Next likely steps" from Session 186 explicitly called for this: "Expand
+the new melancholy word pools further." This is the first expansion of the
+melancholy mood's word pools since its creation.
+
+### New word rationale
+
+**Adjectives (+3)**:
+- `lonesome` — solitary, melancholy-appropriate. No existing melancholy
+  adjective covers the specific feeling of being alone/lonely.
+- `overcast` — grey, cloud-covered sky. Complements `grey` (abstract color)
+  and `rain-soaked` (wetness) with a meteorological register.
+- `muffled` — subdued, quietened. Fills the acoustic/auditory gap alongside
+  `hushed` (which is more about reverent silence than dampened sound).
+
+**Elements (+3)**:
+- `fog breath` — misty exhalation, the landscape breathing fog. Fills a
+  low-visibility, atmospheric niche between `rain scent` (olfactory) and
+  `grey light` (visual).
+- `candle glow` — weak, warm, intimate light. Complements `amber glow`
+  (which is broader/warmer) with a smaller, more personal scale.
+- `moss scent` — damp, earthy, quiet decay. A natural olfactory companion
+  to the melancholy register.
+
+**Nouns (+3)**:
+- `shadows` — dark forms, indistinct shapes. No existing melancholy noun
+  covers darkness or formlessness.
+- `windows` — portals, reflections, barriers. Adds an architectural/
+  reflective register not present in the existing nouns.
+- `silhouettes` — indistinct outlined shapes. Complements `shadows` with
+  a slightly more defined visual form.
+
+**Verbs (+2)**:
+- `yearn` — deep, persistent longing. The most natural melancholy verb
+  for the wistful register.
+- `mourn` — express grief. Adds a slightly heavier emotional weight
+  alongside `weep` (which is more active crying) and `ache` (which is
+  more physical pain).
+
+**Colors (+2)**:
+- `dove` — soft grey-blue, a muted, tender tone. No existing melancholy
+  color covers the grey-blue spectrum.
+- `lavender` — pale purple, a faded, nostalgic tone. Adds a floral/pale
+  register beyond the existing `faded rose`.
+
+**Adverbs (+2)**:
+- `tenderly` — with gentle care. No existing melancholy adverb covers
+  soft, caring action.
+- `sadly` — with sorrow. The most direct melancholy adverb, filling a
+  surprising gap in the existing 5.
+
+**Weathers (+2)**:
+- `"a somber fog settles in the hollows, grey and patient"` — still,
+  grey fog that waits in low places. Distinct from `"mist clings to
+  everything"` (active clinging, not passive settling) and `"a quiet
+  drizzle dampens the world"` (precipitation, not fog). Niche: patient,
+  grounded fog in depressions.
+- `"an amber twilight fades slowly into a bruised and heavy sky"` —
+  fading evening light into weighty, discoloured sky. Distinct from
+  `"the light is grey and tender"` (static grey light, not dynamic
+  fading). Niche: transitional twilight moment.
+
+**Anomalies (+2)**:
+- `"A half-remembered melody drifts through the air, familiar yet
+  impossible to place."` — ephemeral phantom music with a sense of
+  mnemonic familiarity. Distinct from `"Every shadow holds a memory"`
+  (visual memory, not auditory). Niche: auditory phantom memory.
+- `"The sky reflects a landscape that is not this one — a place you
+  almost recognize."` — impossible sky-reflection of an
+  almost-recognizable other place. Distinct from `"Colors drain to
+  grey when you look directly at them"` (colour negation, not
+  reflective displacement). Niche: reflected alternative landscape.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI
+  flags, or any logic. Only MOOD_WORDS["melancholy"] was updated.
+- **No seed-breaking**: Adding entries to MOOD_WORDS doesn't change the
+  random sequence within a given seed — `_word_weight` only uses mood
+  word membership to multiply base weight. Larger mood pools only affect
+  which words get the mood boost, not RNG state progression.
+- **No test changes needed**: All melancholy tests use dynamic checks
+  over `MOOD_WORDS["melancholy"].get("adjectives", [])` (adjectives) or
+  iterate `MOOD_WORDS.keys()` (mood selection). No hardcoded lists needed
+  updating.
+- **Test count unchanged**: 1145 tests (448 subtests) — same as Session 186.
+- **Moderate expansion**: 19 new entries across 8 categories. The melancholy
+  mood still has smaller pools than the global pools (which are 20 each),
+  leaving room for further expansion in future sessions.
+- **Fulfills "Next likely steps" from Session 186**: Melancholy word pool
+  expansion was explicitly called out as the first item.
+
 ## 2026-07-21 — Added "gloaming" Preset (Session 186)
 
 ### What
