@@ -2,6 +2,59 @@
 
 ## 2026-07-21
 
+### What was done (Session 178)
+- **Expanded 5 global word pools from 15 to 20 entries each** — ELEMENTS, NOUNS,
+  VERBS, ADVERBS, and COLORS each gained 5 carefully chosen entries, adding 25
+  new words/phrases total. ADJECTIVES was already at 20 from Session 173 and was
+  not expanded.
+- **ELEMENTS (+5)**: `hoarfrost` (frozen crystalline deposit), `sunflare` (intense
+  solar burst), `earth scent` (geosmin/petrichor), `moon glow` (reflected lunar
+  light), `raindamp` (active wetness/humidity). These cover cold/growth, celestial/
+  radiant, earthy/mineral, nocturnal/celestial, and aqueous/moisture niches
+  underrepresented in the existing 15.
+- **NOUNS (+5)**: `ridges` (linear elevated crests), `waterfalls` (vertical aquatic
+  cascades), `chambers` (enclosed interior rooms), `passages` (narrow connecting
+  routes), `ledges` (horizontal shelf-like projections). These cover linear/
+  vertical/interior/transitional/horizontal niches underrepresented in the
+  existing 15.
+- **VERBS (+5)**: `emerge` (appearance/coming-into-being), `curl` (sinuous winding),
+  `mirror` (reflection/copying), `linger` (persistence/remaining), `surge`
+  (forceful forward motion). These cover emergence, sinuous, reflective,
+  persistent, and forceful movement niches underrepresented in the existing 15.
+- **ADVERBS (+5)**: `abruptly` (sudden/sharp), `wearily` (tired/exhausted),
+  `fiercely` (intense/forceful), `hesitantly` (uncertain/reluctant), `lightly`
+  (gentle/delicate). These cover suddenness, fatigue, intensity, uncertainty, and
+  delicacy niches underrepresented in the existing 15.
+- **COLORS (+5)**: `ochre` (warm earth yellow), `vermilion` (bright red-orange),
+  `teal` (blue-green), `plum` (deep purple), `ash` (pale grey-white). These cover
+  warm earth, vibrant red-orange, blue-green, deep purple, and pale grey niches
+  underrepresented in the existing 15.
+- **No code, CLI, or generation logic changes** — data-only expansion. All existing
+  tests use dynamic checks over `ALL_ADJECTIVES`, `ALL_ELEMENTS`, etc. (derived
+  sets that auto-include new additions), so no test modifications were needed.
+  No `WEATHER_INDICATORS` update needed because no weather entries were added.
+- **New words are default-weight**: All 25 new entries use the "normal" weight
+  tier, appropriate for balanced appearance rates under normal bias. None are
+  marked COMMON or RARE.
+- This directly fulfills the first "Next likely step" from Session 177: "Expand
+  global word pools further (more adjectives, elements, nouns, verbs)." All 8
+  global pools are now at 20 entries (ADJECTIVES was already at 20 from Session
+  173; WEATHERS and ANOMALIES remain at 15 from Session 173 and can be expanded
+  in a future session).
+- Tests unchanged: 1137 landscape tests pass (399 subtests), 18 todo unchanged.
+- Total: 1155 tests pass.
+
+### Current status
+Working. All 1155 tests pass (18 todo + 1137 landscape).
+
+### Next likely steps
+- Expand global word pools further (WEATHERS, ANOMALIES from 15 to 20)
+- Expand biome-specific word pools (weathers, anomalies per biome)
+- Add a new mood overlay
+- Add more presets for diverse generation experiences
+
+## 2026-07-21
+
 ### What was done (Session 177)
 - **Added new biome: "crystal fields"** — a surface landscape of massive crystal
   formations, prismatic light, and resonant mineral energy. This is the 14th biome

@@ -1,5 +1,86 @@
 # Decisions
 
+## 2026-07-21 — Expanded Global Word Pools to 20 (Session 178)
+
+### What
+Expanded 5 of the 8 global word pools from 15→20 entries each: ELEMENTS,
+NOUNS, VERBS, ADVERBS, and COLORS each gained 5 carefully chosen entries for
+25 new words/phrases total. ADJECTIVES was already at 20 (Session 173).
+WEATHERS and ANOMALIES remain at 15 for a future session.
+
+### Why
+The "Next likely steps" from Session 177 explicitly called for this: "Expand
+global word pools further (more adjectives, elements, nouns, verbs)." The
+global word pools are the foundational vocabulary of every generated landscape
+— every sentence in every output draws from them via `_pick()`, blended with
+biome-specific words. Expanding them has a multiplier effect on variety across
+all 14 biomes and all 15+ feature systems.
+
+Session 173 expanded the same pools (from their original sizes to 15–20) and
+noted that "not all are at 20." This session brings every pool except WEATHERS
+and ANOMALIES to exactly 20 entries — a milestone for consistency.
+
+Each new word was chosen to fill a niche not represented in the existing pool:
+
+**ELEMENTS (+5)**: `hoarfrost` (cold crystalline deposit — no existing element
+covers frozen/growth), `sunflare` (intense solar burst — no existing element
+covers sudden brilliance), `earth scent` (geosmin/petrichor — no existing
+element covers raw mineral/soil smell), `moon glow` (reflected lunar light —
+no existing element covers celestial reflection), `raindamp` (active wetness —
+no existing element covers the feel of rain-soaked air).
+
+**NOUNS (+5)**: `ridges` (linear elevated crests — no existing noun covers a
+long topographical crest), `waterfalls` (vertical aquatic cascade — no existing
+noun covers falling water), `chambers` (enclosed interior rooms — no existing
+noun covers a contained space), `passages` (narrow connecting routes — no
+existing noun covers a traversable connector), `ledges` (horizontal shelf-like
+projection — no existing noun covers a flat protrusion).
+
+**VERBS (+5)**: `emerge` (coming into view — no existing verb covers
+appearance/emergence), `curl` (winding/sinuous motion — no existing verb
+covers spiraling/wrapping), `mirror` (reflection/copying — no existing verb
+covers reflective doubling), `linger` (remaining/persisting — no existing verb
+covers staying beyond expected), `surge` (forceful forward movement — no
+existing verb covers explosive motion).
+
+**ADVERBS (+5)**: `abruptly` (suddenness — no existing adverb covers
+sharp/unexpected change), `wearily` (tired manner — no existing adverb covers
+exhaustion), `fiercely` (intensity — no existing adverb covers raw force),
+`hesitantly` (uncertainty — no existing adverb covers reluctance/indecision),
+`lightly` (delicate touch — no existing adverb covers gentle, barely-there
+action).
+
+**COLORS (+5)**: `ochre` (warm earth yellow — no existing color covers
+earthy yellow), `vermilion` (bright red-orange — no existing color covers
+vibrant warm red), `teal` (blue-green — no existing color covers the
+blue-green spectrum), `plum` (deep purple — no existing color covers
+fruit-deep purple), `ash` (pale grey-white — no existing color covers
+cool pale grey).
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only the 5 global word pool lists were updated. No test
+  indicators or test logic changes were needed — the derived `ALL_*` sets
+  auto-include new entries.
+- **No seed-breaking**: Adding entries to global pools doesn't change the
+  random sequence within a given seed — `rng.choices(pool, weights, k=1)` on
+  a larger pool only changes which words get selected, not the RNG state
+  progression. The only behavioral change is that new words may appear in
+  generated output.
+- **New words are default-weight**: All 25 new entries are in the "normal"
+  weight tier (weight=5 in normal bias). None are COMMON (weight=10) or RARE
+  (weight=1). Appropriate for balanced appearance rates.
+- **Test count unchanged**: 1155 tests (1137 landscape + 18 todo) — same as
+  Session 177.
+- **WEATHERS and ANOMALIES not expanded**: These pools remain at 15 from
+  Session 173. They involve test indicator updates (`WEATHER_INDICATORS` in
+  test_landscape.py), making them slightly more involved. A future session
+  can tackle them.
+- **Fulfills "Next likely steps" from Session 177**: Global word pool expansion
+  was explicitly called out as the first item. 6 of 8 pools now at 20 entries
+  (ADJECTIVES 20, ELEMENTS 20, NOUNS 20, VERBS 20, ADVERBS 20, COLORS 20).
+  WEATHERS (15) and ANOMALIES (15) remain for future expansion.
+
 ## 2026-07-21 — Added "crystal fields" Biome (Session 177)
 
 ### What

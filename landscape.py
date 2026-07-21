@@ -21,18 +21,21 @@ ELEMENTS = [
     "mist", "light", "sound", "stillness", "fragrance", "warmth",
     "echo", "silence", "radiance", "darkness",
     "phosphorescence", "thunder", "breath", "resonance", "glimmer",
+    "hoarfrost", "sunflare", "earth scent", "moon glow", "raindamp",
 ]
 
 NOUNS = [
     "trees", "spires", "stones", "ruins", "pillars", "archways",
     "roots", "crystals", "geodes", "fungi", "vines", "shells",
     "monoliths", "terraces", "basins",
+    "ridges", "waterfalls", "chambers", "passages", "ledges",
 ]
 
 VERBS = [
     "whisper", "hum", "glow", "shimmer", "drift", "pulse",
     "vibrate", "sway", "glimmer", "resonate",
     "breathe", "sing", "shiver", "bloom", "fold",
+    "emerge", "curl", "mirror", "linger", "surge",
 ]
 
 WEATHERS = [
@@ -122,6 +125,7 @@ ADVERBS = [
     "patiently", "eternally", "silently", "slowly",
     "constantly", "subtly", "quietly", "ceaselessly",
     "lazily", "heavily", "perpetually",
+    "abruptly", "wearily", "fiercely", "hesitantly", "lightly",
 ]
 
 COLORS = [
@@ -129,6 +133,7 @@ COLORS = [
     "lurid", "mottled", "bleached", "veined",
     "iridescent", "fluorescent", "scintillating", "coruscating",
     "opal", "argent", "sepia",
+    "ochre", "vermilion", "teal", "plum", "ash",
 ]
 
 TIME_WORDS = [
