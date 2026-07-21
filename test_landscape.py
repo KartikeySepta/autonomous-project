@@ -4618,7 +4618,7 @@ class TestPresets(unittest.TestCase):
         self.assertTrue(PRESETS["wasteland"]["echo_enabled"])
 
     def test_preset_produces_valid_output(self):
-        for name in ["nightfall", "pastoral", "sublime", "wasteland", "dreamscape", "gloaming", "sanctuary", "lament", "oasis", "reverie", "elegy", "fallow"]:
+        for name in ["nightfall", "pastoral", "sublime", "wasteland", "dreamscape", "gloaming", "sanctuary", "lament", "oasis", "reverie", "elegy", "fallow", "threshold"]:
             with self.subTest(preset=name):
                 from landscape import generate_landscape, PRESETS
                 result = generate_landscape(seed=42, **PRESETS[name])
@@ -4628,7 +4628,7 @@ class TestPresets(unittest.TestCase):
 
     def test_preset_is_deterministic(self):
         from landscape import PRESETS
-        for name in ["nightfall", "pastoral", "sublime", "wasteland", "dreamscape", "gloaming", "sanctuary", "lament", "oasis", "reverie", "elegy", "fallow"]:
+        for name in ["nightfall", "pastoral", "sublime", "wasteland", "dreamscape", "gloaming", "sanctuary", "lament", "oasis", "reverie", "elegy", "fallow", "threshold"]:
             with self.subTest(preset=name):
                 a = generate_landscape(seed=42, **PRESETS[name])
                 b = generate_landscape(seed=42, **PRESETS[name])
