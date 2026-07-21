@@ -2,6 +2,85 @@
 
 ## 2026-07-21
 
+### What was done (Session 192)
+- **Expanded mood atmosphere phrase pools for all 5 moods** — each mood's
+  MOOD_ATMOSPHERE pool grew from 4 to 6 phrases, adding 10 new atmosphere
+  phrases total. This directly fulfills the third "Next likely step" from
+  Session 191: "Expand mood atmosphere phrase pools for consistency."
+- **New peaceful atmosphere phrases**:
+  - "A quiet contentment settles over the world, as if everything is exactly
+    where it should be." — contentment and rightness, a feeling that the
+    universe is in proper order. Distinct from existing peaceful phrases about
+    rest, stillness, and oxygen — this is about cosmic alignment and belonging.
+  - "The light here seems to linger a little longer, as if time itself is
+    reluctant to move on." — temporal stillness, light that overstays. Distinct
+    from "world holds its breath" (held-breath anticipation) — this is about
+    time itself slowing down through reluctance.
+- **New eerie atmosphere phrases**:
+  - "The shadows seem deeper than they should be, as if they have swallowed
+    something of the light." — unnaturally deep shadows that have consumed
+    light. Distinct from existing eerie phrases about wrongness, watchful
+    silence, and hair-standing-up — this is about visual darkness that has
+    actively consumed illumination.
+  - "Nothing moves, yet you sense that everything has just finished moving —
+    a world frozen mid-gesture." — a landscape caught in the instant after
+    motion, frozen mid-action. Distinct from "wrongness in the air" (abstract
+    unease) — this is about specific temporal arrest.
+- **New vibrant atmosphere phrases**:
+  - "The air itself vibrates with a frequency just below hearing, a song the
+    world cannot stop singing." — sub-audible vibration, the world humming
+    its own song. Distinct from existing vibrant phrases about bleeding colour,
+    joyful intensity, and charged air — this is about an inaudible, constant
+    vibrational song.
+  - "Life presses in from every direction, as if the landscape itself cannot
+    contain its own abundance." — overwhelming abundance, life exceeding the
+    landscape's capacity. Distinct from "too full to contain itself" (bleeding
+    colour/light) — this is about organic life pressure, not optical excess.
+- **New desolate atmosphere phrases**:
+  - "The silence here is not empty — it is the absence of everything that once
+    was, a shape left by loss." — silence as the negative space of vanished
+    things. Distinct from existing desolate phrases about hope withered, the
+    land giving up, and emptiness as identity — this is about silence as the
+    geometric trace of what departed.
+  - "Nothing grows here, not because the land is incapable, but because it has
+    forgotten how." — lost knowledge of growth, a forgetting more fundamental
+    than incapacity. Distinct from "land has given up on itself" (volitional
+    surrender) — this is about ontological forgetting.
+- **New melancholy atmosphere phrases**:
+  - "The rain does not fall — it hangs in the air, suspended between sky and
+    earth, unwilling to commit to either." — rain as suspended indecision, a
+    weather of ambivalence. Distinct from "gentle sadness in the air" (abstract
+    sadness) — this is a specific weather phenomenon that embodies melancholy.
+  - "Everything here is touched with the colour of a memory that refuses to
+    fade, soft and persistent." — a persistent, colour-like memory that will
+    not dim. Distinct from "half-forgotten lullaby" (which is about forgetting)
+    — this is about a memory that actively refuses to fade.
+- **Updated MOOD_ATMOSPHERE_INDICATORS** in test_landscape.py: Added 10 new
+  invariant substrings (2 per mood) for test detection of the new atmosphere
+  phrases. All existing mood atmosphere tests use dynamic checks over
+  MOOD_ATMOSPHERE_INDICATORS, so no test logic changes were needed.
+- **No code, CLI, or generation logic changes** — data-only expansion of the
+  MOOD_ATMOSPHERE dict plus indicator additions. All existing tests use dynamic
+  checks over MOOD_ATMOSPHERE keys and MOOD_ATMOSPHERE_INDICATORS, so no test
+  modifications were needed beyond the indicator list.
+- This directly fulfills the third "Next likely step" from Session 191: "Expand
+  mood atmosphere phrase pools for consistency." All 5 moods now have 6
+  atmosphere phrases each, matching the expanded pool sizes pattern from the
+  mood word pool consistency initiative (Sessions 187–191).
+- **Tests**: 1169 pass (448 subtests) — same as Session 191. Mood atmosphere
+  tests use dynamic checks over MOOD_ATMOSPHERE_INDICATORS, so test count is
+  unchanged.
+
+### Current status
+Working. All 1169 tests pass (18 todo + 1169 landscape).
+
+### Next likely steps
+- Add more presets for diverse generation experiences
+- Add a new biome or mood overlay
+- Add mood-atmosphere-aware presets with varied count/prob values
+
+## 2026-07-21
+
 ### What was done (Session 189)
 - **Expanded eerie mood word pools** — added 22 new words/phrases across 7 lexical
   categories (adjectives, elements, nouns, verbs, colors, adverbs, weathers) to bring

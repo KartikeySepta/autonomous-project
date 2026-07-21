@@ -1,5 +1,112 @@
 # Decisions
 
+## 2026-07-21 — Expanded Mood Atmosphere Phrase Pools (Session 192)
+
+### What
+Expanded all 5 moods' MOOD_ATMOSPHERE pools from 4 to 6 phrases each, adding
+10 new atmosphere phrases total: +2 peaceful (contentment, temporal lingering),
++2 eerie (shadow consumption, frozen gesture), +2 vibrant (sub-audible song,
+organic abundance), +2 desolate (silence as shape of loss, forgotten growth),
++2 melancholy (suspended rain, persistent memory colour).
+
+### Why
+The "Next likely steps" from Session 191 explicitly called for this: "Expand
+mood atmosphere phrase pools for consistency." All 5 moods had only 4 atmosphere
+phrases each — the smallest of any word pool category. The mood word pools
+(adjectives, elements, nouns, etc.) were all expanded to consistent sizes in
+Sessions 187–191. The atmosphere phrase pools were the last remaining mood
+category with small, unequal pools.
+
+The mood atmosphere system (added in Session 148) is the primary vehicle for
+establishing each mood's emotional register through direct narrative framing.
+Expanding these pools increases variety in mood-prescribed output and reduces
+phrase repetition when using mood atmosphere with high count settings across
+multiple presets.
+
+### New phrase rationale
+
+**Peaceful (+2)**:
+- "A quiet contentment settles over the world, as if everything is exactly
+  where it should be." — cosmic rightness/belonging. Fills a niche distinct
+  from restfulness (existing: "slow, tranquil rhythm"), stillness (existing:
+  "gentle stillness"), and benevolence (existing: "landscape wishes you well").
+  This is about ontological alignment — things being in their proper place.
+- "The light here seems to linger a little longer, as if time itself is
+  reluctant to move on." — temporal dilation through reluctance. Fills a
+  time-slowing niche absent from the existing 4 peaceful phrases, which focus
+  on spatial stillness rather than temporal lingering.
+
+**Eerie (+2)**:
+- "The shadows seem deeper than they should be, as if they have swallowed
+  something of the light." — active shadow-consumption of light. Distinct from
+  existing eerie phrases which focus on wrongness (abstract), watchful silence
+  (auditory/tactile), primal fear (visceral), and cold attention (intentional).
+  This is about visual darkness with agency — shadows that have eaten light.
+- "Nothing moves, yet you sense that everything has just finished moving —
+  a world frozen mid-gesture." — arrested motion, the instant after action.
+  Fills a temporal/kinetic niche: the feeling of having just missed something,
+  of a world caught between movement and stillness. No existing eerie phrase
+  covers this arrested-moment register.
+
+**Vibrant (+2)**:
+- "The air itself vibrates with a frequency just below hearing, a song the
+  world cannot stop singing." — sub-audible vibration, the world as involuntary
+  singer. Fills an auditory/vibrational niche: not the visual excess of
+  bleeding colour or the energetic charge of electric air, but a constant,
+  inaudible hum — a song the world cannot help but sing.
+- "Life presses in from every direction, as if the landscape itself cannot
+  contain its own abundance." — overwhelming organic pressure. Distinct from
+  "too full to contain itself" (which is about colour/light bleeding) — this
+  is about biological abundance pressing in, a fecundity that exceeds the
+  landscape's containing capacity.
+
+**Desolate (+2)**:
+- "The silence here is not empty — it is the absence of everything that once
+  was, a shape left by loss." — silence as negative sculpture. Distinct from
+  existing desolate phrases which personify the land as having given up, or
+  describe emptiness as identity. This is about silence as the geometric trace
+  of absent things — a positive shape of loss, not just the absence of sound.
+- "Nothing grows here, not because the land is incapable, but because it has
+  forgotten how." — lost knowledge of growth, a forgetting more fundamental
+  than incapacity. Distinct from "the land has given up on itself" (volitional
+  surrender) — this is about ontological amnesia, the land having lost the
+  memory of life rather than having chosen barrenness.
+
+**Melancholy (+2)**:
+- "The rain does not fall — it hangs in the air, suspended between sky and
+  earth, unwilling to commit to either." — weather as indecision. Fills a
+  meteorological/emotional niche: rain that embodies the melancholy register
+  through its own ambivalence. Distinct from "gentle sadness in the air"
+  (abstract emotion) and "world feels soft and heavy" (tactile-emotional).
+  This is a specific weather phenomenon that performs melancholy through
+  suspension and indecision.
+- "Everything here is touched with the colour of a memory that refuses to fade,
+  soft and persistent." — persistent indestructible memory. Distinct from
+  "half-forgotten lullaby" (which is about fading/diminishment) — this phrase
+  is about an active refusal to fade, a memory that clings with determination.
+
+### Tradeoffs
+- **Data-only change + indicator updates**: No modifications to
+  `generate_landscape()`, CLI flags, or any logic. Only MOOD_ATMOSPHERE dict
+  and MOOD_ATMOSPHERE_INDICATORS were updated.
+- **No seed-breaking**: Adding entries to MOOD_ATMOSPHERE doesn't change the
+  random sequence within a given seed — `rng.choice(pool)` on a larger pool
+  only affects which phrases are selected, not RNG state progression.
+- **No existing test changes needed**: All mood atmosphere tests use dynamic
+  checks over MOOD_ATMOSPHERE_INDICATORS and len(MOOD_ATMOSPHERE[mood]). No
+  hardcoded lists needed updating.
+- **Test count unchanged**: 1169 landscape + 18 todo tests — same as Session
+  191. All existing tests pass unchanged.
+- **Phrase characterization follows established pattern**: Each new phrase is
+  accompanied by an indicator substring and a rationale explaining its
+  distinct niche vs existing phrases in the same mood — consistent with the
+  pattern established in Sessions 180–191 and all prior expansions.
+- **All 5 moods now have 6 atmosphere phrases**: peaceful (6), eerie (6),
+  vibrant (6), desolate (6), melancholy (6) — consistent across all moods.
+- **Fulfills "Next likely steps" from Session 191**: Mood atmosphere phrase
+  pool expansion was explicitly called out as the third item. This completes
+  the last remaining mood-related pool size inconsistency.
+
 ## 2026-07-21 — Expanded Desolate Mood Word Pools (Session 191)
 
 ### What
