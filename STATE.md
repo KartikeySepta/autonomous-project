@@ -2,6 +2,88 @@
 
 ## 2026-07-21
 
+### What was done (Session 183)
+- **Expanded biome-specific weathers and anomalies for tundra, mountain range, and swamp**
+  — each biome's weather pool grew from 5 to 7 entries and anomaly pool from 5 to 7
+  entries, adding 6 new weathers and 6 new anomalies (12 phrases total). This is the
+  5th–7th biomes to receive weather/anomaly expansion (following forest, ocean, desert
+  in Session 180, and ruined city in Session 182).
+- **New tundra weathers**:
+  - `"a hoarfrost settles on every surface, turning the world to crystal and bone"` —
+    hoarfrost crystallizing everything in a frozen white blanket. Distinct from `"ice
+    crystals hang in the air like frozen diamonds"` (airborne, not settled) and `"snow
+    falls in a world of white and silence" (active snowfall, not surface frost).
+    Indicator: `"hoarfrost settles"`.
+  - `"the wind screams across the open ice, carrying the sound of a thousand frozen
+    voices"` — wind as an auditory scream across open ice. Distinct from `"a biting
+    wind carries ice crystals"` (tactile, about crystal impact). Indicator:
+    `"wind screams across"`.
+- **New tundra anomalies**:
+  - `"The permafrost exhales a breath of ancient air, carrying the smell of a world
+    that died long ago."` — permafrost releasing prehistoric atmosphere. Distinct from
+    `"The ice sings when the wind blows across it"` (musical, not olfactory) and `"Shapes
+    move beneath the frozen surface"` (visual movement, not exhalation).
+  - `"Your shadow freezes to the ground behind you, a dark stain on the white that does
+    not fade."` — shadow as a permanent stain on the snow. Distinct from `"The aurora
+    casts shadows that move on their own"` (independent moving shadows) — this is about
+    the shadow being stuck, not autonomous.
+- **New mountain range weathers**:
+  - `"a sudden avalanche thunders down the slopes, a river of white and stone"` —
+    avalanche as a dynamic catastrophic event. Distinct from all existing weathers
+    (wind, cloud, snow fall, warm wind). No existing mountain range weather covers
+    violent mass movement. Indicator: `"avalanche thunders"`.
+  - `"clouds boil over the ridgeline, spilling into the valleys below in slow cascades"` —
+    clouds spilling over ridges like slow waterfalls. Distinct from `"clouds cling to
+    the peaks like shawls"` (static clinging, not dynamic spilling). Indicator:
+    `"boil over the ridgeline"`.
+- **New mountain range anomalies**:
+  - `"The mountain breathes — a slow expansion and contraction of its entire mass, as
+    if stone has lungs."` — the mountain as a living entity with breath. Distinct from
+    `"Echoes return minutes after you speak"` (auditory, not kinetic). Adds a
+    living-stone register.
+  - `"Each step upward feels lighter, as if the mountain is pulling you toward its
+    summit."` — reverse gravity / attraction toward the summit. Distinct from `"The
+    mountain casts two shadows under a single sun"` (optical, not gravitational).
+- **New swamp weathers**:
+  - `"warm rain falls in heavy droplets, each splash releasing a puff of mist from the
+    stagnant water"` — warm rain causing mist explosions on contact with still water.
+    Distinct from `"fog rolls low over the black water"` (fog rolling in, not rain on
+    water) and `"thunder rolls across the marsh without lightning"` (auditory, not
+    percussive). Indicator: `"warm rain falls in heavy droplets"`.
+  - `"a slow rain of shed leaves and seed pods patters on the dark water, a percussion
+    of tiny impacts"` — organic debris falling on water like a percussion instrument.
+    Distinct from `"gnats swarm in the stagnant heat"` (living insects, not falling
+    debris). Indicator: `"shed leaves and seed pods"`.
+- **New swamp anomalies**:
+  - `"The water is perfectly still, yet the reflection shows ripples that never reach
+    the surface."` — reflection out of sync with reality, showing movement where there
+    is none. Distinct from `"The water reflects a world that no longer exists"` (a
+    different world, not the same world with different physics).
+  - `"Trees that were on your left are now on your right, though you never turned
+    around."` — impossible physical rearrangement of the environment. Distinct from
+    `"Will-o'-wisps flicker in perfect constellations"` (light-based, not spatial).
+- **Updated WEATHER_INDICATORS** in test_landscape.py: Added 6 new invariant substrings
+  for the new biome weather phrases so weather suppression/probability tests correctly
+  cover the new weathers.
+- **No code, CLI, or generation logic changes** — data-only expansion plus indicator
+  additions. All existing tests use dynamic checks over `ALL_WEATHERS`, `ALL_ANOMALIES`,
+  and `WEATHER_INDICATORS`, so no test logic changes were needed.
+- This directly fulfills the first "Next likely step" from Session 182: "Expand biome-
+  specific word pools further (more biomes, more entries)." 7 of 14 biomes now have
+  expanded weathers/anomalies (forest, ocean, desert, ruined city, tundra, mountain
+  range, swamp). 7 biomes remain at 5 weathers and 5 anomalies.
+- Tests unchanged: 1145 passed (18 todo + 1145 landscape) — same as Session 182.
+
+### Current status
+Working. All 1163 tests pass (18 todo + 1145 landscape).
+
+### Next likely steps
+- Expand biome-specific word pools further (more biomes, more entries)
+- Add more presets for diverse generation experiences
+- Expand the new melancholy word pools further
+
+## 2026-07-21
+
 ### What was done (Session 182)
 - **Expanded biome-specific weathers and anomalies for "ruined city"** — the
   only human-constructed (ruined) biome in the project. Weathers grew from 5→7

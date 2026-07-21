@@ -1,5 +1,112 @@
 # Decisions
 
+## 2026-07-21 — Expanded Tundra, Mountain Range, and Swamp Biome Weathers and Anomalies (Session 183)
+
+### What
+Expanded biome-specific weather and anomaly pools for tundra, mountain range, and
+swamp from 5→7 entries each — 6 new weathers and 6 new anomalies (12 phrases total).
+This is the 5th–7th biomes to receive weather/anomaly expansion (following forest,
+ocean, desert in Session 180, and ruined city in Session 182).
+
+### Why
+The "Next likely steps" from Session 182 explicitly called for this: "Expand biome-
+specific word pools further (more biomes, more entries)." After Sessions 180 and 182,
+7 of 14 biomes remained at 5 weathers and 5 anomalies.
+
+I chose tundra, mountain range, and swamp because:
+1. **Tundra** — the coldest, most extreme climate biome, offering unique frozen/
+   auroral weathers and anomalies that no other biome can provide.
+2. **Mountain range** — the only vertical/elevation biome, with distinct alpine
+   weather (avalanches, cloud cascades) and gravity-defying anomaly potential.
+3. **Swamp** — the only wetland/decay biome, with unique marshy weather (organic
+   debris rain, warm rain on stagnant water) and reflection/surreal anomalies.
+4. **Diversity across climates** — frozen (tundra), alpine (mountain range), wetland
+   (swamp) cover three very different environmental registers, none overlapping with
+   the previously expanded biomes (forest, ocean, desert, ruined city).
+
+### New weathers
+
+**Tundra**:
+- `"a hoarfrost settles on every surface, turning the world to crystal and bone"` —
+  hoarfrost as a crystallizing blanket coating everything. Niche: surface frost
+  deposition. Distinct from `"ice crystals hang in the air"` (airborne, not settled)
+  and `"snow falls in a world of white and silence"` (active snowfall, not surface).
+  Indicator: `"hoarfrost settles"`.
+- `"the wind screams across the open ice, carrying the sound of a thousand frozen
+  voices"` — wind as auditory scream across open ice. Niche: sound of wind on ice.
+  Distinct from `"a biting wind carries ice crystals"` (tactile, crystal impact).
+  Indicator: `"wind screams across"`.
+
+**Mountain range**:
+- `"a sudden avalanche thunders down the slopes, a river of white and stone"` —
+  catastrophic mass movement. Niche: violent dynamic event. No existing mountain
+  range weather covers avalanche or mass movement. Indicator: `"avalanche thunders"`.
+- `"clouds boil over the ridgeline, spilling into the valleys below in slow cascades"` —
+  cloud spillover as slow-motion waterfall. Niche: dynamic cloud movement over
+  topography. Distinct from `"clouds cling to the peaks like shawls"` (static).
+  Indicator: `"boil over the ridgeline"`.
+
+**Swamp**:
+- `"warm rain falls in heavy droplets, each splash releasing a puff of mist from the
+  stagnant water"` — warm percussive rain on still water. Niche: rain-on-water
+  percussive effect. Distinct from `"fog rolls low over the black water"` (fog, not
+  rain). Indicator: `"warm rain falls in heavy droplets"`.
+- `"a slow rain of shed leaves and seed pods patters on the dark water, a percussion
+  of tiny impacts"` — organic debris percussion. Niche: falling organic matter as
+  sound. Distinct from `"gnats swarm in the stagnant heat"` (living insects, not
+  debris). Indicator: `"shed leaves and seed pods"`.
+
+### New anomalies
+
+**Tundra**:
+- `"The permafrost exhales a breath of ancient air, carrying the smell of a world
+  that died long ago."` — permafrost releasing prehistoric atmosphere. Niche:
+  olfactory time capsule. Distinct from `"The ice sings when the wind blows"` (musical,
+  not olfactory) and `"Shapes move beneath the frozen surface"` (visual movement).
+- `"Your shadow freezes to the ground behind you, a dark stain on the white that does
+  not fade."` — shadow as permanent dark stain. Niche: stuck/immobile shadow.
+  Distinct from `"The aurora casts shadows that move on their own"` (autonomous
+  moving shadows) — this is about immobility rather than independence.
+
+**Mountain range**:
+- `"The mountain breathes — a slow expansion and contraction of its entire mass, as
+  if stone has lungs."` — living mountain with breath. Niche: geological respiration.
+  Distinct from `"Echoes return minutes after you speak"` (auditory, not kinetic).
+- `"Each step upward feels lighter, as if the mountain is pulling you toward its
+  summit."` — reverse gravitational attraction. Niche: anti-gravity pull toward
+  summit. Distinct from `"The mountain casts two shadows under a single sun"`
+  (optical phenomenon, not gravitational).
+
+**Swamp**:
+- `"The water is perfectly still, yet the reflection shows ripples that never reach
+  the surface."` — reflection out of sync with reality. Niche: decoupled mirror
+  physics. Distinct from `"The water reflects a world that no longer exists"` (a
+  different world entirely, not the same world with modified physics).
+- `"Trees that were on your left are now on your right, though you never turned
+  around."` — impossible spatial rearrangement. Niche: disorienting relocation.
+  Distinct from `"Will-o'-wisps flicker in perfect constellations"` (light-based,
+  not spatial dislocation).
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only BIOME_WORDS entries and WEATHER_INDICATORS were updated.
+- **No seed-breaking**: Adding entries to biome pools doesn't change the random
+  sequence within a given seed — `rng.choices(pool, weights, k=1)` on a larger
+  pool only changes which entries are selected, not RNG state progression.
+- **Test indicator updates**: 6 new WEATHER_INDICATORS added. Necessary because
+  weather suppression/probability tests scan for these substrings.
+- **No anomaly indicator updates needed**: Anomaly suppression tests use
+  `ALL_ANOMALIES` directly (a derived set that includes biome anomalies), so
+  new anomalies are automatically covered.
+- **Test count unchanged**: 1163 tests (18 todo + 1145 landscape) — same as
+  Session 182.
+- **Expansion scope: 3 biomes**: 7 of 14 biomes now have expanded pools (forest,
+  ocean, desert, ruined city, tundra, mountain range, swamp). 7 biomes remain:
+  cave system, plain, volcanic field, coral reef, fungal grove, sky islands,
+  crystal fields.
+- **Fulfills "Next likely steps" from Session 182**: Biome-specific word pool
+  expansion was explicitly called out as the first item.
+
 ## 2026-07-21 — Expanded Ruined City Biome Weathers and Anomalies (Session 182)
 
 ### What

@@ -1150,6 +1150,8 @@ BIOME_WORDS = {
             "snow falls in a world of white and silence",
             "ice crystals hang in the air like frozen diamonds",
             "a strange warmth rises from beneath the permafrost",
+            "a hoarfrost settles on every surface, turning the world to crystal and bone",
+            "the wind screams across the open ice, carrying the sound of a thousand frozen voices",
         ],
         "anomalies": [
             "The ice sings when the wind blows across it.",
@@ -1157,6 +1159,8 @@ BIOME_WORDS = {
             "The aurora casts shadows that move on their own.",
             "The snow remembers every footprint ever pressed into it.",
             "A mountain in the distance has not moved, yet it is closer than yesterday.",
+            "The permafrost exhales a breath of ancient air, carrying the smell of a world that died long ago.",
+            "Your shadow freezes to the ground behind you, a dark stain on the white that does not fade.",
         ],
     },
     "mountain range": {
@@ -1172,6 +1176,8 @@ BIOME_WORDS = {
             "thin air carries every sound for miles",
             "snow falls in heavy silence, muffling the world",
             "a warm wind descends from the peaks, carrying the scent of distant valleys",
+            "a sudden avalanche thunders down the slopes, a river of white and stone",
+            "clouds boil over the ridgeline, spilling into the valleys below in slow cascades",
         ],
         "anomalies": [
             "The peaks rearrange themselves at night.",
@@ -1179,6 +1185,8 @@ BIOME_WORDS = {
             "A stone bridge arcs between clouds.",
             "There is a peak that appears only in reflections.",
             "The mountain casts two shadows under a single sun.",
+            "The mountain breathes — a slow expansion and contraction of its entire mass, as if stone has lungs.",
+            "Each step upward feels lighter, as if the mountain is pulling you toward its summit.",
         ],
     },
     "swamp": {
@@ -1194,6 +1202,8 @@ BIOME_WORDS = {
             "gnats swarm in the stagnant heat",
             "a phosphorescent mist rises from the water at dusk",
             "thunder rolls across the marsh without lightning",
+            "warm rain falls in heavy droplets, each splash releasing a puff of mist from the stagnant water",
+            "a slow rain of shed leaves and seed pods patters on the dark water, a percussion of tiny impacts",
         ],
         "anomalies": [
             "Will-o'-wisps flicker in perfect constellations.",
@@ -1201,6 +1211,8 @@ BIOME_WORDS = {
             "Bubbles rise spelling out words in an old language.",
             "Moss-covered trees whisper conversations from a century past.",
             "Every pair of eyes in the swamp blinks in perfect unison.",
+            "The water is perfectly still, yet the reflection shows ripples that never reach the surface.",
+            "Trees that were on your left are now on your right, though you never turned around.",
         ],
     },
     "cave system": {

@@ -150,6 +150,12 @@ WEATHER_INDICATORS = [
     "phantom pools",
     "swallowing the ground floor",
     "rain drums on",
+    "hoarfrost settles",
+    "wind screams across",
+    "avalanche thunders",
+    "boil over the ridgeline",
+    "warm rain falls in heavy droplets",
+    "shed leaves and seed pods",
 ]
 
 LEGEND_INDICATORS = [
