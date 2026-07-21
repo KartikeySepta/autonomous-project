@@ -1,5 +1,73 @@
 # Decisions
 
+## 2026-07-21 — Added "crystal fields" Biome (Session 177)
+
+### What
+Added a new biome "crystal fields" — a surface landscape of massive crystal
+formations, prismatic light, and resonant mineral energy. Includes a full
+BIOME_WORDS entry with 8 word pools (8 adjectives, 7 elements, 7 nouns,
+7 verbs, 7 colors, 5 adverbs, 5 weathers, 5 anomalies) and 3 new tests
+following the existing "new biome" test pattern.
+
+### Why
+The project has 13 biomes but none covers a crystalline/reflective surface
+landscape. The existing biomes are split between organic (forest, swamp,
+fungal grove), geologic (mountain range, cave system, volcanic field),
+aqueous (ocean, coral reef), climatic (desert, tundra), and constructed
+(ruined city, sky islands, plain). "crystal fields" adds a mineral/growth
+landscape that is neither underground (cave system) nor destructive
+(volcanic field) — it's about light refraction, resonance, and geometric
+beauty.
+
+This was the third "Next likely step" from Session 176: "Add a new biome
+or mood." The first two (global pool expansion, biome-specific pool
+expansion) are ongoing efforts, but adding a new biome is a discrete,
+verifiable step that expands the generator's creative range immediately.
+
+### Why "crystal fields" specifically
+- **Fills a genuine gap**: No existing biome describes a surface of
+  crystalline structures or glass-like formations. The closest is "cave
+  system" which has crystals but is underground and dark.
+- **Rich vocabulary potential**: The prismatic/refractive/resonant register
+  is entirely new. Words like "prismatic", "refract", "glass chime", and
+  "faceted" don't appear in any other biome's word pools.
+- **Distinct anomalies**: The anomalies lean into optical/sonic impossibility
+  (sky reflected in crystals, sound traveling in straight lines, shadows
+  that contradict the sun) rather than the temporal/ghostly anomalies of
+  other biomes.
+- **Thematically coherent**: Every word pool entry reinforces the same core
+  concept — light interacting with crystal — creating a cohesive biome
+  identity.
+
+### Tradeoffs
+- **No code, CLI, or generation logic changes**: Only BIOMES list and
+  BIOME_WORDS dict were modified. The `generate_landscape()` function,
+  all CLI flags, preset system, and feature systems are unchanged. This
+  is a data-only addition.
+- **No seed-breaking**: Adding a new biome doesn't change existing output
+  for any seed — the RNG progression is identical for all existing biomes.
+  Crystal fields output only appears when explicitly requested via
+  `--biome` or when randomly selected (which is now 1/14 instead of 1/13).
+- **Test count +3**: 1137 landscape tests (up from 1134). 3 new test
+  methods + updated 1 existing test. All existing tests pass unchanged.
+- **All feature compatibility**: Crystal fields works with all 15 feature
+  systems (echoes, legends, sounds, wildlife, perspectives, times, seasons,
+  similes, metaphors, personifications, mood atmosphere, travelogue,
+  wistful, weather, anomalies) out of the box — no biome-specific feature
+  gating needed.
+- **Not a mood**: Could "crystal" be a mood overlay instead? A mood is
+  an emotional register that boosts mood-matched words across any biome.
+  "crystal fields" is a physical landscape with specific nouns, verbs,
+  weathers, and anomalies — far more than a word-weighting overlay.
+  The "vibrant" mood (with geometric/adjectives like "crystal") is the
+  closest existing mood match for crystal fields output.
+- **Presets unchanged**: All 5 presets randomly select from BIOMES, so
+  crystal fields can appear in any preset's output. No preset was modified.
+  A dedicated "crystal" preset could be added in a future session.
+- **Fulfills "Next likely steps" from Session 176**: Adding a new biome
+  was explicitly called out as the third item. This is the first new
+  biome since "sky islands" was added.
+
 ## 2026-07-21 — Added wistful_count/wistful_prob to All 5 Presets (Session 176)
 
 ### What

@@ -6,7 +6,7 @@ import random
 BIOMES = [
     "forest", "desert", "tundra", "ocean", "mountain range",
     "swamp", "cave system", "plain", "volcanic field", "coral reef",
-    "ruined city", "fungal grove", "sky islands",
+    "ruined city", "fungal grove", "sky islands", "crystal fields",
 ]
 
 # Global fallback word pools
@@ -1302,6 +1302,28 @@ BIOME_WORDS = {
             "A bell tolls from an island that no one has ever reached.",
             "The islands cast shadows onto the clouds below — shadows that move independently.",
             "Gravity weakens at the center of each island, as if the land itself is trying to float free.",
+        ],
+    },
+    "crystal fields": {
+        "adjectives": ["prismatic", "faceted", "resonant", "shard-strewn", "refractive", "geometric", "crystalline", "iridescent"],
+        "elements": ["crystal hum", "prism light", "shard glow", "facet gleam", "refracted ray", "resonance", "glass chime"],
+        "nouns": ["spires", "facets", "prisms", "shards", "clusters", "geodes", "formations"],
+        "verbs": ["refract", "resonate", "gleam", "scatter", "chime", "catch", "split"],
+        "colors": ["prismatic", "glass-clear", "lavender", "rose-quartz", "citrine", "amethyst", "beryl"],
+        "adverbs": ["brilliantly", "sharply", "clearly", "geometrically", "brightly"],
+        "weathers": [
+            "light scatters into a thousand colors across the crystal faces",
+            "a low hum resonates from the deeper crystal formations",
+            "the crystals sing softly as the wind moves between them",
+            "a fine dust of crystal powder catches the light like floating gems",
+            "the air shimmers with refracted light from a hidden source",
+        ],
+        "anomalies": [
+            "The crystals reflect a sky that is not above you.",
+            "Every facet shows a different moment in time.",
+            "Sound travels in straight lines here — you hear only what is directly before you.",
+            "The crystals hum in harmonies that form chords no human instrument can play.",
+            "Shadows move in directions that contradict the position of the sun.",
         ],
     },
 }

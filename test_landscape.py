@@ -1637,7 +1637,7 @@ class TestNewBiomes(unittest.TestCase):
         biomes_seen = set()
         for s in range(200):
             r = generate_landscape(seed=s)
-            for b in ["ruined city", "fungal grove", "sky islands"]:
+            for b in ["ruined city", "fungal grove", "sky islands", "crystal fields"]:
                 if b in r:
                     biomes_seen.add(b)
         self.assertGreaterEqual(len(biomes_seen), 1,
@@ -1648,6 +1648,21 @@ class TestNewBiomes(unittest.TestCase):
         self.assertIn("ruined city", result)
         self.assertIn("fungal grove", result)
         self.assertIn(" and ", result)
+
+    def test_crystal_fields_in_biomes_list(self):
+        self.assertIn("crystal fields", BIOMES)
+
+    def test_crystal_fields_produces_valid_output(self):
+        for s in range(10):
+            result = generate_landscape(seed=s, biome="crystal fields")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_crystal_fields_uses_specific_vocabulary(self):
+        crystal_adj = set(BIOME_WORDS["crystal fields"].get("adjectives", []))
+        results = [generate_landscape(seed=s, biome="crystal fields") for s in range(200)]
+        found = any(any(w in r for w in crystal_adj) for r in results)
+        self.assertTrue(found, "crystal fields-specific adjectives never appeared")
 
 
 class TestCountWithSeed(unittest.TestCase):

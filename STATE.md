@@ -2,6 +2,54 @@
 
 ## 2026-07-21
 
+### What was done (Session 177)
+- **Added new biome: "crystal fields"** — a surface landscape of massive crystal
+  formations, prismatic light, and resonant mineral energy. This is the 14th biome
+  and the first new biome since "sky islands" was added.
+- **BIOMES list expanded**: `"crystal fields"` added to the 13 existing biomes.
+- **BIOME_WORDS entry created** with 8 full word pools (adjectives, elements,
+  nouns, verbs, colors, adverbs, weathers, anomalies):
+  - **Adjectives (8)**: `prismatic`, `faceted`, `resonant`, `shard-strewn`,
+    `refractive`, `geometric`, `crystalline`, `iridescent`
+  - **Elements (7)**: `crystal hum`, `prism light`, `shard glow`, `facet gleam`,
+    `refracted ray`, `resonance`, `glass chime`
+  - **Nouns (7)**: `spires`, `facets`, `prisms`, `shards`, `clusters`, `geodes`,
+    `formations`
+  - **Verbs (7)**: `refract`, `resonate`, `gleam`, `scatter`, `chime`, `catch`,
+    `split`
+  - **Colors (7)**: `prismatic`, `glass-clear`, `lavender`, `rose-quartz`,
+    `citrine`, `amethyst`, `beryl`
+  - **Adverbs (5)**: `brilliantly`, `sharply`, `clearly`, `geometrically`,
+    `brightly`
+  - **Weathers (5)**: light scattering across crystal faces, low hum from deep
+    formations, crystals singing in the wind, crystal dust floating like gems,
+    shimmering refracted light
+  - **Anomalies (5)**: sky reflected in crystals, facets showing different times,
+    sound traveling in straight lines, crystal harmonies forming impossible chords,
+    shadows contradicting the sun
+- **Designed to fill a unique niche**: No existing biome covers a crystalline/
+  reflective surface landscape. "crystal fields" sits between "cave system"
+  (underground minerals) and "volcanic field" (destructive earth forces) but is
+  an open-air landscape of growth, refraction, and resonance.
+- **3 new tests** in `TestNewBiomes` (`test_crystal_fields_in_biomes_list`,
+  `test_crystal_fields_produces_valid_output`,
+  `test_crystal_fields_uses_specific_vocabulary`) — following the same pattern
+  as the 3 existing "new biome" test sets. Also updated
+  `test_new_biomes_appear_in_random_selection` to include `"crystal fields"`.
+- Tests pass: 1137 landscape tests (+3 from 1134), 18 todo unchanged.
+- Total: 1155 tests pass.
+
+### Current status
+Working. All 1155 tests pass (18 todo + 1137 landscape).
+
+### Next likely steps
+- Expand global word pools further (more adjectives, elements, nouns, verbs)
+- Expand biome-specific word pools (weathers, anomalies per biome)
+- Add a new mood overlay
+- Add more presets for diverse generation experiences
+
+## 2026-07-21
+
 ### What was done (Session 176)
 - **Added `wistful_count` and `wistful_prob` to all 5 presets** with varied,
   meaningful values that enhance each preset's character:
