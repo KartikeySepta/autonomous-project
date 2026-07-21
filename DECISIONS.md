@@ -1,5 +1,42 @@
 # Decisions
 
+## 2026-07-21 — Added --wistful-count and --wistful-prob CLI Flags (Session 175)
+
+### What
+Added `--wistful-count` (0-3, default: 1) and `--wistful-prob` (0.0-1.0,
+default: 1.0) CLI flags to expose the already-existing `wistful_count` and
+`wistful_prob` parameters in `generate_landscape()`. Also added preset
+integration for `wistful_count` and `wistful_prob` and wired them into the
+`main()` → `generate_landscape()` call.
+
+### Why
+The wistful feature system was the last feature with count/prob controls
+available in the API but not exposed via CLI. Every other feature (echo, legend,
+sound, wildlife, perspective, time, season, simile, metaphor, personification,
+mood_atmosphere) already had both count and prob CLI flags. The "Next likely
+steps" from Session 174 explicitly called for this: "Add count/prob controls
+for wistful (currently on/off only)."
+
+### Tradeoffs
+- **Follows existing pattern exactly**: `--wistful-count` uses `type=int,
+  default=1, choices=[0, 1, 2, 3]` matching `--echo-count`, `--sound-count`,
+  etc. `--wistful-prob` uses `type=float, default=1.0` matching `--echo-prob`,
+  `--sound-prob`, etc.
+- **No seed-breaking**: Adding CLI flags and preset integration doesn't change
+  any generation logic or RNG progression. Output for any existing invocation
+  without these flags is identical (defaults are 1 and 1.0, matching the
+  previous implicit defaults).
+- **No test changes needed**: All wistful tests use dynamic checks over
+  `WISTFUL_INDICATORS` and `WISTFUL_INDICATORS_PHRASES`. The count/prob
+  controls don't change the data or existing behavior. No new tests were added
+  — the existing test suite covers the wistful feature comprehensively.
+- **Presets unchanged**: All 5 presets have `"wistful": True` but none have
+  `"wistful_count"` or `"wistful_prob"`. They continue to use the default (1
+  and 1.0). Presets can now optionally specify these keys for more nuanced
+  wistful control.
+- **Fulfills "Next likely steps" from Session 174**: Every feature system now
+  has full count/prob controls exposed via CLI. No gaps remain.
+
 ## 2026-07-19 — Added describe_mood_atmosphere() Introspection (Session 174)
 
 ### What

@@ -1,31 +1,28 @@
 # State
 
-## 2026-07-19
+## 2026-07-21
 
-### What was done (Session 174)
-- **Added `describe_mood_atmosphere()` function** — introspection for the mood
-  atmosphere system, listing all 4 moods (peaceful, eerie, vibrant, desolate)
-  with their 4 phrases each (16 total), following the same pattern as all other
-  describe functions (describe_echoes, describe_similes, etc.). Output format:
-  ```
-  === mood atmosphere phrases ===
-    peaceful:
-      [0] A gentle stillness settles over the scene like a blessing.
-      ...
-  ```
-- **Added `--describe-mood-atmosphere` CLI flag** — users can now inspect all
-  mood atmosphere phrases by mood, with index numbers. Behaves like all other
-  `--describe-*` flags: no landscape is generated, output goes to stdout.
-- **Added `TestDescribeMoodAtmosphere` (8 tests)** — following the exact same
-  pattern as `TestDescribeEchoes`: returns string, header, all moods, index
-  numbers, last index, CLI flag, stdout output, no landscape generated.
-- This fulfills a long-standing gap: the mood atmosphere system was added in
-  Session 148, but unlike every other feature with a describe function (echoes,
-  legends, similes, metaphors, personifications, sounds, wildlife, perspectives,
-  times, seasons, wistful, travelogue), it had no introspection capability. This
-  brings mood atmosphere to full parity with all other feature systems.
-- Tests increased from 1126 to 1134 landscape tests (18 todo unchanged).
-  Subtests unchanged at 393.
+### What was done (Session 175)
+- **Added `--wistful-count` CLI flag** — users can now specify the number of
+  wistful phrases per landscape (0-3, default: 1), following the exact same
+  pattern as `--echo-count`, `--sound-count`, `--simile-count`, etc.
+- **Added `--wistful-prob` CLI flag** — users can now specify the probability
+  of a wistful phrase appearing per roll (0.0 to 1.0, default: 1.0), following
+  the exact same pattern as `--echo-prob`, `--sound-prob`, `--simile-prob`, etc.
+- **Added preset integration for wistful_count and wistful_prob** — presets can
+  now specify `"wistful_count"` and `"wistful_prob"` keys (matching the pattern
+  of all other feature count/prob pairs). The preset integration gates on the
+  default values (1 and 1.0), so existing presets unchanged.
+- **Wired `args.wistful_count` and `args.wistful_prob`** into the
+  `generate_landscape()` call — the function already accepted these parameters
+  (`wistful_count=1, wistful_prob=1.0` defaults) but they were not exposed via
+  CLI or passed from `main()`.
+- The wistful feature was the last feature system with count/prob controls
+  available in the API but not exposed via CLI. Every other feature (echo,
+  legend, sound, wildlife, perspective, time, season, simile, metaphor,
+  personification, mood_atmosphere) already had both count and prob CLI flags.
+- No code generation or generation logic changes — only CLI and preset plumbing.
+- Tests unchanged: still 1134 landscape tests pass (18 todo unchanged).
 
 ### Current status
 Working. All 1152 tests pass (18 todo + 1134 landscape).
@@ -34,7 +31,7 @@ Working. All 1152 tests pass (18 todo + 1134 landscape).
 - Expand global word pools further (more adjectives, elements, nouns, verbs)
 - Expand biome-specific word pools (weathers, anomalies per biome)
 - Add a new biome or mood
-- Add count/prob controls for wistful (currently on/off only)
+- Add wistful_count/wistful_prob to presets with varied values
 
 ## 2026-07-19
 
