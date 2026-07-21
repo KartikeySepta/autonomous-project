@@ -2,6 +2,74 @@
 
 ## 2026-07-21
 
+### What was done (Session 179)
+- **Expanded WEATHERS from 15 to 20 entries** — 5 new weather phrases covering
+  sleet, debris swirl, sunbreak, humidity, and dust — niches underrepresented
+  in the existing 15.
+- **Expanded ANOMALIES from 15 to 20 entries** — 5 new anomaly phrases covering
+  phantom self, responsive vegetation, temporal voice echo, temperature inversion,
+  and fractal repetition — niches underrepresented in the existing 15.
+- **New weathers**:
+  - `"a sharp wind drives needles of sleet through the air"` — sleet/freezing
+    rain, a cold precipitation distinct from snow (existing) and fog (existing).
+    Covers icy mixed precipitation. Indicator: `"drives needles of sleet"`.
+  - `"leaves and debris swirl in sudden eddies of wind"` — dynamic debris swirl,
+    distinct from "ash drifts slowly downward" (slow, ash) and "mist curls along
+    the ground" (low, mist). This is about active wind-driven debris. Indicator:
+    `"swirl in sudden eddies"`.
+  - `"the sun breaks through the clouds in shafts of amber light"` — dramatic
+    sunbreak, distinct from "the air shimmers with heat" (heat shimmer) and
+    "lightning flickers on the horizon" (storm light). Covers sudden sunlight.
+    Indicator: `"shafts of amber light"`.
+  - `"the air hangs heavy and damp, thick enough to taste"` — oppressive humidity,
+    distinct from "a still calm lingers" (dry stillness) and "the air grows thick
+    with the promise of thunder" (storm pressure). Covers heavy wet air.
+    Indicator: `"heavy and damp"`.
+  - `"a fine dust rises in spirals, catching the light like scattered gold"` —
+    dust devils/particulate light, distinct from "ash drifts slowly downward"
+    (falling ash) and "mist curls along the ground" (moisture). Covers dry
+    particulate rising. Indicator: `"fine dust rises in spirals"`.
+- **New anomalies**:
+  - `"You see your own figure in the distance, walking a path you have not yet
+    taken."` — phantom self/premonition, distinct from "Every step you take rings
+    twice" (temporal echo of past steps). This is about a future self seen ahead.
+  - `"The plants turn to face you as you pass, their leaves tracking your
+    movement."` — responsive vegetation, no existing anomaly covers living
+    plants reacting to the observer.
+  - `"Your words echo back to you in a voice that is yours, but not from this
+    moment."` — temporal voice echo, distinct from "Every step you take rings
+    twice" (footstep echo). This is about spoken words returned from another time.
+  - `"The air is warm here, though frost covers the ground at your feet."` —
+    temperature inversion, no existing anomaly covers localized impossible
+    temperature.
+  - `"Every rock, every tree, every blade of grass is arranged in the same
+    pattern, repeated to infinity."` — fractal repetition, distinct from "The
+    geometry of the landscape follows rules you cannot quite recall" (uncanny
+    geometry). This is about visible identical repetition.
+- **Updated WEATHER_INDICATORS** in test_landscape.py: Added 5 new invariant
+  substrings for the new weather phrases so that weather suppression/probability
+  tests correctly cover the new phrases.
+- **No code, CLI, or generation logic changes** — data-only expansion plus
+  indicator additions. All existing tests use dynamic checks over `ALL_WEATHERS`,
+  `ALL_ANOMALIES`, and `WEATHER_INDICATORS`, so no test logic changes were needed.
+- **New words are default-weight**: All 10 new entries use the "normal" weight
+  tier, appropriate for balanced appearance rates under normal bias. None are
+  marked COMMON or RARE.
+- This directly fulfills the first "Next likely step" from Session 178: "Expand
+  global word pools further (WEATHERS, ANOMALIES from 15 to 20)." All 8 global
+  pools are now at 20 entries — a milestone for consistency.
+- Tests unchanged: 1155 tests pass (18 todo + 1137 landscape) — same as Session 178.
+
+### Current status
+Working. All 1155 tests pass (18 todo + 1137 landscape).
+
+### Next likely steps
+- Expand biome-specific word pools (weathers, anomalies per biome)
+- Add a new mood overlay
+- Add more presets for diverse generation experiences
+
+## 2026-07-21
+
 ### What was done (Session 178)
 - **Expanded 5 global word pools from 15 to 20 entries each** — ELEMENTS, NOUNS,
   VERBS, ADVERBS, and COLORS each gained 5 carefully chosen entries, adding 25

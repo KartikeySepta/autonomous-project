@@ -137,6 +137,11 @@ WEATHER_INDICATORS = [
     "thin mist rises from",
     "smell of distant rain",
     "promise of thunder",
+    "drives needles of sleet",
+    "swirl in sudden eddies",
+    "shafts of amber light",
+    "heavy and damp",
+    "fine dust rises in spirals",
 ]
 
 LEGEND_INDICATORS = [

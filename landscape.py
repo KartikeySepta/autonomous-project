@@ -54,6 +54,11 @@ WEATHERS = [
     "a thin mist rises from the warming stone",
     "a slow wind carries the smell of distant rain",
     "the air grows thick with the promise of thunder",
+    "a sharp wind drives needles of sleet through the air",
+    "leaves and debris swirl in sudden eddies of wind",
+    "the sun breaks through the clouds in shafts of amber light",
+    "the air hangs heavy and damp, thick enough to taste",
+    "a fine dust rises in spirals, catching the light like scattered gold",
 ]
 
 ANOMALIES = [
@@ -72,6 +77,11 @@ ANOMALIES = [
     "The light here has no source — it simply exists.",
     "Every step you take rings twice, once now and once long ago.",
     "Birds glide in spirals that form equations no living eye has solved.",
+    "You see your own figure in the distance, walking a path you have not yet taken.",
+    "The plants turn to face you as you pass, their leaves tracking your movement.",
+    "Your words echo back to you in a voice that is yours, but not from this moment.",
+    "The air is warm here, though frost covers the ground at your feet.",
+    "Every rock, every tree, every blade of grass is arranged in the same pattern, repeated to infinity.",
 ]
 
 ECHOES = [

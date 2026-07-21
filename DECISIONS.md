@@ -1,5 +1,87 @@
 # Decisions
 
+## 2026-07-21 — Expanded WEATHERS and ANOMALIES to 20 (Session 179)
+
+### What
+Expanded WEATHERS from 15→20 and ANOMALIES from 15→20, adding 5 carefully
+chosen entries to each pool for 10 new phrases total. All 8 global word pools
+(ADJECTIVES, ELEMENTS, NOUNS, VERBS, ADVERBS, COLORS, WEATHERS, ANOMALIES)
+are now at exactly 20 entries each — a milestone for the project.
+
+### Why
+The "Next likely steps" from Session 178 explicitly called for this: "Expand
+global word pools further (WEATHERS, ANOMALIES from 15 to 20)." These were
+the last two pools remaining at 15 — all others were expanded to 20 in
+Session 178 (5 pools) and Session 173 (ADJECTIVES).
+
+The global word pools are the foundational vocabulary of every generated
+landscape. Expanding them has a multiplier effect on variety across all 14
+biomes and all 15+ feature systems.
+
+Each new word was chosen to fill a niche not represented in the existing pool:
+
+**WEATHERS (+5)**:
+- `"a sharp wind drives needles of sleet through the air"` — sleet/freezing
+  rain. No existing weather covers icy mixed precipitation (snow is soft,
+  fog is moisture, rain is liquid). This is hard, needle-like frozen rain.
+- `"leaves and debris swirl in sudden eddies of wind"` — active wind-driven
+  debris. No existing weather covers loose particulate matter whipped into
+  motion. Distinct from "ash drifts slowly downward" (falling, not rising).
+- `"the sun breaks through the clouds in shafts of amber light"` — dramatic
+  sunbreak. No existing weather covers sudden sunlight piercing cloud cover.
+  Distinct from "the air shimmers with heat" (persistent heat) and "lightning
+  flickers" (electrical).
+- `"the air hangs heavy and damp, thick enough to taste"` — oppressive
+  humidity. No existing weather covers heavy wet air. Distinct from "the air
+  grows thick with the promise of thunder" (barometric pressure, not moisture).
+- `"a fine dust rises in spirals, catching the light like scattered gold"` —
+  dust devils / particulate light. No existing weather covers dry particulate
+  rising from the ground. Distinct from "ash drifts slowly downward" (falling)
+  and "mist curls along the ground" (moisture).
+
+**ANOMALIES (+5)**:
+- `"You see your own figure in the distance, walking a path you have not yet
+  taken."` — phantom self / premonition. No existing anomaly involves seeing
+  one's own double or a future self. Distinct from "Every step you take rings
+  twice" (temporal echo of past actions).
+- `"The plants turn to face you as you pass, their leaves tracking your
+  movement."` — responsive vegetation. No existing anomaly describes living
+  plants reacting to the observer. Adds a biological/sentient register.
+- `"Your words echo back to you in a voice that is yours, but not from this
+  moment."` — temporal voice echo. Distinct from "Every step you take rings
+  twice" (footsteps) — this is about spoken language returned from another
+  temporal position. Adds a linguistic/auditory register.
+- `"The air is warm here, though frost covers the ground at your feet."` —
+  temperature inversion. No existing anomaly involves localized impossible
+  temperature. Adds a thermal/sensory register.
+- `"Every rock, every tree, every blade of grass is arranged in the same
+  pattern, repeated to infinity."` — fractal repetition / cosmic symmetry.
+  Distinct from "The geometry of the landscape follows rules you cannot quite
+  recall" (uncanny but not visibly identical). This is about visible,
+  mind-bending repetition.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only WEATHERS and ANOMALIES lists were updated, plus
+  WEATHER_INDICATORS in test_landscape.py.
+- **No seed-breaking**: Adding entries doesn't change the random sequence
+  within a given seed — larger pools only change which entries get selected,
+  not RNG state progression. Only rendered output content changes.
+- **New entries are default-weight**: All 10 entries are in the "normal"
+  weight tier (weight=5 in normal bias). None are COMMON (weight=10) or RARE
+  (weight=1). Appropriate for balanced appearance rates.
+- **No anomaly indicator updates needed**: Anomaly suppression tests use
+  `ALL_ANOMALIES` directly (a derived set), so new anomalies are automatically
+  covered. Only WEATHER_INDICATORS needed manual addition.
+- **Test count unchanged**: 1155 tests (18 todo + 1137 landscape) — same as
+  Session 178.
+- **All 8 global pools now at 20 entries**: ADJECTIVES (20), ELEMENTS (20),
+  NOUNS (20), VERBS (20), ADVERBS (20), COLORS (20), WEATHERS (20),
+  ANOMALIES (20). This is a milestone — every global pool is now at the same
+  size, providing balanced variety across all categories.
+- **Fulfills "Next likely steps" from Session 178**: Global word pool expansion
+  was explicitly called out as the first item. All pools are now at 20.
+
 ## 2026-07-21 — Expanded Global Word Pools to 20 (Session 178)
 
 ### What
