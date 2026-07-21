@@ -142,6 +142,12 @@ WEATHER_INDICATORS = [
     "shafts of amber light",
     "heavy and damp",
     "fine dust rises in spirals",
+    "rush of wings",
+    "world to silhouettes",
+    "white foam",
+    "glass-calm",
+    "haboob swallows",
+    "phantom pools",
 ]
 
 LEGEND_INDICATORS = [

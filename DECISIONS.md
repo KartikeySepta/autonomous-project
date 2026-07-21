@@ -1,5 +1,110 @@
 # Decisions
 
+## 2026-07-21 — Expanded Biome-Specific Weathers and Anomalies (Session 180)
+
+### What
+Expanded biome-specific weather and anomaly pools for forest, ocean, and desert
+from 5→7 entries each — 6 new weathers and 6 new anomalies (12 phrases total).
+This is the first expansion of any biome-specific word pool since the project
+began (every biome has had exactly 5 weathers and 5 anomalies from inception).
+
+### Why
+The "Next likely steps" from Session 179 explicitly called for this: "Expand
+biome-specific word pools (weathers, anomalies per biome)." This has been a
+recurring next step for many sessions — biome pools were the last untouched
+frontier after all 8 global pools reached 20 entries.
+
+The global word pool work (Sessions 173, 178, 179) expanded every global pool
+to 20 entries. But biome-specific pools had never been touched. Biome-specific
+weathers and anomalies are blended with global ones via `_pick()`, so expanding
+them adds variety specifically when a biome is selected — something global
+expansions don't address.
+
+I chose forest, ocean, and desert as the first three biomes because:
+1. **Forest** — the most archetypal biome, appears first in BIOMES, and has the
+   broadest vocabulary resonance with other features.
+2. **Ocean** — a fundamentally different environment (aqueous), with high contrast
+   to land biomes, making new additions immediately recognizable.
+3. **Desert** — the extreme opposite of forest (arid vs lush), completing a
+   foundational triad. All three are single-word biome names with broad appeal.
+
+### New weathers
+
+**Forest**:
+- `"a flock of birds rises from the canopy in a rush of wings"` — sudden bird
+  flush. Niche: explosive avian movement. Distinct from the existing quiet
+  wind/light weathers. Indicator: `"rush of wings"`.
+- `"a heavy mist settles between the trees, turning the world to silhouettes"` —
+  dense fog. Niche: visibility-limiting fog. Distinct from sunny `"sunlight
+  filters through"`. Indicator: `"world to silhouettes"`.
+
+**Ocean**:
+- `"a squall line approaches, whipping the surface into white foam"` — storm
+  squall. Niche: sudden violent wind/foam. Distinct from `"waves roll in"`
+  (steady, non-stormy). Indicator: `"white foam"`.
+- `"the sea is glass-calm, reflecting the sky so perfectly you cannot tell where
+  one begins"` — dead calm mirror. Niche: absolute stillness with reflection.
+  Distinct from `"eerily still and black"` (dark, non-reflective). Indicator:
+  `"glass-calm"`.
+
+**Desert**:
+- `"a haboob swallows the horizon, a wall of dust and sand advancing with terrible
+  purpose"` — dust storm wall. Niche: imminent dust wall. Distinct from
+  `"sandstorms gather on the horizon"` (distant gathering). Indicator:
+  `"haboob swallows"`.
+- `"the air shimmers with phantom pools of water that vanish as you approach"` —
+  mirage pools. Niche: receding water illusion. Distinct from `"heat ripples
+  rise"` (heat shimmer, no water illusion). Indicator: `"phantom pools"`.
+
+### New anomalies
+
+**Forest**:
+- `"The trees have faces carved into their bark — faces that change expression
+  when you look away."` — living watching faces. Niche: animated tree faces.
+  No existing forest anomaly involves faces or expressions.
+- `"A path appears where there was none before, leading deeper into the woods."` —
+  shifting path. Niche: path that materializes unbidden. No existing forest
+  anomaly involves path alteration.
+
+**Ocean**:
+- `"The ocean breathes — a slow rise and fall of the entire surface, as if the
+  sea itself has lungs."` — ocean as living entity. Niche: breathing rhythm.
+  No existing ocean anomaly involves the ocean acting as a single organism.
+- `"A shipwreck floats on the horizon, but it is the same shipwreck that was
+  there yesterday, and the day before."` — persistent wreck. Niche: impossible
+  immutability. No existing ocean anomaly involves a static unchanging object.
+
+**Desert**:
+- `"The stars are too close here — you can hear them humming."` — audible stars.
+  Niche: sound from celestial bodies. No existing desert anomaly involves sound.
+- `"Cacti and rocks cast shadows that point inward toward a single, unseen
+  center."` — convergent shadows. Niche: shadow geometry. No existing desert
+  anomaly involves shadows or geometry.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only BIOME_WORDS entries and WEATHER_INDICATORS were updated.
+- **No seed-breaking**: Adding entries to biome pools doesn't change the random
+  sequence within a given seed — `rng.choices(pool, weights, k=1)` on a larger
+  pool only changes which entries get selected, not RNG state progression. The
+  only behavioral change is that new phrases may appear in biome-specific output.
+- **Test indicator updates**: 6 new WEATHER_INDICATORS were added. This is
+  necessary because weather suppression/probability tests scan for these
+  substrings. Without them, new biome weathers would be invisible to the
+  test detection logic.
+- **Expansion scope limited**: Only 3 of 14 biomes were expanded. The other 11
+  biomes (tundra, mountain range, swamp, cave system, plain, volcanic field,
+  coral reef, ruined city, fungal grove, sky islands, crystal fields) remain at
+  5 weathers and 5 anomalies. Future sessions can continue this pattern.
+- **No Anomaly_INDICATORS added**: Anomaly suppression tests use `ALL_ANOMALIES`
+  directly (a derived set that includes biome anomalies), so no indicator list
+  analogous to WEATHER_INDICATORS was needed for anomalies.
+- **Test count unchanged**: 1155 tests (18 todo + 1137 landscape) — same as
+  Session 179.
+- **Fulfills "Next likely steps" from Session 179**: Biome-specific word pool
+  expansion was explicitly called out as the first item. This is the first
+  expansion of biome-specific pools since the project began.
+
 ## 2026-07-21 — Expanded WEATHERS and ANOMALIES to 20 (Session 179)
 
 ### What

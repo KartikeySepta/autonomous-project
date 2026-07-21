@@ -2,6 +2,81 @@
 
 ## 2026-07-21
 
+### What was done (Session 180)
+- **Expanded biome-specific weathers and anomalies for forest, ocean, and desert**
+  — each biome's weather pool grew from 5 to 7 entries and anomaly pool from 5
+  to 7 entries, adding 6 new weathers and 6 new anomalies (12 phrases total).
+  This is the first expansion of any biome-specific word pool.
+- **New forest weathers**:
+  - `"a flock of birds rises from the canopy in a rush of wings"` — sudden bird
+    flush, a brief explosive ascent of birds from the canopy. Distinct from `"a
+    soft wind stirs the leaves overhead"` (wind, not birds) and `"sunlight filters
+    through the canopy"` (light, not movement). Indicator: `"rush of wings"`.
+  - `"a heavy mist settles between the trees, turning the world to silhouettes"` —
+    dense ground fog in the forest that reduces the world to shapes. Distinct from
+    `"sunlight filters through the canopy in golden beams"` (sunny, not foggy).
+    Indicator: `"world to silhouettes"`.
+- **New forest anomalies**:
+  - `"The trees have faces carved into their bark — faces that change expression
+    when you look away."` — living watching tree faces, distinct from `"Every leaf
+    faces the same direction"` (vegetative orientation, not faces) and `"The trees
+    grow in a perfect circle"` (geometry, not faces).
+  - `"A path appears where there was none before, leading deeper into the woods."` —
+    shifting forest path that materializes unbidden, distinct from `"Fungal spores
+    hang in the air"` (airborne, not path-based).
+- **New ocean weathers**:
+  - `"a squall line approaches, whipping the surface into white foam"` — sudden
+    storm squall, distinct from `"waves roll in from an unseen horizon"` (regular
+    waves) and `"rain falls on the surface like a thousand drummers"` (rain).
+    Indicator: `"white foam"`.
+  - `"the sea is glass-calm, reflecting the sky so perfectly you cannot tell where
+    one begins"` — dead calm mirror surface, distinct from `"the water is eerily
+    still and black"` (dark stillness, not reflection). Indicator: `"glass-calm"`.
+- **New ocean anomalies**:
+  - `"The ocean breathes — a slow rise and fall of the entire surface, as if the
+    sea itself has lungs."` — ocean as living breather, distinct from `"The water
+    glows with an inner light"` (luminous, not breathing).
+  - `"A shipwreck floats on the horizon, but it is the same shipwreck that was
+    there yesterday, and the day before."` — persistent unchanging shipwreck,
+    distinct from `"Whales sing in frequencies that vibrate through bone"` (auditory,
+    not visual).
+- **New desert weathers**:
+  - `"a haboob swallows the horizon, a wall of dust and sand advancing with
+    terrible purpose"` — massive dust storm wall, distinct from `"sandstorms
+    gather on the horizon like walls of amber"` (distant, less immediate).
+    Indicator: `"haboob swallows"`.
+  - `"the air shimmers with phantom pools of water that vanish as you approach"` —
+    mirage pools that recede, distinct from `"heat ripples rise from the sand in
+    waves"` (heat haze, not water illusion). Indicator: `"phantom pools"`.
+- **New desert anomalies**:
+  - `"The stars are too close here — you can hear them humming."` — audible stars,
+    distinct from `"The stars rearrange themselves into unfamiliar constellations"`
+    (visual rearrangement, not auditory).
+  - `"Cacti and rocks cast shadows that point inward toward a single, unseen
+    center."` — convergent shadow geometry, distinct from `"The dunes form perfect
+    geometric spirals"` (dune patterns, not shadows).
+- **Updated WEATHER_INDICATORS** in test_landscape.py: Added 6 new invariant
+  substrings for the new biome weather phrases so weather suppression/probability
+  tests correctly cover the new biome weathers.
+- **No code, CLI, or generation logic changes** — data-only expansion plus
+  indicator additions. All existing tests use dynamic checks over `ALL_WEATHERS`,
+  `ALL_ANOMALIES`, and `WEATHER_INDICATORS`, so no test logic changes were needed.
+- This directly fulfills the first "Next likely step" from Session 179: "Expand
+  biome-specific word pools (weathers, anomalies per biome)." This is the first
+  expansion of biome-specific pools since the project began — every biome had
+  exactly 5 weathers and 5 anomalies from inception.
+- Tests unchanged: 1155 tests pass (18 todo + 1137 landscape) — same as Session 179.
+
+### Current status
+Working. All 1155 tests pass (18 todo + 1137 landscape).
+
+### Next likely steps
+- Expand biome-specific word pools further (more biomes, more entries)
+- Add a new mood overlay
+- Add more presets for diverse generation experiences
+
+## 2026-07-21
+
 ### What was done (Session 179)
 - **Expanded WEATHERS from 15 to 20 entries** — 5 new weather phrases covering
   sleet, debris swirl, sunbreak, humidity, and dust — niches underrepresented

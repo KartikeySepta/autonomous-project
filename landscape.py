@@ -1046,6 +1046,8 @@ BIOME_WORDS = {
             "the undergrowth glistens with morning dew",
             "a light drizzle filters through the canopy like whispered secrets",
             "the forest floor releases the scent of damp earth after rain",
+            "a flock of birds rises from the canopy in a rush of wings",
+            "a heavy mist settles between the trees, turning the world to silhouettes",
         ],
         "anomalies": [
             "Every leaf faces the same direction.",
@@ -1053,6 +1055,8 @@ BIOME_WORDS = {
             "Fungal spores hang in the air like tiny lanterns.",
             "The trees grow in a perfect circle around a patch of sky that never clouds.",
             "Every creature in the forest falls silent at the same moment each day.",
+            "The trees have faces carved into their bark — faces that change expression when you look away.",
+            "A path appears where there was none before, leading deeper into the woods.",
         ],
     },
     "desert": {
@@ -1068,6 +1072,8 @@ BIOME_WORDS = {
             "the sun beats down without mercy",
             "sandstorms gather on the horizon like walls of amber",
             "a rare rain falls, each drop sizzling against the hot stone",
+            "a haboob swallows the horizon, a wall of dust and sand advancing with terrible purpose",
+            "the air shimmers with phantom pools of water that vanish as you approach",
         ],
         "anomalies": [
             "The sand falls upward here.",
@@ -1075,6 +1081,8 @@ BIOME_WORDS = {
             "The dunes form perfect geometric spirals.",
             "Footprints behind you fill with water that has no source.",
             "The stars rearrange themselves into unfamiliar constellations at midnight.",
+            "The stars are too close here — you can hear them humming.",
+            "Cacti and rocks cast shadows that point inward toward a single, unseen center.",
         ],
     },
     "ocean": {
@@ -1090,6 +1098,8 @@ BIOME_WORDS = {
             "the water is eerily still and black",
             "rain falls on the surface like a thousand drummers",
             "a deep fog bank rolls across the water, swallowing the horizon",
+            "a squall line approaches, whipping the surface into white foam",
+            "the sea is glass-calm, reflecting the sky so perfectly you cannot tell where one begins",
         ],
         "anomalies": [
             "The water glows with an inner light.",
@@ -1097,6 +1107,8 @@ BIOME_WORDS = {
             "The surface is a mirror to a different sky.",
             "Pressure changes in ways that do not correspond to depth.",
             "Whales sing in frequencies that vibrate through bone, though no whales are near.",
+            "The ocean breathes — a slow rise and fall of the entire surface, as if the sea itself has lungs.",
+            "A shipwreck floats on the horizon, but it is the same shipwreck that was there yesterday, and the day before.",
         ],
     },
     "tundra": {
