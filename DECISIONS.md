@@ -1,5 +1,118 @@
 # Decisions
 
+## 2026-07-21 — Expanded Peaceful Mood Word Pools (Session 188)
+
+### What
+Expanded all 8 lexical categories of MOOD_WORDS["peaceful"] with 19 new
+words/phrases: +4 adjectives (halcyon, dreamy, restful, languid), +3 elements
+(honey light, creek song, dusk warmth), +3 nouns (hills, hollows, lakes),
++3 verbs (nest, drift, float), +2 colors (cream, pastel), +2 adverbs (dreamily,
+idly), +2 weathers (warm golden light, gentle breeze with grass scent),
++2 anomalies (softer world haze, honey-stretched time).
+
+### Why
+The peaceful mood has been the first/primary mood since the project's inception
+but its word pools remained at their original small sizes: adjectives (8),
+elements (6), nouns (6), verbs (6), colors (6), adverbs (6), weathers (4),
+anomalies (4). The melancholy mood (Session 187) was just expanded to 12/9/9/9/
+8/7/6/6. Bringing peaceful to matching sizes ensures variety parity across moods.
+
+The "Next likely steps" from Session 187 explicitly called for this: "Expand the
+remaining mood word pools (peaceful, eerie, vibrant, desolate) for consistency."
+Peaceful is the most natural first choice — it's the oldest mood and the most
+frequently used (appears in pastoral and sublime presets).
+
+### New word rationale
+
+**Adjectives (+4)**:
+- `halcyon` — peaceful, happy, idyllic. A classic word for a perfect, calm,
+  golden-age peace. No existing peaceful adjective captures this nostalgic,
+  idealized register.
+- `dreamy` — soft-focused, pleasantly unreal. Adds a slightly surreal/
+  unfocused quality distinct from `soft` (texture) and `gentle` (manner).
+- `restful` — restorative, reposeful. Emphasizes the recuperative quality
+  of peace. Distinct from `sleepy` (drowsy) and `calm` (still).
+- `languid` — slow, relaxed, unhurried. Adds a luxurious, unhurried slowness
+  distinct from `placid` (undisturbed) and `lulling` (soothing to sleep).
+
+**Elements (+3)**:
+- `honey light` — warm golden illumination like honey. Complements `warmth`
+  (temperature) and `soft light` (diffuse quality) with a specific color/warmth
+  register.
+- `creek song` — gentle flowing water sound. Complements `stillness` (absence
+  of sound) with a pleasant, peaceful auditory element.
+- `dusk warmth` — the comforting warmth of evening. Complements `breeze` (cool)
+  and `warmth` (general heat) with a specific time-of-day warmth.
+
+**Nouns (+3)**:
+- `hills` — gentle rolling elevations. No existing peaceful noun covers
+  elevated forms (all are depressions or water features: glades, shallows,
+  meadows, clearings, reflections, coves).
+- `hollows` — sheltered depressions. Complements `coves` (water-adjacent
+  shelter) with a dry-land sheltered depression.
+- `lakes` — still water bodies. Complements `shallows` (shallow water) and
+  `coves` (sheltered water) with open, placid water.
+
+**Verbs (+3)**:
+- `nest` — settle into a cozy resting place. Adds intentional restful settling.
+  Distinct from `rest` (stop moving) and `settle` (come to rest).
+- `drift` — move aimlessly and gently. Adds smooth, directionless motion.
+  Distinct from `glide` (smooth, directional) and `ripple` (wave-like motion).
+- `float` — remain suspended on a surface or in air. Adds buoyant suspension.
+  Distinct from `drift` (lateral motion) and `rest` (motionless).
+
+**Colors (+2)**:
+- `cream` — soft off-white with a warm tint. Complements `milky` (which is
+  a cooler white) with a warmer tone.
+- `pastel` — any soft, muted pale hue. Adds the entire pastel register as a
+  single color adjective, distinct from all existing specific colors.
+
+**Adverbs (+2)**:
+- `dreamily` — in a soft-focused, reverie-like manner. Complements `tranquilly`
+  (restful calm) and `serenely` (untroubled) with a slightly unfocused,
+  daydreaming quality.
+- `idly` — without purpose or haste. Complements `gently` (soft manner) and
+  `peacefully` (absence of disturbance) with a specific unhurried, purposeless
+  register.
+
+**Weathers (+2)**:
+- `"a warm golden light bathes the landscape in soft comfort"` — enveloping
+  golden illumination that soothes. Distinct from `"warm sunlight filters through
+  gently"` (filtering through, not bathing) and `"the air is still and comfortable"`
+  (temperature, not light). Niche: warmly enveloping gold light.
+- `"a gentle breeze carries the scent of fresh grass and wildflowers"` —
+  olfactory breeze with fresh floral/vegetal notes. Distinct from `"a soft breeze
+  carries the scent of flowers"` (existing, which uses old-space "a soft breeze").
+  Niche: fresh grass and wildflowers as distinct olfactory notes.
+
+**Anomalies (+2)**:
+- `"The world feels softer than it should, as if seen through a gentle haze."` —
+  perceptual softening of reality. Distinct from `"Colors seem more vivid here"`
+  (increased vividness, not softening) and `"Everything seems to hum in harmony"`
+  (auditory harmony, not visual/perceptual softness). Niche: haze-filtered
+  perception.
+- `"Time stretches like honey here, each moment thick and sweet."` — temporal
+  dilation with sweetness. Distinct from `"Time moves like honey here"` (existing,
+  which uses "moves like honey" — this one uses "stretches like honey" and adds
+  "each moment thick and sweet"). Niche: richly viscous, sweetened time.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only MOOD_WORDS["peaceful"] was updated.
+- **No seed-breaking**: Adding entries to MOOD_WORDS doesn't change the random
+  sequence within a given seed — `_word_weight` only uses mood word membership to
+  multiply base weight. Larger mood pools only affect which words get the mood
+  boost, not RNG state progression.
+- **No test changes needed**: All peaceful tests use dynamic checks over
+  MOOD_WORDS keys, `ALL_ADJECTIVES` (derived sets), or iterable mood lists.
+  No hardcoded lists needed updating.
+- **Test count unchanged**: 1145 tests (448 subtests) — same as Session 187.
+- **Expansion matches melancholy**: peaceful now has identical pool sizes to
+  melancholy after Session 187: 12/9/9/9/8/8/6/6 (melancholy has 7 adverbs vs
+  peaceful's 8). Consistent variety across moods.
+- **Fulfills "Next likely steps" from Session 187**: Peaceful mood word pool
+  expansion was explicitly called out as the first item.
+
 ## 2026-07-21 — Expanded Melancholy Mood Word Pools (Session 187)
 
 ### What

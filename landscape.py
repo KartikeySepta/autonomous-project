@@ -681,23 +681,27 @@ MOOD_BOOST = 5
 
 MOOD_WORDS = {
     "peaceful": {
-        "adjectives": ["calm", "serene", "gentle", "tranquil", "placid", "lulling", "sleepy", "soft"],
-        "elements": ["stillness", "warmth", "soft light", "quiet", "breeze", "lullaby"],
-        "nouns": ["glades", "shallows", "meadows", "clearings", "reflections", "coves"],
-        "verbs": ["rest", "glide", "settle", "bloom", "ripple", "cradle"],
-        "colors": ["pale", "soft", "gentle", "mellow", "warm", "milky"],
-        "adverbs": ["gently", "softly", "peacefully", "calmly", "tranquilly", "serenely"],
+        "adjectives": ["calm", "serene", "gentle", "tranquil", "placid", "lulling", "sleepy", "soft", "halcyon", "dreamy", "restful", "languid"],
+        "elements": ["stillness", "warmth", "soft light", "quiet", "breeze", "lullaby", "honey light", "creek song", "dusk warmth"],
+        "nouns": ["glades", "shallows", "meadows", "clearings", "reflections", "coves", "hills", "hollows", "lakes"],
+        "verbs": ["rest", "glide", "settle", "bloom", "ripple", "cradle", "nest", "drift", "float"],
+        "colors": ["pale", "soft", "gentle", "mellow", "warm", "milky", "cream", "pastel"],
+        "adverbs": ["gently", "softly", "peacefully", "calmly", "tranquilly", "serenely", "dreamily", "idly"],
         "weathers": [
             "a soft breeze carries the scent of flowers",
             "warm sunlight filters through gently",
             "the air is still and comfortable",
             "a light mist settles in the hollows",
+            "a warm golden light bathes the landscape in soft comfort",
+            "a gentle breeze carries the scent of fresh grass and wildflowers",
         ],
         "anomalies": [
             "Everything seems to hum in harmony.",
             "The world holds its breath.",
             "Colors seem more vivid here.",
             "Time moves like honey here.",
+            "The world feels softer than it should, as if seen through a gentle haze.",
+            "Time stretches like honey here, each moment thick and sweet.",
         ],
     },
     "eerie": {
