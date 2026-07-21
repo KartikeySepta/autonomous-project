@@ -87,6 +87,58 @@ Working. All 1169 tests pass (18 todo + 1169 landscape).
 
 ## 2026-07-21
 
+### What was done (Session 195)
+- **Added "oasis" preset** — the 9th preset and the first to use the vibrant+desolate
+  mood combination. Until now, no preset combined these two moods: sanctuary uses pure
+  vibrant, wasteland uses pure desolate. The new preset fills a life-amid-barrenness
+  niche between them, providing a landscape where vibrant abundance and desolate
+  barrenness coexist in tension.
+- **"oasis" preset design**:
+  - **Mood**: `["vibrant", "desolate"]` — life and barrenness in generative tension.
+  - **Weather**: high (2, prob=0.85) — both vibrant's warm/lively weathers (sunlight,
+    butterflies, pollen shimmer) and desolate's harsh/scouring weathers (relentless
+    wind, pale sun without warmth).
+  - **Anomalies**: high (2, prob=0.85) — both moods contribute surreal juxtaposition
+    anomalies: vibrant's synesthetic colour-sound, coral pulse alongside desolate's
+    unearthly ground disintegration and temporal distortion.
+  - **Echoes**: high (2, prob=0.8) — the landscape remembers both its abundance
+    and its loss.
+  - **Wistful**: high (2, prob=0.85) — the contrast between life and barrenness
+    naturally evokes yearning and the desire to preserve what remains.
+  - **Mood atmosphere**: high (2, prob=0.9) — both vibrant's 6 atmosphere phrases
+    (bleeding colour, sub-audible song, organic abundance) and desolate's 6 phrases
+    (silence as shape of loss, forgotten growth, withered hope).
+  - **Sound**: moderate (1, prob=0.7) — vibrant sounds (birdsong, insect hum) push
+    against desolate silence, creating a sonic landscape of contested space.
+  - **Wildlife**: moderate (1, prob=0.6) — life persists against odds, sparse but
+    tenacious.
+  - **Legends**: moderate (1, prob=0.6) — folkloric tales of places where life
+    finds a way, where abundance and barrenness meet.
+  - **Simile/Metaphor/Personification**: moderate descending (0.8/0.7/0.6) —
+    figurative language is well-suited for a landscape of contrasts; simile most
+    natural, personification rarest.
+  - **Time of day/Season/Perspective**: moderate (0.6 each) — gentle framing.
+  - **Travelogue**: enabled — journal framing suits the discovery of a place where
+    contradiction is the natural state.
+- **Updated hardcoded preset lists**: `test_preset_produces_valid_output` and
+  `test_preset_is_deterministic` now include `"oasis"` in their iteration lists.
+- **No code logic changes**: The preset system dynamically reads `PRESETS` dict keys for
+  `--preset` choices and all dynamic tests use `for name in PRESETS`, so the preset is
+  auto-available without any other code modifications. Only the two tests with hardcoded
+  preset name lists needed manual updates.
+- **Tests**: 1169 pass (589 subtests) — same test count as Session 194, with 47 additional
+  subtests (589 vs 542) from dynamic preset iteration tests picking up the new preset.
+
+### Current status
+Working. All 1169 tests pass (18 todo + 1169 landscape).
+
+### Next likely steps
+- Add more presets for diverse generation experiences (e.g. peaceful+melancholy)
+- Add a new biome or mood overlay
+- Add biome-biased presets or biome-weight customization
+
+## 2026-07-21
+
 ### What was done (Session 192)
 - **Expanded mood atmosphere phrase pools for all 5 moods** — each mood's
   MOOD_ATMOSPHERE pool grew from 4 to 6 phrases, adding 10 new atmosphere

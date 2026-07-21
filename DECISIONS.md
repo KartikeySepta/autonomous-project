@@ -1,5 +1,95 @@
 # Decisions
 
+## 2026-07-21 — Added "oasis" Preset (Session 195)
+
+### What
+Added a 9th preset "oasis" — the first to combine vibrant and desolate moods (not used
+together before). The preset configures vibrant+desolate with high weather (2, 0.85),
+high anomalies (2, 0.85), high echoes (2, 0.8), high wistful (2, 0.85), high mood
+atmosphere (2, 0.9), moderate sound (1, 0.7), moderate wildlife (1, 0.6), moderate
+legends (1, 0.6), and descending poetic device probabilities (simile 0.8 → metaphor 0.7
+→ personification 0.6).
+
+### Why
+The vibrant and desolate moods have both existed since the project's inception, but no
+preset combined them. The 8 existing presets used the following mood configurations:
+- nightfall: pure eerie (haunting, watchful)
+- pastoral: pure peaceful (calm, serene)
+- sublime: vibrant + peaceful (maximal beauty)
+- wasteland: pure desolate (barren, hopeless)
+- dreamscape: eerie + vibrant (surreal, dreamlike)
+- gloaming: pure melancholy (wistful, rainy)
+- sanctuary: pure vibrant (abundant, alive)
+- lament: eerie + melancholy (haunted grief)
+
+The vibrant+desolate combination was explicitly called out as a next step in Sessions
+193 and 194: "Add more presets for diverse generation experiences (e.g. vibrant+desolate,
+peaceful+melancholy)." It creates a life-amid-barrenness register that is neither pure
+life (sanctuary) nor pure barrenness (wasteland) but a generative tension between both
+— a landscape where abundance persists within desolation.
+
+I chose the name "oasis" because:
+1. It evokes a fertile spot in a desert — the core tension of life amid barrenness.
+2. It's a universally understood word that immediately sets the expectation of
+   contrast between vibrant life and desolate surroundings.
+3. It sits between "sanctuary" (pure vibrant abundance) and "wasteland" (pure desolate
+   barrenness) — a place where life and loss coexist.
+4. Unlike "sanctuary" (which is about protected abundance) and "wasteland" (which is
+   about hopeless emptiness), "oasis" occupies a contested space — life persisting
+   against odds, not secure in its sanctuary nor entirely vanquished.
+
+### Preset design rationale
+- **Weather (2, 0.85)**: Vibrant weathers (warm sunlight, butterfly cascades, pollen
+  shimmer) and desolate weathers (relentless scouring wind, pale sun without warmth,
+  hoarfrost) create a landscape of extremes — life-giving and life-denying forces
+  alternating. The high count ensures both registers appear.
+- **Anomalies (2, 0.85)**: Both moods contribute surreal contrast anomalies: vibrant's
+  synesthetic colour-sound and coral pulse alongside desolate's unearthly ground
+  disintegration and temporal distortion. The juxtaposition of beautiful and wrong
+  anomalies reinforces the oasis tension.
+- **Echoes (2, 0.8)**: Echo phrases about memory, deep time, and the land holding
+  its breath align with both moods — the oasis remembers both the abundance it
+  harbours and the barrenness surrounding it.
+- **Wistful (2, 0.85)**: The contrast between life and barrenness naturally evokes
+  wistfulness — the desire to protect what lives, to remember what was lost, to
+  carry a piece of the oasis with you.
+- **Mood atmosphere (2, 0.9)**: Both vibrant's 6 atmosphere phrases (bleeding colour,
+  sub-audible song, organic abundance) and desolate's 6 phrases (silence as shape of
+  loss, forgotten growth, withered hope) create a rich, layered emotional register
+  that moves between life and its absence.
+- **Sound (1, 0.7)**: Moderate — vibrant sounds (birdsong, insect hum, the world
+  singing) push against desolate silence. The sonic landscape of an oasis is contested
+  space between sound and stillness.
+- **Wildlife (1, 0.6)**: Moderate — life persists against odds. Sparse but tenacious,
+  wildlife appears occasionally as a testament to life's persistence rather than as
+  teeming abundance (sanctuary uses 0.9).
+- **Legends (1, 0.6)**: Moderate — folkloric tales of places where life finds a way,
+  where abundance and barrenness meet. Higher than in sanctuary (0.5) because the
+  contrast invites narrative explanation.
+- **Simile/Metaphor/Personification (0.8/0.7/0.6)**: Moderate descending probabilities.
+  Similes thrive in a landscape defined by contrast (life *like* a defiance against
+  barrenness). Metaphors are slightly more assertive. Personifications are rarest to
+  avoid making the oasis feel too intentional in its resistance.
+- **Time/Season/Perspective (0.6 each)**: Moderate — gentle framing without
+  overwhelming the primary tension between life and desolation.
+
+### Tradeoffs
+- **No code changes**: Only the `PRESETS` dict and two hardcoded test lists were modified.
+  The preset is auto-available via `--preset` choices (which uses `list(PRESETS.keys())`)
+  and auto-tested by all `for name in PRESETS:` dynamic tests.
+- **No seed-breaking**: Adding a new preset key doesn't change any existing preset's
+  behaviour. Only explicit `--preset oasis` invocations are affected.
+- **No new tests needed**: The dynamic `for name in PRESETS:` subtests in
+  `test_all_presets_*` will automatically generate 47 new subtests for the new preset,
+  verifying it has all required keys with valid ranges. Only
+  `test_preset_produces_valid_output` and `test_preset_is_deterministic` had hardcoded
+  lists that needed updating.
+- **Test count unchanged**: 1169 tests pass — same as Session 194. Subtests grew from
+  542 to 589 (+47) due to dynamic preset iteration.
+- **Fulfills "Next likely steps" from Session 194**: "Add more presets for diverse
+  generation experiences (e.g. vibrant+desolate, peaceful+melancholy)" — vibrant+desolate
+  was explicitly listed first. This is the first preset to combine these two moods.
+
 ## 2026-07-21 — Added "lament" Preset (Session 194)
 
 ### What
