@@ -1,5 +1,76 @@
 # Decisions
 
+## 2026-07-21 — Added "sanctuary" Preset (Session 193)
+
+### What
+Added a 7th preset "sanctuary" — the first to use vibrant as the sole mood (not in
+combination). The preset configures vibrant with high weather (2, 0.9), high sound
+(2, 0.9), high wildlife (2, 0.9), high echoes (2, 0.85), high wistful (2, 0.85),
+high mood atmosphere (2, 0.9), high simile (2, 0.85), high metaphor (2, 0.85),
+and moderate personification (1, 0.7). Anomalies are moderate (1, 0.7), legends low
+(1, 0.5).
+
+### Why
+The vibrant mood has existed since the project's inception but no preset used it as
+the primary mood. It appeared only in combination: sublime (vibrant + peaceful) and
+dreamscape (eerie + vibrant). Users who wanted a pure vibrant experience had to use
+`--mood vibrant` and configure all feature flags manually. The 6 existing presets
+left vibrant without a guided standalone experience. Adding "sanctuary" fills this gap.
+
+I chose the name "sanctuary" because:
+1. It evokes a place of refuge, safety, and protected abundance — the emotional
+   register of vibrant at its most welcoming.
+2. It's a warm, resonant word that sets the expectation of life, colour, and energy.
+3. It sits between "pastoral" (peaceful/calm, low-energy) and "sublime" (maximal,
+   overwhelming) — a space of abundant life that is nurturing rather than overwhelming.
+4. Unlike "pastoral" (which is peaceful/gentle) and "gloaming" (which is melancholy/
+   wistful), "sanctuary" occupies a life-celebrating register that's about presence
+   and vitality rather than rest or reflection.
+
+### Preset design rationale
+- **Weather (2, 0.9)**: Vibrant weathers feature warm sunlight, butterfly cascades,
+  and pollen-shimmering air — these should appear frequently to establish the abundant
+  life register.
+- **Sound (2, 0.9)**: Vibrant landscapes teem with life. Soundscapes (birdsong, insect
+  hum, the world singing) reinforce the alive, bustling quality of a sanctuary.
+- **Wildlife (2, 0.9)**: Abundant wildlife is the core of the sanctuary experience —
+  creatures moving through the landscape as part of its living fabric.
+- **Echoes (2, 0.85)**: The sanctuary remembers its abundance. Echo phrases about
+  memory, waiting, and deep time give the landscape a sense of enduring vitality.
+- **Wistful (2, 0.85)**: The beauty of a vibrant sanctuary naturally evokes wistfulness
+  — the desire to stay, to carry a piece of the place with you.
+- **Mood atmosphere (2, 0.9)**: Vibrant has 6 atmosphere phrases about bleeding colour,
+  sub-audible song, and organic abundance. These should appear frequently to reinforce
+  the sensory richness.
+- **Simile/Metaphor high (0.85), Personification moderate (0.7)**: Figurative language
+  matches the abundant, expressive register. Similes and metaphors are most natural for
+  vibrant description; personification (giving the landscape active agency) is slightly
+  rarer to avoid anthropomorphizing the life force.
+- **Anomalies (1, 0.7)**: Vibrant anomalies include synesthetic colour-sound, coral
+  pulse, and light-filled shells. These add a surreal beauty without overwhelming the
+  sanctuary's welcome.
+- **Legends (1, 0.5)**: Legends are sparingly used because a sanctuary is about
+  immediate presence and living experience, not folkloric past.
+- **Travelogue**: enabled — journal-entry framing suits the intimate, present-tense
+  register of discovering a sanctuary.
+
+### Tradeoffs
+- **No code changes**: Only the `PRESETS` dict and two hardcoded test lists were modified.
+  The preset is auto-available via `--preset` choices (which uses `list(PRESETS.keys())`)
+  and auto-tested by all `for name in PRESETS:` dynamic tests.
+- **No seed-breaking**: Adding a new preset key doesn't change any existing preset's
+  behaviour. Only explicit `--preset sanctuary` invocations are affected.
+- **No new tests needed**: The dynamic `for name in PRESETS:` subtests in
+  `test_all_presets_*` will automatically generate 47 new subtests for the new preset,
+  verifying it has all required keys with valid ranges. Only
+  `test_preset_produces_valid_output` and `test_preset_is_deterministic` had hardcoded
+  lists that needed updating.
+- **Test count unchanged**: 1169 tests pass — same as Session 192. Subtests grew from
+  448 to 495 (+47) due to dynamic preset iteration.
+- **Fulfills "Next likely steps" from Session 192**: "Add more presets for diverse
+  generation experiences" was the first listed item. This is the first purely vibrant
+  preset.
+
 ## 2026-07-21 — Expanded Mood Atmosphere Phrase Pools (Session 192)
 
 ### What

@@ -2,6 +2,49 @@
 
 ## 2026-07-21
 
+### What was done (Session 193)
+- **Added "sanctuary" preset** — the 7th preset and the first to use vibrant as the
+  sole mood. Until now, vibrant only appeared in combination presets (sublime with
+  peaceful, dreamscape with eerie). The new preset fills a vibrant-abundance niche
+  between pastoral (peaceful, calm) and sublime (vibrant+peaceful, maximal), providing
+  a pure vibrant, life-celebrating generation experience.
+- **"sanctuary" preset design**:
+  - **Mood**: `["vibrant"]` — radiant, effulgent, life-abundant emotional register.
+  - **Weather**: high (2, prob=0.9) — sunlight, butterflies, pollen shimmer.
+  - **Anomalies**: moderate (1, prob=0.7) — beautiful surreal details like synesthetic
+    colour-sound and coral pulse.
+  - **Echoes**: high (2, prob=0.85) — the landscape remembers its own abundance.
+  - **Wistful**: high (2, prob=0.85) — the beauty leaves a lingering ache.
+  - **Mood atmosphere**: high (2, prob=0.9) — vibrant's 6 atmosphere phrases about
+    bleeding colour, sub-audible song, and organic abundance.
+  - **Sound**: high (2, prob=0.9) — birdsong, insect hum, the world singing.
+  - **Wildlife**: high (2, prob=0.9) — abundant teeming life.
+  - **Legends**: low (1, prob=0.5) — sparingly used; sanctuary is about immediate
+    presence, not folkloric past.
+  - **Simile/Metaphor/Personification**: high/moderate (0.85/0.85/0.7) — abundant
+    figurative language for an abundant landscape.
+  - **Time of day/Season/Perspective**: moderate (0.7 each) — gentle framing.
+  - **Travelogue**: enabled — journal framing suits the intimate, present-tense
+    register of a sanctuary.
+- **Updated hardcoded preset lists**: `test_preset_produces_valid_output` and
+  `test_preset_is_deterministic` now include `"sanctuary"` in their iteration lists.
+- **No code logic changes**: The preset system dynamically reads `PRESETS` dict keys for
+  `--preset` choices and all dynamic tests use `for name in PRESETS`, so the preset is
+  auto-available without any other code modifications. Only the two tests with hardcoded
+  preset name lists needed manual updates.
+- **Tests**: 1169 pass (495 subtests) — same test count as Session 192, with 47 additional
+  subtests (495 vs 448) from dynamic preset iteration tests picking up the new preset.
+
+### Current status
+Working. All 1169 tests pass (18 todo + 1169 landscape).
+
+### Next likely steps
+- Add more presets for diverse generation experiences (e.g. eerie+melancholy, vibrant+desolate)
+- Add a new biome or mood overlay
+- Add biome-biased presets or biome-weight customization
+
+## 2026-07-21
+
 ### What was done (Session 192)
 - **Expanded mood atmosphere phrase pools for all 5 moods** — each mood's
   MOOD_ATMOSPHERE pool grew from 4 to 6 phrases, adding 10 new atmosphere
