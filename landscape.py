@@ -1306,6 +1306,8 @@ BIOME_WORDS = {
             "the water is clear and impossibly blue",
             "underwater currents carry a symphony of clicks and pops",
             "the tide pulls in patterns that do not follow the moon",
+            "a school of silvery fish wheels as one, a living constellation in the blue depths",
+            "bioluminescent plankton ignites in waves of blue-green fire at each breaking swell",
         ],
         "anomalies": [
             "The coral pulses in unison like a single heart.",
@@ -1313,6 +1315,8 @@ BIOME_WORDS = {
             "Every shell contains a tiny, perfect melody.",
             "The reef glows in wavelengths visible only to something that has been watching.",
             "Time passes differently here — hours feel like minutes, minutes like hours.",
+            "The coral has grown around a structure that was never built — pillars and archways of living calcium, older than any civilization.",
+            "The water grows shallower the deeper you swim, as if the ocean has forgotten which way is down.",
         ],
     },
     "ruined city": {
@@ -1354,6 +1358,8 @@ BIOME_WORDS = {
             "a warm dampness carries the scent of growth",
             "spore-laden rain falls in curtains of gold and silver",
             "a warm mist carries the sweet scent of fungal bloom",
+            "bioluminescent caps pulse in slow waves of light, a breathing garden of soft fire",
+            "a fine veil of spores settles on everything, muffling the world in velvet silence",
         ],
         "anomalies": [
             "The mushrooms sing at frequencies only bones can feel.",
@@ -1361,6 +1367,8 @@ BIOME_WORDS = {
             "The entire grove shares one consciousness.",
             "The mycelium network reacts to your thoughts — the glow shifts as you approach.",
             "Fungal growths form temporary sculptures that collapse and reform in endless cycles.",
+            "The mushrooms grow in the shape of things you have forgotten — lost faces, abandoned places, words you meant to say.",
+            "Breathing in, the spores carry whispers of a past that belongs to the grove, not to you.",
         ],
     },
     "sky islands": {
@@ -1376,6 +1384,8 @@ BIOME_WORDS = {
             "the wind is constant and unforgiving",
             "rain falls upward from the cloud sea below",
             "a thin mist wraps each island in solitude",
+            "a bank of luminous clouds rises from below, bathing the islands in pearl-grey light",
+            "the stars pierce the thin air above with an intensity that feels like sound — cold, clear, infinite",
         ],
         "anomalies": [
             "The islands orbit each other in a slow dance.",
@@ -1383,6 +1393,8 @@ BIOME_WORDS = {
             "A bell tolls from an island that no one has ever reached.",
             "The islands cast shadows onto the clouds below — shadows that move independently.",
             "Gravity weakens at the center of each island, as if the land itself is trying to float free.",
+            "When you look down, you see yourself standing on a different island, looking up at this one.",
+            "The clouds below form words, forming and dissolving — a message from the sky to itself that no one can read.",
         ],
     },
     "crystal fields": {
@@ -1398,6 +1410,8 @@ BIOME_WORDS = {
             "the crystals sing softly as the wind moves between them",
             "a fine dust of crystal powder catches the light like floating gems",
             "the air shimmers with refracted light from a hidden source",
+            "a cascade of prismatic light sweeps across the field as the sun shifts, painting everything in shifting spectra",
+            "a shimmering heat haze rises from the crystal formations, distorting the world into liquid geometry",
         ],
         "anomalies": [
             "The crystals reflect a sky that is not above you.",
@@ -1405,6 +1419,8 @@ BIOME_WORDS = {
             "Sound travels in straight lines here — you hear only what is directly before you.",
             "The crystals hum in harmonies that form chords no human instrument can play.",
             "Shadows move in directions that contradict the position of the sun.",
+            "The crystals grow when you are not watching — a slow, patient accretion that reverses when you turn back.",
+            "Your reflection in the crystal faces does not mirror you — it continues moving after you have stopped, living a life of its own.",
         ],
     },
 }

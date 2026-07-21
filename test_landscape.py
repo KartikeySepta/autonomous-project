@@ -162,6 +162,14 @@ WEATHER_INDICATORS = [
     "plain into a sea of fire",
     "groan issues from deep",
     "lightning forks through",
+    "living constellation",
+    "bioluminescent plankton ignites",
+    "caps pulse in slow waves",
+    "veil of spores settles",
+    "bank of luminous clouds",
+    "stars pierce the thin air",
+    "cascade of prismatic light",
+    "liquid geometry",
 ]
 
 LEGEND_INDICATORS = [

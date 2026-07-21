@@ -86,9 +86,103 @@
 Working. All 1163 tests pass (18 todo + 1145 landscape).
 
 ### Next likely steps
-- Expand biome-specific word pools further (coral reef, fungal grove, sky islands, crystal fields)
-- Add more presets for diverse generation experiences
 - Expand the new melancholy word pools further
+- Add more presets for diverse generation experiences
+- Add a new biome or mood overlay
+
+## 2026-07-21
+
+### What was done (Session 185)
+- **Expanded biome-specific weathers and anomalies for the final 4 biomes**: coral reef,
+  fungal grove, sky islands, and crystal fields — each biome's weather pool grew from
+  5 to 7 entries and anomaly pool from 5 to 7 entries, adding 8 new weathers and 8 new
+  anomalies (16 phrases total). This completes the biome-specific weather/anomaly
+  expansion that began in Session 180 (forest, ocean, desert), continued through
+  Session 182 (ruined city), Session 183 (tundra, mountain range, swamp), and Session
+  184 (cave system, plain, volcanic field). All 14 biomes now have 7 weathers and 7
+  anomalies each.
+- **New coral reef weathers**:
+  - `"a school of silvery fish wheels as one, a living constellation in the blue depths"` —
+    coordinated fish movement as a living constellation. Distinct from `"sunlight dances
+    on the water in shifting patterns"` (light pattern, not life) and `"warm currents
+    drift through the coral canyons"` (current, not life). Indicator: `"living constellation"`.
+  - `"bioluminescent plankton ignites in waves of blue-green fire at each breaking swell"` —
+    bioluminescence triggered by wave action. Distinct from `"the water is clear and
+    impossibly blue"` (color, not bioluminescence). Indicator: `"bioluminescent plankton ignites"`.
+- **New coral reef anomalies**:
+  - `"The coral has grown around a structure that was never built — pillars and archways
+    of living calcium, older than any civilization."` — ancient organic architecture in
+    the coral, structures that predate civilization. Distinct from `"The coral pulses in
+    unison like a single heart"` (living unity, not architecture).
+  - `"The water grows shallower the deeper you swim, as if the ocean has forgotten which
+    way is down."` — impossible depth inversion, ocean losing its orientation. Distinct
+    from `"Time passes differently here"` (temporal, not spatial).
+- **New fungal grove weathers**:
+  - `"bioluminescent caps pulse in slow waves of light, a breathing garden of soft fire"` —
+    coordinated bioluminescent pulsing of mushroom caps. Distinct from `"the ground pulses
+    with faint blue light"` (ground-level, not caps) and `"a warm mist carries the sweet
+    scent of fungal bloom"` (olfactory, not visual). Indicator: `"caps pulse in slow waves"`.
+  - `"a fine veil of spores settles on everything, muffling the world in velvet silence"` —
+    spore veil creating acoustic muffling. Distinct from `"spore-laden rain falls in
+    curtains of gold and silver"` (falling, not settled). Indicator: `"veil of spores settles"`.
+- **New fungal grove anomalies**:
+  - `"The mushrooms grow in the shape of things you have forgotten — lost faces, abandoned
+    places, words you meant to say."` — mushrooms forming memory-shaped structures.
+    Distinct from `"Spores form faces when they settle"` (simple faces, not complex
+    memory shapes) and `"Fungal growths form temporary sculptures"` (abstract, not personal).
+  - `"Breathing in, the spores carry whispers of a past that belongs to the grove, not
+    to you."` — spores transmitting the grove's own memories through inhalation.
+    Distinct from `"The mycelium network reacts to your thoughts"` (responding to you,
+    not you receiving its past).
+- **New sky islands weathers**:
+  - `"a bank of luminous clouds rises from below, bathing the islands in pearl-grey light"` —
+    luminous rising clouds creating soft ambient light. Distinct from `"clouds churn far
+    below like a white sea"` (distant churning, not rising) and `"a thin mist wraps each
+    island in solitude"` (wrapping, not rising upward). Indicator: `"bank of luminous clouds"`.
+  - `"the stars pierce the thin air above with an intensity that feels like sound — cold,
+    clear, infinite"` — extreme clarity of stars at high altitude, synesthetic
+    sound-of-light. Distinct from `"lightning arcs silently between nearby islands"`
+    (electrical discharge, not stellar). Indicator: `"stars pierce the thin air"`.
+- **New sky islands anomalies**:
+  - `"When you look down, you see yourself standing on a different island, looking up at
+    this one."` — recursive self-observation, vertiginous Doppelgänger across the
+    archipelago. Distinct from `"The islands orbit each other in a slow dance"` (orbital
+    movement, not recursive selves) and `"The islands cast shadows onto the clouds below"`
+    (shadow autonomy, not self-recursion).
+  - `"The clouds below form words, forming and dissolving — a message from the sky to
+    itself that no one can read."` — clouds writing ephemeral language. Distinct from
+    `"A bell tolls from an island that no one has ever reached"` (auditory, not visual).
+- **New crystal fields weathers**:
+  - `"a cascade of prismatic light sweeps across the field as the sun shifts, painting
+    everything in shifting spectra"` — sweeping spectrum of light across crystals as the
+    sun moves. Distinct from `"light scatters into a thousand colors across the crystal
+    faces"` (scattering, not sweeping) and `"the air shimmers with refracted light"`
+    (ambient shimmer, not directional sweep). Indicator: `"cascade of prismatic light"`.
+  - `"a shimmering heat haze rises from the crystal formations, distorting the world into
+    liquid geometry"` — heat haze warping perception into fluid shapes. Distinct from
+    `"the air shimmers with refracted light from a hidden source"` (light-based shimmer,
+    not heat-based distortion). Indicator: `"liquid geometry"`.
+- **New crystal fields anomalies**:
+  - `"The crystals grow when you are not watching — a slow, patient accretion that reverses
+    when you turn back."` — quantum-observer crystal growth that reverses under direct
+    observation. Distinct from `"Every facet shows a different moment in time"` (time
+    facets, not growth) and `"The crystals reflect a sky that is not above you"` (reflection,
+    not accretion).
+  - `"Your reflection in the crystal faces does not mirror you — it continues moving after
+    you have stopped, living a life of its own."` — independent reflection with its own
+    agency. Distinct from `"Shadows move in directions that contradict the position of the
+    sun"` (shadow autonomy, not reflection autonomy).
+- **Updated WEATHER_INDICATORS** in test_landscape.py: Added 8 new invariant substrings
+  for the new biome weather phrases so weather suppression/probability tests correctly
+  cover the new weathers.
+- **No code, CLI, or generation logic changes** — data-only expansion plus indicator
+  additions. All existing tests use dynamic checks over `ALL_WEATHERS`, `ALL_ANOMALIES`,
+  and `WEATHER_INDICATORS`, so no test logic changes were needed.
+- **Milestone**: This is the final batch of biome-specific weather/anomaly expansion.
+  All 14 biomes now have 7 weathers and 7 anomalies each (up from the original 5 and 5).
+  Over 5 sessions (180–185), 18 new weathers and 18 new anomalies (36 phrases total)
+  were added across 14 biomes.
+- Tests unchanged: 1145 passed (18 todo + 1145 landscape) — same as Session 184.
 
 ## 2026-07-21
 

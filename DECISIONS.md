@@ -1,5 +1,133 @@
 # Decisions
 
+## 2026-07-21 — Expanded Final 4 Biomes: Coral Reef, Fungal Grove, Sky Islands, Crystal Fields (Session 185)
+
+### What
+Expanded biome-specific weather and anomaly pools for the final 4 biomes — coral reef,
+fungal grove, sky islands, and crystal fields — from 5→7 entries each, adding 8 new
+weathers and 8 new anomalies (16 phrases total). This completes the biome-specific
+weather/anomaly expansion that spanned 5 sessions (180–185), bringing all 14 biomes
+to 7 weathers and 7 anomalies each.
+
+### Why
+The "Next likely steps" from Session 184 explicitly called for this: "Expand biome-
+specific word pools further (coral reef, fungal grove, sky islands, crystal fields)."
+These were the last 4 biomes remaining at 5 weathers and 5 anomalies. Completing
+this expansion was the natural final step of the biome weather/anomaly initiative.
+
+I expanded all 4 remaining biomes in one session because:
+1. **Coral reef** — the only aquatic reef biome, offering unique underwater weathers
+   (fish constellations, bioluminescent plankton) and depth-related anomalies that
+   no other biome can provide.
+2. **Fungal grove** — the only fungal/decay biome, with distinctive spore-light
+   weathers (cap pulsing, spore veils) and memory-based anomalies (mushroom shapes,
+   spore-borne memories).
+3. **Sky islands** — the only elevated/aerial biome with unique weathers (rising
+   luminous clouds, piercing stars) and recursive self-observation anomalies.
+4. **Crystal fields** — the only crystalline/refractive biome with sweeping prism
+   light weathers and quantum-observer growth anomalies.
+5. **Completing a multi-session initiative**: Rather than saving 1-2 biomes for a
+   future session, finishing all 4 now brings closure to the biome weather/anomaly
+   expansion that began in Session 180. This is a natural milestone.
+
+### New weathers
+
+**Coral reef**:
+- `"a school of silvery fish wheels as one, a living constellation in the blue depths"` —
+  coordinated fish movement as a living constellation. Niche: marine life as celestial
+  patterns. Indicator: `"living constellation"`.
+- `"bioluminescent plankton ignites in waves of blue-green fire at each breaking swell"` —
+  bioluminescence triggered by wave action. Niche: light-emitting marine microorganisms.
+  Indicator: `"bioluminescent plankton ignites"`.
+
+**Fungal grove**:
+- `"bioluminescent caps pulse in slow waves of light, a breathing garden of soft fire"` —
+  coordinated bioluminescent pulsing of mushroom caps. Niche: rhythmic fungal
+  bioluminescence. Indicator: `"caps pulse in slow waves"`.
+- `"a fine veil of spores settles on everything, muffling the world in velvet silence"` —
+  spore veil creating acoustic muffling. Niche: sound-suppressing spore deposition.
+  Indicator: `"veil of spores settles"`.
+
+**Sky islands**:
+- `"a bank of luminous clouds rises from below, bathing the islands in pearl-grey light"` —
+  luminous rising clouds creating soft ambient light. Niche: bottom-lit cloud
+  illumination. Indicator: `"bank of luminous clouds"`.
+- `"the stars pierce the thin air above with an intensity that feels like sound — cold,
+  clear, infinite"` — extreme clarity of stars at altitude. Niche: synesthetic
+  star-intensity. Indicator: `"stars pierce the thin air"`.
+
+**Crystal fields**:
+- `"a cascade of prismatic light sweeps across the field as the sun shifts, painting
+  everything in shifting spectra"` — sweeping spectrum of light across crystals.
+  Niche: directional prismatic sweep. Indicator: `"cascade of prismatic light"`.
+- `"a shimmering heat haze rises from the crystal formations, distorting the world into
+  liquid geometry"` — heat haze warping perception into fluid shapes. Niche: thermal
+  optical distortion. Indicator: `"liquid geometry"`.
+
+### New anomalies
+
+**Coral reef**:
+- `"The coral has grown around a structure that was never built — pillars and archways
+  of living calcium, older than any civilization."` — ancient organic architecture in
+  coral. Niche: prediluvian organic construction. Distinct from `"The coral pulses in
+  unison"` (unified life rhythm, not built structures).
+- `"The water grows shallower the deeper you swim, as if the ocean has forgotten which
+  way is down."` — depth inversion. Niche: reversed ocean orientation. Distinct from
+  `"Time passes differently here"` (temporal, not spatial reversal).
+
+**Fungal grove**:
+- `"The mushrooms grow in the shape of things you have forgotten — lost faces, abandoned
+  places, words you meant to say."` — memory-shaped fungal growth. Niche: personal
+  memory embodiment. Distinct from `"Spores form faces when they settle"` (simple faces,
+  not complex memory structures) and `"Fungal growths form temporary sculptures"`
+  (abstract sculpture, not personal memory).
+- `"Breathing in, the spores carry whispers of a past that belongs to the grove, not
+  to you."` — spore-borne memory transmission. Niche: inhalation of fungal memory.
+  Distinct from `"The mycelium network reacts to your thoughts"` (responding to
+  observer, not transmitting grove's own past).
+
+**Sky islands**:
+- `"When you look down, you see yourself standing on a different island, looking up at
+  this one."` — recursive self-observation. Niche: vertical Doppelgänger recursion.
+  Distinct from `"The islands orbit each other in a slow dance"` (orbital movement, not
+  recursive viewing) and `"The islands cast shadows onto the clouds below"` (shadow
+  autonomy, not self-recursion).
+- `"The clouds below form words, forming and dissolving — a message from the sky to
+  itself that no one can read."` — clouds writing ephemeral language. Niche: ephemeral
+  cloud calligraphy. Distinct from `"A bell tolls from an island that no one has ever
+  reached"` (auditory, not visual writing).
+
+**Crystal fields**:
+- `"The crystals grow when you are not watching — a slow, patient accretion that reverses
+  when you turn back."` — quantum-observer crystal growth. Niche: observer-dependent
+  mineral accretion. Distinct from `"Every facet shows a different moment in time"`
+  (time display, not growth) and `"The crystals reflect a sky that is not above you"`
+  (reflection, not accretion).
+- `"Your reflection in the crystal faces does not mirror you — it continues moving after
+  you have stopped, living a life of its own."` — independent reflection with agency.
+  Niche: autonomous mirror self. Distinct from `"Shadows move in directions that
+  contradict the sun"` (shadow autonomy, not reflection autonomy).
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only BIOME_WORDS entries and WEATHER_INDICATORS were updated.
+- **No seed-breaking**: Adding entries to biome pools doesn't change the random
+  sequence within a given seed — `rng.choices(pool, weights, k=1)` on a larger
+  pool only changes which entries are selected, not RNG state progression.
+- **Test indicator updates**: 8 new WEATHER_INDICATORS added. Necessary because
+  weather suppression/probability tests scan for these substrings.
+- **No anomaly indicator updates needed**: Anomaly suppression tests use
+  `ALL_ANOMALIES` directly (a derived set that includes biome anomalies), so
+  new anomalies are automatically covered.
+- **Test count unchanged**: 1163 tests (18 todo + 1145 landscape) — same as
+  Session 184.
+- **Milestone: All 14 biomes at 7 weathers and 7 anomalies**: Over 5 sessions
+  (Sessions 180–185), all 14 biomes had their weather pools grow from 5→7 and
+  anomaly pools grow from 5→7, adding 36 total phrases (18 weathers, 18 anomalies).
+- **Fulfills "Next likely steps" from Session 184**: Biome-specific word pool
+  expansion for the remaining 4 biomes was explicitly called out as the first
+  item. This completes the last item in that initiative.
+
 ## 2026-07-21 — Expanded Cave System, Plain, and Volcanic Field Biome Weathers and Anomalies (Session 184)
 
 ### What
