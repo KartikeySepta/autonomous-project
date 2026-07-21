@@ -1,5 +1,29 @@
 # Decisions
 
+## 2026-07-21 — Added "reverie" Preset (Session 196)
+
+### What
+Added a 10th preset "reverie" — the first to combine peaceful and melancholy moods
+(not used together before). The preset configures peaceful+melancholy with gentle
+weather (1, 0.7), subtle anomalies (1, 0.65), high echoes (2, 0.8), high wistful
+(2, 0.9), high mood atmosphere (2, 0.9), gentle sound (1, 0.6), sparse wildlife
+(1, 0.3), sparse legends (1, 0.4), and descending poetic device probabilities
+(simile 0.7 → metaphor 0.6 → personification 0.5).
+
+### Why
+The peaceful+melancholy combination was explicitly called out as the next step in
+Sessions 193–195: "Add more presets for diverse generation experiences (e.g.
+peaceful+melancholy)." No existing preset combined these two moods — pastoral
+uses pure peaceful, gloaming uses pure melancholy. The combination creates a
+"beautiful melancholy" register: calm contentment mingled with wistful longing.
+
+### Design rationale
+Lower weather/anomaly/sound/wildlife counts than the recent high-intensity presets
+(lament, oasis) because "reverie" is introspective and gentle — the landscape
+supports the dreamy state rather than dominating it. Simile set at the highest
+probability (0.7) among poetic devices because simile's explicit "like/as" framing
+best captures the comparative, reflective quality of a reverie.
+
 ## 2026-07-21 — Added "oasis" Preset (Session 195)
 
 ### What
