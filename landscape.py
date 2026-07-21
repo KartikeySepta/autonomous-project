@@ -754,17 +754,19 @@ MOOD_WORDS = {
         ],
     },
     "desolate": {
-        "adjectives": ["forgotten", "bone", "scorched", "barren", "frozen", "rotting", "windswept", "cracked"],
-        "elements": ["stillness", "silence", "darkness", "dry air", "ash fall"],
-        "nouns": ["ruins", "dunes", "ice fields", "crevasses", "slag heaps", "permafrost"],
-        "verbs": ["crack", "freeze", "drift", "scour", "bake", "stagnate"],
-        "colors": ["murky", "bleached", "stark", "lurid", "mottled"],
-        "adverbs": ["relentlessly", "constantly", "slowly", "eternally"],
+        "adjectives": ["forgotten", "bone", "scorched", "barren", "frozen", "rotting", "windswept", "cracked", "harsh", "dead", "blasted", "wasted"],
+        "elements": ["stillness", "silence", "darkness", "dry air", "ash fall", "dust", "rust", "salt", "hollow wind"],
+        "nouns": ["ruins", "dunes", "ice fields", "crevasses", "slag heaps", "permafrost", "wasteland", "skeletons", "ashes"],
+        "verbs": ["crack", "freeze", "drift", "scour", "bake", "stagnate", "decay", "wither", "erode"],
+        "colors": ["murky", "bleached", "stark", "lurid", "mottled", "dusty", "rust", "grey-brown"],
+        "adverbs": ["relentlessly", "constantly", "slowly", "eternally", "bitterly", "mercilessly", "endlessly"],
         "weathers": [
             "ash drifts slowly downward",
             "a biting wind carries ice crystals",
             "the sun beats down without mercy",
             "a hot wind scours the dunes",
+            "a relentless wind scours the surface, scouring away all that is soft",
+            "a pale sun hangs low in a colourless sky, giving light without warmth",
         ],
         "anomalies": [
             "The sand falls upward here.",
@@ -772,6 +774,7 @@ MOOD_WORDS = {
             "Shapes move beneath the frozen surface.",
             "The heat does not burn — it freezes.",
             "Distant figures never get closer no matter how far you walk.",
+            "The ground beneath your feet crumbles into dust that does not come from this world.",
         ],
     },
     "melancholy": {

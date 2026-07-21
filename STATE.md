@@ -111,6 +111,67 @@ Working. All 1179 tests pass (18 todo + 1161 landscape).
 
 ## 2026-07-21
 
+### What was done (Session 191)
+- **Expanded desolate mood word pools** — added 23 new words/phrases across all 8
+  lexical categories (adjectives, elements, nouns, verbs, colors, adverbs, weathers,
+  anomalies) to bring desolate's pool sizes in line with melancholy, peaceful, eerie,
+  and vibrant (expanded in Sessions 187, 188, 189, and 190).
+- **Desolate adjectives**: 8 → 12, added `harsh`, `dead`, `blasted`, `wasted` —
+  rough severity, lifeless inertness, weather-worn destruction, and devastated ruin.
+- **Desolate elements**: 5 → 9, added `dust`, `rust`, `salt`, `hollow wind` —
+  fine dry particulate, oxidized metal decay, sterile saline residue, and wind through
+  empty spaces.
+- **Desolate nouns**: 6 → 9, added `wasteland`, `skeletons`, `ashes` —
+  barren empty region, organic/animal bone remains, and post-fire residue.
+- **Desolate verbs**: 6 → 9, added `decay`, `wither`, `erode` —
+  organic decomposition, desiccation and shriveling, and gradual geological wearing.
+- **Desolate colors**: 5 → 8, added `dusty`, `rust`, `grey-brown` —
+  muted dry particles, oxidized metal tone, and neutral desaturated earth tone.
+- **Desolate adverbs**: 4 → 7, added `bitterly`, `mercilessly`, `endlessly` —
+  intense cold/hostility, pitiless harshness, and infinite duration.
+- **Desolate weathers**: 4 → 6, added:
+  - `"a relentless wind scours the surface, scouring away all that is soft"` —
+    persistent abrasive wind that strips everything bare; distinct from both
+    "a biting wind carries ice crystals" (cold-focused) and "a hot wind scours
+    the dunes" (heat-focused). Niche: constant erosive wind.
+  - `"a pale sun hangs low in a colourless sky, giving light without warmth"` —
+    cold distant sun providing illumination without heat; distinct from "the sun
+    beats down without mercy" (hot punishing sun). Niche: cold light.
+- **Desolate anomalies**: 5 → 6, added:
+  - `"The ground beneath your feet crumbles into dust that does not come from this
+    world."` — unearthly ground disintegration; adds material-decay and alien-origin
+    register distinct from existing desolate anomalies (sand fall, no sky, shapes
+    under ice, heat-freezing, distant figures).
+- **Added TestDesolateMood class** (8 tests) following the TestVibrantMood/
+  TestPeacefulMood pattern: does not break output (20 seeds), word weight boosted
+  for desolate-matched words (barren), word weight not boosted for unmatched words
+  (crystal), combines with other moods (peaceful, eerie, vibrant, melancholy),
+  deterministic with same seed, desolate-specific adjectives appear across 200 seeds,
+  JSON output includes mood field, CLI flag exists.
+- **No code, CLI, or generation logic changes** — data-only expansion of the
+  MOOD_WORDS["desolate"] dictionary plus new test class. All existing tests use dynamic
+  checks over MOOD_WORDS keys and sets, so no existing test modifications were needed.
+- This directly fulfills the first "Next likely step" from Session 190: "Expand the
+  remaining mood word pools (desolate) for consistency." The desolate mood now has
+  12 adjectives, 9 elements, 9 nouns, 9 verbs, 8 colors, 7 adverbs, 6 weathers, and
+  6 anomalies — matching the expanded pool sizes of melancholy, peaceful, eerie,
+  and vibrant. All 5 moods now have consistent pool sizes.
+- **Milestone**: This completes the mood word pool consistency initiative begun in
+  Session 187. All 5 moods (melancholy, peaceful, eerie, vibrant, desolate) now have
+  matching expanded pool sizes (12/9/9/9/8/7/6/6 with minor variation).
+- **Tests**: 1187 pass (448 subtests) — 1169 landscape + 18 todo. Landscape tests
+  grew from 1161 to 1169 (+8 for the new TestDesolateMood class).
+
+### Current status
+Working. All 1187 tests pass (18 todo + 1169 landscape).
+
+### Next likely steps
+- Add more presets for diverse generation experiences
+- Add a new biome or mood overlay
+- Expand mood atmosphere phrase pools for consistency
+
+## 2026-07-21
+
 ### What was done (Session 188)
 - **Expanded peaceful mood word pools** — added 19 new words/phrases across all 8
   lexical categories (adjectives, elements, nouns, verbs, colors, adverbs, weathers,

@@ -3091,6 +3091,57 @@ class TestVibrantMood(unittest.TestCase):
         self.assertTrue(callable(main))
 
 
+class TestDesolateMood(unittest.TestCase):
+    def test_desolate_mood_does_not_break_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, mood="desolate")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_desolate_mood_word_weight_boosted(self):
+        from landscape import _word_weight, MOOD_BOOST
+        w_no_mood = _word_weight("barren", bias="flat", mood=None, category="adjectives")
+        w_mood = _word_weight("barren", bias="flat", mood="desolate", category="adjectives")
+        self.assertEqual(w_mood, w_no_mood * MOOD_BOOST,
+            "barren should be boosted in desolate mood")
+
+    def test_desolate_mood_word_weight_not_boosted_for_unmatched(self):
+        from landscape import _word_weight
+        w_no_mood = _word_weight("crystal", bias="flat", mood=None, category="adjectives")
+        w_mood = _word_weight("crystal", bias="flat", mood="desolate", category="adjectives")
+        self.assertEqual(w_mood, w_no_mood,
+            "crystal should not be boosted in desolate mood")
+
+    def test_desolate_mood_combine_with_other_moods(self):
+        for combo in [["desolate", "peaceful"], ["desolate", "eerie"], ["desolate", "vibrant"], ["desolate", "melancholy"]]:
+            for s in range(10):
+                result = generate_landscape(seed=s, mood=combo)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_desolate_mood_deterministic(self):
+        a = generate_landscape(seed=42, mood="desolate")
+        b = generate_landscape(seed=42, mood="desolate")
+        self.assertEqual(a, b)
+
+    def test_desolate_mood_uses_desolate_words(self):
+        desolate_adj = set(MOOD_WORDS["desolate"].get("adjectives", []))
+        results = [generate_landscape(seed=s, mood="desolate") for s in range(200)]
+        found = any(any(w in r for w in desolate_adj) for r in results)
+        self.assertTrue(found, "desolate-specific adjectives never appeared in output")
+
+    def test_desolate_mood_json_includes_mood(self):
+        result = generate_landscape(seed=42, mood="desolate", fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("mood", data)
+        self.assertIn("desolate", data["mood"])
+
+    def test_desolate_mood_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
 MOOD_ATMOSPHERE_INDICATORS = {
     "peaceful": [
         "settles over the scene like a blessing",

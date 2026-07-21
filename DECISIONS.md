@@ -1,5 +1,107 @@
 # Decisions
 
+## 2026-07-21 — Expanded Desolate Mood Word Pools (Session 191)
+
+### What
+Expanded all 8 lexical categories of MOOD_WORDS["desolate"] with 23 new words/phrases:
++4 adjectives (harsh, dead, blasted, wasted), +4 elements (dust, rust, salt, hollow wind),
++3 nouns (wasteland, skeletons, ashes), +3 verbs (decay, wither, erode), +3 colors
+(dusty, rust, grey-brown), +3 adverbs (bitterly, mercilessly, endlessly), +2 weathers
+(relentless scouring wind, pale sun without warmth), +1 anomaly (unearthly ground
+disintegration).
+
+### Why
+The desolate mood is the last of the 5 moods to receive word pool expansion. Its pools
+remained at their original small sizes: adjectives (8), elements (5), nouns (6), verbs (6),
+colors (5), adverbs (4), weathers (4), anomalies (5). The melancholy (Session 187),
+peaceful (Session 188), eerie (Session 189), and vibrant (Session 190) moods were all
+expanded to matching sizes. Desolate was the last remaining mood with small word pools.
+
+The "Next likely steps" from Session 190 explicitly called for this: "Expand the remaining
+mood word pools (desolate) for consistency." This is the final mood word pool expansion,
+completing the consistency initiative begun in Session 187.
+
+### New word rationale
+
+**Adjectives (+4)**: 8 → 12
+- `harsh` — rough, severe, inhospitable. No existing desolate adjective covers
+  severity/cruelty of the landscape.
+- `dead` — lifeless, inert. The most natural desolate adjective, surprisingly absent
+  from the original pool.
+- `blasted` — destroyed by wind/weather, withered. Adds a weather-worn register
+  distinct from `scorched` (burned) and `cracked` (fractured).
+- `wasted` — laid waste, devastated. Complements `barren` (unproductive) with a sense
+  of violent ruination.
+
+**Elements (+4)**: 5 → 9
+- `dust` — fine dry particulate. No existing desolate element covers the most
+  fundamental arid element.
+- `rust` — oxidized metal, decay of manufactured things. Adds a decayed-human-presence
+  register.
+- `salt` — saline residue, sterile crystallization. Distinct from `ash fall` (volcanic)
+  and `dry air` (meteorological).
+- `hollow wind` — wind through empty spaces, a sound of absence. Distinct from
+  `silence` (stillness) — this is wind in an empty space.
+
+**Nouns (+3)**: 6 → 9
+- `wasteland` — barren, empty region. The most fundamental desolate noun.
+- `skeletons` — bones, structural remains. Distinct from `ruins` (buildings) —
+  specifically organic/animal remains.
+- `ashes` — what remains after burning. Distinct from `slag heaps` (industrial waste) —
+  more elemental/post-fire.
+
+**Verbs (+3)**: 6 → 9
+- `decay` — rot, decompose. Natural desolate verb about organic breakdown.
+- `wither` — shrivel, dry up. Specific to desiccation, distinct from `rot` (wet decay).
+- `erode` — wear away gradually. Adds the slow geological destruction register.
+
+**Colors (+3)**: 5 → 8
+- `dusty` — covered with fine dry particles. A muted, dry tone. Distinct from
+  `bleached` (faded by sun) and `murky` (dark/unclear).
+- `rust` — reddish-brown of oxidized metal. Adds decay-metal register.
+- `grey-brown` — neutral, desaturated earth tone. A specific desolate non-color.
+
+**Adverbs (+3)**: 4 → 7
+- `bitterly` — with intense cold or resentment. Adds a sharp, hostile register.
+- `mercilessly` — without pity or relief. Intensifier for harsh conditions.
+- `endlessly` — without end. Adds a sense of infinite, inescapable duration.
+
+**Weathers (+2)**: 4 → 6
+- `"a relentless wind scours the surface, scouring away all that is soft"` —
+  persistent abrasive wind that strips everything bare. Distinct from `"a biting wind
+  carries ice crystals"` (cold-focused) and `"a hot wind scours the dunes"` (heat-focused).
+  Niche: constant erosive wind.
+- `"a pale sun hangs low in a colourless sky, giving light without warmth"` —
+  cold distant sun providing illumination without heat. Distinct from `"the sun beats
+  down without mercy"` (hot punishing sun). Niche: cold light.
+
+**Anomalies (+1)**: 5 → 6
+- `"The ground beneath your feet crumbles into dust that does not come from this world."` —
+  unearthly disintegration of the ground. Adds material-decay and alien-origin register
+  distinct from all existing desolate anomalies (sand upward, no sky, shapes under ice,
+  heat-freezes, distant figures).
+
+### Tradeoffs
+- **Data-only change + new tests**: No modifications to `generate_landscape()`, CLI
+  flags, or any logic. Only MOOD_WORDS["desolate"] was updated, plus a new
+  TestDesolateMood test class was added.
+- **No seed-breaking**: Adding entries to MOOD_WORDS doesn't change the random
+  sequence within a given seed — `_word_weight` only uses mood word membership to
+  multiply base weight. Larger mood pools only affect which words get the mood boost,
+  not RNG state progression.
+- **No existing test changes needed**: All desolate tests use dynamic checks over
+  MOOD_WORDS keys, `ALL_ADJECTIVES` (derived sets), or iterable mood lists. No
+  hardcoded lists needed updating.
+- **Test count +8**: 1187 total (18 todo + 1169 landscape). 8 new test methods in
+  TestDesolateMood.
+- **Expansion matches all other moods**: desolate now has 12/9/9/9/8/7/6/6 — matching
+  the expanded pool sizes of melancholy (12/9/9/9/8/7/6/6), peaceful (12/9/9/9/8/8/6/6),
+  eerie (12/9/9/9/8/7/6/7), and vibrant (12/9/9/9/8/7/6/6).
+- **Milestone — all 5 moods consistent**: This completes the mood word pool consistency
+  initiative begun in Session 187. All 5 moods now have matching expanded pool sizes.
+- **Fulfills "Next likely steps" from Session 190**: Desolate mood word pool expansion
+  was explicitly called out as the first item. No remaining mood word pools need expansion.
+
 ## 2026-07-21 — Expanded Eerie Mood Word Pools (Session 189)
 
 ### What
