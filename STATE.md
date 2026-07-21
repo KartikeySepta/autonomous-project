@@ -2,6 +2,51 @@
 
 ## 2026-07-21
 
+### What was done (Session 186)
+- **Added "gloaming" preset** — the 6th preset and the first to use the melancholy mood
+  (added in Session 181). Until now, melancholy had no dedicated preset despite being
+  available since Session 181. The new preset fills a twilight/rainy-day niche between
+  pastoral (peaceful, sunny) and nightfall (eerie, dark), providing a wistful, soft-focus,
+  introspective generation experience.
+- **"gloaming" preset design**:
+  - **Mood**: `["melancholy"]` — wistful, rainy, soft-focus emotional register.
+  - **Weather**: high probability (2, prob=0.9) — rain, mist, and grey light.
+  - **Anomalies**: moderate (1, prob=0.6) — melancholy-specific anomalies about memory
+    and muted perception.
+  - **Echoes**: high (2, prob=0.8) — atmospheric memory phrases fit the reflective tone.
+  - **Wistful**: high (2, prob=0.9) — yearning closings complement the melancholy mood.
+  - **Mood atmosphere**: high (2, prob=0.9) — melancholy's 4 atmosphere phrases about
+    gentle sadness, soft heaviness, muffled sounds, and quiet ache.
+  - **Legends**: low (1, prob=0.4) — sparingly used; folkloric lore feels too active for
+    the introspective tone.
+  - **Sounds**: moderate (1, prob=0.6) — hushed/muffled sonic register.
+  - **Wildlife**: low (1, prob=0.3) — melancholy landscapes are quiet and sparsely
+    inhabited.
+  - **Time of day**: moderate (1, prob=0.7) — twilight/dusk/overcast times fit.
+  - **Season**: moderate (1, prob=0.7) — autumn/early spring/rainy seasons fit.
+  - **Perspectives**: moderate (1, prob=0.6) — adds spatial context without overwhelming.
+  - **Simile/Metaphor/Personification**: moderate probabilities descending (0.7/0.6/0.5)
+    — simile is most natural for melancholy, personification rarest.
+  - **Travelogue**: enabled — journal-entry framing suits the reflective register.
+- **Updated hardcoded preset lists**: `test_preset_produces_valid_output` and
+  `test_preset_is_deterministic` now include `"gloaming"` in their iteration lists.
+- **No code logic changes**: The preset system dynamically reads `PRESETS` dict keys for
+  `--preset` choices and all dynamic tests use `for name in PRESETS`, so the preset is
+  auto-available without any other code modifications. Only the two tests with hardcoded
+  preset name lists needed manual updates.
+- **Tests**: 1145 pass (18 todo + 1145 landscape) — same count as Session 185, with
+  47 additional subtests (448 vs 401) from dynamic preset iteration tests.
+
+### Current status
+Working. All 1145 tests pass (18 todo + 1145 landscape).
+
+### Next likely steps
+- Expand the new melancholy word pools further
+- Add more presets for diverse generation experiences
+- Add a new biome or mood overlay
+
+## 2026-07-21
+
 ### What was done (Session 184)
 - **Expanded biome-specific weathers and anomalies for cave system, plain, and volcanic field**
   — each biome's weather pool grew from 5 to 7 entries and anomaly pool from 5 to 7

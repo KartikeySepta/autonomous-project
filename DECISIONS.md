@@ -1,5 +1,64 @@
 # Decisions
 
+## 2026-07-21 — Added "gloaming" Preset (Session 186)
+
+### What
+Added a 6th preset "gloaming" — the first to use the melancholy mood (added in Session
+181). The preset configures melancholy with high weather (2, 0.9), high wistful (2, 0.9),
+high mood atmosphere (2, 0.9), high echoes (2, 0.8), and progressively decreasing
+poetic device probabilities (simile 0.7 → metaphor 0.6 → personification 0.5). Wildlife
+is low (0.3) and legends are low (0.4) to keep the tone introspective rather than active.
+
+### Why
+The melancholy mood has existed since Session 181 (5 sessions ago) but no preset used it.
+Users had to know about `--mood melancholy` and configure feature flags manually. The
+5 existing presets all use the 4 original moods (peaceful, eerie, vibrant, desolate),
+leaving melancholy without a guided experience. Adding "gloaming" fills this gap.
+
+I chose the name "gloaming" (twilight/dusk) because:
+1. It evokes the soft, fading-light quality of melancholy landscapes.
+2. It's a distinctive, memorable word that immediately sets the tonal expectation.
+3. It sits between "nightfall" (dark/eerie) and "pastoral" (sunny/peaceful) in the
+   preset spectrum — a twilight space at the boundary of day and night.
+4. Unlike "nightfall" (which is eerie/dark) and "pastoral" (which is peaceful/daytime),
+   "gloaming" occupies a liminal evening register that's wistful rather than threatening
+   or serene.
+
+### Preset design rationale
+- **Weather (2, 0.9)**: Melancholy weathers are about rain, mist, grey light, and
+  drizzle — these should appear frequently to establish the tone.
+- **Wistful (2, 0.9)**: Wistful closings (yearning, memory, farewell) perfectly
+  complement melancholy mood words. The double count with high probability ensures
+  wistful reflection is almost always present.
+- **Mood atmosphere (2, 0.9)**: Melancholy has 4 carefully crafted atmosphere phrases
+  about gentle sadness and soft heaviness. These should appear frequently.
+- **Echoes (2, 0.8)**: Melancholy is about memory and introspection. Echo phrases
+  ("mourns", "holds its breath", "remembers") align with this register.
+- **Poetic devices descending (0.7 → 0.6 → 0.5)**: Similes (comparison) are the least
+  assertive figurative device and most natural for melancholy. Metaphors (identity)
+  are slightly more assertive. Personifications (anthropomorphism) are rarest because
+  giving the landscape active human agency (weeping, reaching, dancing) can break the
+  passive, observant tone of melancholy.
+- **Wildlife (1, 0.3)**: Melancholy landscapes are sparsely inhabited — wildlife
+  appears occasionally but isn't a focus.
+- **Legends (1, 0.4)**: Folkloric legends feel too active/narrative for the introspective
+  tone. Used sparingly.
+
+### Tradeoffs
+- **No code changes**: Only the `PRESETS` dict and two hardcoded test lists were modified.
+  The preset is auto-available via `--preset` choices (which uses `list(PRESETS.keys())`)
+  and auto-tested by all `for name in PRESETS:` dynamic tests.
+- **No seed-breaking**: Adding a new preset key doesn't change any existing preset's
+  behaviour. Only explicit `--preset gloaming` invocations are affected.
+- **No new tests needed**: The dynamic `for name in PRESETS:` subtests in
+  `test_all_presets_*` will automatically generate 47 new subtests for the new preset,
+  verifying it has all required keys with valid ranges.
+- **Test count unchanged**: 1145 tests pass — same as Session 185. Subtests grew from
+  401 to 448 (+47) due to dynamic preset iteration.
+- **Fulfills "Next likely steps" from Session 185**: "Add more presets for diverse
+  generation experiences" was the second listed item. This is the first new preset since
+  the original 5 were created, and the first to use the melancholy mood.
+
 ## 2026-07-21 — Expanded Final 4 Biomes: Coral Reef, Fungal Grove, Sky Islands, Crystal Fields (Session 185)
 
 ### What
