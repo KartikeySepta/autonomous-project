@@ -2,6 +2,57 @@
 
 ## 2026-07-21
 
+### What was done (Session 181)
+- **Added new mood overlay: "melancholy"** — a wistful, rainy, soft-focus emotional
+  register that fills the mood gap between "peaceful" (calm/gentle) and "desolate"
+  (barren/hopeless). This is the first new mood since the desolate mood was added
+  alongside the others at inception.
+- **MOOD_WORDS["melancholy"] entry created** with 8 full word pools:
+  - **Adjectives (9)**: wistful, rain-soaked, grey, faded, weeping, hushed, somber, tender, sighing
+  - **Elements (6)**: rain scent, grey light, distant thunder, wet stone, amber glow, tear-warmth
+  - **Nouns (6)**: rainclouds, puddles, veils, whispers, echoes, doorways
+  - **Verbs (7)**: weep, fade, linger, sigh, ache, remember, drift
+  - **Colors (6)**: grey, silver, pale blue, muted, soft grey, faded rose
+  - **Adverbs (5)**: softly, quietly, wistfully, slowly, heavily
+  - **Weathers (4)**: a soft rain falls without end, mist clings to everything, the light is grey and tender, a quiet drizzle dampens the world
+  - **Anomalies (4)**: rain falling upward carrying tears, shadows holding silent memories, world in slow motion weighted with unspoken things, colors draining to grey when looked at directly
+- **MOOD_ATMOSPHERE["melancholy"] added** with 4 atmosphere phrases:
+  - "There is a gentle sadness in the air, like the end of a beautiful day."
+  - "The world feels soft and heavy, as if it is holding its breath and remembering."
+  - "Every sound seems muffled, as though the landscape itself is lost in thought."
+  - "A quiet ache hangs in the air, tender and familiar, like a half-forgotten lullaby."
+- **Added TestMelancholyMood class** (8 tests) following the TestPeacefulMood pattern:
+  - Does not break output (20 seeds)
+  - Word weight boosted for melancholy-matched words (wistful)
+  - Word weight not boosted for unmatched words (crystal)
+  - Combines with other moods (eerie, peaceful, desolate)
+  - Deterministic with same seed
+  - Melancholy-specific adjectives appear across 200 seeds
+  - JSON output includes mood field
+  - CLI flag exists
+- **Updated 7 existing test methods** that hardcoded mood lists to include "melancholy":
+  `test_describe_all_contains_all_moods`, `test_describe_all_moods_flag_prints_multiple`,
+  `test_peaceful_mood_combine_with_other_moods`, `test_does_not_break_output`,
+  `test_works_with_all_moods`, `test_works_with_mood_combine`,
+  `test_multi_atmosphere_with_count_three`, `test_does_not_repeat_same_phrase`.
+- **Added MELANCHOLY_ATMOSPHERE_INDICATORS** to MOOD_ATMOSPHERE_INDICATORS for
+  test detection of melancholy atmosphere phrases.
+- This directly fulfills the second "Next likely step" from Session 180:
+  "Add a new mood overlay." The melancholy mood is the 5th mood (joining peaceful,
+  eerie, vibrant, desolate) and the first new mood addition.
+- Tests: 1163 pass (18 todo + 1145 landscape) — up from 1155.
+  Landscape tests grew from 1137 to 1145 (+8 for the new test class).
+
+### Current status
+Working. All 1163 tests pass (18 todo + 1145 landscape).
+
+### Next likely steps
+- Expand biome-specific word pools further (more biomes, more entries)
+- Add more presets for diverse generation experiences
+- Expand the new melancholy word pools further
+
+## 2026-07-21
+
 ### What was done (Session 180)
 - **Expanded biome-specific weathers and anomalies for forest, ocean, and desert**
   — each biome's weather pool grew from 5 to 7 entries and anomaly pool from 5

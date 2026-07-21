@@ -721,6 +721,26 @@ MOOD_WORDS = {
             "Distant figures never get closer no matter how far you walk.",
         ],
     },
+    "melancholy": {
+        "adjectives": ["wistful", "rain-soaked", "grey", "faded", "weeping", "hushed", "somber", "tender", "sighing"],
+        "elements": ["rain scent", "grey light", "distant thunder", "wet stone", "amber glow", "tear-warmth"],
+        "nouns": ["rainclouds", "puddles", "veils", "whispers", "echoes", "doorways"],
+        "verbs": ["weep", "fade", "linger", "sigh", "ache", "remember", "drift"],
+        "colors": ["grey", "silver", "pale blue", "muted", "soft grey", "faded rose"],
+        "adverbs": ["softly", "quietly", "wistfully", "slowly", "heavily"],
+        "weathers": [
+            "a soft rain falls without end",
+            "mist clings to everything",
+            "the light is grey and tender",
+            "a quiet drizzle dampens the world",
+        ],
+        "anomalies": [
+            "The rain falls upward, carrying tears to the sky.",
+            "Every shadow holds a memory that will not speak.",
+            "The world seems to move in slow motion, each moment weighted with something unspoken.",
+            "Colors drain to grey when you look directly at them.",
+        ],
+    },
 }
 
 MOOD_ATMOSPHERE = {
@@ -747,6 +767,12 @@ MOOD_ATMOSPHERE = {
         "The land has given up on itself — nothing grows, nothing waits, nothing remembers.",
         "Desolation hangs in the air like a held breath that will never be released.",
         "This place has been empty for so long that emptiness has become its only identity.",
+    ],
+    "melancholy": [
+        "There is a gentle sadness in the air, like the end of a beautiful day.",
+        "The world feels soft and heavy, as if it is holding its breath and remembering.",
+        "Every sound seems muffled, as though the landscape itself is lost in thought.",
+        "A quiet ache hangs in the air, tender and familiar, like a half-forgotten lullaby.",
     ],
 }
 

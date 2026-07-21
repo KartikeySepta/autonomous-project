@@ -2072,7 +2072,7 @@ class TestDescribeMood(unittest.TestCase):
     def test_describe_all_contains_all_moods(self):
         from landscape import describe_mood
         result = describe_mood("all")
-        for m in ["peaceful", "eerie", "vibrant", "desolate"]:
+        for m in ["peaceful", "eerie", "vibrant", "desolate", "melancholy"]:
             self.assertIn(m, result)
 
     def test_describe_mood_flag_exists_via_cli(self):
@@ -2116,6 +2116,7 @@ class TestDescribeMood(unittest.TestCase):
         self.assertIn("=== eerie ===", output)
         self.assertIn("=== vibrant ===", output)
         self.assertIn("=== desolate ===", output)
+        self.assertIn("=== melancholy ===", output)
 
 
 class TestDescribeMoodAtmosphere(unittest.TestCase):
@@ -2886,7 +2887,7 @@ class TestPeacefulMood(unittest.TestCase):
             "crystal should not be boosted in peaceful mood")
 
     def test_peaceful_mood_combine_with_other_moods(self):
-        for combo in [["peaceful", "eerie"], ["peaceful", "vibrant"], ["peaceful", "desolate"]]:
+        for combo in [["peaceful", "eerie"], ["peaceful", "vibrant"], ["peaceful", "desolate"], ["peaceful", "melancholy"]]:
             for s in range(10):
                 result = generate_landscape(seed=s, mood=combo)
                 self.assertIsInstance(result, str)
@@ -2911,6 +2912,57 @@ class TestPeacefulMood(unittest.TestCase):
         self.assertIn("peaceful", data["mood"])
 
     def test_peaceful_mood_flag_exists_via_cli(self):
+        from landscape import main
+        self.assertTrue(callable(main))
+
+
+class TestMelancholyMood(unittest.TestCase):
+    def test_melancholy_mood_does_not_break_output(self):
+        for s in range(20):
+            result = generate_landscape(seed=s, mood="melancholy")
+            self.assertIsInstance(result, str)
+            self.assertGreater(len(result), 10)
+
+    def test_melancholy_mood_word_weight_boosted(self):
+        from landscape import _word_weight, MOOD_BOOST
+        w_no_mood = _word_weight("wistful", bias="flat", mood=None, category="adjectives")
+        w_mood = _word_weight("wistful", bias="flat", mood="melancholy", category="adjectives")
+        self.assertEqual(w_mood, w_no_mood * MOOD_BOOST,
+            "wistful should be boosted in melancholy mood")
+
+    def test_melancholy_mood_word_weight_not_boosted_for_unmatched(self):
+        from landscape import _word_weight
+        w_no_mood = _word_weight("crystal", bias="flat", mood=None, category="adjectives")
+        w_mood = _word_weight("crystal", bias="flat", mood="melancholy", category="adjectives")
+        self.assertEqual(w_mood, w_no_mood,
+            "crystal should not be boosted in melancholy mood")
+
+    def test_melancholy_mood_combine_with_other_moods(self):
+        for combo in [["melancholy", "eerie"], ["melancholy", "peaceful"], ["melancholy", "desolate"]]:
+            for s in range(10):
+                result = generate_landscape(seed=s, mood=combo)
+                self.assertIsInstance(result, str)
+                self.assertGreater(len(result), 10)
+
+    def test_melancholy_mood_deterministic(self):
+        a = generate_landscape(seed=42, mood="melancholy")
+        b = generate_landscape(seed=42, mood="melancholy")
+        self.assertEqual(a, b)
+
+    def test_melancholy_mood_uses_melancholy_words(self):
+        melancholy_adj = set(MOOD_WORDS["melancholy"].get("adjectives", []))
+        results = [generate_landscape(seed=s, mood="melancholy") for s in range(200)]
+        found = any(any(w in r for w in melancholy_adj) for r in results)
+        self.assertTrue(found, "melancholy-specific adjectives never appeared in output")
+
+    def test_melancholy_mood_json_includes_mood(self):
+        result = generate_landscape(seed=42, mood="melancholy", fmt="json")
+        import json
+        data = json.loads(result)
+        self.assertIn("mood", data)
+        self.assertIn("melancholy", data["mood"])
+
+    def test_melancholy_mood_flag_exists_via_cli(self):
         from landscape import main
         self.assertTrue(callable(main))
 
@@ -2940,6 +2992,12 @@ MOOD_ATMOSPHERE_INDICATORS = {
         "held breath that will never be released",
         "emptiness has become its only identity",
     ],
+    "melancholy": [
+        "gentle sadness in the air",
+        "holding its breath and remembering",
+        "landscape itself is lost in thought",
+        "half-forgotten lullaby",
+    ],
 }
 
 ALL_MOOD_ATMOSPHERE_PHRASES = set()
@@ -2963,7 +3021,7 @@ class TestMoodAtmosphere(unittest.TestCase):
         )
 
     def test_does_not_break_output(self):
-        for mood_name in ["peaceful", "eerie", "vibrant", "desolate"]:
+        for mood_name in ["peaceful", "eerie", "vibrant", "desolate", "melancholy"]:
             for s in range(10):
                 result = generate_landscape(seed=s, mood=mood_name, mood_atmosphere=True)
                 self.assertIsInstance(result, str)
@@ -2982,7 +3040,7 @@ class TestMoodAtmosphere(unittest.TestCase):
             "Mood atmosphere enabled should differ from disabled with same seed")
 
     def test_works_with_all_moods(self):
-        for mood_name in ["peaceful", "eerie", "vibrant", "desolate"]:
+        for mood_name in ["peaceful", "eerie", "vibrant", "desolate", "melancholy"]:
             with self.subTest(mood=mood_name):
                 results = [generate_landscape(seed=s, mood=mood_name, mood_atmosphere=True) for s in range(50)]
                 self.assertTrue(
@@ -3019,7 +3077,7 @@ class TestMoodAtmosphere(unittest.TestCase):
                 self.assertGreater(len(result), 10)
 
     def test_works_with_mood_combine(self):
-        for combo in [["peaceful", "eerie"], ["vibrant", "desolate"], ["eerie", "vibrant"]]:
+        for combo in [["peaceful", "eerie"], ["vibrant", "desolate"], ["eerie", "vibrant"], ["melancholy", "peaceful"]]:
             with self.subTest(mood=combo):
                 results = [generate_landscape(seed=s, mood=combo, mood_atmosphere=True) for s in range(50)]
                 all_indicators = []
@@ -3078,7 +3136,7 @@ class TestMoodAtmosphereCount(unittest.TestCase):
 
     def test_multi_atmosphere_with_count_three(self):
         results = [generate_landscape(
-            seed=s, mood=["peaceful", "eerie", "vibrant", "desolate"],
+            seed=s, mood=["peaceful", "eerie", "vibrant", "desolate", "melancholy"],
             mood_atmosphere=True, mood_atmosphere_count=3,
         ) for s in range(200)]
         multi_count = sum(
@@ -3091,7 +3149,7 @@ class TestMoodAtmosphereCount(unittest.TestCase):
     def test_does_not_repeat_same_phrase(self):
         for s in range(100):
             result = generate_landscape(
-                seed=s, mood=["peaceful", "eerie", "vibrant", "desolate"],
+                seed=s, mood=["peaceful", "eerie", "vibrant", "desolate", "melancholy"],
                 mood_atmosphere=True, mood_atmosphere_count=3,
             )
             for ind in ALL_MOOD_ATMOSPHERE_PHRASES:

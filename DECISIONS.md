@@ -1,5 +1,116 @@
 # Decisions
 
+## 2026-07-21 — Added "melancholy" Mood Overlay (Session 181)
+
+### What
+Added a new mood overlay "melancholy" — a wistful, rainy, soft-focus emotional
+register — to MOOD_WORDS and MOOD_ATMOSPHERE, with 8 curated word pools
+(9 adjectives, 6 elements, 6 nouns, 7 verbs, 6 colors, 5 adverbs, 4 weathers,
+4 anomalies) and 4 atmosphere phrases. Also added a TestMelancholyMood class
+(8 tests) following the TestPeacefulMood pattern and updated 7 existing tests
+that hardcoded mood lists.
+
+### Why
+The "Next likely steps" from Session 180 explicitly called for this: "Add a new
+mood overlay." The project has had 4 moods (peaceful, eerie, vibrant, desolate)
+since inception. A melancholy mood fills a clear emotional gap:
+
+1. **Peaceful** is gentle, calm, and serene — a positive, restful register.
+2. **Eerie** is unsettling, wrong, and watchful — a negative, spooky register.
+3. **Vibrant** is energetic, bright, and joyful — a positive, intense register.
+4. **Desolate** is barren, hopeless, and empty — a negative, stark register.
+
+**Melancholy** sits between peaceful and desolate: it's sad but not hopeless,
+tender but not serene, wistful but not spooky. It captures the bittersweet,
+rainy-day, soft-focus feeling that none of the existing moods cover.
+
+### Word pool design
+Each word pool is curated to reinforce the melancholy register:
+
+- **Adjectives**: `wistful` (yearning), `rain-soaked` (wet sadness), `grey`
+  (muted color), `faded` (worn/vintage), `weeping` (crying), `hushed` (quiet
+  reverence), `somber` (serious/sad), `tender` (gentle/vulnerable), `sighing`
+  (exhausted breath). These cover yearning, wetness, muted color, wear, crying,
+  quiet, seriousness, tenderness, and breath — all within the melancholy range.
+- **Elements**: `rain scent` (petrichor), `grey light` (dim illumination),
+  `distant thunder` (approaching storm), `wet stone` (cool moisture),
+  `amber glow` (warm memory), `tear-warmth` (body-temperature tears).
+  These are about water, dimness, and bodily warmth — all melancholy-appropriate.
+- **Nouns**: `rainclouds`, `puddles`, `veils`, `whispers`, `echoes`, `doorways`
+  — things that are half-visible, transitory, or suggestive of absence.
+- **Verbs**: `weep`, `fade`, `linger`, `sigh`, `ache`, `remember`, `drift`
+  — actions of loss, persistence, memory, and gentle movement.
+- **Colors**: `grey`, `silver`, `pale blue`, `muted`, `soft grey`, `faded rose`
+  — desaturated, cool, or faded tones. No bright or saturated colors.
+- **Adverbs**: `softly`, `quietly`, `wistfully`, `slowly`, `heavily`
+  — gentle, slow, weighted movement. No sharp or fast adverbs.
+- **Weathers**: `"a soft rain falls without end"` (persistent gentle rain),
+  `"mist clings to everything"` (low visibility envelopment),
+  `"the light is grey and tender"` (soft diffuse light),
+  `"a quiet drizzle dampens the world"` (misting rain).
+  All four are about rain, mist, or muted light. Distinct from peaceful
+  (sunny/comfortable) and desolate (extreme/stark) weathers.
+- **Anomalies**: `"The rain falls upward, carrying tears to the sky."`
+  (weather inversion with emotional cargo), `"Every shadow holds a memory
+  that will not speak."` (silent memory), `"The world seems to move in slow
+  motion, each moment weighted with something unspoken."` (temporal slowness
+  with emotional weight), `"Colors drain to grey when you look directly at
+  them."` (color negation). Each anomaly is about emotion, memory, or muted
+  perception — distinct from eerie (wrongness/fear), vibrant (excess/energy),
+  and desolate (emptiness/decay) anomalies.
+
+### Atmosphere phrases
+Each atmosphere phrase captures a different facet of melancholy:
+1. `"There is a gentle sadness in the air, like the end of a beautiful day."`
+   — sadness as a gentle, natural end-of-day feeling (not sharp grief).
+2. `"The world feels soft and heavy, as if it is holding its breath and
+   remembering."` — the landscape as a remembering, tender presence.
+3. `"Every sound seems muffled, as though the landscape itself is lost in
+   thought."` — the landscape as introspective and absorbed.
+4. `"A quiet ache hangs in the air, tender and familiar, like a half-forgotten
+   lullaby."` — a persistent, familiar, quiet pain.
+
+All four avoid active grief (not desolate), avoid fear (not eerie), avoid
+joy (not vibrant), and avoid restfulness (not peaceful). They are about
+gentle sadness, memory, introspection, and familiar ache — the melancholy
+register.
+
+### Why not use wistful instead of a mood?
+Wistful is an output feature (a set of reflective phrases appended to the
+landscape). A mood is a word-weighting overlay that boosts tone-matched words
+across all 8 lexical categories. They operate at different levels:
+- Wistful adds a single sentence reflecting on the experience.
+- Melancholy boosts adjectives like "wistful", colors like "grey", adverbs
+  like "heavily", etc. — it affects the entire lexical fabric.
+
+They complement each other: `--mood melancholy --wistful` produces landscapes
+that are both lexically weighted toward melancholy AND have a wistful closing
+reflection. Using wistful alone doesn't give you grey colors or rain-heavy
+weathers across the whole description.
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only MOOD_WORDS and MOOD_ATMOSPHERE dicts were updated, plus
+  test hardcoded lists and new test class. The CLI `--mood` flag already uses
+  `choices=list(MOOD_WORDS.keys())`, so "melancholy" is auto-included.
+- **No seed-breaking**: Adding a new mood doesn't change output for any
+  existing invocation (no default mood, no existing code references it).
+  Only explicit `--mood melancholy` calls are affected.
+- **No preset changes**: All 5 presets use mood keys that still exist.
+  Melancholy is available for custom invocation or future preset use.
+- **Test count +8**: 1163 total (18 todo + 1145 landscape). 8 new test methods
+  in TestMelancholyMood + updates to 7 existing test methods that hardcoded
+  mood lists. Tests that iterate over `MOOD_WORDS` or `MOOD_ATMOSPHERE` keys
+  dynamically include the new mood automatically.
+- **Weather and anomaly indicators NOT needed**: Unlike the global WEATHERS
+  pool (which has indicator-based tests), mood-specific weathers and anomalies
+  are only accessible through MOOD_WORDS lookups and the mood word-weight
+  system. No WEATHER_INDICATORS update was needed because mood weathers are
+  not in the global WEATHERS list.
+- **Fulfills "Next likely steps" from Session 180**: Adding a new mood overlay
+  was explicitly called out as the second item. This is the first new mood
+  since the project began.
+
 ## 2026-07-21 — Expanded Biome-Specific Weathers and Anomalies (Session 180)
 
 ### What
