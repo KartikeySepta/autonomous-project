@@ -1,5 +1,83 @@
 # Decisions
 
+## 2026-07-21 — Added "elegy" Preset (Session 197)
+
+### What
+Added an 11th preset "elegy" — the first to combine vibrant and melancholy moods
+(not used together before). The preset configures vibrant+melancholy with high weather
+(2, 0.85), moderate anomalies (1, 0.7), high echoes (2, 0.8), high wistful (2, 0.9),
+high mood atmosphere (2, 0.9), high sound (2, 0.85), moderate wildlife (1, 0.6),
+moderate legends (1, 0.5), moderate simile (2, 0.8), moderate metaphor (1, 0.7),
+and moderate personification (1, 0.6).
+
+### Why
+The vibrant+melancholy combination was explicitly called out as the next step in
+Sessions 195–196: "Add more presets for diverse generation experiences (e.g.
+vibrant+melancholy, peaceful+desolate, eerie+desolate)." No existing preset combined
+these two moods — sanctuary uses pure vibrant, gloaming uses pure melancholy. The
+combination creates a "beauty-in-transience" register: radiant life aware of its own
+fleetingness, a celebration tinged with wistful farewell.
+
+I chose the name "elegy" because:
+1. It evokes a poem of serious reflection, often lamenting what is lost or passing.
+2. It immediately sets the tonal expectation: beauty that is precious because it is
+   temporary, celebration and farewell in one gesture.
+3. It sits between "sanctuary" (pure vibrant abundance, celebrating life's fullness)
+   and "gloaming" (pure melancholy wistfulness, soft-focus sadness) — a space where
+   beauty and its passing coexist.
+4. Unlike "lament" (which is eerie+melancholy — haunted grief, wrongness), "elegy"
+   is about beautiful sadness, not haunted grief. It occupies the poignant rather
+   than the grievous register.
+
+### Preset design rationale
+- **Weather (2, 0.85)**: Vibrant's warm/lively weathers (golden light, butterfly
+  cascades, pollen shimmer) and melancholy's rain/mist/grey light weathers create a
+  landscape that shifts between celebration and wistfulness. High count ensures both
+  registers appear.
+- **Anomalies (1, 0.7)**: Moderate — beautiful-strange anomalies from both moods
+  (vibrant's synesthetic colour-sound, melancholy's half-remembered melodies) appear
+  occasionally, reinforcing the surreal beauty of transience without dominating.
+- **Echoes (2, 0.8)**: Echo phrases about memory, deep time, and the land holding
+  its breath align with both moods — the landscape remembering beauty that passes.
+- **Wistful (2, 0.9)**: Yearning and farewell closings perfectly complement the
+  transience-of-beauty register. High probability ensures wistful reflection is almost
+  always present.
+- **Mood atmosphere (2, 0.9)**: Both vibrant's 6 atmosphere phrases (bleeding colour,
+  sub-audible song, organic abundance) and melancholy's 6 phrases (gentle sadness,
+  quiet ache, suspended rain) create a rich, layered emotional register.
+- **Sound (2, 0.85)**: High — vibrant's birdsong, insect hum, and the world singing
+  intermingle with melancholy's muffled, distant sounds. The sonic landscape itself
+  becomes an elegy: celebration fading into quiet.
+- **Wildlife (1, 0.6)**: Moderate — life is present but aware of its own transience.
+  More present than in gloaming (0.3) but less abundant than in sanctuary (0.9).
+  The creatures of an elegy are precious because they are fleeting.
+- **Legends (1, 0.5)**: Moderate — folkloric tales of things that were beautiful and
+  are gone; stories about transience, memory, and the ache of what passes.
+- **Simile/Metaphor/Personification (0.8/0.7/0.6)**: Moderate descending probabilities.
+  Similes (comparison) thrive in a landscape of transience (beauty *like* a farewell).
+  Metaphors (identity) are slightly more assertive. Personifications are rarest to
+  avoid making the landscape's awareness of its own transience feel too intentional.
+- **Time/Season/Perspective (0.6 each)**: Gentle framing without overwhelming the
+  primary emotional register.
+
+### Tradeoffs
+- **No code changes**: Only the `PRESETS` dict and two hardcoded test lists were modified.
+  The preset is auto-available via `--preset` choices (which uses `list(PRESETS.keys())`)
+  and auto-tested by all `for name in PRESETS:` dynamic tests.
+- **No seed-breaking**: Adding a new preset key doesn't change any existing preset's
+  behaviour. Only explicit `--preset elegy` invocations are affected.
+- **No new tests needed**: The dynamic `for name in PRESETS:` subtests in
+  `test_all_presets_*` will automatically generate 47 new subtests for the new preset,
+  verifying it has all required keys with valid ranges. Only
+  `test_preset_produces_valid_output` and `test_preset_is_deterministic` had hardcoded
+  lists that needed updating.
+- **Test count unchanged**: 1169 tests pass — same as Session 196. Subtests grew from
+  636 to 683 (+47) due to dynamic preset iteration.
+- **Fulfills "Next likely steps" from Session 196**: "Add more presets for diverse
+  generation experiences (e.g. vibrant+melancholy, peaceful+desolate, eerie+desolate)"
+  — vibrant+melancholy was explicitly listed first. This is the first preset to combine
+  these two moods.
+
 ## 2026-07-21 — Added "reverie" Preset (Session 196)
 
 ### What

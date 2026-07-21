@@ -2,6 +2,59 @@
 
 ## 2026-07-21
 
+### What was done (Session 197)
+- **Added "elegy" preset** — the 11th preset and the first to use the vibrant+melancholy
+  mood combination (explicitly called out as the next step in Sessions 195–196). Until now,
+  no preset combined these two moods: sanctuary uses pure vibrant, gloaming uses pure
+  melancholy. The new preset fills a beauty-in-transience niche between them, providing
+  a landscape that is both radiant and wistful — an "elegy" for beauty that is precious
+  because it is fleeting.
+- **"elegy" preset design**:
+  - **Mood**: `["vibrant", "melancholy"]` — radiant life meets wistful awareness of passing,
+    the register of beautiful transience.
+  - **Weather**: high (2, prob=0.85) — vibrant's golden light, butterfly cascades, and
+    pollen shimmer alongside melancholy's fog, rain, and grey light; the weather oscillates
+    between celebration and wistfulness.
+  - **Anomalies**: moderate (1, prob=0.7) — beautiful-strange surrealness: vibrant's
+    synesthetic colour-sound and coral pulse alongside melancholy's half-remembered melodies
+    and impossible sky-reflections.
+  - **Echoes**: high (2, prob=0.8) — the landscape remembers its own beauty and the passing
+    thereof.
+  - **Wistful**: high (2, prob=0.9) — transience of beauty is the core of the elegy register;
+    the beauty is all the more poignant for being fleeting.
+  - **Mood atmosphere**: high (2, prob=0.9) — both vibrant's 6 atmosphere phrases (bleeding
+    colour, sub-audible song, organic abundance) and melancholy's 6 phrases (gentle sadness,
+    quiet ache, suspended rain).
+  - **Sound**: high (2, prob=0.85) — the world sings its own elegy; vibrant's birdsong and
+    insect hum intermingle with melancholy's muffled, distant sounds.
+  - **Wildlife**: moderate (1, prob=0.6) — life is present but aware of its own transience;
+    more present than in gloaming (0.3) but less abundant than in sanctuary (0.9).
+  - **Legends**: moderate (1, prob=0.5) — folkloric tales of things that were beautiful and
+    are gone; stories about transience and memory.
+  - **Simile/Metaphor/Personification**: moderate descending (0.8/0.7/0.6) — simile most
+    natural for the reflective register; personification rarest.
+  - **Time of day/Season/Perspective**: gentle (0.6 each) — framing without overwhelming.
+  - **Travelogue**: enabled — journal framing suits the intimate, reflective register
+    of an elegy for beauty passing.
+- **Updated hardcoded preset lists**: `test_preset_produces_valid_output` and
+  `test_preset_is_deterministic` now include `"elegy"` in their iteration lists.
+- **No code logic changes**: The preset system dynamically reads `PRESETS` dict keys for
+  `--preset` choices and all dynamic tests use `for name in PRESETS`, so the preset is
+  auto-available without any other code modifications. Only the two tests with hardcoded
+  preset name lists needed manual updates.
+- **Tests**: 1169 pass (683 subtests) — same test count as Session 196, with 47 additional
+  subtests (683 vs 636) from dynamic preset iteration tests picking up the new preset.
+
+### Current status
+Working. All 1169 tests pass (18 todo + 1169 landscape).
+
+### Next likely steps
+- Add more presets for diverse generation experiences (e.g. peaceful+desolate, eerie+desolate)
+- Add a new biome or mood overlay
+- Add biome-biased presets or biome-weight customization
+
+## 2026-07-21
+
 ### What was done (Session 196)
 - **Added "reverie" preset** — the 10th preset and the first to use the peaceful+melancholy
   mood combination. Until now, no preset combined these two moods: pastoral uses pure peaceful,
