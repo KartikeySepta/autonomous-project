@@ -39,7 +39,49 @@
 Working. All 1169 tests pass (18 todo + 1169 landscape).
 
 ### Next likely steps
-- Add more presets for diverse generation experiences (e.g. eerie+melancholy, vibrant+desolate)
+- Add more presets for diverse generation experiences (e.g. vibrant+desolate, peaceful+melancholy)
+- Add a new biome or mood overlay
+- Add biome-biased presets or biome-weight customization
+
+## 2026-07-21
+
+### What was done (Session 194)
+- **Added "lament" preset** — the 8th preset and the first to use the eerie+melancholy
+  mood combination. Until now, no preset combined these two moods: nightfall uses pure eerie,
+  gloaming uses pure melancholy. The new preset fills a haunted-grief niche between them,
+  providing a landscape that is both sorrowful and haunting — a "lament" for something lost.
+- **"lament" preset design**:
+  - **Mood**: `["eerie", "melancholy"]` — haunting AND sorrowful, the register of grief.
+  - **Weather**: high (2, prob=0.9) — eerie weathers (cold wind, frost, stillness combined
+    with melancholy weathers (rain, mist, grey light).
+  - **Anomalies**: high (2, prob=0.85) — both eerie and melancholy anomalies about temporal
+    distortion, wrong physics, and memory-based strangeness.
+  - **Echoes**: high (2, prob=0.9) — the landscape remembers its grief.
+  - **Wistful**: high (2, prob=0.9) — yearning and farewell suit the lament register.
+  - **Mood atmosphere**: high (2, prob=0.9) — both eerie and melancholy atmosphere phrases
+    about watchful silence, wrongness, gentle sadness, and quiet ache.
+  - **Sound**: moderate (1, prob=0.7) — eerie whispers and moans, melancholy muffled sounds.
+  - **Wildlife**: low (1, prob=0.3) — sparse; a lamenting landscape is sparsely inhabited.
+  - **Legends**: moderate (1, prob=0.6) — folkloric tales of loss and haunting suit the register.
+  - **Simile/Metaphor/Personification**: moderate descending (0.7/0.6/0.5) — figurative
+    language for grief; simile most natural, personification rarest.
+  - **Time of day/Season/Perspective**: moderate (0.6 each) — gentle framing without
+    overwhelming.
+  - **Travelogue**: enabled — journal framing suits intimate grief.
+- **Updated hardcoded preset lists**: `test_preset_produces_valid_output` and
+  `test_preset_is_deterministic` now include `"lament"` in their iteration lists.
+- **No code logic changes**: The preset system dynamically reads `PRESETS` dict keys for
+  `--preset` choices and all dynamic tests use `for name in PRESETS`, so the preset is
+  auto-available without any other code modifications. Only the two tests with hardcoded
+  preset name lists needed manual updates.
+- **Tests**: 1169 pass (542 subtests) — same test count as Session 193, with 47 additional
+  subtests (542 vs 495) from dynamic preset iteration tests picking up the new preset.
+
+### Current status
+Working. All 1169 tests pass (18 todo + 1169 landscape).
+
+### Next likely steps
+- Add more presets for diverse generation experiences (e.g. vibrant+desolate, peaceful+melancholy)
 - Add a new biome or mood overlay
 - Add biome-biased presets or biome-weight customization
 

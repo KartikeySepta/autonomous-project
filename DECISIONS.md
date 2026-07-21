@@ -1,5 +1,92 @@
 # Decisions
 
+## 2026-07-21 — Added "lament" Preset (Session 194)
+
+### What
+Added an 8th preset "lament" — the first to combine eerie and melancholy moods (not in
+combination before). The preset configures eerie+melancholy with high weather (2, 0.9),
+high anomalies (2, 0.85), high echoes (2, 0.9), high wistful (2, 0.9), high mood
+atmosphere (2, 0.9), moderate sound (1, 0.7), low wildlife (1, 0.3), moderate legends
+(1, 0.6), and descending poetic device probabilities (simile 0.7 → metaphor 0.6 →
+personification 0.5).
+
+### Why
+The eerie and melancholy moods have both existed since Session 181, but no preset
+combined them. The 7 existing presets used the following mood configurations:
+- nightfall: pure eerie (haunting, watchful)
+- pastoral: pure peaceful (calm, serene)
+- sublime: vibrant + peaceful (maximal beauty)
+- wasteland: pure desolate (barren, hopeless)
+- dreamscape: eerie + vibrant (surreal, dreamlike)
+- gloaming: pure melancholy (wistful, rainy)
+- sanctuary: pure vibrant (abundant, alive)
+
+The eerie+melancholy combination was the most prominent unused pairing. It creates a
+haunted-grief register that is neither pure fear (nightfall) nor pure sadness (gloaming)
+but a blend of both — a landscape that is both wrong and sorrowful, haunted by its own
+grief.
+
+I chose the name "lament" because:
+1. It evokes a passionate expression of grief — the emotional register of eerie
+   (wrongness, haunting) combined with melancholy (sadness, yearning).
+2. It's a powerful, resonant word that immediately sets the tonal expectation of
+   mourning and haunting.
+3. It sits between "nightfall" (fearful, watchful) and "gloaming" (wistful,
+   introspective) — a grief-haunted space that is neither pure fear nor pure sadness.
+4. Unlike "gloaming" (which is soft-focus and rainy) and "nightfall" (which is
+   dark and predatory), "lament" occupies a bereavement register — the landscape
+   itself mourns.
+
+### Preset design rationale
+- **Weather (2, 0.9)**: Eerie weathers (cold wind moaning, frost language, unnatural
+  stillness) combined with melancholy weathers (rain, mist, grey light, drizzle) create
+  a somber, haunted atmosphere. The high probability ensures the weather reinforces the
+  grief register.
+- **Anomalies (2, 0.85)**: Both eerie and melancholy offer temporal distortion, wrong
+  physics, and memory-based strangeness — perfect for a landscape that is fundamentally
+  "wrong" in its grief. High count and probability ensure frequent surreal disruptions.
+- **Echoes (2, 0.9)**: Echo phrases ("mourns", "holds its breath", "remembers") align
+  with both moods — the landscape remembering its grief is core to "lament".
+- **Wistful (2, 0.9)**: Yearning, farewell, and "carrying a piece" closings complement
+  the grief register perfectly. Double count with high probability ensures wistful
+  reflection is almost always present.
+- **Mood atmosphere (2, 0.9)**: Both eerie's 6 atmosphere phrases (watchful silence,
+  wrongness, frozen gestures) and melancholy's 6 phrases (gentle sadness, soft heaviness,
+  quiet ache) contribute to a rich, layered emotional register.
+- **Sound (1, 0.7)**: Moderate — eerie whispers and moans, melancholy muffled sounds.
+  Not overwhelming but present enough to enhance the haunting atmosphere.
+- **Wildlife (1, 0.3)**: Sparse — a lamenting landscape is sparsely inhabited.
+  Occasional creatures appear but the focus is on the landscape's own grief.
+- **Legends (1, 0.6)**: Moderate — folkloric tales of loss and haunting suit the
+  register better than in pure melancholy (gloaming uses 0.4) but less than in pure
+  eerie (nightfall uses 0.7).
+- **Simile/Metaphor/Personification (0.7/0.6/0.5)**: Moderate descending probabilities
+  consistent with the pattern in glooming. Similes (comparison) are the most natural for
+  describing grief; metaphors (identity) are slightly more assertive; personifications
+  (anthropomorphism) are rarest because giving the landscape active human agency can
+  feel too active for the reflective tone.
+- **Time/Season/Perspective (0.6 each)**: Moderate — gentle framing without overwhelming
+  the primary emotional register.
+
+### Tradeoffs
+- **No code changes**: Only the `PRESETS` dict and two hardcoded test lists were modified.
+  The preset is auto-available via `--preset` choices (which uses `list(PRESETS.keys())`)
+  and auto-tested by all `for name in PRESETS:` dynamic tests.
+- **No seed-breaking**: Adding a new preset key doesn't change any existing preset's
+  behaviour. Only explicit `--preset lament` invocations are affected.
+- **No new tests needed**: The dynamic `for name in PRESETS:` subtests in
+  `test_all_presets_*` will automatically generate 47 new subtests for the new preset,
+  verifying it has all required keys with valid ranges. Only
+  `test_preset_produces_valid_output` and `test_preset_is_deterministic` had hardcoded
+  lists that needed updating.
+- **Test count unchanged**: 1169 tests pass — same as Session 193. Subtests grew from
+  495 to 542 (+47) due to dynamic preset iteration.
+- **Fulfills "Next likely steps" from Session 193**: "Add more presets for diverse
+  generation experiences (e.g. eerie+melancholy)" was explicitly listed as the first
+  item. This is the first preset to combine eerie and melancholy.
+
+## 2026-07-21 — Added "sanctuary" Preset (Session 193)
+
 ## 2026-07-21 — Added "sanctuary" Preset (Session 193)
 
 ### What
