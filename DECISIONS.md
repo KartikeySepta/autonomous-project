@@ -1,5 +1,78 @@
 # Decisions
 
+## 2026-07-21 — Expanded Ruined City Biome Weathers and Anomalies (Session 182)
+
+### What
+Expanded biome-specific weather and anomaly pools for "ruined city" from 5→7
+entries each — 2 new weathers and 2 new anomalies (4 phrases total). This is
+the 4th biome to receive weather/anomaly expansion (following forest, ocean,
+and desert in Session 180).
+
+### Why
+The "Next likely steps" from Session 181 explicitly called for this: "Expand
+biome-specific word pools further (more biomes, more entries)." After Session
+180 expanded forest, ocean, and desert, 11 biomes remained at 5 weathers and
+5 anomalies.
+
+I chose "ruined city" because:
+1. **It's the only human-constructed biome** — the only landscape of abandoned
+   architecture, which has a distinct atmospheric register from natural biomes.
+2. **High contrast with previous expansions** — forest, ocean, and desert are
+   natural environments; ruined city is entirely anthropogenic decay. This
+   demonstrates the pattern works for non-natural biomes too.
+3. **Rich creative potential** — ruined urban environments offer unique weather
+   (fog in skyscraper canyons, rain on broken glass) and anomalies (frozen
+   ghostly figures, impossible street geometry) that natural biomes can't match.
+
+### New weathers
+- `"a heavy fog settles in the lower streets, swallowing the ground floor of
+  every building"` — urban ground-level fog that submerges the lowest visible
+  layer of the city. Niche: fog in a built environment. No existing ruined city
+  weather covers fog or low visibility. Indicator: `"swallowing the ground floor"`.
+- `"rain drums on broken glass and rusted metal in a rhythm without pattern"` —
+  percussive rain creating an arrhythmic soundscape of debris. Niche: sound-
+  oriented weather (auditory rather than visual). Distinct from `"a rust-colored
+  drizzle stains the concrete further"` (visual staining vs. auditory drumming).
+  Indicator: `"rain drums on"`.
+
+### New anomalies
+- `"The silhouettes of people flicker in doorways — frozen mid-stride, mid-word,
+  mid-thought — from a time that never was."` — frozen ghostly figures from an
+  unreal past, suggesting the city itself is a memory of something that never
+  happened. Niche: temporal freeze and unreal history. Distinct from `"Shadows of
+  people who aren't there move along the walls"` (fluid motion vs. frozen
+  stillness) and `"All the doors in the city are slightly ajar, as if someone
+  just left"` (recent departure vs. never-arrived presence).
+- `"Every street leads back to the same intersection, no matter which direction
+  you choose."` — impossible looping street geometry that defeats navigation.
+  Niche: spatial recursion/loop. Distinct from `"The street signs point in
+  directions that don't exist"` (semantic misdirection vs. physical looping)
+  and `"The city gives birth to new streets at night"` (dynamic map changes
+  vs. static impossible topology).
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only BIOME_WORDS entries and WEATHER_INDICATORS were updated.
+- **No seed-breaking**: Adding entries to biome pools doesn't change the random
+  sequence within a given seed — `rng.choices(pool, weights, k=1)` on a larger
+  pool only changes which entries are selected, not RNG state progression. The
+  only behavioral change is that new phrases may appear in biome-specific output.
+- **Test indicator updates**: 2 new WEATHER_INDICATORS added. Necessary because
+  weather suppression/probability tests scan for these substrings. Without them,
+  new biome weathers would be invisible to the test detection logic.
+- **No anomaly indicator updates needed**: Anomaly suppression tests use
+  `ALL_ANOMALIES` directly (a derived set that includes biome anomalies), so
+  new anomalies are automatically covered.
+- **Test count unchanged**: 1163 tests (18 todo + 1145 landscape) — same as
+  Session 181.
+- **Expansion scope limited**: Only 1 of 11 remaining biomes was expanded. 10
+  biomes (tundra, mountain range, swamp, cave system, plain, volcanic field,
+  coral reef, fungal grove, sky islands, crystal fields) remain at 5 weathers
+  and 5 anomalies. Future sessions can continue this pattern.
+- **Fulfills "Next likely steps" from Session 181**: Biome-specific word pool
+  expansion was explicitly called out as the first item. 4 of 14 biomes now
+  have expanded pools.
+
 ## 2026-07-21 — Added "melancholy" Mood Overlay (Session 181)
 
 ### What

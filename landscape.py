@@ -1304,6 +1304,8 @@ BIOME_WORDS = {
             "the wind moans through empty streets",
             "a rust-colored drizzle stains the concrete further",
             "dust devils spin through collapsed intersections",
+            "a heavy fog settles in the lower streets, swallowing the ground floor of every building",
+            "rain drums on broken glass and rusted metal in a rhythm without pattern",
         ],
         "anomalies": [
             "The street signs point in directions that don't exist.",
@@ -1311,6 +1313,8 @@ BIOME_WORDS = {
             "Shadows of people who aren't there move along the walls.",
             "The city gives birth to new streets at night — a map that redraws itself.",
             "All the doors in the city are slightly ajar, as if someone just left.",
+            "The silhouettes of people flicker in doorways — frozen mid-stride, mid-word, mid-thought — from a time that never was.",
+            "Every street leads back to the same intersection, no matter which direction you choose.",
         ],
     },
     "fungal grove": {

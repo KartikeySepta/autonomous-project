@@ -2,6 +2,58 @@
 
 ## 2026-07-21
 
+### What was done (Session 182)
+- **Expanded biome-specific weathers and anomalies for "ruined city"** — the
+  only human-constructed (ruined) biome in the project. Weathers grew from 5→7
+  and anomalies from 5→7, adding 4 new phrases total. This is the 4th biome to
+  get expanded weathers/anomalies (following forest, ocean, and desert in
+  Session 180).
+- **New ruined city weathers**:
+  - `"a heavy fog settles in the lower streets, swallowing the ground floor of
+    every building"` — urban fog filling the lower levels of abandoned structures.
+    Distinct from all existing ruined city weathers (ash, smog, wind, drizzle,
+    dust devils). Indicator: `"swallowing the ground floor"`.
+  - `"rain drums on broken glass and rusted metal in a rhythm without pattern"` —
+    percussive rain on debris creating an arrhythmic soundscape. Distinct from
+    `"a rust-colored drizzle stains the concrete further"` (which is about
+    staining and visual effect, not sound). Indicator: `"rain drums on"`.
+- **New ruined city anomalies**:
+  - `"The silhouettes of people flicker in doorways — frozen mid-stride, mid-word,
+    mid-thought — from a time that never was."` — ghostly frozen figures from an
+    unreal past, like a city that never existed. Distinct from `"Shadows of people
+    who aren't there move along the walls"` (existing, which describes moving
+    shadows vs. frozen silhouettes here). This is about temporal freezing rather
+    than fluid ghost movement.
+  - `"Every street leads back to the same intersection, no matter which direction
+    you choose."` — impossible looping street geometry. Distinct from `"The street
+    signs point in directions that don't exist"` (misleading signs vs. looping
+    streets) and `"The city gives birth to new streets at night"` (map
+    self-modification vs. looping).
+- **Updated WEATHER_INDICATORS** in test_landscape.py: Added 2 new invariant
+  substrings (`"swallowing the ground floor"`, `"rain drums on"`) so weather
+  suppression/probability tests correctly cover the new ruined city weather
+  phrases.
+- **No code, CLI, or generation logic changes** — data-only expansion plus
+  indicator additions. All existing tests use dynamic checks over
+  `ALL_WEATHERS`, `ALL_ANOMALIES`, and `WEATHER_INDICATORS`, so no test logic
+  changes were needed.
+- This directly fulfills the first "Next likely step" from Session 181: "Expand
+  biome-specific word pools further (more biomes, more entries)." 4 of 14 biomes
+  now have expanded weathers/anomalies (forest, ocean, desert, ruined city).
+  10 biomes remain at 5 weathers and 5 anomalies.
+- Tests unchanged: 1163 tests pass (18 todo + 1145 landscape) — same as
+  Session 181.
+
+### Current status
+Working. All 1163 tests pass (18 todo + 1145 landscape).
+
+### Next likely steps
+- Expand biome-specific word pools further (more biomes, more entries)
+- Add more presets for diverse generation experiences
+- Expand the new melancholy word pools further
+
+## 2026-07-21
+
 ### What was done (Session 181)
 - **Added new mood overlay: "melancholy"** — a wistful, rainy, soft-focus emotional
   register that fills the mood gap between "peaceful" (calm/gentle) and "desolate"

@@ -148,6 +148,8 @@ WEATHER_INDICATORS = [
     "glass-calm",
     "haboob swallows",
     "phantom pools",
+    "swallowing the ground floor",
+    "rain drums on",
 ]
 
 LEGEND_INDICATORS = [
