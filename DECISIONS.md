@@ -1,5 +1,116 @@
 # Decisions
 
+## 2026-07-21 — Expanded Cave System, Plain, and Volcanic Field Biome Weathers and Anomalies (Session 184)
+
+### What
+Expanded biome-specific weather and anomaly pools for cave system, plain, and volcanic
+field from 5→7 entries each — 6 new weathers and 6 new anomalies (12 phrases total).
+This is the 8th–10th biomes to receive weather/anomaly expansion (following forest,
+ocean, desert in Session 180, ruined city in Session 182, and tundra, mountain range,
+swamp in Session 183).
+
+### Why
+The "Next likely steps" from Session 183 explicitly called for this: "Expand biome-
+specific word pools further (more biomes, more entries)." After Session 183, 7 of
+14 biomes remained at 5 weathers and 5 anomalies.
+
+I chose cave system, plain, and volcanic field because:
+1. **Cave system** — the only underground/subterranean biome, offering unique
+   enclosed-space weathers (rumbles, mineral deposition) and echo-based anomalies
+   that no surface biome can provide.
+2. **Plain** — the most open/horizontal biome, with vast weathers (approaching
+   storms, sunset fires) and distance/solitude anomalies distinct from other biomes.
+3. **Volcanic field** — the most destructive/geologically active biome, with unique
+   weathers (volcanic groans, lightning) and eruption-based anomalies that no other
+   biome covers.
+4. **Diversity across environments** — underground (cave), open (plain), and
+   volcanic (volcanic field) cover three very different environmental registers,
+   none overlapping with previously expanded biomes.
+
+### New weathers
+
+**Cave system**:
+- `"a deep rumble echoes from the unseen depths, shaking loose ancient dust"` —
+  subterranean tremor adding dynamic geological vibration. Niche: percussive
+  geological event. Distinct from `"water drips in a slow, endless rhythm"`
+  (steady drip, not rumble). Indicator: `"deep rumble echoes"`.
+- `"mineral-laden water trickles down the walls, leaving veins of silver and white"` —
+  mineral deposition creating visible vein patterns. Niche: visual chemical
+  deposition. Distinct from `"water drips in a slow, endless rhythm"` (auditory
+  rhythm, not visual deposition). Indicator: `"veins of silver and white"`.
+
+**Plain**:
+- `"a thunderstorm brews on the distant edge of the plain, a curtain of black and
+  silver advancing with purpose"` — approaching storm as a dramatic curtain. Niche:
+  distant storm front on flat land. Distinct from `"a bank of fog rolls in from the
+  horizon"` (fog, not storm). Indicator: `"curtain of black and silver"`.
+- `"the setting sun paints the grasses gold and amber, turning the plain into a sea
+  of fire"` — sunset illumination as fire across the plain. Niche: dramatic golden-
+  hour lighting. Distinct from `"a warm wind sends ripples across the grass"` (wind,
+  not light). Indicator: `"plain into a sea of fire"`.
+
+**Volcanic field**:
+- `"a low groan issues from deep within the earth, a sound that vibrates through bone
+  before it reaches the ear"` — infrasonic volcanic groan. Niche: body-felt sound.
+  Distinct from `"steam vents hiss in ragged chorus"` (hissing, not groaning).
+  Indicator: `"groan issues from deep"`.
+- `"lightning forks through the ash-filled sky, illuminating the wasteland in stark
+  white flashes"` — volcanic lightning. Niche: electrical discharge through ash.
+  Distinct from `"lava illuminates the smoke from below"` (steady glow from below).
+  Indicator: `"lightning forks through"`.
+
+### New anomalies
+
+**Cave system**:
+- `"Your footsteps echo back as the voices of people who have not been born yet."` —
+  temporal echo returning future voices. Niche: precognitive auditory echo. Distinct
+  from `"Passages rearrange when you blink"` (spatial, not temporal).
+- `"Fossils embedded in the cave walls shift their positions when no one is watching,
+  forming new arrangements in the stone."` — animate fossils rearranging when
+  unobserved. Niche: quantum-observer fossil movement. Distinct from `"Stalactites
+  grow toward each other at visible speed"` (mineral growth, not fossil motion).
+
+**Plain**:
+- `"The wind carries whispers in a language that comes from the grass itself, not
+  from any living throat."` — grass speaking through wind. Niche: oracular
+  vegetation. Distinct from `"The grass grows in the shape of a language"` (visual,
+  not auditory speech).
+- `"A single tree stands in the middle of the plain, though you remember there were
+  no trees here a moment ago."` — impossible lone tree appearing unbidden. Niche:
+  solitary arboreal materialization. Distinct from `"Distant figures never get
+  closer"` (humanoid figures, not solitary tree).
+
+**Volcanic field**:
+- `"The ash does not fall — it rises, returning to the mountain as if the eruption
+  is running backward in time."` — reversed ash fall. Niche: temporal inversion of
+  eruption dynamics. Distinct from `"Lava flows uphill without reason"` (spatial
+  reversal of lava, not temporal reversal of ash).
+- `"Cracks in the earth glow with an inner light that does not illuminate, does not
+  warm, but watches."` — sentient watchful fissure-light. Niche: conscious non-
+  thermal light. Distinct from `"The heat does not burn — it freezes"` (temperature
+  paradox, not light) and `"The ground pulses with a heartbeat"` (kinetic pulse,
+  not watchful light).
+
+### Tradeoffs
+- **Data-only change**: No modifications to `generate_landscape()`, CLI flags,
+  or any logic. Only BIOME_WORDS entries and WEATHER_INDICATORS were updated.
+- **No seed-breaking**: Adding entries to biome pools doesn't change the random
+  sequence within a given seed — `rng.choices(pool, weights, k=1)` on a larger
+  pool only changes which entries are selected, not RNG state progression.
+- **Test indicator updates**: 6 new WEATHER_INDICATORS added. Necessary because
+  weather suppression/probability tests scan for these substrings.
+- **No anomaly indicator updates needed**: Anomaly suppression tests use
+  `ALL_ANOMALIES` directly (a derived set that includes biome anomalies), so
+  new anomalies are automatically covered.
+- **Test count unchanged**: 1163 tests (18 todo + 1145 landscape) — same as
+  Session 183.
+- **Expansion scope: 3 biomes**: 10 of 14 biomes now have expanded pools (forest,
+  ocean, desert, ruined city, tundra, mountain range, swamp, cave system, plain,
+  volcanic field). 4 biomes remain: coral reef, fungal grove, sky islands, crystal
+  fields.
+- **Fulfills "Next likely steps" from Session 183**: Biome-specific word pool
+  expansion was explicitly called out as the first item.
+
 ## 2026-07-21 — Expanded Tundra, Mountain Range, and Swamp Biome Weathers and Anomalies (Session 183)
 
 ### What

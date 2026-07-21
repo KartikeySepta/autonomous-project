@@ -156,6 +156,12 @@ WEATHER_INDICATORS = [
     "boil over the ridgeline",
     "warm rain falls in heavy droplets",
     "shed leaves and seed pods",
+    "deep rumble echoes",
+    "veins of silver and white",
+    "curtain of black and silver",
+    "plain into a sea of fire",
+    "groan issues from deep",
+    "lightning forks through",
 ]
 
 LEGEND_INDICATORS = [

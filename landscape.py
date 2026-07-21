@@ -1228,6 +1228,8 @@ BIOME_WORDS = {
             "the darkness presses in from all sides",
             "a low mist hugs the cave floor, cool and thick",
             "an underground stream sings somewhere in the darkness",
+            "a deep rumble echoes from the unseen depths, shaking loose ancient dust",
+            "mineral-laden water trickles down the walls, leaving veins of silver and white",
         ],
         "anomalies": [
             "The crystals here glow without a light source.",
@@ -1235,6 +1237,8 @@ BIOME_WORDS = {
             "The cave breathes — a slow, deep rhythm.",
             "Stalactites and stalagmites grow toward each other at visible speed.",
             "The darkness here has weight — it presses against your back.",
+            "Your footsteps echo back as the voices of people who have not been born yet.",
+            "Fossils embedded in the cave walls shift their positions when no one is watching, forming new arrangements in the stone.",
         ],
     },
     "plain": {
@@ -1250,6 +1254,8 @@ BIOME_WORDS = {
             "the sky stretches forever, blue and empty",
             "a slow breeze carries the scent of wildflowers from miles away",
             "a bank of fog rolls in from the horizon at dusk",
+            "a thunderstorm brews on the distant edge of the plain, a curtain of black and silver advancing with purpose",
+            "the setting sun paints the grasses gold and amber, turning the plain into a sea of fire",
         ],
         "anomalies": [
             "The grass bends in patterns that spell something.",
@@ -1257,6 +1263,8 @@ BIOME_WORDS = {
             "Distant figures never get closer no matter how far you walk.",
             "The grass grows in the shape of a language that predates humanity.",
             "Every footstep you take is echoed by a second set of footsteps that stop when you stop.",
+            "The wind carries whispers in a language that comes from the grass itself, not from any living throat.",
+            "A single tree stands in the middle of the plain, though you remember there were no trees here a moment ago.",
         ],
     },
     "volcanic field": {
@@ -1272,6 +1280,8 @@ BIOME_WORDS = {
             "lava illuminates the smoke from below",
             "sulfur fumes drift across the cracked earth in low-lying clouds",
             "a hot rain of ash and cinders falls without warning",
+            "a low groan issues from deep within the earth, a sound that vibrates through bone before it reaches the ear",
+            "lightning forks through the ash-filled sky, illuminating the wasteland in stark white flashes",
         ],
         "anomalies": [
             "Lava flows uphill without reason.",
@@ -1279,6 +1289,8 @@ BIOME_WORDS = {
             "The heat does not burn — it freezes.",
             "The ground beneath your feet pulses with a heartbeat that is not your own.",
             "Molten rock flows in formations that spell out coordinates to nowhere.",
+            "The ash does not fall — it rises, returning to the mountain as if the eruption is running backward in time.",
+            "Cracks in the earth glow with an inner light that does not illuminate, does not warm, but watches.",
         ],
     },
     "coral reef": {

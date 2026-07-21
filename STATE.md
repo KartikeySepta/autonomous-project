@@ -2,6 +2,96 @@
 
 ## 2026-07-21
 
+### What was done (Session 184)
+- **Expanded biome-specific weathers and anomalies for cave system, plain, and volcanic field**
+  — each biome's weather pool grew from 5 to 7 entries and anomaly pool from 5 to 7
+  entries, adding 6 new weathers and 6 new anomalies (12 phrases total). This is the
+  8th–10th biomes to receive weather/anomaly expansion (following forest, ocean, desert
+  in Session 180, ruined city in Session 182, and tundra, mountain range, swamp in
+  Session 183).
+- **New cave system weathers**:
+  - `"a deep rumble echoes from the unseen depths, shaking loose ancient dust"` —
+    subterranean tremor, a dynamic geological event shaking dust from ancient passages.
+    Distinct from `"water drips in a slow, endless rhythm"` (steady dripping, not
+    rumbling) and `"a draft carries the scent of deep earth"` (air movement, not
+    vibration). Indicator: `"deep rumble echoes"`.
+  - `"mineral-laden water trickles down the walls, leaving veins of silver and white"` —
+    mineral deposition creating visible veins on cave walls. Distinct from `"water drips
+    in a slow, endless rhythm"` (which is about auditory rhythm, not visual deposition)
+    and `"a low mist hugs the cave floor"` (moisture in air, not on walls). Indicator:
+    `"veins of silver and white"`.
+- **New cave system anomalies**:
+  - `"Your footsteps echo back as the voices of people who have not been born yet."` —
+    temporal echo returning future voices instead of the present. Distinct from
+    `"Passages rearrange when you blink"` (spatial, not temporal) and `"The cave breathes"`
+    (kinetic, not auditory/temporal).
+  - `"Fossils embedded in the cave walls shift their positions when no one is watching,
+    forming new arrangements in the stone."` — animated fossils rearranging themselves
+    when unobserved. Distinct from `"Stalactites grow toward each other at visible speed"`
+    (mineral growth, not fossil movement).
+- **New plain weathers**:
+  - `"a thunderstorm brews on the distant edge of the plain, a curtain of black and silver
+    advancing with purpose"` — approaching storm as a dramatic curtain across the plain.
+    Distinct from `"a bank of fog rolls in from the horizon at dusk"` (fog, not storm)
+    and `"clouds cast slow-moving shadows"` (passive clouds, not active storm front).
+    Indicator: `"curtain of black and silver"`.
+  - `"the setting sun paints the grasses gold and amber, turning the plain into a sea of
+    fire"` — sunset illumination transforming the plain into a fiery expanse. Distinct
+    from `"a warm wind sends ripples across the grass"` (wind-driven, not light-driven)
+    and `"the sky stretches forever, blue and empty"` (daytime blue sky, not sunset).
+    Indicator: `"plain into a sea of fire"`.
+- **New plain anomalies**:
+  - `"The wind carries whispers in a language that comes from the grass itself, not from
+    any living throat."` — the grass speaking through the wind. Distinct from `"The grass
+    grows in the shape of a language"` (visual linguistic patterns, not auditory speech).
+    Adds an auditory/oracular register to the plain.
+  - `"A single tree stands in the middle of the plain, though you remember there were no
+    trees here a moment ago."` — impossible lone tree appearing unbidden. Distinct from
+    `"Distant figures never get closer"` (humanoid figures, not arboreal) and `"There is
+    no horizon"` (spatial boundary absence, not object appearance).
+- **New volcanic field weathers**:
+  - `"a low groan issues from deep within the earth, a sound that vibrates through bone
+    before it reaches the ear"` — infrasonic volcanic groan, a body-felt sound. Distinct
+    from `"steam vents hiss in ragged chorus"` (hissing steam, not deep groaning) and
+    `"lava illuminates the smoke from below"` (visual, not auditory). Indicator:
+    `"groan issues from deep"`.
+  - `"lightning forks through the ash-filled sky, illuminating the wasteland in stark
+    white flashes"` — volcanic lightning, dramatic electrical discharge through ash.
+    Distinct from `"lava illuminates the smoke from below"` (steady glow from below,
+    not sharp flashes from above). Indicator: `"lightning forks through"`.
+- **New volcanic field anomalies**:
+  - `"The ash does not fall — it rises, returning to the mountain as if the eruption is
+    running backward in time."` — reversed ash fall, temporal inversion of eruption
+    dynamics. Distinct from `"Lava flows uphill without reason"` (spatial reversal of
+    lava, not temporal reversal of ash) and `"Molten rock flows in formations"` (rock
+    patterns, not ash behavior).
+  - `"Cracks in the earth glow with an inner light that does not illuminate, does not
+    warm, but watches."` — sentient watchful light in fissures. Distinct from `"The
+    heat does not burn — it freezes"` (temperature paradox, not light) and `"Obsidian
+    shards show visions of the past"` (visual reflection, not ambient watching).
+- **Updated WEATHER_INDICATORS** in test_landscape.py: Added 6 new invariant substrings
+  for the new biome weather phrases so weather suppression/probability tests correctly
+  cover the new weathers.
+- **No code, CLI, or generation logic changes** — data-only expansion plus indicator
+  additions. All existing tests use dynamic checks over `ALL_WEATHERS`, `ALL_ANOMALIES`,
+  and `WEATHER_INDICATORS`, so no test logic changes were needed.
+- This directly fulfills the first "Next likely step" from Session 183: "Expand biome-
+  specific word pools further (more biomes, more entries)." 10 of 14 biomes now have
+  expanded weathers/anomalies (forest, ocean, desert, ruined city, tundra, mountain
+  range, swamp, cave system, plain, volcanic field). 4 biomes remain at 5 weathers and
+  5 anomalies: coral reef, fungal grove, sky islands, crystal fields.
+- Tests unchanged: 1145 passed (18 todo + 1145 landscape) — same as Session 183.
+
+### Current status
+Working. All 1163 tests pass (18 todo + 1145 landscape).
+
+### Next likely steps
+- Expand biome-specific word pools further (coral reef, fungal grove, sky islands, crystal fields)
+- Add more presets for diverse generation experiences
+- Expand the new melancholy word pools further
+
+## 2026-07-21
+
 ### What was done (Session 183)
 - **Expanded biome-specific weathers and anomalies for tundra, mountain range, and swamp**
   — each biome's weather pool grew from 5 to 7 entries and anomaly pool from 5 to 7
